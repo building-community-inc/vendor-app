@@ -1,6 +1,7 @@
 generator zod {
   provider                         = "zod-prisma-types"
   createOptionalDefaultValuesTypes = true
+  create
 }
 
 generator client {
