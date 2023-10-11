@@ -16,4 +16,6 @@
     "statusBarItem.hoverBackground": "#39093a"
   },
   "peacock.color": "#0000FF",
+  "WillLuke.nextjs.addTypesOnSave": true,
+  "WillLuke.nextjs.hasPrompted": true,
 }

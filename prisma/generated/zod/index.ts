@@ -53,18 +53,6 @@ export const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>
 
-// USER OPTIONAL DEFAULTS SCHEMA
-//------------------------------------------------------
-
-export const UserOptionalDefaultsSchema = UserSchema.merge(z.object({
-  role: RoleSchema.optional(),
-  hasImage: z.boolean().optional(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-}))
-
-export type UserOptionalDefaults = z.infer<typeof UserOptionalDefaultsSchema>
-
 /////////////////////////////////////////
 // SELECT & INCLUDE
 /////////////////////////////////////////
@@ -72,26 +60,26 @@ export type UserOptionalDefaults = z.infer<typeof UserOptionalDefaultsSchema>
 // USER
 //------------------------------------------------------
 
-// export const UserSelectSchema: z.ZodType<Prisma.UserSelect> = z.object({
-//   id: z.boolean().optional(),
-//   firstName: z.boolean().optional(),
-//   lastName: z.boolean().optional(),
-//   hasImage: z.boolean().optional(),
-//   image: z.boolean().optional(),
-//   address1: z.boolean().optional(),
-//   address2: z.boolean().optional(),
-//   city: z.boolean().optional(),
-//   stateProvince: z.boolean().optional(),
-//   postalCode: z.boolean().optional(),
-//   country: z.boolean().optional(),
-//   email: z.boolean().optional(),
-//   phone: z.boolean().optional(),
-//   businessName: z.boolean().optional(),
-//   instagramHandle: z.boolean().optional(),
-//   createdAt: z.boolean().optional(),
-//   updatedAt: z.boolean().optional(),
-//   role: z.boolean().optional(),
-// }).strict()
+export const UserSelectSchema: z.ZodType<Prisma.UserSelect> = z.object({
+  id: z.boolean().optional(),
+  firstName: z.boolean().optional(),
+  lastName: z.boolean().optional(),
+  hasImage: z.boolean().optional(),
+  image: z.boolean().optional(),
+  address1: z.boolean().optional(),
+  address2: z.boolean().optional(),
+  city: z.boolean().optional(),
+  stateProvince: z.boolean().optional(),
+  postalCode: z.boolean().optional(),
+  country: z.boolean().optional(),
+  email: z.boolean().optional(),
+  phone: z.boolean().optional(),
+  businessName: z.boolean().optional(),
+  instagramHandle: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  role: z.boolean().optional(),
+}).strict()
 
 
 /////////////////////////////////////////
