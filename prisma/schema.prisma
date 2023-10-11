@@ -1,0 +1,41 @@
+generator zod {
+  provider                         = "zod-prisma-types"
+  createOptionalDefaultValuesTypes = true
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id              String   @id @unique
+  firstName       String
+  lastName        String
+  hasImage        Boolean  @default(false)
+  image           String?
+  address1        String?
+  address2        String?
+  city            String?
+  stateProvince   String?
+  postalCode      String?
+  country         String?
+  email           String   @unique
+  phone           String?
+  businessName    String?
+  instagramHandle String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  role            Role     @default(VENDOR)
+}
+
+enum Role {
+  ADMIN
+  VENDOR
+  GOD
+}
