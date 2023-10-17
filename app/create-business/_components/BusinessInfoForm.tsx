@@ -3,12 +3,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TBusinessInfo, TUserWithOptionalBusinessInfo, zodBusinessInfo } from "@/zod/types";
 import { sanityWriteClient } from "@/sanity/lib/client";
+import { useRouter } from "next/router";
 
 type TBIFProps = {
   user: TUserWithOptionalBusinessInfo;
 };
 const BusinessInfoForm = ({user}: TBIFProps) => {
-  
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -31,7 +32,8 @@ const BusinessInfoForm = ({user}: TBIFProps) => {
     }).catch((err) => {
       console.log({err})
     })
-    // reset();
+    reset();
+    router.push("/dashboard");
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid mx-auto max-w-7xl px-5">
