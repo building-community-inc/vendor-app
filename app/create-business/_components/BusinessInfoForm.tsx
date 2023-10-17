@@ -1,11 +1,11 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TBusinessInfo, TUserBase, zodBusinessInfo } from "@/zod/types";
+import { TBusinessInfo, TUserWithOptionalBusinessInfo, zodBusinessInfo } from "@/zod/types";
 import { sanityWriteClient } from "@/sanity/lib/client";
 
 type TBIFProps = {
-  user: TUserBase;
+  user: TUserWithOptionalBusinessInfo;
 };
 const BusinessInfoForm = ({user}: TBIFProps) => {
   
@@ -38,7 +38,7 @@ const BusinessInfoForm = ({user}: TBIFProps) => {
       <label htmlFor="businessName">Business Name</label>
       <input {...register("businessName")} className="text-black" type="text" name="businessName" />
       {errors.businessName && <span className="text-red-500">{errors.businessName.message}</span>}
-      <label htmlFor="address1">Addess 1</label>
+      <label htmlFor="address1">Address 1</label>
       <input {...register("address1")} className="text-black" type="text" name="address1" />
       {errors.address1 && <span className="text-red-500">{errors.address1.message}</span>}
       <label htmlFor="address2">Address 2</label>

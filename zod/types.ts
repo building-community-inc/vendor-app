@@ -29,16 +29,16 @@ export type TBusinessInfo = z.infer<typeof zodBusinessInfo>;
 
 export const zodUserWithOptionalBusinessInfo = zodUserBase.merge(
   z.object({
-    businessName: z.string(),
-    address1: z.string(),
-    address2: z.string().nullable(),
-    city: z.string(),
-    province: z.string(),
-    postalCode: z.string(),
-    country: z.string(),
-    phone: z.string(),
-    instagramHandle: z.string().nullable(),
+    businessName: z.string().optional(),
+    address1: z.string().optional(),
+    address2: z.string().nullable().optional(),
+    city: z.string().optional(),
+    province: z.string().optional(),
+    postalCode: z.string().optional(),
+    country: z.string().optional(),
+    phone: z.string().optional(),
+    instagramHandle: z.string().nullable().optional(),
   })
 );
 
-// export type TUserWithBusinessInfo = TUserBase & TBusinessInfo;
+export type TUserWithOptionalBusinessInfo = z.infer<typeof zodUserWithOptionalBusinessInfo>;
