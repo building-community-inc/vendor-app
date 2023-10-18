@@ -1,0 +1,21 @@
+{
+  "workbench.colorCustomizations": {
+    "titleBar.activeForeground": "#ffffff",
+    "titleBar.inactiveForeground": "#e7e7e799",
+    "titleBar.activeBackground": "#2a292a",
+    "titleBar.inactiveBackground": "#4b454b",
+    "activityBar.activeBackground": "#e7e7e799",
+    "activityBar.activeBorder": "#39093a",
+    "activityBar.background": "#4b454b",
+    "activityBar.foreground": "#000000",
+    "activityBar.inactiveForeground": "#ffffff",
+    "activityBarBadge.background": "#39093a",
+    "activityBarBadge.foreground": "#ffffff",
+    "statusBar.background": "#4b454b",
+    "statusBar.foreground": "#ffffff",
+    "statusBarItem.hoverBackground": "#39093a"
+  },
+  "peacock.color": "#0000FF",
+  "WillLuke.nextjs.addTypesOnSave": true,
+  "WillLuke.nextjs.hasPrompted": true,
+}
