@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TBusinessInfo, TUserWithOptionalBusinessInfo, zodBusinessInfo } from "@/zod/types";
 import { sanityWriteClient } from "@/sanity/lib/client";
-import { useRouter } from "next/router";
+import { useRouter } from 'next/navigation'
 
 type TBIFProps = {
   user: TUserWithOptionalBusinessInfo;
@@ -26,14 +26,12 @@ const BusinessInfoForm = ({user}: TBIFProps) => {
       ...data
     }
     
-    console.log({updatedUser})
     await sanityWriteClient.createOrReplace(updatedUser).then((res) => {
-      console.log({res})
+      reset();
+      router.push("/dashboard");
     }).catch((err) => {
-      console.log({err})
+      console.error({err})
     })
-    reset();
-    router.push("/dashboard");
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid mx-auto max-w-7xl px-5">
