@@ -23,6 +23,7 @@ export const zodBusinessInfo = z.object({
   country: z.string().min(1, "Country is required"),
   phone: z.string().min(1, "Phone is required"),
   instagramHandle: z.string().nullable(),
+  industry: z.string().nullable(),
 });
 
 export type TBusinessInfo = z.infer<typeof zodBusinessInfo>;
@@ -38,6 +39,7 @@ export const zodUserWithOptionalBusinessInfo = zodUserBase.merge(
     country: z.string().optional(),
     phone: z.string().optional(),
     instagramHandle: z.string().nullable().optional(),
+    industry: z.string().nullable().optional(),
   })
 );
 

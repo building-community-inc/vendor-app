@@ -1,14 +1,20 @@
 "use client";
-import { useForm } from "react-hook-form";
+import { FieldErrors, UseFormRegister, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TBusinessInfo, TUserWithOptionalBusinessInfo, zodBusinessInfo } from "@/zod/types";
+import {
+  TBusinessInfo,
+  TUserWithOptionalBusinessInfo,
+  zodBusinessInfo,
+} from "@/zod/types";
 import { sanityWriteClient } from "@/sanity/lib/client";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
+import { camelCaseToTitleCase } from "@/utils/helpers";
 
 type TBIFProps = {
   user: TUserWithOptionalBusinessInfo;
 };
-const BusinessInfoForm = ({user}: TBIFProps) => {
+
+const BusinessInfoForm = ({ user }: TBIFProps) => {
   const router = useRouter();
   const {
     register,
@@ -19,52 +25,92 @@ const BusinessInfoForm = ({user}: TBIFProps) => {
     resolver: zodResolver(zodBusinessInfo),
   });
 
+  const formInputs = Object.keys(zodBusinessInfo.shape)
+    .filter((key) => key !== "industry")
+    .map((key) => {
+      return {
+        name: key,
+        title: camelCaseToTitleCase(key),
+      };
+    }) as { name: keyof TBusinessInfo; title: string }[];
+
+  console.log({ formInputs });
+
   const onSubmit = async (data: TBusinessInfo) => {
-    
     const updatedUser = {
       ...user,
-      ...data
-    }
-    
-    await sanityWriteClient.createOrReplace(updatedUser).then((res) => {
-      reset();
-      router.push("/dashboard");
-    }).catch((err) => {
-      console.error({err})
-    })
+      ...data,
+    };
+
+    await sanityWriteClient
+      .createOrReplace(updatedUser)
+      .then((res) => {
+        reset();
+        router.push("/dashboard");
+      })
+      .catch((err) => {
+        console.error({ err });
+      });
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="grid mx-auto max-w-7xl px-5">
-      <label htmlFor="businessName">Business Name</label>
-      <input {...register("businessName")} className="text-black" type="text" name="businessName" />
-      {errors.businessName && <span className="text-red-500">{errors.businessName.message}</span>}
-      <label htmlFor="address1">Address 1</label>
-      <input {...register("address1")} className="text-black" type="text" name="address1" />
-      {errors.address1 && <span className="text-red-500">{errors.address1.message}</span>}
-      <label htmlFor="address2">Address 2</label>
-      <input {...register("address2")} className="text-black" type="text" name="address2" />
-      {errors.address2 && <span className="text-red-500">{errors.address2.message}</span>}
-      <label htmlFor="city">City</label>
-      <input {...register("city")} className="text-black" type="text" name="city" />
-      {errors.city && <span className="text-red-500">{errors.city.message}</span>}
-      <label htmlFor="province">Province</label>
-      <input {...register("province")} className="text-black" type="text" name="province" />
-      {errors.province && <span className="text-red-500">{errors.province.message}</span>}
-      <label htmlFor="postalCode">Postal Code</label>
-      <input {...register("postalCode")} className="text-black" type="text" name="postalCode" />
-      {errors.postalCode && <span className="text-red-500">{errors.postalCode.message}</span>}
-      <label htmlFor="country">Country</label>
-      <input {...register("country")} className="text-black" type="text" name="country" />
-      {errors.country && <span className="text-red-500">{errors.country.message}</span>}
-      <label htmlFor="phone">Phone</label>
-      <input {...register("phone")} className="text-black" type="text" name="phone" />
-      {errors.phone && <span className="text-red-500">{errors.phone.message}</span>}
-      <label htmlFor="instagramHandle">Instagram Handle</label>
-      <input {...register("instagramHandle")} className="text-black" type="text" name="instagramHandle" />
-      {errors.instagramHandle && <span className="text-red-500">{errors.instagramHandle.message}</span>}
-      <button disabled={isSubmitting} className="disabled:bg-red-200" type="submit">Submit</button>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="grid mx-auto max-w-7xl py-5"
+    >
+      {formInputs.map(({ name, title }) => {
+        return (
+          <InputComp
+            register={register}
+            errors={errors}
+            name={name}
+            title={title}
+          />
+        );
+      })}
+
+
+      <label htmlFor={"industry"} className="mt-4">
+        {"Industry"}
+      </label>
+      <select
+        {...register("industry")}
+        className="text-black rounded-md px-2 py-1 "
+      >
+        <option>Choose Industry</option>
+      </select>
+
+      <button
+        disabled={isSubmitting}
+        className="disabled:bg-red-200 bg-secondary text-primary rounded-md w-fit px-2 py-1 mx-auto mt-8 text-2xl"
+        type="submit"
+      >
+        {"->"}
+      </button>
     </form>
   );
 };
 
 export default BusinessInfoForm;
+
+type TInputProps = {
+  register: UseFormRegister<TBusinessInfo>;
+  errors: FieldErrors<TBusinessInfo>;
+  name: keyof TBusinessInfo; // Use keyof to specify that it's a key of TBusinessInfo
+  title: string;
+};
+const InputComp = ({ register, errors, name, title }: TInputProps) => {
+  return (
+    <section className="flex flex-col gap-1 my-2 w-full min-w-[75vw] max-w-">
+      <label htmlFor={name}>{title}</label>
+      <input
+        {...register(name)}
+        className="text-black rounded-md px-2 py-1"
+        type="text"
+        name={name}
+      />
+      {errors[name] && (
+        <span className="text-red-500">{errors[name]?.message}</span>
+      )}
+    </section>
+  );
+};
