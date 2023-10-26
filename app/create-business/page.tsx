@@ -9,18 +9,17 @@ const Page = async () => {
   if (!clerkUser) {
     return redirect("/sign-in");
   }
-  
+
   const user = await getSanityUser(clerkUser.emailAddresses[0].emailAddress);
 
   return (
-    <main className="min-h-screen">
-      <h1>Create Your Business</h1>
-      <p>Hi {user.firstName}</p>
-      <p>Welcome to your Vendor App</p>
-      <p>please provide your business information below</p>
+    <main className="min-h-screen grid place-content-center">
+      <header>
+        <h1 className="uppercase text-center">Create Business Profile</h1>
+      </header>
       <BusinessInfoForm user={user} />
     </main>
   );
-}
+};
 
 export default Page;
