@@ -60,6 +60,7 @@ const BusinessInfoForm = ({ user }: TBIFProps) => {
       {formInputs.map(({ name, title }) => {
         return (
           <InputComp
+            key={name}
             register={register}
             errors={errors}
             name={name}
