@@ -13,7 +13,7 @@ export const zodUserBase = z.object({
 
 export type TUserBase = z.infer<typeof zodUserBase>;
 
-export const zodBusinessInfo = z.object({
+export const zodBusiness = z.object({
   businessName: z.string().min(1, "Business name is required"),
   address1: z.string().min(1, "Address is required"),
   address2: z.string().nullable(),
@@ -26,21 +26,15 @@ export const zodBusinessInfo = z.object({
   industry: z.string().nullable(),
 });
 
-export type TBusinessInfo = z.infer<typeof zodBusinessInfo>;
+export type TBusiness = z.infer<typeof zodBusiness>;
 
-export const zodUserWithOptionalBusinessInfo = zodUserBase.merge(
+export const zodUserWithOptionalBusinessRef = zodUserBase.merge(
   z.object({
-    businessName: z.string().optional(),
-    address1: z.string().optional(),
-    address2: z.string().nullable().optional(),
-    city: z.string().optional(),
-    province: z.string().optional(),
-    postalCode: z.string().optional(),
-    country: z.string().optional(),
-    phone: z.string().optional(),
-    instagramHandle: z.string().nullable().optional(),
-    industry: z.string().nullable().optional(),
+    business: z.object({
+      _ref: z.string(),
+      _type: z.literal("reference"),
+    }).optional(),
   })
 );
 
-export type TUserWithOptionalBusinessInfo = z.infer<typeof zodUserWithOptionalBusinessInfo>;
+export type TUserWithOptionalBusinessRef = z.infer<typeof zodUserWithOptionalBusinessRef>;

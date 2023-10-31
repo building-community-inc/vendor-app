@@ -1,52 +1,61 @@
 "use client";
 import { FieldErrors, UseFormRegister, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  TBusinessInfo,
-  TUserWithOptionalBusinessInfo,
-  zodBusinessInfo,
-} from "@/zod/types";
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { useRouter } from "next/navigation";
 import { camelCaseToTitleCase } from "@/utils/helpers";
+import {
+  TBusiness,
+  TUserWithOptionalBusinessRef,
+  zodBusiness,
+} from "@/zod/types";
 
-type TBIFProps = {
-  user: TUserWithOptionalBusinessInfo;
+type TVendorCategory = {
+  name: string;
 };
 
-const BusinessInfoForm = ({ user }: TBIFProps) => {
+type TBIFProps = {
+  user: TUserWithOptionalBusinessRef;
+  vendorCategories: TVendorCategory[];
+};
+
+const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
   const router = useRouter();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<TBusinessInfo>({
-    resolver: zodResolver(zodBusinessInfo),
+  } = useForm<TBusiness>({
+    resolver: zodResolver(zodBusiness),
   });
 
-  const formInputs = Object.keys(zodBusinessInfo.shape)
+  const formInputs = Object.keys(zodBusiness.shape)
     .filter((key) => key !== "industry")
     .map((key) => {
       return {
         name: key,
         title: camelCaseToTitleCase(key),
       };
-    }) as { name: keyof TBusinessInfo; title: string }[];
+    }) as { name: keyof TBusiness; title: string }[];
 
-  console.log({ formInputs });
+  const onSubmit = async (data: TBusiness) => {
 
-  const onSubmit = async (data: TBusinessInfo) => {
-    const updatedUser = {
-      ...user,
+    const businessObj = {
       ...data,
+      _type: "business",
     };
-
     await sanityWriteClient
-      .createOrReplace(updatedUser)
-      .then((res) => {
-        reset();
-        router.push("/dashboard");
+      .create(businessObj)
+      .then(async (res) => {
+        await sanityWriteClient
+          .patch(user._id)
+          .set({ business: { _ref: res._id } })
+          .commit()
+          .then(() => {
+            reset();
+            router.push("/dashboard");
+          });
       })
       .catch((err) => {
         console.error({ err });
@@ -69,7 +78,6 @@ const BusinessInfoForm = ({ user }: TBIFProps) => {
         );
       })}
 
-
       <label htmlFor={"industry"} className="mt-4">
         {"Industry"}
       </label>
@@ -78,6 +86,9 @@ const BusinessInfoForm = ({ user }: TBIFProps) => {
         className="text-black rounded-md px-2 py-1 "
       >
         <option>Choose Industry</option>
+        {vendorCategories.map(({ name }) => {
+          return <option key={name}>{name}</option>;
+        })}
       </select>
 
       <button
@@ -94,9 +105,9 @@ const BusinessInfoForm = ({ user }: TBIFProps) => {
 export default BusinessInfoForm;
 
 type TInputProps = {
-  register: UseFormRegister<TBusinessInfo>;
-  errors: FieldErrors<TBusinessInfo>;
-  name: keyof TBusinessInfo; // Use keyof to specify that it's a key of TBusinessInfo
+  register: UseFormRegister<TBusiness>;
+  errors: FieldErrors<TBusiness>;
+  name: keyof TBusiness; // Use keyof to specify that it's a key of TBusiness
   title: string;
 };
 const InputComp = ({ register, errors, name, title }: TInputProps) => {

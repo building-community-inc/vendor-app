@@ -30,51 +30,7 @@ export const userSchema = defineType({
       title: 'Image',
       type: 'string'
     }),
-    defineField({
-      name: 'address1',
-      title: 'Address 1',
-      type: 'string'
-    }),
-    defineField({
-      name: 'address2',
-      title: 'Address 2',
-      type: 'string'
-    }),
-    defineField({
-      name: 'city',
-      title: 'City',
-      type: 'string'
-    }),
-    defineField({
-      name: 'province',
-      title: 'Province',
-      type: 'string'
-    }),
-    defineField({
-      name: 'postalCode',
-      title: 'Postal Code',
-      type: 'string'
-    }),
-    defineField({
-      name: 'country',
-      title: 'Country',
-      type: 'string'
-    }),
-    defineField({
-      name: 'phone',
-      title: 'Phone',
-      type: 'string'
-    }),
-    defineField({
-      name: "businessName",
-      title: "Business Name",
-      type: "string"
-    }),
-    defineField({
-      name: "instagramHandle",
-      title: "Instagram Handle",
-      type: "string"
-    }),
+    
     defineField({
       name: "role",
       title: "Role",
@@ -83,6 +39,12 @@ export const userSchema = defineType({
         list: ["admin", "vendor", "dev"]
       },
       initialValue: "vendor"
+    }),
+    defineField({
+      name: "business",
+      title: "Business",
+      type: "reference",
+      to: [{ type: "business" }]
     })
   ]
 })
