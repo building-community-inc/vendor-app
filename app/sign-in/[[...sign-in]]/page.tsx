@@ -9,6 +9,7 @@ export default function Page() {
       <Image src={"/logo.png"} alt="logo" width={468} height={468} />
       <SignIn
         appearance={clerkLoginAppearance}
+        afterSignUpUrl={"/create-user"}
       />
     </main>
   );
