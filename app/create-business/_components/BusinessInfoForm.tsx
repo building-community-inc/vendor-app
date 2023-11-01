@@ -1,5 +1,5 @@
 "use client";
-import { FieldErrors, UseFormRegister, useForm } from "react-hook-form";
+import { FieldErrors, UseFormRegister, useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { useRouter } from "next/navigation";
@@ -8,9 +8,11 @@ import {
   TBusiness,
   TUserWithOptionalBusinessRef,
   zodBusiness,
+  zodBusinessForm,
+  // zodBusinessForm,
 } from "@/zod/types";
-import { ComponentPropsWithoutRef } from "react";
-import { Input } from "@/app/_components/Input";
+import FileInput from "./FileInput";
+import { useFileStore } from "@/app/_components/store/fileStore";
 
 type TVendorCategory = {
   name: string;
@@ -27,13 +29,14 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<TBusiness>({
     resolver: zodResolver(zodBusiness),
   });
-
+  const fileId = useFileStore((state) => state.fileId);
   const formInputs = Object.keys(zodBusiness.shape)
-    .filter((key) => key !== "industry")
+    .filter((key) => key !== "industry" && key !== "logo")
     .map((key) => {
       return {
         name: key,
@@ -42,12 +45,23 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
     }) as { name: keyof TBusiness; title: string }[];
 
   const onSubmit = async (data: TBusiness) => {
+    console.log("trying to save");
     const businessObj = {
       ...data,
       _type: "business",
+      logo: fileId
     };
+
+    
+    const parsedBusinesObj = zodBusinessForm.safeParse(businessObj);
+    console.log({ parsedBusinesObj });
+
+    if (!parsedBusinesObj.success) {
+      throw new Error(parsedBusinesObj.error.message);
+    }
+
     await sanityWriteClient
-      .create(businessObj)
+      .create(parsedBusinesObj.data)
       .then(async (res) => {
         await sanityWriteClient
           .patch(user._id)
@@ -91,12 +105,19 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
           return <option key={name}>{name}</option>;
         })}
       </select>
+        {errors["industry"] && (
+          <span className="text-red-500">{errors["logo"]?.message}</span>
+        )}
+      <FileInput />
+      {errors["logo"] && (
+        <span className="text-red-500">{errors["logo"]?.message}</span>
+      )}
 
       <button
         disabled={isSubmitting}
         className="disabled:bg-red-200 bg-secondary text-primary rounded-md w-fit px-2 py-1 mx-auto mt-8 text-2xl"
         type="submit"
-      >
+        >
         {"->"}
       </button>
     </form>
@@ -110,15 +131,31 @@ type TInputProps = {
   errors: FieldErrors<TBusiness>;
   name: keyof TBusiness; // Use keyof to specify that it's a key of TBusiness
   title: string;
+  hidden?: boolean;
 };
-const InputComp = ({ register, errors, name, title }: TInputProps) => {
+const InputComp = ({
+  register,
+  errors,
+  name,
+  title,
+  hidden = false,
+}: TInputProps) => {
   return (
     <section className="flex flex-col gap-1 my-2 w-full min-w-[75vw] max-w-">
       <label htmlFor={name}>{title}</label>
-      <Input
+      {/* <Input /> */}
+    {/* // <section className="flex flex-col gap-1 my-2 w-full min-w-[75vw]"> */}
+      <label
+        htmlFor={name}
+        hidden={hidden}
+      >
+        {title}
+      </label>
+      <input
         {...register(name)}
         type="text"
         name={name}
+        hidden={hidden}
       />
       {errors[name] && (
         <span className="text-red-500">{errors[name]?.message}</span>

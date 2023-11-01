@@ -23,17 +23,38 @@ export const zodBusiness = z.object({
   country: z.string().min(1, "Country is required"),
   phone: z.string().min(1, "Phone is required"),
   instagramHandle: z.string().nullable(),
-  industry: z.string().nullable(),
+  industry: z.string().min(1, "Industry is required"),
+  logo: z.string().optional().transform(refId => ({_type: "image", asset: {_ref: refId}})),
 });
+
+export const zodBusinessForm = zodBusiness.merge(z.object({
+  _type: z.literal("business"),
+  logo: z.string().nullable(),
+}));
+
+
+export const zodBusinessQuery = zodBusiness.merge(z.object({
+  logoUrl: z.string().optional(),
+  _type: z.literal("business"),
+  logo: z.object({
+    _type: z.literal("image"),
+    asset: z.object({
+      _ref: z.string(),
+    }),
+  }).nullable(),
+}));
+// export const zodBusinessForm = zodBusiness.merge(
+//   z.object({
+//     _type: z.literal("business"),
+//     logo: z.string().nullable(),
+//   })
+// );
 
 export type TBusiness = z.infer<typeof zodBusiness>;
 
 export const zodUserWithOptionalBusinessRef = zodUserBase.merge(
   z.object({
-    business: z.object({
-      _ref: z.string(),
-      _type: z.literal("reference"),
-    }).optional(),
+    business: zodBusinessQuery.optional()
   })
 );
 

@@ -1,4 +1,4 @@
-import { getSanityUser } from "@/sanity/queries/user";
+import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import BusinessInfoForm from "./_components/BusinessInfoForm";
@@ -10,7 +10,7 @@ const Page = async () => {
     return redirect("/sign-in");
   }
 
-  const user = await getSanityUser(clerkUser.emailAddresses[0].emailAddress);
+  const user = await getSanityUserByEmail(clerkUser.emailAddresses[0].emailAddress);
 
   const vendorCategories = await getAllVendorCategories();
 
