@@ -9,6 +9,8 @@ import {
   TUserWithOptionalBusinessRef,
   zodBusiness,
 } from "@/zod/types";
+import { ComponentPropsWithoutRef } from "react";
+import { Input } from "@/app/_components/Input";
 
 type TVendorCategory = {
   name: string;
@@ -40,7 +42,6 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
     }) as { name: keyof TBusiness; title: string }[];
 
   const onSubmit = async (data: TBusiness) => {
-
     const businessObj = {
       ...data,
       _type: "business",
@@ -54,7 +55,7 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
           .commit()
           .then(() => {
             reset();
-            router.push("/dashboard");
+            router.push("/create-business/accept-terms");
           });
       })
       .catch((err) => {
@@ -114,9 +115,8 @@ const InputComp = ({ register, errors, name, title }: TInputProps) => {
   return (
     <section className="flex flex-col gap-1 my-2 w-full min-w-[75vw] max-w-">
       <label htmlFor={name}>{title}</label>
-      <input
+      <Input
         {...register(name)}
-        className="text-black rounded-md px-2 py-1"
         type="text"
         name={name}
       />
