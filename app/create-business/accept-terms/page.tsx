@@ -1,4 +1,5 @@
 import Button from "@/app/_components/Button";
+import { Input } from "@/app/_components/Input";
 import SanityTextBlock from "@/app/_components/SanityTextBlock";
 import { getAcceptTermsContent } from "@/sanity/queries/pages/accept-terms";
 import { PortableText } from "@portabletext/react";
@@ -13,13 +14,13 @@ const Page = async () => {
         <SanityTextBlock value={content.terms} />
       </div>
       <form action="" className="mt-10 flex flex-col items-center">
-        <div>
-          <label htmlFor="acceptance">
-            <input type="checkbox" name="acceptance" />I accept the terms and
-            conditions
-          </label>
+        <label htmlFor="acceptance" className="flex items-center gap-2">
+          <input type="checkbox" name="acceptance" />I accept the terms and
+          conditions
+        </label>
+        <div className="my-4">
+          <Input name="name" placeholder="Name" />
         </div>
-        <input type="name" placeholder="Name" />
         <Button type="submit">Submit</Button>
       </form>
     </main>
