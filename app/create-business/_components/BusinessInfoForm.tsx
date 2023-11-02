@@ -54,7 +54,7 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
           .commit()
           .then(() => {
             reset();
-            router.push("/dashboard");
+            router.push("/create-business/accept-terms");
           });
       })
       .catch((err) => {
