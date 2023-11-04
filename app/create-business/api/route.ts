@@ -8,28 +8,28 @@ import { NextResponse } from "next/server";
 export const POST = async (req: Request) => {
 
   if (req.method !== "POST") {
-    return {
+    return NextResponse.json({
       status: 405,
       body: { message: "Method not allowed" },
-    };
+    });
   }
 
   const clerkUser = await currentUser();
 
   if (!clerkUser) {
-    return {
+    return NextResponse.json({
       status: 401,
       body: { message: "Unauthorized" },
-    };
+    });
   }
 
   const user = await getSanityUserByEmail(clerkUser.emailAddresses[0].emailAddress);
 
   if (!user) {
-    return {
+    return NextResponse.json({
       status: 401,
       body: { message: "Unauthorized" },
-    };
+    });
   }
 
   const body = await req.json();
