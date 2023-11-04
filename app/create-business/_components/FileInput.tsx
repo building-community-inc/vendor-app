@@ -112,7 +112,7 @@ const FileInput = () => {
       </label>
       {input.length > 0 &&
         input.map((file) => (
-          <Image src={file.url} alt={file.name} width={100} height={100} />
+          <Image key={file.url} src={file.url} alt={file.name} width={100} height={100} />
         ))}
     </>
   );
