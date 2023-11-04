@@ -1,7 +1,11 @@
 "use client";
-import { FieldErrors, UseFormRegister, useForm, Controller } from "react-hook-form";
+import {
+  FieldErrors,
+  UseFormRegister,
+  useForm,
+  // Controller,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { sanityWriteClient } from "@/sanity/lib/client";
 import { useRouter } from "next/navigation";
 import { camelCaseToTitleCase } from "@/utils/helpers";
 import {
@@ -49,10 +53,9 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
     const businessObj = {
       ...data,
       _type: "business",
-      logo: fileId
+      logo: fileId,
     };
 
-    
     const parsedBusinesObj = zodBusinessForm.safeParse(businessObj);
     console.log({ parsedBusinesObj });
 
@@ -60,21 +63,33 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
       throw new Error(parsedBusinesObj.error.message);
     }
 
-    await sanityWriteClient
-      .create(parsedBusinesObj.data)
-      .then(async (res) => {
-        await sanityWriteClient
-          .patch(user._id)
-          .set({ business: { _ref: res._id } })
-          .commit()
-          .then(() => {
-            reset();
-            router.push("/create-business/accept-terms");
-          });
-      })
-      .catch((err) => {
-        console.error({ err });
-      });
+    await fetch("create-business/api/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(parsedBusinesObj.data),
+    }).then((res) => {
+      // if (res.ok) {
+      // } else {
+      //   throw new Error("Error creating business");
+      // }
+    });
+    // await sanityWriteClient
+    //   .create(parsedBusinesObj.data)
+    //   .then(async (res) => {
+    //     await sanityWriteClient
+    //       .patch(user._id)
+    //       .set({ business: { _ref: res._id } })
+    //       .commit()
+    //       .then(() => {
+    //         reset();
+    //         router.push("/dashboard");
+    //       });
+    //   })
+    //   .catch((err) => {
+    //     console.error({ err });
+    //   });
   };
   return (
     <form
@@ -98,17 +113,19 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
       </label>
       <select
         {...register("industry")}
-        className="text-black rounded-md px-2 py-1 "
+        className="text-black rounded-md px-2 py-1 mb-2"
       >
         <option>Choose Industry</option>
         {vendorCategories.map(({ name }) => {
           return <option key={name}>{name}</option>;
         })}
       </select>
-        {errors["industry"] && (
-          <span className="text-red-500">{errors["logo"]?.message}</span>
-        )}
-      <FileInput />
+      {errors["industry"] && (
+        <span className="text-red-500">{errors["industry"]?.message}</span>
+      )}
+      <div className="mx-auto">
+        <FileInput />
+      </div>
       {errors["logo"] && (
         <span className="text-red-500">{errors["logo"]?.message}</span>
       )}
@@ -117,7 +134,7 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
         disabled={isSubmitting}
         className="disabled:bg-red-200 bg-secondary text-primary rounded-md w-fit px-2 py-1 mx-auto mt-8 text-2xl"
         type="submit"
-        >
+      >
         {"->"}
       </button>
     </form>
@@ -141,14 +158,8 @@ const InputComp = ({
   hidden = false,
 }: TInputProps) => {
   return (
-    <section className="flex flex-col gap-1 my-2 w-full min-w-[75vw] max-w-">
-      <label htmlFor={name}>{title}</label>
-      {/* <Input /> */}
-    {/* // <section className="flex flex-col gap-1 my-2 w-full min-w-[75vw]"> */}
-      <label
-        htmlFor={name}
-        hidden={hidden}
-      >
+    <section className="flex flex-col gap-1 my-2 w-full min-w-[75vw]">
+      <label htmlFor={name} hidden={hidden}>
         {title}
       </label>
       <input

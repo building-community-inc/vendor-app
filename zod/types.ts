@@ -24,25 +24,37 @@ export const zodBusiness = z.object({
   phone: z.string().min(1, "Phone is required"),
   instagramHandle: z.string().nullable(),
   industry: z.string().min(1, "Industry is required"),
-  logo: z.string().optional().transform(refId => ({_type: "image", asset: {_ref: refId}})),
+  
+  logo: z
+    .string()
+    .optional()
+    .transform((refId) => ({ _type: "image", asset: { _ref: refId } })),
 });
 
-export const zodBusinessForm = zodBusiness.merge(z.object({
-  _type: z.literal("business"),
-  logo: z.string().nullable(),
-}));
+export const zodBusinessForm = zodBusiness.merge(
+  z.object({
+    _type: z.literal("business"),
+    // logo: z.string().nullable(),
+  })
+);
 
-
-export const zodBusinessQuery = zodBusiness.merge(z.object({
-  logoUrl: z.string().optional(),
-  _type: z.literal("business"),
-  logo: z.object({
-    _type: z.literal("image"),
-    asset: z.object({
-      _ref: z.string(),
-    }),
-  }).nullable(),
-}));
+export const zodBusinessQuery = zodBusiness.merge(
+  z.object({
+    logoUrl: z.string().optional().nullable( ),
+    _type: z.literal("business"),
+    logo: z.union([
+      z
+        .object({
+          _type: z.literal("image"),
+          asset: z.object({
+            _ref: z.string(),
+          }),
+        })
+        .nullable(),
+      z.string().nullable(),
+    ]),
+  })
+);
 // export const zodBusinessForm = zodBusiness.merge(
 //   z.object({
 //     _type: z.literal("business"),
@@ -54,8 +66,10 @@ export type TBusiness = z.infer<typeof zodBusiness>;
 
 export const zodUserWithOptionalBusinessRef = zodUserBase.merge(
   z.object({
-    business: zodBusinessQuery.optional()
+    business: zodBusinessQuery.optional().nullable(),
   })
 );
 
-export type TUserWithOptionalBusinessRef = z.infer<typeof zodUserWithOptionalBusinessRef>;
+export type TUserWithOptionalBusinessRef = z.infer<
+  typeof zodUserWithOptionalBusinessRef
+>;

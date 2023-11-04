@@ -30,7 +30,7 @@ export const getSanityUserByEmail = async (email: string) => {
             "logoUrl": logo.asset->url
         }
     }`);
-    console.log({userBiz: user.business.logo});
+    // console.log({userBiz: user.business.logo});
 
     // const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
     // if (!validatedUser.success) {

@@ -10,10 +10,10 @@ type FileStoreActions = {
   clearFileId: () => void;
 }
 
-type FileStore = FileStoreState & FileStoreActions
+export type TFileStore = FileStoreState & FileStoreActions
 
 
-export const useFileStore = create<FileStore>(set => ({
+export const useFileStore = create<TFileStore>((set) => ({
   fileId: '',
   setFileId: (fileId: string) => set({fileId}),
   clearFileId: () => set({fileId: ''}),
