@@ -34,14 +34,12 @@ export const zodBusiness = z.object({
 export const zodBusinessForm = zodBusiness.merge(
   z.object({
     _type: z.literal("business"),
-    // logo: z.string().nullable(),
   })
 );
 
-export const zodBusinessQuery = zodBusiness.merge(
+export const zodBusinessQuery = zodBusinessForm.merge(
   z.object({
     logoUrl: z.string().optional().nullable( ),
-    _type: z.literal("business"),
     logo: z.union([
       z
         .object({

@@ -26,7 +26,7 @@ type Action = ReturnType<typeof addFilesToInput>;
 type State = TFileWithUrl[];
 
 const FileInput = () => {
-  const setFileId = useFileStore((state) => state.setFileId); 
+  const setFileId = useFileStore((state) => state.setFileId);
   const [input, dispatch] = useReducer((state: State, action: Action) => {
     switch (action.type) {
       case "ADD_FILES_TO_INPUT": {
@@ -69,16 +69,8 @@ const FileInput = () => {
 
         const { name, size } = e.target.files[0];
         addFilesToState([{ name, url, size }]);
-        console.log({ sanityResp });
-        
-        setFileId(_id);
-        // const formInput = document.getElementsByName("logo");
-        // // console.log({formInput})
 
-        // if (formInput && formInput.length > 0) {
-        //   const inputElement = formInput[0] as HTMLInputElement;
-        //   inputElement.value = _id;
-        // }
+        setFileId(_id);
       }
     } catch (error) {}
   };
@@ -88,32 +80,41 @@ const FileInput = () => {
 
   return (
     <>
-      <label
-        htmlFor={"file"}
-        className={cn(
-          "group relative p-2 w-fit flex flex-col items-center justify-center border-2 border-slate-300 border-dashed rounded-lg dark:border-gray-600 transition",
-          // { "dark:border-slate-400 dark:bg-slate-800": dragActive },
-          { "h-fit aspect-auto": !noInput },
-          { "items-start justify-start": !noInput },
-          { "dark:hover:border-gray-500 dark:hover:bg-slate-800": noInput }
-        )}
-      >
-        <input
-          // {...props}
-          // ref={ref}
-          // multiple
-          onChange={handleChange}
-          accept="image/jpeg, image/jpg, image/png"
-          id="file"
-          type="file"
-          className="hidden"
-        />
-        upload your logo
-      </label>
-      {input.length > 0 &&
+      {input.length > 0 ? (
         input.map((file) => (
-          <Image key={file.url} src={file.url} alt={file.name} width={100} height={100} />
-        ))}
+          <Image
+            key={file.url}
+            src={file.url}
+            alt={file.name}
+            width={100}
+            height={100}
+            className="object-cover mx-auto mt-2"
+          />
+        ))
+      ) : (
+        <label
+          htmlFor={"file"}
+          className={cn(
+            "group relative p-2 w-fit flex flex-col items-center justify-center border-2 border-slate-300 border-dashed rounded-lg dark:border-gray-600 transition",
+            // { "dark:border-slate-400 dark:bg-slate-800": dragActive },
+            { "h-fit aspect-auto": !noInput },
+            { "items-start justify-start": !noInput },
+            { "dark:hover:border-gray-500 dark:hover:bg-slate-800": noInput }
+          )}
+        >
+          <input
+            // {...props}
+            // ref={ref}
+            // multiple
+            onChange={handleChange}
+            accept="image/jpeg, image/jpg, image/png"
+            id="file"
+            type="file"
+            className="hidden"
+          />
+          upload your logo
+        </label>
+      )}
     </>
   );
 };

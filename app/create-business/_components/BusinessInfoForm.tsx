@@ -70,26 +70,9 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
       },
       body: JSON.stringify(parsedBusinesObj.data),
     }).then((res) => {
-      // if (res.ok) {
-      // } else {
-      //   throw new Error("Error creating business");
-      // }
+     
     });
-    // await sanityWriteClient
-    //   .create(parsedBusinesObj.data)
-    //   .then(async (res) => {
-    //     await sanityWriteClient
-    //       .patch(user._id)
-    //       .set({ business: { _ref: res._id } })
-    //       .commit()
-    //       .then(() => {
-    //         reset();
-    //         router.push("/dashboard");
-    //       });
-    //   })
-    //   .catch((err) => {
-    //     console.error({ err });
-    //   });
+   
   };
   return (
     <form
@@ -167,6 +150,7 @@ const InputComp = ({
         type="text"
         name={name}
         hidden={hidden}
+        className="text-black rounded-md px-2 py-1 mb-2"
       />
       {errors[name] && (
         <span className="text-red-500">{errors[name]?.message}</span>
