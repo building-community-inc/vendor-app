@@ -8,7 +8,8 @@ export const clerkLoginAppearance = {
   variables: {
     colorBackground: "transparent",
     colorPrimary: "#fff",
-    colorTextOnPrimaryBackground: "#191919",
+    colorText: "#fff",
+    colorInputText: "#fff",
   },
   elements: {
     card: {
@@ -19,17 +20,18 @@ export const clerkLoginAppearance = {
       display: "none",
     },
     formFieldLabel: {
-      color: "#fff",
+      // color: "#fff",
     },
     socialButtons: {
-      background: "#fff",
+      background: "black",
       borderRadius: "0.5rem",
     },
-    footerActionText: {
-      color: "#fff",
+    formButtonPrimary: {
+      color: "black",
     },
   },
 };
+
 export default async function Home() {
   const user = await currentUser();
 

@@ -1,4 +1,3 @@
-
 import { clerkLoginAppearance } from "@/app/page";
 import { SignUp } from "@clerk/nextjs";
 import Image from "next/image";
