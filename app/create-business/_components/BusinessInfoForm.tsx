@@ -1,16 +1,22 @@
 "use client";
-import { FieldErrors, UseFormRegister, useForm } from "react-hook-form";
+import {
+  FieldErrors,
+  UseFormRegister,
+  useForm,
+  // Controller,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { sanityWriteClient } from "@/sanity/lib/client";
 import { useRouter } from "next/navigation";
 import { camelCaseToTitleCase } from "@/utils/helpers";
 import {
   TBusiness,
   TUserWithOptionalBusinessRef,
   zodBusiness,
+  zodBusinessForm,
+  // zodBusinessForm,
 } from "@/zod/types";
-import { ComponentPropsWithoutRef } from "react";
-import { Input } from "@/app/_components/Input";
+import FileInput from "./FileInput";
+import { useFileStore } from "@/app/_components/store/fileStore";
 
 type TVendorCategory = {
   name: string;
@@ -27,13 +33,14 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<TBusiness>({
     resolver: zodResolver(zodBusiness),
   });
-
+  const fileId = useFileStore((state) => state.fileId);
   const formInputs = Object.keys(zodBusiness.shape)
-    .filter((key) => key !== "industry")
+    .filter((key) => key !== "industry" && key !== "logo")
     .map((key) => {
       return {
         name: key,
@@ -42,25 +49,35 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
     }) as { name: keyof TBusiness; title: string }[];
 
   const onSubmit = async (data: TBusiness) => {
+    console.log("trying to save");
     const businessObj = {
       ...data,
       _type: "business",
+      logo: fileId,
     };
-    await sanityWriteClient
-      .create(businessObj)
-      .then(async (res) => {
-        await sanityWriteClient
-          .patch(user._id)
-          .set({ business: { _ref: res._id } })
-          .commit()
-          .then(() => {
-            reset();
-            router.push("/create-business/accept-terms");
-          });
-      })
-      .catch((err) => {
-        console.error({ err });
-      });
+
+    const parsedBusinesObj = zodBusinessForm.safeParse(businessObj);
+    console.log({ parsedBusinesObj });
+
+    if (!parsedBusinesObj.success) {
+      throw new Error(parsedBusinesObj.error.message);
+    }
+
+    await fetch("create-business/api/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(parsedBusinesObj.data),
+    }).then(async (res) => {
+      const body = await res.json();
+      console.log({ body });
+      if (body._id) {
+        reset();
+        router.push("/create-business/accept-terms");
+      }
+    });
+   
   };
   return (
     <form
@@ -84,13 +101,22 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
       </label>
       <select
         {...register("industry")}
-        className="text-black rounded-md px-2 py-1 "
+        className="text-black rounded-md px-2 py-1 mb-2"
       >
         <option>Choose Industry</option>
         {vendorCategories.map(({ name }) => {
           return <option key={name}>{name}</option>;
         })}
       </select>
+      {errors["industry"] && (
+        <span className="text-red-500">{errors["industry"]?.message}</span>
+      )}
+      <div className="mx-auto">
+        <FileInput />
+      </div>
+      {errors["logo"] && (
+        <span className="text-red-500">{errors["logo"]?.message}</span>
+      )}
 
       <button
         disabled={isSubmitting}
@@ -110,15 +136,26 @@ type TInputProps = {
   errors: FieldErrors<TBusiness>;
   name: keyof TBusiness; // Use keyof to specify that it's a key of TBusiness
   title: string;
+  hidden?: boolean;
 };
-const InputComp = ({ register, errors, name, title }: TInputProps) => {
+const InputComp = ({
+  register,
+  errors,
+  name,
+  title,
+  hidden = false,
+}: TInputProps) => {
   return (
-    <section className="flex flex-col gap-1 my-2 w-full min-w-[75vw] max-w-">
-      <label htmlFor={name}>{title}</label>
-      <Input
+    <section className="flex flex-col gap-1 my-2 w-full min-w-[75vw]">
+      <label htmlFor={name} hidden={hidden}>
+        {title}
+      </label>
+      <input
         {...register(name)}
         type="text"
         name={name}
+        hidden={hidden}
+        className="text-black rounded-md px-2 py-1 mb-2"
       />
       {errors[name] && (
         <span className="text-red-500">{errors[name]?.message}</span>

@@ -23,18 +23,51 @@ export const zodBusiness = z.object({
   country: z.string().min(1, "Country is required"),
   phone: z.string().min(1, "Phone is required"),
   instagramHandle: z.string().nullable(),
-  industry: z.string().nullable(),
+  industry: z.string().min(1, "Industry is required"),
+  
+  logo: z
+    .string()
+    .optional()
+    .transform((refId) => ({ _type: "image", asset: { _ref: refId } })),
 });
+
+export const zodBusinessForm = zodBusiness.merge(
+  z.object({
+    _type: z.literal("business"),
+  })
+);
+
+export const zodBusinessQuery = zodBusinessForm.merge(
+  z.object({
+    logoUrl: z.string().optional().nullable( ),
+    logo: z.union([
+      z
+        .object({
+          _type: z.literal("image"),
+          asset: z.object({
+            _ref: z.string(),
+          }),
+        })
+        .nullable(),
+      z.string().nullable(),
+    ]),
+  })
+);
+// export const zodBusinessForm = zodBusiness.merge(
+//   z.object({
+//     _type: z.literal("business"),
+//     logo: z.string().nullable(),
+//   })
+// );
 
 export type TBusiness = z.infer<typeof zodBusiness>;
 
 export const zodUserWithOptionalBusinessRef = zodUserBase.merge(
   z.object({
-    business: z.object({
-      _ref: z.string(),
-      _type: z.literal("reference"),
-    }).optional(),
+    business: zodBusinessQuery.optional().nullable(),
   })
 );
 
-export type TUserWithOptionalBusinessRef = z.infer<typeof zodUserWithOptionalBusinessRef>;
+export type TUserWithOptionalBusinessRef = z.infer<
+  typeof zodUserWithOptionalBusinessRef
+>;

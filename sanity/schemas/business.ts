@@ -55,7 +55,12 @@ export const businessSchema = defineType({
       name: "industry",
       title: "Industry",
       type: "string"
-    })
+    }),
+    defineField({
+      name: "logo",
+      title: "Logo",
+      type: "image"
+    }),
   ],
   preview: {
     select: {
