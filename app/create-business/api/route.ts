@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 export const POST = async (req: Request) => {
 
   if (req.method !== "POST") {
-    return NextResponse.json({
+    return Response.json({
       status: 405,
       body: { message: "Method not allowed" },
     });
@@ -17,7 +17,7 @@ export const POST = async (req: Request) => {
   const clerkUser = await currentUser();
 
   if (!clerkUser) {
-    return NextResponse.json({
+    return Response.json({
       status: 401,
       body: { message: "Unauthorized" },
     });
@@ -26,22 +26,20 @@ export const POST = async (req: Request) => {
   const user = await getSanityUserByEmail(clerkUser.emailAddresses[0].emailAddress);
 
   if (!user) {
-    return NextResponse.json({
+    return Response.json({
       status: 401,
       body: { message: "Unauthorized" },
     });
   }
 
   const body = await req.json();
-
+  let response;
   const parsedBusinesObj = zodBusinessQuery.safeParse(body);
 
     if (!parsedBusinesObj.success) {
       throw new Error(parsedBusinesObj.error.message);
     }
-    const {url} = req;
 
-    // console.log({url: url.split("/api")[0] });
     await sanityWriteClient
       .create(parsedBusinesObj.data)
       .then(async (res) => {
@@ -49,14 +47,15 @@ export const POST = async (req: Request) => {
           .patch(user._id)
           .set({ business: { _ref: res._id } })
           .commit()
-          .then(() => {
-            console.log("redirecting to terms");
-            return NextResponse.redirect(url.split("/api")[0] + "/terms");
+          .then((res1) => {
+            console.log("redirecting to terms", {res1});
+            response = res1
+            return Response.json(res1);
           });
       })
       .catch((err) => {
         throw new Error(err);
       });
 
-      return NextResponse.redirect(url.split("/api")[0] + "/terms");
+      return Response.json(response);
 }

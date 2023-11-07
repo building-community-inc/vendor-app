@@ -69,8 +69,13 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(parsedBusinesObj.data),
-    }).then((res) => {
-     
+    }).then(async (res) => {
+      const body = await res.json();
+      console.log({ body });
+      if (body._id) {
+        reset();
+        router.push("/create-business/accept-terms");
+      }
     });
    
   };
