@@ -41,7 +41,7 @@ export default async function Home() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen">
       <header>
-        <Image src="/logo.png" width={468} height={468} alt="logo" />
+        <Image src="/logo-on-black-bg-low-res.png" width={468} height={468} alt="logo" />
       </header>
       <section className="flex flex-col items-center gap-6">
         <Link href="/sign-in">
