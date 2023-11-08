@@ -49,7 +49,6 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
     }) as { name: keyof TBusiness; title: string }[];
 
   const onSubmit = async (data: TBusiness) => {
-    console.log("trying to save");
     const businessObj = {
       ...data,
       _type: "business",
@@ -57,7 +56,6 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
     };
 
     const parsedBusinesObj = zodBusinessForm.safeParse(businessObj);
-    console.log({ parsedBusinesObj });
 
     if (!parsedBusinesObj.success) {
       throw new Error(parsedBusinesObj.error.message);
@@ -71,7 +69,6 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
       body: JSON.stringify(parsedBusinesObj.data),
     }).then(async (res) => {
       const body = await res.json();
-      console.log({ body });
       if (body._id) {
         reset();
         router.push("/create-business/accept-terms");
@@ -86,7 +83,7 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
     >
       {formInputs.map(({ name, title }) => {
         return (
-          <InputComp
+          <BusinessFormInputComp
             key={name}
             register={register}
             errors={errors}
@@ -138,7 +135,7 @@ type TInputProps = {
   title: string;
   hidden?: boolean;
 };
-const InputComp = ({
+const BusinessFormInputComp = ({
   register,
   errors,
   name,
@@ -163,3 +160,25 @@ const InputComp = ({
     </section>
   );
 };
+
+
+
+const Input = ({name, hidden, title, register, errors}: TInputProps) => {
+  return (
+    <section className="flex flex-col gap-1 my-2 w-full min-w-[75vw]">
+      <label htmlFor={name} hidden={hidden}>
+        {title}
+      </label>
+      <input
+        {...register(name)}
+        type="text"
+        name={name}
+        hidden={hidden}
+        className="text-black rounded-md px-2 py-1 mb-2"
+      />
+      {errors[name] && (
+        <span className="text-red-500">{errors[name]?.message}</span>
+      )}
+    </section>
+  )
+}

@@ -45,6 +45,24 @@ export const userSchema = defineType({
       title: "Business",
       type: "reference",
       to: [{ type: "business" }]
+    }),
+    defineField({
+      name: "acceptedTerms",
+      title: "Accepted Terms",
+      type: "object",
+      fields: [
+        defineField({
+          name: "dateAccepted",
+          title: "Date Accepted",
+          type: "datetime",
+        }),
+        defineField({
+          name: "accepted",
+          title: "Accepted",
+          type: "boolean",
+          initialValue: false
+        }),
+      ]
     })
   ]
 })
