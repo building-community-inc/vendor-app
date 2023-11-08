@@ -17,6 +17,8 @@ const config: Config = {
         "background": "#191919",
         "primary": "#707070",
         "secondary": "#E7E7E7",
+        "nav-bg": "#ffff",
+        "nav-text": "#000000"
       },
     },
   },

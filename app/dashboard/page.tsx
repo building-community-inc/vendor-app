@@ -9,7 +9,7 @@ const page = async () => {
   const sanityUser = await getSanityUserByEmail(user.emailAddresses[0].emailAddress);
 
   return (
-    <main className="grid place-content-center gap-2 min-h-screen">
+    <main className="grid place-content-center gap-2 min-h-screen w-full">
       <div className="flex items-center gap-2">
         <UserButton afterSignOutUrl="/" />
         <h2>Welcome back {user.firstName}!</h2>
