@@ -74,12 +74,11 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
         router.push("/create-business/accept-terms");
       }
     });
-   
   };
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="grid mx-auto max-w-7xl py-5"
+      className="flex flex-col mx-auto max-w-7xl py-5"
     >
       {formInputs.map(({ name, title }) => {
         return (
@@ -98,7 +97,7 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
       </label>
       <select
         {...register("industry")}
-        className="text-black rounded-md px-2 py-1 mb-2"
+        className="text-black rounded-md px-2 py-1 mb-2 max-w-full w-[75vw] mx-auto xs:w-full  sm:w-[75vw]"
       >
         <option>Choose Industry</option>
         {vendorCategories.map(({ name }) => {
@@ -108,7 +107,7 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
       {errors["industry"] && (
         <span className="text-red-500">{errors["industry"]?.message}</span>
       )}
-      <div className="mx-auto">
+      <div className="mx-auto mt-5">
         <FileInput />
       </div>
       {errors["logo"] && (
@@ -143,42 +142,20 @@ const BusinessFormInputComp = ({
   hidden = false,
 }: TInputProps) => {
   return (
-    <section className="flex flex-col gap-1 my-2 w-full min-w-[75vw]">
-      <label htmlFor={name} hidden={hidden}>
+    <section className="flex flex-col gap-1 my-2 max-w-full w-[75vw] mx-auto xs:w-full  sm:w-[75vw]">
+      <label htmlFor={name} hidden={hidden} className="flex flex-col w-full">
         {title}
+        <input
+          {...register(name)}
+          type="text"
+          name={name}
+          hidden={hidden}
+          className="text-black rounded-md px-2 py-1 mb-2 w-full"
+        />
       </label>
-      <input
-        {...register(name)}
-        type="text"
-        name={name}
-        hidden={hidden}
-        className="text-black rounded-md px-2 py-1 mb-2"
-      />
       {errors[name] && (
         <span className="text-red-500">{errors[name]?.message}</span>
       )}
     </section>
   );
 };
-
-
-
-const Input = ({name, hidden, title, register, errors}: TInputProps) => {
-  return (
-    <section className="flex flex-col gap-1 my-2 w-full min-w-[75vw]">
-      <label htmlFor={name} hidden={hidden}>
-        {title}
-      </label>
-      <input
-        {...register(name)}
-        type="text"
-        name={name}
-        hidden={hidden}
-        className="text-black rounded-md px-2 py-1 mb-2"
-      />
-      {errors[name] && (
-        <span className="text-red-500">{errors[name]?.message}</span>
-      )}
-    </section>
-  )
-}

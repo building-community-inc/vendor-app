@@ -3,8 +3,7 @@ import { useFileStore } from "@/app/_components/store/fileStore";
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { cn } from "@/utils";
 import Image from "next/image";
-import { forwardRef, useReducer, type ChangeEvent } from "react";
-import { form } from "sanity/desk";
+import { useReducer, type ChangeEvent } from "react";
 const ALLOWED_FILE_TYPES = ["image/png", "image/jpeg"];
 
 export function validateFileType(file: File) {
