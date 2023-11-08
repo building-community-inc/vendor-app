@@ -48,7 +48,6 @@ export const POST = async (req: Request) => {
           .set({ business: { _ref: res._id } })
           .commit()
           .then((res1) => {
-            console.log("redirecting to terms", {res1});
             response = res1
             return Response.json(res1);
           });
