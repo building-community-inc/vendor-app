@@ -26,11 +26,9 @@ export const getSanityUserByEmail = async (email: string) => {
             phone,
             instagramHandle,
             industry,
-            logo,
             "logoUrl": logo.asset->url
         }
     }`);
-    console.log({userBiz: user.business.logo});
 
     const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
     if (!validatedUser.success) {

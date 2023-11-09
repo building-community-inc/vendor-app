@@ -10,7 +10,6 @@ const page = async () => {
   const sanityUser = await getSanityUserByEmail(
     user.emailAddresses[0].emailAddress
   );
-  console.log(sanityUser.business?.logoUrl);
 
   return (
     <main className="flex gap-2 min-h-screen w-full">
@@ -78,6 +77,9 @@ const page = async () => {
             <p className="flex gap-2">
               <strong>Supporting Documents:</strong> foodCertificate.pdf
             </p>
+          </section>
+          <section>
+            <h3>My Markets</h3>
           </section>
         </section>
       )}
