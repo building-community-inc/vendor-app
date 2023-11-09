@@ -30,18 +30,20 @@ export const getSanityUserByEmail = async (email: string) => {
             "logoUrl": logo.asset->url
         }
     }`);
-    // console.log({userBiz: user.business.logo});
+    console.log({userBiz: user.business.logo});
 
-    // const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
-    // if (!validatedUser.success) {
-    //     throw new Error(validatedUser.error.message);
-    // }
-
-    // return validatedUser.data;
-
-    if (!user) {
-        throw new Error(`No user found with email ${email}`);
+    const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
+    if (!validatedUser.success) {
+        throw new Error(validatedUser.error.message);
     }
 
-    return user;
+    return validatedUser.data;
+
+    // console.log({user});
+
+    // if (!user) {
+    //     throw new Error(`No user found with email ${email}`);
+    // }
+
+    // return user;
 }
