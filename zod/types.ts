@@ -40,17 +40,6 @@ export const zodBusinessForm = zodBusiness.merge(
 export const zodBusinessQuery = zodBusinessForm.merge(
   z.object({
     logoUrl: z.string().optional().nullable( ),
-    logo: z.union([
-      z
-        .object({
-          _type: z.literal("image"),
-          asset: z.object({
-            _ref: z.string(),
-          }),
-        })
-        .nullable(),
-      z.string().nullable(),
-    ]),
   })
 );
 // export const zodBusinessForm = zodBusiness.merge(
