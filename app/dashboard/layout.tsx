@@ -36,7 +36,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         {navOptions.map((option) => (
           <>
             {option.title === "Logout" ? (
-              <div className="text-center uppercase font-bold text-xl">
+              <div className="text-center uppercase font-bold text-xl" key={option.href}>
                 <SignOutButton key={option.href} />
               </div>
             ) : (
