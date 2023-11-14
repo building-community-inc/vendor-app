@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 const navOptions = [
   {
-    title: "Home",
+    title: "Dashboard",
     href: "/admin/dashboard",
   },
   {
@@ -49,8 +49,7 @@ const navOptions = [
         title: "Payment Information",
         href: "/admin/dashboard/payments/information",
       },
-
-    ]
+    ],
   },
   {
     title: "Message Centre",
@@ -64,7 +63,7 @@ const navOptions = [
         title: "Notifications",
         href: "/admin/dashboard/messages/notifications",
       },
-    ]
+    ],
   },
   {
     title: "Terms & Conditions",
@@ -87,13 +86,13 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     user.emailAddresses[0].emailAddress
   );
 
-  if (sanityUser.role !== "admin" && sanityUser.role !== "dev") {
+  if (sanityUser.role !== "admin") {
     return redirect("/dashboard");
   }
 
   return (
     <section className="flex">
-      <aside className="bg-nav-bg text-nav-text px-10 flex flex-col py-[10px] gap-[10px]">
+      <aside className="bg-nav-bg text-nav-text px-10 flex flex-col py-[10px] gap-2 h-screen overflow-y-scroll pb-10">
         <Link href="/">
           <Image
             src={"/logo-on-white-bg.png"}
@@ -110,7 +109,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
                 <SignOutButton key={option.href} />
               </div>
             ) : (
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center mb-2">
                 <Link
                   href={option.href}
                   key={option.title}
