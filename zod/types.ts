@@ -37,6 +37,18 @@ export const zodBusinessForm = zodBusiness.merge(
   })
 );
 
+
+export const zodSanityBusiness = zodBusiness.merge(
+  z.object({
+    _type: z.literal("business"),
+    logo: z.object({
+      _type: z.literal("image"),
+      asset: z.object({
+        _ref: z.string(),
+      }),
+    }),
+  })
+);
 export const zodBusinessQuery = zodBusinessForm.merge(
   z.object({
     logoUrl: z.string().optional().nullable( ),

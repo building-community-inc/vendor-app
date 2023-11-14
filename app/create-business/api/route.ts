@@ -1,12 +1,9 @@
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { zodBusinessQuery } from "@/zod/types";
+import { zodBusinessQuery, zodSanityBusiness } from "@/zod/types";
 import { currentUser } from "@clerk/nextjs";
-import { NextResponse } from "next/server";
-
 
 export const POST = async (req: Request) => {
-
   if (req.method !== "POST") {
     return Response.json({
       status: 405,
@@ -23,7 +20,9 @@ export const POST = async (req: Request) => {
     });
   }
 
-  const user = await getSanityUserByEmail(clerkUser.emailAddresses[0].emailAddress);
+  const user = await getSanityUserByEmail(
+    clerkUser.emailAddresses[0].emailAddress
+  );
 
   if (!user) {
     return Response.json({
@@ -34,27 +33,27 @@ export const POST = async (req: Request) => {
 
   const body = await req.json();
   let response;
-  const parsedBusinesObj = zodBusinessQuery.safeParse(body);
+  const parsedBusinesObj = zodSanityBusiness.safeParse(body);
 
-    if (!parsedBusinesObj.success) {
-      throw new Error(parsedBusinesObj.error.message);
-    }
+  if (!parsedBusinesObj.success) {
+    throw new Error(parsedBusinesObj.error.message);
+  }
 
-    await sanityWriteClient
-      .create(parsedBusinesObj.data)
-      .then(async (res) => {
-        await sanityWriteClient
-          .patch(user._id)
-          .set({ business: { _ref: res._id } })
-          .commit()
-          .then((res1) => {
-            response = res1
-            return Response.json(res1);
-          });
-      })
-      .catch((err) => {
-        throw new Error(err);
-      });
+  await sanityWriteClient
+    .create(parsedBusinesObj.data)
+    .then(async (res) => {
+      await sanityWriteClient
+        .patch(user._id)
+        .set({ business: { _ref: res._id } })
+        .commit()
+        .then((res1) => {
+          response = res1;
+          return Response.json(res1);
+        });
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
 
-      return Response.json(response);
-}
+  return Response.json(response);
+};
