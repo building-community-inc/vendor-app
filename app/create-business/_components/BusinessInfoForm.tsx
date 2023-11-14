@@ -13,7 +13,6 @@ import {
   TUserWithOptionalBusinessRef,
   zodBusiness,
   zodBusinessForm,
-  // zodBusinessForm,
 } from "@/zod/types";
 import FileInput from "./FileInput";
 import { useFileStore } from "@/app/_components/store/fileStore";
@@ -49,6 +48,8 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
     }) as { name: keyof TBusiness; title: string }[];
 
   const onSubmit = async (data: TBusiness) => {
+
+    
     const businessObj = {
       ...data,
       _type: "business",

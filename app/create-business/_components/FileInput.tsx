@@ -68,7 +68,7 @@ const FileInput = () => {
 
         const { name, size } = e.target.files[0];
         addFilesToState([{ name, url, size }]);
-
+        // console.log("sanityResp", sanityResp);
         setFileId(_id);
       }
     } catch (error) {}
