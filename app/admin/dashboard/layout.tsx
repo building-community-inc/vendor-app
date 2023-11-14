@@ -12,17 +12,71 @@ const navOptions = [
   {
     title: "Markets",
     href: "/admin/dashboard/markets",
-    dropdown: [
-      
-    ]
+    links: [
+      {
+        title: "Create New Market",
+        href: "/admin/dashboard/markets/create",
+      },
+      {
+        title: "Market Monitoring",
+        href: "/admin/dashboard/markets/manage",
+      },
+    ],
+  },
+  {
+    title: "Vendors",
+    href: "/admin/dashboard/vendors",
+    links: [
+      {
+        title: "Vendor Listings",
+        href: "/admin/dashboard/vendors/listings",
+      },
+    ],
   },
   {
     title: "Payments",
-    href: "/dashboard/payments",
+    href: "/admin/dashboard/payments",
+    links: [
+      {
+        title: "Payment History",
+        href: "/admin/dashboard/payments/history",
+      },
+      {
+        title: "Invoices",
+        href: "/admin/dashboard/payments/invoices",
+      },
+      {
+        title: "Payment Information",
+        href: "/admin/dashboard/payments/information",
+      },
+
+    ]
+  },
+  {
+    title: "Message Centre",
+    href: "/admin/dashboard/messages",
+    links: [
+      {
+        title: "Message Vendors",
+        href: "/admin/dashboard/messages/vendors",
+      },
+      {
+        title: "Notifications",
+        href: "/admin/dashboard/messages/notifications",
+      },
+    ]
+  },
+  {
+    title: "Terms & Conditions",
+    href: "/admin/dashboard/terms",
+  },
+  {
+    title: "View Vendor Dashboard",
+    href: "/dashboard",
   },
   {
     title: "Logout",
-    href: "/dashboard/logout",
+    href: "/admin/dashboard/logout",
   },
 ];
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -39,7 +93,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <section className="flex">
-      <aside className="bg-nav-bg text-nav-text px-10 flex flex-col py-[10px] gap-[45px]">
+      <aside className="bg-nav-bg text-nav-text px-10 flex flex-col py-[10px] gap-[10px]">
         <Link href="/">
           <Image
             src={"/logo-on-white-bg.png"}
@@ -56,13 +110,28 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
                 <SignOutButton key={option.href} />
               </div>
             ) : (
-              <Link
-                href={option.href}
-                key={option.title}
-                className="text-center uppercase font-bold text-xl"
-              >
-                {option.title}
-              </Link>
+              <div className="flex flex-col items-center">
+                <Link
+                  href={option.href}
+                  key={option.title}
+                  className="text-center uppercase font-bold text-xl mb-4"
+                >
+                  {option.title}
+                </Link>
+                {option.links && (
+                  <>
+                    {option.links.map((link) => (
+                      <Link
+                        href={link.href}
+                        key={link.title}
+                        className="text-center"
+                      >
+                        {link.title}
+                      </Link>
+                    ))}
+                  </>
+                )}
+              </div>
             )}
           </>
         ))}

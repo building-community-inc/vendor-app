@@ -30,8 +30,6 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     user.emailAddresses[0].emailAddress
   );
 
-  if (sanityUser.role === "admin" || sanityUser.role === "dev") redirect("/admin/dashboard");
-
   return (
     <section className="flex">
       <aside className="bg-nav-bg text-nav-text px-10 flex flex-col py-[10px] gap-[45px]">
@@ -61,6 +59,12 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
             )}
           </>
         ))}
+        {sanityUser.role === "admin" && (
+          <Link href="/admin/dashboard" className="text-center font-bold text-xl">
+            View Admin
+          </Link>
+        
+        )}
       </aside>
       {children}
     </section>

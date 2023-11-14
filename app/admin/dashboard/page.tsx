@@ -11,6 +11,10 @@ const page = async () => {
     user.emailAddresses[0].emailAddress
   );
 
+  if (!sanityUser) redirect("/sign-in");
+
+
+  if (sanityUser.role !== "admin") redirect("/dashboard");
 
 
 
