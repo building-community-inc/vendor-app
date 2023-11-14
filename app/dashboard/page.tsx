@@ -1,5 +1,5 @@
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { SignOutButton, UserButton, currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 

@@ -6,12 +6,15 @@ import { redirect } from "next/navigation";
 
 const navOptions = [
   {
-    title: "My Profile",
-    href: "/dashboard",
+    title: "Home",
+    href: "/admin/dashboard",
   },
   {
-    title: "Exlore Markets",
-    href: "/dashboard/explore",
+    title: "Markets",
+    href: "/admin/dashboard/markets",
+    dropdown: [
+      
+    ]
   },
   {
     title: "Payments",
@@ -30,7 +33,9 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     user.emailAddresses[0].emailAddress
   );
 
-  if (sanityUser.role === "admin" || sanityUser.role === "dev") redirect("/admin/dashboard");
+  if (sanityUser.role !== "admin" && sanityUser.role !== "dev") {
+    return redirect("/dashboard");
+  }
 
   return (
     <section className="flex">
