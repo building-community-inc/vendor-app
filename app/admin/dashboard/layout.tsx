@@ -105,8 +105,8 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <section className="flex bg-nav-bg text-nav-text">
-      <aside className="bg-nav-bg text-nav-text px-10 flex flex-col py-[10px] gap-2 h-screen overflow-y-scroll pb-10">
+    <section className="flex bg-nav-bg text-nav-text h-screen overflow-y-hidden">
+      <aside className="bg-nav-bg text-nav-text px-10 flex flex-col py-[10px] gap-2 h-screen overflow-y-scroll hide-scrollbar pb-10">
         <Link href="/">
           <Image
             src={"/logo-on-white-bg.png"}
@@ -149,7 +149,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
           </>
         ))}
       </aside>
-      {children}
+      <div className="h-full overflow-y-scroll w-full hide-scrollbar">{children}</div>
     </section>
   );
 };
