@@ -14,7 +14,7 @@ import {
   zodBusiness,
   zodBusinessForm,
 } from "@/zod/types";
-import FileInput from "./FileInput";
+import FileInput from "../../_components/FileInput";
 import { useFileStore } from "@/app/_components/store/fileStore";
 
 type TVendorCategory = {
@@ -109,7 +109,7 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
         <span className="text-red-500">{errors["industry"]?.message}</span>
       )}
       <div className="mx-auto mt-5">
-        <FileInput />
+        <FileInput useStore={useFileStore} />
       </div>
       {errors["logo"] && (
         <span className="text-red-500">{errors["logo"]?.message}</span>

@@ -66,6 +66,20 @@ const navOptions = [
     ],
   },
   {
+    title: "Venues",
+    href: "/admin/dashboard/venues",
+    links: [
+      {
+        title: "Venue List",
+        href: "/admin/dashboard/venues",
+      },
+      {
+        title: "Create New Venue",
+        href: "/admin/dashboard/venues/create",
+      },
+    ],
+  },
+  {
     title: "Terms & Conditions",
     href: "/admin/dashboard/terms",
   },
@@ -91,7 +105,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <section className="flex">
+    <section className="flex bg-nav-bg text-nav-text">
       <aside className="bg-nav-bg text-nav-text px-10 flex flex-col py-[10px] gap-2 h-screen overflow-y-scroll pb-10">
         <Link href="/">
           <Image

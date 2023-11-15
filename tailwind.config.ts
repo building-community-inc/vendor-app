@@ -18,7 +18,9 @@ const config: Config = {
         "primary": "#707070",
         "secondary": "#E7E7E7",
         "nav-bg": "#ffff",
-        "nav-text": "#000000"
+        "nav-text": "#000000",
+        "primary-admin-border": "#292929",
+        "secondary-admin-border": "#707070"
       },
     },
   },

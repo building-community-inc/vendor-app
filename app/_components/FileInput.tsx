@@ -1,5 +1,5 @@
 "use client";
-import { useFileStore } from "@/app/_components/store/fileStore";
+import { TFileStore, useFileStore } from "@/app/_components/store/fileStore";
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { cn } from "@/utils";
 import Image from "next/image";
@@ -24,8 +24,10 @@ const addFilesToInput = () => ({
 type Action = ReturnType<typeof addFilesToInput>;
 type State = TFileWithUrl[];
 
-const FileInput = () => {
-  const setFileId = useFileStore((state) => state.setFileId);
+const FileInput = ({useStore}: {
+  useStore: () => TFileStore;
+}) => {
+  const {setFileId} = useStore();
   const [input, dispatch] = useReducer((state: State, action: Action) => {
     switch (action.type) {
       case "ADD_FILES_TO_INPUT": {
