@@ -2,10 +2,12 @@
 import { useMarketImageIdStore } from "@/app/_components/store/fileStore";
 import FileInput from "@/app/_components/FileInput";
 import { useState } from "react";
+import FormTitleDivider from "./FormTitleDivider";
 
 const CreateMarketForm = () => {
   return (
     <form className="pt-3 flex flex-col gap-10">
+      <FormTitleDivider title="Market Info" />
       <FormSection className="flex flex-col gap-3">
         <FormInput name="name" placeholder="Market Name" />
         <FormInput
@@ -24,7 +26,7 @@ const CreateMarketForm = () => {
       </FormSection>
       <FormSection>
         <h3>Market Cover</h3>
-        <div className="p-2 w-fit mx-auto">
+        <div className="p-2 w-fit mx-auto mb-2">
           <FileInput
             useStore={useMarketImageIdStore}
             title={"Browse"}
@@ -32,6 +34,13 @@ const CreateMarketForm = () => {
           />
         </div>
       </FormSection>
+      <FormTitleDivider title="Venue" />
+      <FormSection>
+        <h3>Select Venue</h3>
+      </FormSection>
+      <button className="bg-black text-white px-[66px] py-[14px] w-fit mx-auto">
+        Create Market
+      </button>
     </form>
   );
 };
@@ -159,25 +168,39 @@ const Days = () => {
         + Add Day
       </button>
       {days.map(({ date }, index) => (
-        <FormInput
-          key={date.toDateString()}
-          name="date"
-          placeholder={date.toDateString()}
-          className="w-full"
-          type="date"
-          title={`Day ${index + 1}`}
-          value={`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-            2,
-            "0"
-          )}-${String(date.getDate()).padStart(2, "0")}`}
-          onDateChange={(e) => {
-            e.preventDefault();
-            const newDate = new Date(e.target.value);
-            setDays((prevDays) =>
-              prevDays.map((day, i) => (i === index ? { date: newDate } : day))
-            );
-          }}
-        />
+        <div className="relative">
+          {days.length > 1 && (
+            <button
+              className="absolute -top-1 right-0"
+              onClick={(e) => {
+                e.preventDefault();
+                setDays((prevDays) => prevDays.filter((_, i) => i !== index));
+              }}
+            >
+              remove day
+            </button>
+          )}
+          <FormInput
+            key={date.toDateString()}
+            name="date"
+            placeholder={date.toDateString()}
+            className="w-full"
+            type="date"
+            title={`Day ${index + 1}`}
+            value={`${date.getFullYear()}-${String(
+              date.getMonth() + 1
+            ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`}
+            onDateChange={(e) => {
+              e.preventDefault();
+              const newDate = new Date(e.target.value);
+              setDays((prevDays) =>
+                prevDays.map((day, i) =>
+                  i === index ? { date: newDate } : day
+                )
+              );
+            }}
+          />
+        </div>
       ))}
     </>
   );
