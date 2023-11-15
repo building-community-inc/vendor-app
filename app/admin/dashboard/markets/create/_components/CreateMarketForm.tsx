@@ -168,7 +168,7 @@ const Days = () => {
         + Add Day
       </button>
       {days.map(({ date }, index) => (
-        <div className="relative">
+        <div className="relative" key={date.toDateString()}>
           {days.length > 1 && (
             <button
               className="absolute -top-1 right-0"
@@ -181,7 +181,6 @@ const Days = () => {
             </button>
           )}
           <FormInput
-            key={date.toDateString()}
             name="date"
             placeholder={date.toDateString()}
             className="w-full"
