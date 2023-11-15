@@ -23,8 +23,14 @@ const CreateMarketForm = () => {
         />
       </FormSection>
       <FormSection>
-        <h3>Market Cover Image</h3>
-        <FileInput useStore={useMarketImageIdStore} />
+        <h3>Market Cover</h3>
+        <div className="p-2 w-fit mx-auto">
+          <FileInput
+            useStore={useMarketImageIdStore}
+            title={"Browse"}
+            classNames="bg-black text-white px-[66px] py-[14px]"
+          />
+        </div>
       </FormSection>
     </form>
   );

@@ -109,7 +109,7 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
         <span className="text-red-500">{errors["industry"]?.message}</span>
       )}
       <div className="mx-auto mt-5">
-        <FileInput useStore={useFileStore} />
+        <FileInput useStore={useFileStore} title="upload your logo" />
       </div>
       {errors["logo"] && (
         <span className="text-red-500">{errors["logo"]?.message}</span>

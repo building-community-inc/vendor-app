@@ -24,8 +24,10 @@ const addFilesToInput = () => ({
 type Action = ReturnType<typeof addFilesToInput>;
 type State = TFileWithUrl[];
 
-const FileInput = ({useStore}: {
+const FileInput = ({useStore, title, classNames}: {
   useStore: () => TFileStore;
+  title: string;
+  classNames?: string;
 }) => {
   const {setFileId} = useStore();
   const [input, dispatch] = useReducer((state: State, action: Action) => {
@@ -95,12 +97,12 @@ const FileInput = ({useStore}: {
       ) : (
         <label
           htmlFor={"file"}
-          className={cn(
+          className={classNames ? classNames : cn(
             "group relative p-2 w-fit flex flex-col items-center justify-center border-2 border-slate-300 border-dashed rounded-lg dark:border-gray-600 transition",
             // { "dark:border-slate-400 dark:bg-slate-800": dragActive },
             { "h-fit aspect-auto": !noInput },
             { "items-start justify-start": !noInput },
-            { "dark:hover:border-gray-500 dark:hover:bg-slate-800": noInput }
+            { "hover:border-gray-500 hover:bg-slate-800 hover:text-white": noInput }
           )}
         >
           <input
@@ -113,7 +115,7 @@ const FileInput = ({useStore}: {
             type="file"
             className="hidden"
           />
-          upload your logo
+          {title}
         </label>
       )}
     </>
