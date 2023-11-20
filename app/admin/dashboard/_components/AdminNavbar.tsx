@@ -3,14 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import navOptions from "./navOptions.json";
 import { SignOutButton } from "@clerk/nextjs";
-import { TUserWithOptionalBusinessRef } from "@/zod/types";
+import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { usePathname } from "next/navigation";
 
 const AdminNavbar = ({ user }: { user: TUserWithOptionalBusinessRef }) => {
   const pathname = usePathname();
   console.log({ pathname });
   return (
-    <aside className="bg-nav-bg text-nav-text px-10 flex flex-col py-[10px] gap-2 h-screen overflow-y-scroll hide-scrollbar pb-10">
+    <aside className="bg-nav-bg shadow-[10px_3px_6px_#00000029] text-nav-text px-10 flex flex-col py-[10px] gap-2 h-screen overflow-y-scroll hide-scrollbar pb-10">
       <Link href="/">
         <Image
           src={"/logo-on-white-bg.png"}

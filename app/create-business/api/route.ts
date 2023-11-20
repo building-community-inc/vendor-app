@@ -1,6 +1,6 @@
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { zodBusinessQuery, zodSanityBusiness } from "@/zod/types";
+import { zodSanityBusiness } from "@/zod/user-business";
 import { currentUser } from "@clerk/nextjs";
 
 export const POST = async (req: Request) => {

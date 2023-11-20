@@ -1,5 +1,5 @@
 import { sanityClient } from "@/sanity/lib/client";
-import { zodUserWithOptionalBusinessRef } from "@/zod/types";
+import { zodUserWithOptionalBusinessRef } from "@/zod/user-business";
 
 
 
