@@ -1,7 +1,7 @@
+import { sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { zodSanityVenue } from "@/zod/venues";
 import { currentUser } from "@clerk/nextjs";
-
 
 export const POST = async (req: Request) => {
   if (req.method !== "POST") {
@@ -10,7 +10,7 @@ export const POST = async (req: Request) => {
       body: { message: "Method not allowed" },
     });
   }
-  
+
   const clerkUser = await currentUser();
 
   if (!clerkUser) {
@@ -39,7 +39,10 @@ export const POST = async (req: Request) => {
     throw new Error(parsedVenue.error.message);
   }
 
-  console.log({parsedVenue})
-
-  return Response.json(parsedVenue.data);
-}
+  
+  const sanityResp = await sanityWriteClient.create(parsedVenue.data).catch((err) => {
+    throw new Error(err);
+  });
+  
+  return Response.json(sanityResp);
+};

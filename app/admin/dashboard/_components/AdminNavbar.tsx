@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 
 const AdminNavbar = ({ user }: { user: TUserWithOptionalBusinessRef }) => {
   const pathname = usePathname();
-  console.log({ pathname });
+  // console.log({ pathname });
   return (
     <aside className="bg-nav-bg shadow-[10px_3px_6px_#00000029] text-nav-text px-10 flex flex-col py-[10px] gap-2 h-screen overflow-y-scroll hide-scrollbar pb-10">
       <Link href="/">

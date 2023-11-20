@@ -35,7 +35,7 @@ const CreateVenueForm = () => {
     }) as { name: keyof TVenue; title: string }[];
 
   const onSubmit = async (data: TVenue) => {
-    console.log(data);
+    // console.log(data);
     if (!fileId) {
       setError("venueMap", {
         type: "manual",
@@ -82,7 +82,7 @@ const CreateVenueForm = () => {
       {formInputs.map(({ name, title }) => {
         return (
           <VenueFormInputComp
-            key={name}
+            key={name as string}
             register={register}
             errors={errors}
             name={name}
@@ -128,7 +128,7 @@ const VenueFormInputComp = ({
     <section className="flex flex-col gap-1 my-2 max-w-full w-[75vw] mx-auto xs:w-full  sm:w-[75vw]">
       <label htmlFor={name} hidden={hidden} className="flex flex-col w-full">
         {title}
-        <FormInput register={register} placeholder={name} name={name} />
+        <FormInput register={register} placeholder={camelCaseToTitleCase(name)} name={name} />
       </label>
       {errors[name] && (
         <span className="text-red-500">{errors[name]?.message}</span>
