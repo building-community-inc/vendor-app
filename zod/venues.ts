@@ -17,20 +17,29 @@ export const zodVenueSchema = z.object({
 export const zodVenueFormSchema = zodVenueSchema.merge(
   z.object({
     _type: z.literal("venue"),
+    _id: z.string().optional(),
   })
 );
 
 export const zodSanityVenue = zodVenueSchema.merge(
   z.object({
+    _id: z.string().optional(),
     _type: z.literal("venue"),
     venueMap: z.object({
       _type: z.literal("image"),
-      asset: z.object({
-        _ref: z.string(),
-      }),
+      asset: z
+        .object({
+          _ref: z.string(),
+        })
+        .optional(),
     }),
   })
 );
 
+export const zodSanityUpdateVenue = zodSanityVenue.merge(
+  z.object({
+    _id: z.string(),
+  })
+);
 
 export type TVenue = z.infer<typeof zodVenueSchema>;

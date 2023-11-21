@@ -11,13 +11,19 @@ const venueQueryString = `
   phone,
   loadInInstructions,
   _id,
-  "venueMap": venueMap.asset->url,
+  "venueMap": {
+    "url": venueMap.asset->url,
+    "_id": venueMap.asset->_id
+  },
 `;
 
 const zodVenueQuery = zodVenueSchema.merge(
   z.object({
     _id: z.string(),
-    venueMap: z.string(),
+    venueMap: z.object({
+      url: z.string(),
+      _id: z.string(),
+    }),
   })
 );
 
@@ -27,13 +33,14 @@ const zodVenueQueryArray = z.array(zodVenueQuery);
 
 export const getAllVenues = async () => {
   try {
-    const result = await sanityClient.fetch(`*[_type == 'venue']{
+    const result = await sanityClient.fetch(
+      `*[_type == 'venue']{
      ${venueQueryString}
-    }`, {
-      next: {
-        cache: "no-cache",
+    }`,
+      {
+        cache: "no-store",
       }
-    });
+    );
 
     const parsedResult = zodVenueQueryArray.safeParse(result);
 
@@ -44,4 +51,24 @@ export const getAllVenues = async () => {
   } catch (error) {
     console.error(error);
   }
+};
+
+export const getVenueById = async (id: string) => {
+  const result = await sanityClient.fetch(
+    `*[_type == 'venue' && _id == $id]{
+    ${venueQueryString}
+  }`,
+    {
+      id,
+      cache: "no-store",
+    }
+  );
+
+  const parsedResult = zodVenueQuery.safeParse(result[0]);
+
+  if (!parsedResult.success) {
+    throw new Error(parsedResult.error.message);
+  }
+
+  return parsedResult.data;
 };

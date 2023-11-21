@@ -3,15 +3,27 @@ import FileInput from "@/app/_components/FileInput";
 import FormInput from "../../../_components/FormInput";
 import { useVenueImageIdStore } from "@/app/_components/store/fileStore";
 import { FieldErrors, UseFormRegister, useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { camelCaseToTitleCase } from "@/utils/helpers";
 import { useRouter } from "next/navigation";
-import { TVenue, zodSanityVenue, zodVenueFormSchema, zodVenueSchema } from "@/zod/venues";
+import { TVenue, zodVenueFormSchema, zodVenueSchema } from "@/zod/venues";
+import { TVenueFront } from "@/sanity/queries/venues";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { revalidatePath, revalidateTag } from "next/cache";
 
-
-
-const CreateVenueForm = () => {
+// type TVenueDefaultFormValues = Omit<TVenueFront, 'venueMap'> & { venueMap: string };
+const CreateVenueForm = ({
+  defaultValues,
+  defaultImage,
+}: {
+  defaultValues?: any;
+  defaultImage: {
+    _id: string;
+    url: string;
+  };
+}) => {
+  const [isFileInputOpen, setIsFileInputOpen] = useState(false);
   const {
     register,
     handleSubmit,
@@ -20,6 +32,7 @@ const CreateVenueForm = () => {
     formState: { errors, isSubmitting },
   } = useForm<TVenue>({
     resolver: zodResolver(zodVenueSchema),
+    defaultValues,
   });
   const router = useRouter();
 
@@ -35,8 +48,7 @@ const CreateVenueForm = () => {
     }) as { name: keyof TVenue; title: string }[];
 
   const onSubmit = async (data: TVenue) => {
-    // console.log(data);
-    if (!fileId) {
+    if (!defaultImage._id && !fileId) {
       setError("venueMap", {
         type: "manual",
         message: "Venue Map is required",
@@ -46,7 +58,8 @@ const CreateVenueForm = () => {
     const venueObj = {
       ...data,
       _type: "venue",
-      venueMap: fileId,
+      venueMap: defaultValues ? defaultImage._id : fileId,
+      _id: defaultValues ? defaultValues._id : undefined,
     };
 
     const parsedVenueObj = zodVenueFormSchema.safeParse(venueObj);
@@ -56,23 +69,42 @@ const CreateVenueForm = () => {
     }
 
     try {
-      await fetch("/admin/dashboard/venues/create/api/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(parsedVenueObj.data),
-      }).then(async (res) => {
+      await fetch(
+        `/admin/dashboard/venues/${defaultValues ? "update" : "create"}/api/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(parsedVenueObj.data),
+        }
+      ).then(async (res) => {
         const body = await res.json();
         if (body._id) {
           reset();
           router.push("/admin/dashboard/venues");
+          revalidateTag("venues");
         }
-      })
+      });
     } catch (error) {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    const submitForm = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handleSubmit(onSubmit)();
+      }
+    };
+
+    document.addEventListener("keydown", submitForm);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      document.removeEventListener("keydown", submitForm);
+    };
+  }, []);
 
   return (
     <form
@@ -90,19 +122,54 @@ const CreateVenueForm = () => {
           />
         );
       })}
-      <div className="mx-auto">
-        <FileInput title="Upload Venue Image" useStore={useVenueImageIdStore} />
-      </div>
+      {defaultImage && !isFileInputOpen ? (
+        <div className="flex flex-col gap-1 my-2 max-w-full w-[75vw] mx-auto xs:w-full  sm:w-[75vw]">
+          <label
+            htmlFor="venueMap"
+            className="flex flex-col w-full items-center"
+          >
+            Venue Map
+            <div className="flex items-center justify-evenly w-full">
+              <Image
+                src={defaultImage.url}
+                alt={defaultValues.title}
+                // className="w-full"
+                width={300}
+                height={300}
+              />
+              <button
+                // type="submit"
+                // disabled={isSubmitting}
+                className="bg-black text-white px-[66px] py-[14px] w-fit h-fit"
+                onClick={() => setIsFileInputOpen(true)}
+              >
+                change image
+              </button>
+            </div>
+          </label>
+        </div>
+      ) : (
+        <>
+          <div className="mx-auto">
+            <FileInput
+              title="Upload Venue Image"
+              useStore={useVenueImageIdStore}
+            />
+          </div>
+        </>
+      )}
       {errors.venueMap && (
-        <span className="text-red-500 text-center">{errors.venueMap?.message}</span>
+        <span className="text-red-500 text-center">
+          {errors.venueMap?.message}
+        </span>
       )}
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="bg-black text-white px-[66px] py-[14px] w-fit mx-auto"
+        className="bg-black text-white px-[66px] py-[14px] w-fit mx-auto disabled:bg-slate-600"
       >
-        Create Venue
+        {defaultValues ? "Update Venue" : "Create Venue"}
       </button>
     </form>
   );
@@ -128,7 +195,11 @@ const VenueFormInputComp = ({
     <section className="flex flex-col gap-1 my-2 max-w-full w-[75vw] mx-auto xs:w-full  sm:w-[75vw]">
       <label htmlFor={name} hidden={hidden} className="flex flex-col w-full">
         {title}
-        <FormInput register={register} placeholder={camelCaseToTitleCase(name)} name={name} />
+        <FormInput
+          register={register}
+          placeholder={camelCaseToTitleCase(name)}
+          name={name}
+        />
       </label>
       {errors[name] && (
         <span className="text-red-500">{errors[name]?.message}</span>
