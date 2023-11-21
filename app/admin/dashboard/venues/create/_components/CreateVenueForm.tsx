@@ -18,7 +18,7 @@ const CreateVenueForm = ({
   defaultImage,
 }: {
   defaultValues?: any;
-  defaultImage: {
+  defaultImage?: {
     _id: string;
     url: string;
   };
@@ -48,7 +48,7 @@ const CreateVenueForm = ({
     }) as { name: keyof TVenue; title: string }[];
 
   const onSubmit = async (data: TVenue) => {
-    if (!defaultImage._id && !fileId) {
+    if (defaultImage && !defaultImage._id && !fileId) {
       setError("venueMap", {
         type: "manual",
         message: "Venue Map is required",
@@ -58,7 +58,7 @@ const CreateVenueForm = ({
     const venueObj = {
       ...data,
       _type: "venue",
-      venueMap: defaultValues ? defaultImage._id : fileId,
+      venueMap: defaultImage ? defaultImage._id : fileId,
       _id: defaultValues ? defaultValues._id : undefined,
     };
 
