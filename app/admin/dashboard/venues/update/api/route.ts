@@ -2,6 +2,7 @@ import { sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { zodSanityUpdateVenue } from "@/zod/venues";
 import { currentUser } from "@clerk/nextjs";
+import { revalidatePath } from "next/cache";
 
 export const POST = async (req: Request) => {
   if (req.method !== "POST") {
@@ -38,15 +39,18 @@ export const POST = async (req: Request) => {
   if (!parsedVenue.success) {
     throw new Error(parsedVenue.error.message);
   }
-  
 
-  const sanityResp = await sanityWriteClient
-    .patch(parsedVenue.data._id)
-    .set(parsedVenue.data)
-    .commit()
-    .catch((err) => {
-      throw new Error(err);
+  try {
+    const sanityResp = await sanityWriteClient
+      .patch(parsedVenue.data._id)
+      .set(parsedVenue.data)
+      .commit();
+
+    return Response.json(sanityResp);
+  } catch (error) {
+    return Response.json({
+      status: 500,
+      body: { error },
     });
-
-  return Response.json(sanityResp);
+  }
 };

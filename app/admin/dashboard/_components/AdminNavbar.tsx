@@ -5,6 +5,7 @@ import navOptions from "./navOptions.json";
 import { SignOutButton } from "@clerk/nextjs";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { usePathname } from "next/navigation";
+import React from "react";
 
 const AdminNavbar = ({ user }: { user: TUserWithOptionalBusinessRef }) => {
   const pathname = usePathname();
@@ -21,7 +22,7 @@ const AdminNavbar = ({ user }: { user: TUserWithOptionalBusinessRef }) => {
       </Link>
 
       {navOptions.map((option) => (
-        <>
+        <React.Fragment key={option.href}>
           {option.title === "Logout" ? (
             <div className="text-center uppercase font-bold text-xl">
               <SignOutButton key={option.href} />
@@ -56,7 +57,7 @@ const AdminNavbar = ({ user }: { user: TUserWithOptionalBusinessRef }) => {
               )}
             </div>
           )}
-        </>
+        </React.Fragment>
       ))}
     </aside>
   );

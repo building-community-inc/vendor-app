@@ -19,8 +19,8 @@ const page = async () => {
 
 
   return (
-    <main className="grid place-content-center gap-2 min-h-screen w-full bg-indigo-900">
-      <h2>Welcome Admin {sanityUser.firstName}</h2>
+    <main className="grid place-content-center gap-2 min-h-screen w-full">
+      <h1 className="text-lg font-bold">Welcome Admin {sanityUser.firstName}</h1>
     </main>
   );
 };

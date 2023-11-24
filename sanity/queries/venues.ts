@@ -33,13 +33,11 @@ const zodVenueQueryArray = z.array(zodVenueQuery);
 
 export const getAllVenues = async () => {
   try {
+    
     const result = await sanityClient.fetch(
       `*[_type == 'venue']{
      ${venueQueryString}
-    }`,
-      {
-        cache: "no-store",
-      }
+    }`
     );
 
     const parsedResult = zodVenueQueryArray.safeParse(result);
@@ -60,7 +58,6 @@ export const getVenueById = async (id: string) => {
   }`,
     {
       id,
-      cache: "no-store",
     }
   );
 

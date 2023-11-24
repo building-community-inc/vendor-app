@@ -11,6 +11,7 @@ import { TVenueFront } from "@/sanity/queries/venues";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { useSubmitOnEnter } from "@/utils/hooks/useSubmitOnEnter";
 
 // type TVenueDefaultFormValues = Omit<TVenueFront, 'venueMap'> & { venueMap: string };
 const CreateVenueForm = ({
@@ -91,21 +92,7 @@ const CreateVenueForm = ({
     }
   };
 
-  useEffect(() => {
-    const submitForm = (e: KeyboardEvent) => {
-      if (e.key === "Enter") {
-        handleSubmit(onSubmit)();
-      }
-    };
-
-    document.addEventListener("keydown", submitForm);
-
-    // Cleanup function to remove the event listener
-    return () => {
-      document.removeEventListener("keydown", submitForm);
-    };
-  }, []);
-
+  useSubmitOnEnter(onSubmit);
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
