@@ -7,10 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { camelCaseToTitleCase } from "@/utils/helpers";
 import { useRouter } from "next/navigation";
 import { TVenue, zodVenueFormSchema, zodVenueSchema } from "@/zod/venues";
-import { TVenueFront } from "@/sanity/queries/venues";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { useState } from "react";
 import { useSubmitOnEnter } from "@/utils/hooks/useSubmitOnEnter";
 
 // type TVenueDefaultFormValues = Omit<TVenueFront, 'venueMap'> & { venueMap: string };
@@ -84,7 +82,6 @@ const CreateVenueForm = ({
         if (body._id) {
           reset();
           router.push("/admin/dashboard/venues");
-          revalidateTag("venues");
         }
       });
     } catch (error) {
@@ -92,7 +89,7 @@ const CreateVenueForm = ({
     }
   };
 
-  useSubmitOnEnter(onSubmit);
+  useSubmitOnEnter(() => handleSubmit(onSubmit));
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -125,7 +122,7 @@ const CreateVenueForm = ({
                 height={300}
               />
               <button
-                // type="submit"
+                type="button"
                 // disabled={isSubmitting}
                 className="bg-black text-white px-[66px] py-[14px] w-fit h-fit"
                 onClick={() => setIsFileInputOpen(true)}
