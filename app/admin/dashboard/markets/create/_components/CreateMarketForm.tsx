@@ -46,9 +46,9 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
     console.log({ data });
   };
 
-  useSubmitOnEnter(onSubmit);
+  useSubmitOnEnter(() => handleSubmit(onSubmit));
 
-  console.log({ errors });
+  // console.log({ errors });
 
   return (
     <form
