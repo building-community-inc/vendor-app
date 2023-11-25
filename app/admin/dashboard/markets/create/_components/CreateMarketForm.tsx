@@ -1,16 +1,9 @@
 "use client";
 import { useMarketImageIdStore } from "@/app/_components/store/fileStore";
-import { useState } from "react";
 import FormTitleDivider from "../../../_components/FormTitleDivider";
 import FileInput from "@/app/_components/FileInput";
 import FormInput from "../../../_components/FormInput";
-import {
-  DeepMap,
-  FieldError,
-  FieldErrors,
-  UseFormRegister,
-  useForm,
-} from "react-hook-form";
+import { FieldErrors, UseFormRegister, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSubmitOnEnter } from "@/utils/hooks/useSubmitOnEnter";
@@ -183,17 +176,22 @@ const Days = ({
   register: UseFormRegister<TMarketFormSchema>;
   errors: FieldErrors<TMarketFormSchema>;
 }) => {
-  const { days, addDay, removeDay, changeCurrentDate } = useDaysStore((state) => ({
-    days: state.days,
-    addDay: state.addDay,
-    removeDay: state.removeDay,
-    changeCurrentDate: state.changeCurrentDate,
-  }));
+  const { days, addDay, removeDay, changeCurrentDate } = useDaysStore(
+    (state) => ({
+      days: state.days,
+      addDay: state.addDay,
+      removeDay: state.removeDay,
+      changeCurrentDate: state.changeCurrentDate,
+    })
+  );
 
   const addDayToStore = (event: React.FormEvent) => {
     event.preventDefault();
     addDay();
   };
+
+  const today = new Date();
+  const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
   return (
     <>
       <button className="w-fit" onClick={addDayToStore}>
@@ -230,20 +228,20 @@ const Days = ({
               className="w-full"
               type="date"
               title={`Day ${index + 1}`}
+              minDate={minDate}
               value={`${date.getFullYear()}-${String(
                 date.getMonth() + 1
               ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`}
               onDateChange={(e) => {
                 e.preventDefault();
-                const newDate = new Date(e.target.value);
+                const [year, month, day] = e.target.value
+                  .split("-")
+                  .map(Number);
+                const newDate = new Date(year, month - 1, day);
                 console.log({ newDate });
                 changeCurrentDate(index, newDate);
               }}
             />
-            {`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-              2,
-              "0"
-            )}-${String(date.getDate()).padStart(2, "0")}`}
           </div>
         );
       })}

@@ -123,11 +123,10 @@ const CreateVenueForm = ({
               />
               <button
                 type="button"
-                // disabled={isSubmitting}
                 className="bg-black text-white px-[66px] py-[14px] w-fit h-fit"
                 onClick={() => setIsFileInputOpen(true)}
               >
-                change image
+                Update Map
               </button>
             </div>
           </label>

@@ -4,34 +4,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import Button from "./_components/Button";
 
-export const clerkLoginAppearance = {
-  variables: {
-    colorBackground: "transparent",
-    colorPrimary: "#fff",
-    colorText: "#fff",
-    colorInputText: "#fff",
-  },
-  elements: {
-    card: {
-      boxShadow: "none",
-      border: "none",
-    },
-    header: {
-      display: "none",
-    },
-    formFieldLabel: {
-      // color: "#fff",
-    },
-    socialButtons: {
-      background: "black",
-      borderRadius: "0.5rem",
-    },
-    formButtonPrimary: {
-      color: "black",
-    },
-  },
-};
-
 export default async function Home() {
   const user = await currentUser();
 

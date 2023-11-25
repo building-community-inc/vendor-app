@@ -7,6 +7,7 @@ type TCommonProps<TFormValues extends FieldValues> = {
   title?: string;
   register: UseFormRegister<TFormValues>;
   key?: string;
+  minDate?: string | undefined;
 };
 
 type TInputProps<TFormValues extends FieldValues> = TCommonProps<TFormValues> &
@@ -33,22 +34,28 @@ const FormInput = <TFormValues extends FieldValues>({
   onDateChange,
   title,
   register,
+  minDate = undefined,
 }: TInputProps<TFormValues>) => {
   if (type === "date") {
     console.log({ value });
     return (
       <InputSection title={title}>
-        <input
-          key={key}
-          {...register(name)}
-          onChange={onDateChange}
-          type="date"
-          name={name}
-          placeholder={placeholder}
-          value={value}
-          className={`pl-5 border text-white border-secondary-admin-border rounded-[20px] py-2 px-3 ${className}`}
-        />
-        <div className="absolute top-1/2 -translate-y-1/2 translate-x-4 bg-white h-2/5 place-content-center grid">{value}</div>
+        <label htmlFor={name} className="relative">
+          <input
+            key={key}
+            {...register(name)}
+            onChange={onDateChange}
+            type="date"
+            name={name}
+            placeholder={placeholder}
+            value={value}
+            min={minDate}
+            className={`pl-5 border text-white border-secondary-admin-border rounded-[20px] py-2 px-3 ${className}`}
+          />
+          <div className="absolute top-1/2 -translate-y-1/2 translate-x-4 bg-white h-2/5 place-content-center grid">
+            {value}
+          </div>
+        </label>
       </InputSection>
     );
   }

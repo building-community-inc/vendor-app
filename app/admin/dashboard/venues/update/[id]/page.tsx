@@ -2,7 +2,7 @@ import { getVenueById } from "@/sanity/queries/venues";
 import CreateVenueForm from "../../create/_components/CreateVenueForm";
 
 
-export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 const Page = async ({params}: {
   params: {
