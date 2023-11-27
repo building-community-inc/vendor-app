@@ -1,5 +1,5 @@
 import { Path, FieldValues, UseFormRegister } from "react-hook-form";
-
+type FormInputName<TFormValues extends FieldValues> = keyof TFormValues | `${'dates'}.${string}`;
 type TCommonProps<TFormValues extends FieldValues> = {
   name: Path<TFormValues>;
   placeholder: string;
@@ -7,6 +7,7 @@ type TCommonProps<TFormValues extends FieldValues> = {
   title?: string;
   register: UseFormRegister<TFormValues>;
   key?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   minDate?: string | undefined;
 };
 
@@ -16,14 +17,18 @@ type TInputProps<TFormValues extends FieldValues> = TCommonProps<TFormValues> &
         type?: "input" | "textarea" | "price";
         value?: string;
         onDateChange?: never;
+        minDate?: never;
       }
     | {
         type: "date";
         value: string;
         onDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+        minDate?: string;
+        // name: string;
+        // name: `dates[${number}]`
+        name: FormInputName<TFormValues>;
       }
-  );
-
+  ) 
 const FormInput = <TFormValues extends FieldValues>({
   key = "",
   name,
@@ -34,10 +39,10 @@ const FormInput = <TFormValues extends FieldValues>({
   onDateChange,
   title,
   register,
+  onChange,
   minDate = undefined,
 }: TInputProps<TFormValues>) => {
   if (type === "date") {
-    console.log({ value });
     return (
       <InputSection title={title}>
         <label htmlFor={name} className="relative">
@@ -77,9 +82,11 @@ const FormInput = <TFormValues extends FieldValues>({
     <InputSection title={title}>
       <input
         {...register(name)}
-        type="text"
+        type="input"
         name={name}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
         className={`border border-secondary-admin-border rounded-[20px] py-2 px-3 ${className}`}
       />
     </InputSection>

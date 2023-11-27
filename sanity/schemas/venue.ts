@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 export const venueSchema = defineType({
   name: "venue",
@@ -45,6 +45,18 @@ export const venueSchema = defineType({
       title: "Venue Map",
       type: "image",
     }),
+    defineField({
+      name: "tables",
+      title: "Tables",
+      type: "array",
+      of: [
+        defineArrayMember({
+          name: "table",
+          title: "Table Number",
+          type: "string",
+        })
+      ]
+    })
   ],
   preview: {
     select: {

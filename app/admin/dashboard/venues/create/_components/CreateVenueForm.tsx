@@ -10,6 +10,7 @@ import { TVenue, zodVenueFormSchema, zodVenueSchema } from "@/zod/venues";
 import Image from "next/image";
 import { useState } from "react";
 import { useSubmitOnEnter } from "@/utils/hooks/useSubmitOnEnter";
+import { create } from "zustand";
 
 // type TVenueDefaultFormValues = Omit<TVenueFront, 'venueMap'> & { venueMap: string };
 const CreateVenueForm = ({
@@ -23,6 +24,7 @@ const CreateVenueForm = ({
   };
 }) => {
   const [isFileInputOpen, setIsFileInputOpen] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -95,17 +97,19 @@ const CreateVenueForm = ({
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-2 pb-10"
     >
-      {formInputs.map(({ name, title }) => {
-        return (
-          <VenueFormInputComp
-            key={name as string}
-            register={register}
-            errors={errors}
-            name={name}
-            title={title}
-          />
-        );
-      })}
+      {formInputs
+        .filter(({ name }) => name !== "tables")
+        .map(({ name, title }) => {
+          return (
+            <VenueFormInputComp
+              key={name as string}
+              register={register}
+              errors={errors}
+              name={name}
+              title={title}
+            />
+          );
+        })}
       {defaultImage && !isFileInputOpen ? (
         <div className="flex flex-col gap-1 my-2 max-w-full w-[75vw] mx-auto xs:w-full  sm:w-[75vw]">
           <label
@@ -146,6 +150,8 @@ const CreateVenueForm = ({
           {errors.venueMap?.message}
         </span>
       )}
+
+      {!!fileId && <Tables register={register} />}
 
       <button
         type="submit"
@@ -188,5 +194,77 @@ const VenueFormInputComp = ({
         <span className="text-red-500">{errors[name]?.message}</span>
       )}
     </section>
+  );
+};
+
+type TableStore = {
+  tables: string[];
+  addTable: (table: string) => void;
+  removeTable: (table: string) => void;
+  resetTables: () => void;
+  changeTableValue: (index: number, value: string) => void;
+};
+
+const useTableStore = create<TableStore>((set) => ({
+  tables: [],
+  addTable: (table) =>
+    set((state) => {
+      if (state.tables.length > 0) {
+        const lastTableItem = +state.tables[state.tables.length - 1];
+        const newTableItem = lastTableItem + 1;
+        return { tables: [...state.tables, newTableItem.toString()] };
+      }
+      return { tables: [...state.tables, table] };
+    }),
+  removeTable: (table) =>
+    set((state) => ({ tables: state.tables.filter((t) => t !== table) })),
+  resetTables: () => set({ tables: [] }),
+  changeTableValue: (index, value) => {
+    set((state) => {
+      const newTables = [...state.tables];
+      newTables[index] = value;
+      console.log("newTables", newTables);
+
+      return {
+        tables: newTables,
+      };
+    });
+  },
+}));
+
+const Tables = ({ register }: { register: UseFormRegister<TVenue> }) => {
+  const { tables, addTable, removeTable, resetTables, changeTableValue } =
+    useTableStore();
+
+  return (
+    <div>
+      <h4 className="font-bold text-lg text-center">Tables</h4>
+      <button type="button" onClick={() => addTable("1")}>
+        + add Table
+      </button>
+      <ul className="flex flex-col gap-2">
+        {tables.map((table, i) => (
+          <li key={i} className="flex justify-between">
+            {/* // <span key={table + i}>{table}</span> */}
+
+            <FormInput
+              name={`tables[${i}]` as any}
+              register={register}
+              placeholder="table number"
+              type="input"
+              value={table}
+              onChange={(e) => {
+                e.preventDefault();
+                console.log("here", i, e.target.value);
+                changeTableValue(i, e.target.value);
+              }}
+            />
+            <button type="button" onClick={() => removeTable(table)}>
+              - remove table
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };

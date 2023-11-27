@@ -12,6 +12,7 @@ export const zodVenueSchema = z.object({
     .string()
     .optional()
     .transform((refId) => ({ _type: "image", asset: { _ref: refId } })),
+  tables: z.array(z.string()),
 });
 
 export const zodVenueFormSchema = zodVenueSchema.merge(

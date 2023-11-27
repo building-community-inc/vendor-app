@@ -15,7 +15,10 @@ const VenueListItem = ({ venue }: { venue: TVenueFront }) => {
 
 export default VenueListItem;
 
-export const VenueCard = ({ venue }: { venue: TVenueFront }) => {
+type TVenueCardProps = {
+  venue: TVenueFront;
+};
+export const VenueCard = ({ venue }: TVenueCardProps) => {
   return (
     <>
       <h2 className="font-semibold text-center capitalize">{venue.title}</h2>

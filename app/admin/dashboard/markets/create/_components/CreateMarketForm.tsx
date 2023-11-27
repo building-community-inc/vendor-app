@@ -10,20 +10,25 @@ import { useSubmitOnEnter } from "@/utils/hooks/useSubmitOnEnter";
 import { TVenueFront } from "@/sanity/queries/venues";
 import { VenueCard } from "../../../venues/_components/VenueListItem";
 import { create } from "zustand";
+import { useState } from "react";
 
-const zodDaySchema = z.object({
-  date: z.string(),
-});
+const zodDaySchema = z.string();
+
 const zodMarketFormSchema = z.object({
   name: z.string().min(1, "Name of the Market is required"),
   description: z.string().min(1, "Description of the Market is required"),
   price: z.string().min(1, "Price per day is required"),
   dates: z.array(zodDaySchema).min(1, "At least one day is required"),
+  marketCover: z
+    .string()
+    .optional()
+    .transform((refId) => ({ _type: "image", asset: { _ref: refId } })),
 });
 
 type TMarketFormSchema = z.infer<typeof zodMarketFormSchema>;
 
 const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
+  const [selectedVenue, setSelectedVenue] = useState<TVenueFront | null>(null);
   const {
     register,
     handleSubmit,
@@ -34,9 +39,42 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
     resolver: zodResolver(zodMarketFormSchema),
     // defaultValues,
   });
+  const fileId = useMarketImageIdStore((state) => state.fileId);
 
-  const onSubmit = (data: TMarketFormSchema) => {
-    console.log({ data });
+  const onSubmit = async (data: TMarketFormSchema) => {
+    console.log({ data, fileId });
+
+    if (!fileId) {
+      setError("marketCover", {
+        type: "manual",
+        message: "Market Cover is required",
+      });
+      return;
+    }
+
+    const marketObj = {
+      ...data,
+      _type: "market",
+      marketCover: fileId,
+    };
+
+    try {
+      await fetch(`/admin/dashboard/markets/create/api`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(marketObj),
+      }).then(async (res) => {
+        const body = await res.json();
+        if (body._id) {
+          reset();
+          // router.push("/admin/dashboard/markets");
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useSubmitOnEnter(() => handleSubmit(onSubmit));
@@ -79,12 +117,17 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
       </FormSection>
       <FormSection>
         <h3>Market Cover</h3>
-        <div className="p-2 w-fit mx-auto mb-2">
+        <div className="p-2 w-fit mx-auto mb-2 flex flex-col">
           <FileInput
             useStore={useMarketImageIdStore}
             title={"Browse"}
             classNames="bg-black text-white px-[66px] py-[14px]"
           />
+          {errors.marketCover && (
+            <span className="text-red-500 text-center">
+              {errors.marketCover?.message}
+            </span>
+          )}
         </div>
       </FormSection>
       <FormTitleDivider title="Venue" />
@@ -92,7 +135,22 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
         <h3>Select Venue</h3>
         <ul className="flex flex-col gap-2 my-2">
           {venues?.map((venue) => (
-            <VenueCard key={venue._id} venue={venue} />
+            <button
+              type="button"
+              onClick={() =>
+                selectedVenue && selectedVenue._id === venue._id
+                  ? setSelectedVenue(null)
+                  : setSelectedVenue(venue)
+              }
+              className={`border p-2 ${
+                venue._id === selectedVenue?._id
+                  ? "border-black"
+                  : "border-slate-200"
+              }`}
+              key={venue._id}
+            >
+              <VenueCard venue={venue} />
+            </button>
           ))}
         </ul>
       </FormSection>
@@ -191,20 +249,16 @@ const Days = ({
   };
 
   const today = new Date();
-  const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const minDate = `${today.getFullYear()}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  // console.log({ errors });
   return (
     <>
-      <button className="w-fit" onClick={addDayToStore}>
+      <button type="button" className="w-fit" onClick={addDayToStore}>
         + Add Day
       </button>
       {days.map(({ date }, index) => {
-        console.log(
-          { date },
-          `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-            2,
-            "0"
-          )}-${String(date.getDate()).padStart(2, "0")}`
-        );
         return (
           <div className="relative" key={index}>
             {/* {days.length > 1 && ( */}
@@ -223,7 +277,7 @@ const Days = ({
                 date.getMonth() + 1
               ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`}
               register={register}
-              name="dates"
+              name={`dates[${index}]` as any}
               placeholder={date.toDateString()}
               className="w-full"
               type="date"

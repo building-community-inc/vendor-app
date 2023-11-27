@@ -89,8 +89,8 @@ const FileInput = ({useStore, title, classNames}: {
             key={file.url}
             src={file.url}
             alt={file.name}
-            width={200}
-            height={200}
+            width={500}
+            height={500}
             className="object-cover mx-auto mt-2"
           />
         ))
