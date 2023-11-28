@@ -8,7 +8,7 @@ import { camelCaseToTitleCase } from "@/utils/helpers";
 import { useRouter } from "next/navigation";
 import { TVenue, zodVenueFormSchema, zodVenueSchema } from "@/zod/venues";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSubmitOnEnter } from "@/utils/hooks/useSubmitOnEnter";
 import { create } from "zustand";
 
@@ -151,8 +151,10 @@ const CreateVenueForm = ({
         </span>
       )}
 
-      {!!fileId && <Tables register={register} />}
-
+      {!!fileId ||
+        (!!defaultImage && (
+          <Tables register={register} defaultTables={defaultValues.tables} />
+        ))}
       <button
         type="submit"
         disabled={isSubmitting}
@@ -212,7 +214,8 @@ const useTableStore = create<TableStore>((set) => ({
       if (state.tables.length > 0) {
         const lastTableItem = +state.tables[state.tables.length - 1];
         const newTableItem = lastTableItem + 1;
-        return { tables: [...state.tables, newTableItem.toString()] };
+        const newTables = [...state.tables, newTableItem.toString()];
+        return { tables: newTables};
       }
       return { tables: [...state.tables, table] };
     }),
@@ -223,8 +226,6 @@ const useTableStore = create<TableStore>((set) => ({
     set((state) => {
       const newTables = [...state.tables];
       newTables[index] = value;
-      console.log("newTables", newTables);
-
       return {
         tables: newTables,
       };
@@ -232,10 +233,22 @@ const useTableStore = create<TableStore>((set) => ({
   },
 }));
 
-const Tables = ({ register }: { register: UseFormRegister<TVenue> }) => {
+const Tables = ({
+  register,
+  defaultTables,
+}: {
+  register: UseFormRegister<TVenue>;
+  defaultTables?: string[];
+}) => {
   const { tables, addTable, removeTable, resetTables, changeTableValue } =
     useTableStore();
 
+  useEffect(() => {
+    if (defaultTables) {
+      resetTables();
+      defaultTables.forEach((table) => addTable(table));
+    }
+  }, [])
   return (
     <div>
       <h4 className="font-bold text-lg text-center">Tables</h4>
@@ -245,8 +258,6 @@ const Tables = ({ register }: { register: UseFormRegister<TVenue> }) => {
       <ul className="flex flex-col gap-2">
         {tables.map((table, i) => (
           <li key={i} className="flex justify-between">
-            {/* // <span key={table + i}>{table}</span> */}
-
             <FormInput
               name={`tables[${i}]` as any}
               register={register}
@@ -255,9 +266,9 @@ const Tables = ({ register }: { register: UseFormRegister<TVenue> }) => {
               value={table}
               onChange={(e) => {
                 e.preventDefault();
-                console.log("here", i, e.target.value);
                 changeTableValue(i, e.target.value);
               }}
+              controlled
             />
             <button type="button" onClick={() => removeTable(table)}>
               - remove table

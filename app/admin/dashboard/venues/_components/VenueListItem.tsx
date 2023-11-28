@@ -23,8 +23,17 @@ export const VenueCard = ({ venue, withAvailableTables }: TVenueCardProps) => {
   return (
     <>
       <h2 className="font-semibold text-center capitalize">{venue.title}</h2>
-      <div className="flex flex-col md:flex-row items-center justify-between">
-        <section>
+      {venue.venueMap && (
+        <Image
+          src={venue.venueMap.url}
+          width={"500"}
+          height={"500"}
+          alt={venue.title}
+          className="w-full"
+        />
+      )}
+      <div className="flex items-center">
+        <section className="w-1/2">
           {Object.entries(venue)
             .filter(
               ([key, _]) =>
@@ -35,7 +44,7 @@ export const VenueCard = ({ venue, withAvailableTables }: TVenueCardProps) => {
                 key !== "tables"
             )
             .map(([key, value]) => (
-              <p key={key}>
+              <p key={key} className="max-w-full">
                 <strong className="capitalize">
                   {camelCaseToTitleCase(key)}:
                 </strong>{" "}
@@ -43,24 +52,17 @@ export const VenueCard = ({ venue, withAvailableTables }: TVenueCardProps) => {
               </p>
             ))}
         </section>
-        {venue.venueMap && (
-          <Image
-            src={venue.venueMap.url}
-            width={150}
-            height={150}
-            alt={venue.title}
-          />
+
+        {withAvailableTables && (
+          <div className="mx-auto w-fit">
+            <TableView
+              title="Available Tables"
+              amount={venue.tables.length}
+              // type="available"
+            />
+          </div>
         )}
       </div>
-      {withAvailableTables && (
-        <div className="mx-auto w-fit">
-          <TableView
-            title="Available Tables"
-            amount={venue.tables.length}
-            // type="available"
-          />
-        </div>
-      )}
     </>
   );
 };

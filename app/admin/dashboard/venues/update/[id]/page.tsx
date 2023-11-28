@@ -10,7 +10,7 @@ const Page = async ({params}: {
   }
 }) => {
 
-  const {title, address, city, hours, phone, securityPhone, loadInInstructions, venueMap, _id} = await getVenueById(params.id)
+  const {title, address, city, hours, phone, securityPhone, loadInInstructions, venueMap, _id, tables} = await getVenueById(params.id)
 
 
   const defaultValues = {
@@ -21,11 +21,12 @@ const Page = async ({params}: {
     phone,
     securityPhone,
     loadInInstructions,
-    _id
+    _id,
+    tables
   }
   return (
     <main className="pt-10 px-5 w-full">
-      <h1 className="font-bold text-xl">Create New Venue</h1>
+      <h1 className="font-bold text-xl">Update Venue {defaultValues?.title}</h1>
       <section className="w-full">
         <CreateVenueForm
           defaultValues={defaultValues}
