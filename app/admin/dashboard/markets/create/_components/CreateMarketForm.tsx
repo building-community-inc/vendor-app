@@ -149,7 +149,7 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
               }`}
               key={venue._id}
             >
-              <VenueCard venue={venue} />
+              <VenueCard venue={venue} withAvailableTables/>
             </button>
           ))}
         </ul>
