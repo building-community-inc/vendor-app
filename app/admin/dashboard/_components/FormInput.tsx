@@ -1,5 +1,7 @@
 import { Path, FieldValues, UseFormRegister } from "react-hook-form";
-type FormInputName<TFormValues extends FieldValues> = keyof TFormValues | `${'dates'}.${string}`;
+type FormInputName<TFormValues extends FieldValues> =
+  | keyof TFormValues
+  | `${"dates"}.${string}`;
 type TCommonProps<TFormValues extends FieldValues> = {
   name: Path<TFormValues>;
   placeholder: string;
@@ -9,6 +11,7 @@ type TCommonProps<TFormValues extends FieldValues> = {
   key?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   minDate?: string | undefined;
+  controlled?: boolean;
 };
 
 type TInputProps<TFormValues extends FieldValues> = TCommonProps<TFormValues> &
@@ -28,7 +31,7 @@ type TInputProps<TFormValues extends FieldValues> = TCommonProps<TFormValues> &
         // name: `dates[${number}]`
         name: FormInputName<TFormValues>;
       }
-  ) 
+  );
 const FormInput = <TFormValues extends FieldValues>({
   key = "",
   name,
@@ -41,6 +44,7 @@ const FormInput = <TFormValues extends FieldValues>({
   register,
   onChange,
   minDate = undefined,
+  controlled,
 }: TInputProps<TFormValues>) => {
   if (type === "date") {
     return (
@@ -78,6 +82,21 @@ const FormInput = <TFormValues extends FieldValues>({
     );
   }
 
+  if (controlled) {
+    return (
+      <InputSection title={title}>
+        <input
+          {...register(name)}
+          type="input"
+          name={name}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          className={`border border-secondary-admin-border rounded-[20px] py-2 px-3 ${className}`}
+        />
+      </InputSection>
+    );
+  }
   return (
     <InputSection title={title}>
       <input
@@ -85,8 +104,6 @@ const FormInput = <TFormValues extends FieldValues>({
         type="input"
         name={name}
         placeholder={placeholder}
-        value={value}
-        onChange={onChange}
         className={`border border-secondary-admin-border rounded-[20px] py-2 px-3 ${className}`}
       />
     </InputSection>

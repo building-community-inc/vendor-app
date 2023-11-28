@@ -1,8 +1,9 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { Inter, Roboto } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 
 const inter = Inter({ subsets: ['latin'] })
+const roboto = Roboto({ subsets: ['latin'], weight: "400" })
 
 export const metadata = {
   title: 'Vendor App by Building Community Inc',
@@ -17,7 +18,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`bg-background text-secondary ${inter.className}`}>{children}</body>
+        <body className={`bg-background text-secondary ${inter.className} ${roboto.className}`}>{children}</body>
       </html>
     </ClerkProvider>
   )

@@ -15,6 +15,7 @@ const venueQueryString = `
     "url": venueMap.asset->url,
     "_id": venueMap.asset->_id
   },
+  tables
 `;
 
 const zodVenueQuery = zodVenueSchema.merge(
