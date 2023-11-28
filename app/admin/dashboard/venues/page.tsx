@@ -1,4 +1,4 @@
-import { getAllVenues } from "@/sanity/queries/venues";
+import { getAllVenues } from "@/sanity/queries/admin/venues";
 import FormTitleDivider from "../_components/FormTitleDivider";
 import VenueList from "./_components/VenueList";
 

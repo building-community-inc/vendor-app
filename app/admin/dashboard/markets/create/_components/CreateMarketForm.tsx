@@ -4,28 +4,14 @@ import FormTitleDivider from "../../../_components/FormTitleDivider";
 import FileInput from "@/app/_components/FileInput";
 import FormInput from "../../../_components/FormInput";
 import { FieldErrors, UseFormRegister, useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSubmitOnEnter } from "@/utils/hooks/useSubmitOnEnter";
-import { TVenueFront } from "@/sanity/queries/venues";
+import { TVenueFront } from "@/sanity/queries/admin/venues";
 import { VenueCard } from "../../../venues/_components/VenueListItem";
 import { create } from "zustand";
 import { useState } from "react";
+import { TMarketFormSchema, zodMarketFormSchema } from "@/zod/markets";
+import { useRouter } from "next/navigation";
 
-const zodDaySchema = z.string();
-
-const zodMarketFormSchema = z.object({
-  name: z.string().min(1, "Name of the Market is required"),
-  description: z.string().min(1, "Description of the Market is required"),
-  price: z.string().min(1, "Price per day is required"),
-  dates: z.array(zodDaySchema).min(1, "At least one day is required"),
-  marketCover: z
-    .string()
-    .optional()
-    .transform((refId) => ({ _type: "image", asset: { _ref: refId } })),
-});
-
-type TMarketFormSchema = z.infer<typeof zodMarketFormSchema>;
 
 const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
   const [selectedVenue, setSelectedVenue] = useState<TVenueFront | null>(null);
@@ -39,10 +25,12 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
     resolver: zodResolver(zodMarketFormSchema),
     // defaultValues,
   });
+
+  const router = useRouter();
   const fileId = useMarketImageIdStore((state) => state.fileId);
 
   const onSubmit = async (data: TMarketFormSchema) => {
-    console.log({ data, fileId });
+    // console.log({ data, fileId, selectedVenue });
 
     if (!fileId) {
       setError("marketCover", {
@@ -51,11 +39,21 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
       });
       return;
     }
+    // .patch(user._id)
+    // .set({ business: { _ref: res._id } })
 
+    if (!selectedVenue) {
+      setError("venue", {
+        type: "manual",
+        message: "Venue is required",
+      });
+      return;
+    }
     const marketObj = {
       ...data,
       _type: "market",
       marketCover: fileId,
+      venue: { _ref: selectedVenue._id },
     };
 
     try {
@@ -68,8 +66,8 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
       }).then(async (res) => {
         const body = await res.json();
         if (body._id) {
-          reset();
-          // router.push("/admin/dashboard/markets");
+          // reset();
+          router.push("/admin/dashboard/markets");
         }
       });
     } catch (error) {
@@ -77,7 +75,7 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
     }
   };
 
-  useSubmitOnEnter(() => handleSubmit(onSubmit));
+  // useSubmitOnEnter(() => handleSubmit(onSubmit));
 
   // console.log({ errors });
 
@@ -149,7 +147,7 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
               }`}
               key={venue._id}
             >
-              <VenueCard venue={venue} withAvailableTables/>
+              <VenueCard venue={venue} withAvailableTables />
             </button>
           ))}
         </ul>
@@ -292,7 +290,7 @@ const Days = ({
                   .split("-")
                   .map(Number);
                 const newDate = new Date(year, month - 1, day);
-                console.log({ newDate });
+                // console.log({ newDate });
                 changeCurrentDate(index, newDate);
               }}
             />

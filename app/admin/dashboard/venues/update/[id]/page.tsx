@@ -1,4 +1,4 @@
-import { getVenueById } from "@/sanity/queries/venues";
+import { getVenueById } from "@/sanity/queries/admin/venues";
 import CreateVenueForm from "../../create/_components/CreateVenueForm";
 
 

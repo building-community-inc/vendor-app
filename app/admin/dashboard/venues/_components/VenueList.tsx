@@ -1,4 +1,4 @@
-import { TVenueFront } from "@/sanity/queries/venues";
+import { TVenueFront } from "@/sanity/queries/admin/venues";
 import VenueListItem from "./VenueListItem";
 
 const VenueList = ({ venues }: { venues: TVenueFront[] }) => {

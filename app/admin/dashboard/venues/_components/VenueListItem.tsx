@@ -1,4 +1,4 @@
-import { TVenueFront } from "@/sanity/queries/venues";
+import { TVenueFront } from "@/sanity/queries/admin/venues";
 import { camelCaseToTitleCase } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";

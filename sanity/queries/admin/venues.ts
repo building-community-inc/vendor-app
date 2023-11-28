@@ -1,5 +1,5 @@
 import { zodVenueSchema } from "@/zod/venues";
-import { sanityClient } from "../lib/client";
+import { sanityClient } from "../../lib/client";
 import { z } from "zod";
 
 const venueQueryString = `
