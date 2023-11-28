@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 export const marketSchema = defineType({
   name: "market",
@@ -34,13 +34,73 @@ export const marketSchema = defineType({
       name: "marketCover",
       title: "Market Cover",
       type: "image",
-      options: { hotspot: true }
+      options: { hotspot: true },
     }),
     defineField({
       name: "venue",
       title: "Venue",
       type: "reference",
       to: [{ type: "venue" }],
-    })
+    }),
+    defineField({
+      name: "vendors",
+      title: "Vendors",
+      type: "array",
+      of: [
+        defineArrayMember({
+          name: "vendorDetails",
+          title: "Vendor Details",
+          type: "object",
+          fields: [
+            defineField({
+              name: "vendor",
+              title: "Vendor",
+              type: "reference",
+              to: [{ type: "user" }],
+            }),
+            defineField({
+              name: "datesSelected",
+              title: "Dates Selected",
+              type: "array",
+              of: [
+                defineArrayMember({
+                  name: "day",
+                  title: "Day",
+                  type: "object",
+                  fields: [
+                    defineField({
+                      name: "date",
+                      title: "Date",
+                      type: "string",
+                    }),
+                    defineField({
+                      name: "tableSelected",
+                      title: "Table Selected",
+                      type: "string",
+                    }),
+                    defineField({
+                      name: "tableConfirmed",
+                      title: "Table Confirmed",
+                      type: "string",
+                    }),
+                    defineField({
+                      name: "confirmed",
+                      title: "Confirmed",
+                      type: "boolean",
+                    })
+                  ],
+                }),
+              ],
+            }),
+
+            defineField({
+              name: "specialRequests",
+              title: "Special Requests",
+              type: "string",
+            }),
+          ],
+        }),
+      ],
+    }),
   ],
 });

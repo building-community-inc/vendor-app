@@ -2,14 +2,6 @@ import { sanityClient } from "@/sanity/lib/client";
 import { zodMarketFormSchema } from "@/zod/markets";
 import { z } from "zod";
 
-const basicVenueString = `
-  title,
-  address,  
-  city,
-  tables
-,
-`;
-
 const marketQueryString = `
   _id,
   name,
@@ -55,20 +47,12 @@ const zodMarketQuery = zodMarketFormSchema.merge(
 );
 export type TSanityMarket = z.infer<typeof zodMarketQuery>;
 
-// const zodIndividualMarketQuery = zodMarketQuery.merge(
-//   z.object({
-//     venue: z.object({
-//       venueMap: z.string(),
-//     }),
-//   })
-//   );
-  // export type TIndividualSanityMarket = z.infer<typeof zodMarketQuery>;
-  const zodMarketQueryArray = z.array(zodMarketQuery);
-  export const getAllMarkets = async () => {
+const zodMarketQueryArray = z.array(zodMarketQuery);
+export const getAllMarkets = async () => {
   try {
     const result = await sanityClient.fetch(
       `*[_type == 'market']{
-      ${marketQueryString},
+        ${marketQueryString}
       }`
     );
 
