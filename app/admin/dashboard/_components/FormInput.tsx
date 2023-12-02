@@ -1,3 +1,5 @@
+import { createDateString } from "@/utils/helpers";
+import { useState } from "react";
 import { Path, FieldValues, UseFormRegister } from "react-hook-form";
 type FormInputName<TFormValues extends FieldValues> =
   | keyof TFormValues
@@ -33,7 +35,7 @@ type TInputProps<TFormValues extends FieldValues> = TCommonProps<TFormValues> &
       }
   );
 const FormInput = <TFormValues extends FieldValues>({
-  key = "",
+  // key = "",
   name,
   placeholder,
   className = "",
@@ -46,24 +48,33 @@ const FormInput = <TFormValues extends FieldValues>({
   minDate = undefined,
   controlled,
 }: TInputProps<TFormValues>) => {
+  const [date, setDate] = useState(createDateString(new Date(value || "")));
+
   if (type === "date") {
     return (
       <InputSection title={title}>
         <label htmlFor={name} className="relative">
           <input
-            key={key}
+            // key={key}
             {...register(name)}
-            onChange={onDateChange}
+            onChange={(e) => {
+              setDate(e.target.value);
+              if (onDateChange) {
+                onDateChange(e);
+              }
+              // onDateChange(e);
+            }
+          }
             type="date"
             name={name}
             placeholder={placeholder}
-            value={value}
+            value={date}
             min={minDate}
-            className={`pl-5 border text-white border-secondary-admin-border rounded-[20px] py-2 px-3 ${className}`}
+            className={`pl-5 border text-black border-secondary-admin-border rounded-[20px] py-2 px-3 ${className}`}
           />
-          <div className="absolute top-1/2 -translate-y-1/2 translate-x-4 bg-white h-2/5 place-content-center grid">
+          {/* <div className="absolute top-1/2 -translate-y-1/2 translate-x-4 bg-white h-2/5 place-content-center grid">
             {value}
-          </div>
+          </div> */}
         </label>
       </InputSection>
     );

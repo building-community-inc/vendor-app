@@ -11,7 +11,7 @@ import { create } from "zustand";
 import { useState } from "react";
 import { TMarketFormSchema, zodMarketFormSchema } from "@/zod/markets";
 import { useRouter } from "next/navigation";
-
+import { createDateString } from "@/utils/helpers";
 
 const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
   const [selectedVenue, setSelectedVenue] = useState<TVenueFront | null>(null);
@@ -19,6 +19,7 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
     register,
     handleSubmit,
     reset,
+    control,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<TMarketFormSchema>({
@@ -26,6 +27,7 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
     // defaultValues,
   });
 
+  const { days, removeAllDays } = useDaysStore((state) => state);
   const router = useRouter();
   const fileId = useMarketImageIdStore((state) => state.fileId);
 
@@ -39,8 +41,6 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
       });
       return;
     }
-    // .patch(user._id)
-    // .set({ business: { _ref: res._id } })
 
     if (!selectedVenue) {
       setError("venue", {
@@ -54,7 +54,9 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
       _type: "market",
       marketCover: fileId,
       venue: { _ref: selectedVenue._id },
+      dates: days.map((day) => createDateString(day.date)),
     };
+    console.log({ marketObj, data, days });
 
     try {
       await fetch(`/admin/dashboard/markets/create/api`, {
@@ -66,8 +68,9 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
       }).then(async (res) => {
         const body = await res.json();
         if (body._id) {
-          // reset();
+          reset();
           router.push("/admin/dashboard/markets");
+          removeAllDays();
         }
       });
     } catch (error) {
@@ -188,6 +191,7 @@ type DaysStore = {
   addDay: (newDate?: Date) => void;
   removeDay: (index: number) => void;
   changeCurrentDate: (index: number, newDate: Date) => void;
+  removeAllDays: () => void;
 };
 export const useDaysStore = create<DaysStore>((set) => ({
   days: [],
@@ -215,16 +219,18 @@ export const useDaysStore = create<DaysStore>((set) => ({
       days: state.days.filter((_, i) => i !== index),
     })),
   changeCurrentDate: (index: number, newDate: Date) =>
-    set((state) => ({
-      ...state,
-      days: state.days.map((day, i) => {
-        if (i === index) {
-          return { ...day, date: newDate };
-        }
-        return day;
-      }),
-    })),
+    set((state) => {
+      const newDays = [...state.days];
+
+      newDays[index] = { date: newDate };
+      return {
+        ...state,
+        days: newDays,
+      };
+    }),
+  removeAllDays: () => set((state) => ({ ...state, days: [] })),
 }));
+
 const Days = ({
   register,
   errors,
@@ -241,8 +247,8 @@ const Days = ({
     })
   );
 
-  const addDayToStore = (event: React.FormEvent) => {
-    event.preventDefault();
+  const addDayToStore = () => {
+    // event.preventDefault();
     addDay();
   };
 
@@ -252,18 +258,19 @@ const Days = ({
   ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
   // console.log({ errors });
   return (
-    <>
+    <ul>
       <button type="button" className="w-fit" onClick={addDayToStore}>
         + Add Day
       </button>
       {days.map(({ date }, index) => {
+        const dateString = createDateString(date);
         return (
-          <div className="relative" key={index}>
+          <li className="relative" key={index}>
             {/* {days.length > 1 && ( */}
             <button
-              className="absolute -top-1 right-0"
-              onClick={(e) => {
-                e.preventDefault();
+              className="absolute -top-1 right-0 z-10"
+              type="button"
+              onClick={() => {
                 removeDay(index);
               }}
             >
@@ -271,9 +278,7 @@ const Days = ({
             </button>
             {/* )} */}
             <FormInput
-              key={`${date.getFullYear()}-${String(
-                date.getMonth() + 1
-              ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`}
+              key={dateString}
               register={register}
               name={`dates[${index}]` as any}
               placeholder={date.toDateString()}
@@ -281,20 +286,18 @@ const Days = ({
               type="date"
               title={`Day ${index + 1}`}
               minDate={minDate}
-              value={`${date.getFullYear()}-${String(
-                date.getMonth() + 1
-              ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`}
+              value={date}  
               onDateChange={(e) => {
-                e.preventDefault();
+                // e.preventDefault();
                 const [year, month, day] = e.target.value
                   .split("-")
                   .map(Number);
                 const newDate = new Date(year, month - 1, day);
-                // console.log({ newDate });
-                changeCurrentDate(index, newDate);
+                console.log({ newDate });
+                // changeCurrentDate(index, newDate);
               }}
             />
-          </div>
+          </li>
         );
       })}
       {errors && (
@@ -303,6 +306,6 @@ const Days = ({
           {errors.dates?.message}
         </span>
       )}
-    </>
+    </ul>
   );
 };

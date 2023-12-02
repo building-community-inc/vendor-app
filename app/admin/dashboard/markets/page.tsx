@@ -31,7 +31,7 @@ export default Page;
 const MarketList = ({ markets }: { markets: TSanityMarket[] }) => {
   // console.log("dates", markets[0].dates);
   return (
-    <ul>
+    <ul className="flex flex-col gap-5">
       {markets.map((market) => {
         const dateToDisplay = dateArrayToDisplayableText(market.dates);
         return (

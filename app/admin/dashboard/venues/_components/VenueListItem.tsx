@@ -30,7 +30,7 @@ export const VenueCard = ({ venue, withAvailableTables }: TVenueCardProps) => {
           width={"500"}
           height={"500"}
           alt={venue.title}
-          className="w-full"
+          className="w-full max-w-[500px] mx-auto"
         />
       )}
       <div className="flex items-center">

@@ -34,3 +34,6 @@ export const formatMarketDate = function(date: string): string {
   return formattedDate;
 }
 
+export const createDateString = (date: Date): string => {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+};

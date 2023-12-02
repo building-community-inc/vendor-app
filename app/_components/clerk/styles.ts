@@ -3,7 +3,6 @@ export const clerkLoginAppearance = {
     colorBackground: "transparent",
     colorPrimary: "#fff",
     colorText: "#fff",
-    colorInputText: "#fff",
   },
   elements: {
     card: {

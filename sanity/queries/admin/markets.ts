@@ -31,6 +31,11 @@ const individualMarketQueryString = `
     tables,
     "venueMap": venueMap.asset->url
   },
+  "vendors": vendors[] {
+    vendor,
+    datesSelected,
+    specialRequests
+  } 
 `;
 const zodMarketQuery = zodMarketFormSchema.merge(
   z.object({

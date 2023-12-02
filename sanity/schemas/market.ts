@@ -56,7 +56,7 @@ export const marketSchema = defineType({
               name: "vendor",
               title: "Vendor",
               type: "reference",
-              to: [{ type: "user" }],
+              to: [{ type: "user",  }]
             }),
             defineField({
               name: "datesSelected",
