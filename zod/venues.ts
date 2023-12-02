@@ -12,20 +12,21 @@ export const zodVenueSchema = z.object({
     .string()
     .optional()
     .transform((refId) => ({ _type: "image", asset: { _ref: refId } })),
-  tables: z.array(z.string()),
+  // tables: z.array(z.any()).optional(),
 });
 
 export const zodVenueFormSchema = zodVenueSchema.merge(
   z.object({
     _type: z.literal("venue"),
     _id: z.string().optional(),
+    tables: z.array(z.string()).min(1, "At least one table is required"),
   })
 );
 
-export const zodSanityVenue = zodVenueSchema.merge(
+export const zodSanityVenue = zodVenueFormSchema.merge(
   z.object({
-    _id: z.string().optional(),
-    _type: z.literal("venue"),
+    // _id: z.string().optional(),
+    // _type: z.literal("venue"),
     venueMap: z.object({
       _type: z.literal("image"),
       asset: z

@@ -1,4 +1,3 @@
-import { createDateString } from "@/utils/helpers";
 import { useState } from "react";
 import { Path, FieldValues, UseFormRegister } from "react-hook-form";
 type FormInputName<TFormValues extends FieldValues> =
@@ -14,19 +13,19 @@ type TCommonProps<TFormValues extends FieldValues> = {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   minDate?: string | undefined;
   controlled?: boolean;
+  value?: string | Date;
 };
 
 type TInputProps<TFormValues extends FieldValues> = TCommonProps<TFormValues> &
   (
     | {
         type?: "input" | "textarea" | "price";
-        value?: string;
         onDateChange?: never;
         minDate?: never;
       }
     | {
         type: "date";
-        value: string;
+        // value: Date;
         onDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
         minDate?: string;
         // name: string;
@@ -48,8 +47,17 @@ const FormInput = <TFormValues extends FieldValues>({
   minDate = undefined,
   controlled,
 }: TInputProps<TFormValues>) => {
-  const [date, setDate] = useState(createDateString(new Date(value || "")));
+  const [inputValue, setInputValue] = useState(() => {
+    if (value instanceof Date) {
+      return value.toISOString().substring(0, 10);
+    } else if (typeof value === "string") {
+      return value;
+    } else {
+      return "";
+    }
+  });
 
+  
   if (type === "date") {
     return (
       <InputSection title={title}>
@@ -58,17 +66,16 @@ const FormInput = <TFormValues extends FieldValues>({
             // key={key}
             {...register(name)}
             onChange={(e) => {
-              setDate(e.target.value);
+              setInputValue(e.target.value);
               if (onDateChange) {
                 onDateChange(e);
               }
               // onDateChange(e);
-            }
-          }
+            }}
             type="date"
             name={name}
             placeholder={placeholder}
-            value={date}
+            value={inputValue}
             min={minDate}
             className={`pl-5 border text-black border-secondary-admin-border rounded-[20px] py-2 px-3 ${className}`}
           />
@@ -94,6 +101,7 @@ const FormInput = <TFormValues extends FieldValues>({
   }
 
   if (controlled) {
+    console.log({ value }, "controlled")
     return (
       <InputSection title={title}>
         <input
@@ -101,10 +109,16 @@ const FormInput = <TFormValues extends FieldValues>({
           type="input"
           name={name}
           placeholder={placeholder}
-          value={value}
+          value={value as string}
           onChange={onChange}
-          className={`border border-secondary-admin-border rounded-[20px] py-2 px-3 ${className}`}
-        />
+          // contentEditable="false"
+          // hidden
+          // className="hidden"
+          />
+        <div
+          className={`border border-secondary-admin-border rounded-[20px] py-2 px-3 w-1/2 ${className}`}
+        //  className=""
+         >{value as string}</div>
       </InputSection>
     );
   }

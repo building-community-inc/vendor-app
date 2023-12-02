@@ -38,6 +38,8 @@ const CreateVenueForm = ({
   const router = useRouter();
 
   const fileId = useVenueImageIdStore((state) => state.fileId);
+  console.log({ fileId });
+  const tables = useTableStore((state) => state.tables);
 
   const formInputs = Object.keys(zodVenueSchema.shape)
     .filter((key) => key !== "venueMap")
@@ -49,7 +51,7 @@ const CreateVenueForm = ({
     }) as { name: keyof TVenue; title: string }[];
 
   const onSubmit = async (data: TVenue) => {
-    if (defaultImage && !defaultImage._id && !fileId) {
+    if (fileId.length === 0 && !defaultImage) {
       setError("venueMap", {
         type: "manual",
         message: "Venue Map is required",
@@ -61,44 +63,64 @@ const CreateVenueForm = ({
       _type: "venue",
       venueMap: defaultImage ? defaultImage._id : fileId,
       _id: defaultValues ? defaultValues._id : undefined,
+      tables,
     };
 
     const parsedVenueObj = zodVenueFormSchema.safeParse(venueObj);
 
     if (!parsedVenueObj.success) {
-      throw new Error(parsedVenueObj.error.message);
-    }
-
-    try {
-      await fetch(
-        `/admin/dashboard/venues/${defaultValues ? "update" : "create"}/api/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(parsedVenueObj.data),
+      let errorMessage = parsedVenueObj.error.message;
+      if (typeof errorMessage === "string") {
+        try {
+          let errorObj = JSON.parse(errorMessage);
+          if (
+            Array.isArray(errorObj) &&
+            errorObj.length > 0 &&
+            "message" in errorObj[0]
+          ) {
+            errorMessage = errorObj[0].message;
+          }
+        } catch (e) {
+          console.error("Error parsing error message:", e);
         }
-      ).then(async (res) => {
+      }
+
+      console.log("err", errorMessage);
+      setError("root", { type: "manual", message: errorMessage });
+    }
+    else {
+      try {
+        const res = await fetch(
+          `/admin/dashboard/venues/${defaultValues ? "update" : "create"}/api/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(parsedVenueObj.data),
+          }
+        );
+
         const body = await res.json();
         if (body._id) {
           reset();
           router.push("/admin/dashboard/venues");
         }
-      });
-    } catch (error) {
-      console.error(error);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
   useSubmitOnEnter(() => handleSubmit(onSubmit));
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-2 pb-10"
     >
       {formInputs
-        .filter(({ name }) => name !== "tables")
+        // .filter(({ name }) => name !== "tables")
         .map(({ name, title }) => {
           return (
             <VenueFormInputComp
@@ -151,10 +173,14 @@ const CreateVenueForm = ({
         </span>
       )}
 
-      {!!fileId ||
+      {/* {!!fileId ||
         (!!defaultImage && (
-          <Tables register={register} defaultTables={defaultValues.tables} />
-        ))}
+          ))} */}
+
+      <Tables register={register} defaultTables={defaultValues?.tables || []} />
+      {errors && errors.root && (
+        <span className="text-red-500 text-center">{errors.root.message}</span>
+      )}
       <button
         type="submit"
         disabled={isSubmitting}
@@ -215,7 +241,8 @@ const useTableStore = create<TableStore>((set) => ({
         const lastTableItem = +state.tables[state.tables.length - 1];
         const newTableItem = lastTableItem + 1;
         const newTables = [...state.tables, newTableItem.toString()];
-        return { tables: newTables};
+        console.log(newTables, "newTables");
+        return { tables: newTables };
       }
       return { tables: [...state.tables, table] };
     }),
@@ -248,7 +275,7 @@ const Tables = ({
       resetTables();
       defaultTables.forEach((table) => addTable(table));
     }
-  }, [])
+  }, []);
   return (
     <div>
       <h4 className="font-bold text-lg text-center">Tables</h4>
@@ -258,18 +285,24 @@ const Tables = ({
       <ul className="flex flex-col gap-2">
         {tables.map((table, i) => (
           <li key={i} className="flex justify-between">
-            <FormInput
+            {/* <FormInput
               name={`tables[${i}]` as any}
               register={register}
               placeholder="table number"
               type="input"
               value={table}
               onChange={(e) => {
-                e.preventDefault();
+                // e.preventDefault();
                 changeTableValue(i, e.target.value);
               }}
               controlled
-            />
+            /> */}
+
+            <div
+              className={`border border-secondary-admin-border rounded-[20px] py-2 px-3 w-1/2`}
+            >
+              {table}
+            </div>
             <button type="button" onClick={() => removeTable(table)}>
               - remove table
             </button>

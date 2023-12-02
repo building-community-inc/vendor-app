@@ -58,7 +58,7 @@ export const VenueCard = ({ venue, withAvailableTables }: TVenueCardProps) => {
           <div className="mx-auto w-fit">
             <TableView
               title="Available Tables"
-              amount={venue.tables.length}
+              amount={venue?.tables?.length || 0}
               // type="available"
             />
           </div>

@@ -25,6 +25,10 @@ const zodVenueQuery = zodVenueSchema.merge(
       url: z.string(),
       _id: z.string(),
     }),
+    // tables: z.array(z.string()).optional().nullable(),
+      tables: z.array(z.any()).optional(),
+
+    loadInInstructions: z.string().optional().nullable(),
   })
 );
 
