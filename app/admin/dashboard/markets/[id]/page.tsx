@@ -12,7 +12,6 @@ const Page = async ({
   };
 }) => {
   const market = await getMarketById(params.id);
-  console.log({ market });
 
   if (!market) return <div>loading...</div>;
 

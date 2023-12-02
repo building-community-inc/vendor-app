@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Path, FieldValues, UseFormRegister } from "react-hook-form";
 type FormInputName<TFormValues extends FieldValues> =
   | keyof TFormValues
@@ -47,45 +46,53 @@ const FormInput = <TFormValues extends FieldValues>({
   minDate = undefined,
   controlled,
 }: TInputProps<TFormValues>) => {
-  const [inputValue, setInputValue] = useState(() => {
-    if (value instanceof Date) {
-      return value.toISOString().substring(0, 10);
-    } else if (typeof value === "string") {
-      return value;
-    } else {
-      return "";
-    }
-  });
+  // const [inputValue, setInputValue] = useState<string | Date>(() => {
+  //   if (value instanceof Date) {
+  //     return value.toISOString().substring(0, 10);
+  //   } else if (typeof value === "string") {
+  //     return value;
+  //   } else {
+  //     return "";
+  //   }
+  // });
 
-  
-  if (type === "date") {
-    return (
-      <InputSection title={title}>
-        <label htmlFor={name} className="relative">
-          <input
-            // key={key}
-            {...register(name)}
-            onChange={(e) => {
-              setInputValue(e.target.value);
-              if (onDateChange) {
-                onDateChange(e);
-              }
-              // onDateChange(e);
-            }}
-            type="date"
-            name={name}
-            placeholder={placeholder}
-            value={inputValue}
-            min={minDate}
-            className={`pl-5 border text-black border-secondary-admin-border rounded-[20px] py-2 px-3 ${className}`}
-          />
-          {/* <div className="absolute top-1/2 -translate-y-1/2 translate-x-4 bg-white h-2/5 place-content-center grid">
-            {value}
-          </div> */}
-        </label>
-      </InputSection>
-    );
-  }
+  // useEffect(() => {
+  //   console.log({ value }, "useEffect");
+  //   if (type === "date") {
+  //     // const newValue =
+  //       // value instanceof Date ? value.toISOString().substring(0, 10) : value;
+  //     setInputValue(value);
+  //   }
+  // }, [value]);
+
+  // if (type === "date") {
+  //   return (
+  //     <InputSection title={title}>
+  //       <label htmlFor={name} className="relative">
+  //         <input
+  //           // key={key}
+  //           {...register(name)}
+  //           onChange={(e) => {
+  //             setInputValue(e.target.value);
+  //             if (onDateChange) {
+  //               onDateChange(e);
+  //             }
+  //             // onDateChange(e);
+  //           }}
+  //           type="date"
+  //           name={name}
+  //           placeholder={placeholder}
+  //           value={inputValue}
+  //           min={minDate}
+  //           className={`pl-5 border text-black border-secondary-admin-border rounded-[20px] py-2 px-3 ${className}`}
+  //         />
+  //         {/* <div className="absolute top-1/2 -translate-y-1/2 translate-x-4 bg-white h-2/5 place-content-center grid">
+  //           {value}
+  //         </div> */}
+  //       </label>
+  //     </InputSection>
+  //   );
+  // }
 
   if (type === "textarea") {
     return (
@@ -101,7 +108,7 @@ const FormInput = <TFormValues extends FieldValues>({
   }
 
   if (controlled) {
-    console.log({ value }, "controlled")
+    console.log({ value }, "controlled");
     return (
       <InputSection title={title}>
         <input
@@ -114,11 +121,13 @@ const FormInput = <TFormValues extends FieldValues>({
           // contentEditable="false"
           // hidden
           // className="hidden"
-          />
+        />
         <div
           className={`border border-secondary-admin-border rounded-[20px] py-2 px-3 w-1/2 ${className}`}
-        //  className=""
-         >{value as string}</div>
+          //  className=""
+        >
+          {value as string}
+        </div>
       </InputSection>
     );
   }

@@ -13,9 +13,8 @@ const Page = async () => {
 
   const markets = await getAllMarkets();
 
-  console.log({ markets });
   return (
-    <main className="pt-10 px-5 w-full">
+    <main className="pt-10 px-5 w-full min-h-screen">
       <h1 className="font-bold text-xl">Markets</h1>
       <FormTitleDivider title="Live Markets" />
       <MarketList markets={markets || []} />
@@ -32,7 +31,7 @@ const MarketList = ({ markets }: { markets: TSanityMarket[] }) => {
   // console.log("dates", markets[0].dates);
   return (
     <ul className="flex flex-col gap-5">
-      {markets.map((market) => {
+      {markets.length > 0 ? markets.map((market) => {
         const dateToDisplay = dateArrayToDisplayableText(market.dates);
         return (
           <li
@@ -44,7 +43,7 @@ const MarketList = ({ markets }: { markets: TSanityMarket[] }) => {
             </Link>
           </li>
         );
-      })}
+      }) : <p className="place-self-center">No markets found</p>}
     </ul>
   );
 };

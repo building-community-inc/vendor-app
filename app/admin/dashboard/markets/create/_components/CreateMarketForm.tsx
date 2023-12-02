@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TVenueFront } from "@/sanity/queries/admin/venues";
 import { VenueCard } from "../../../venues/_components/VenueListItem";
 import { create } from "zustand";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { TMarketFormSchema, zodMarketFormSchema } from "@/zod/markets";
 import { useRouter } from "next/navigation";
 import { createDateString } from "@/utils/helpers";
@@ -56,7 +56,6 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
       venue: { _ref: selectedVenue._id },
       dates: days.map((day) => createDateString(day.date)),
     };
-    console.log({ marketObj, data, days });
 
     try {
       await fetch(`/admin/dashboard/markets/create/api`, {
@@ -195,11 +194,8 @@ type DaysStore = {
 };
 export const useDaysStore = create<DaysStore>((set) => ({
   days: [],
-  addDay: (newDate?: Date) =>
+  addDay: () =>
     set((state) => {
-      if (newDate) {
-        return { ...state, days: [...state.days, { date: newDate }] };
-      }
 
       if (state.days.length === 0) {
         return { ...state, days: [{ date: new Date() }] };
@@ -210,7 +206,7 @@ export const useDaysStore = create<DaysStore>((set) => ({
         lastDate.getFullYear(),
         lastDate.getMonth(),
         lastDate.getDate() + 1
-      );
+        );
       return { ...state, days: [...state.days, { date: nextDate }] };
     }),
   removeDay: (index: number) =>
@@ -223,6 +219,7 @@ export const useDaysStore = create<DaysStore>((set) => ({
       const newDays = [...state.days];
 
       newDays[index] = { date: newDate };
+
       return {
         ...state,
         days: newDays,
@@ -253,17 +250,23 @@ const Days = ({
   };
 
   const today = new Date();
-  const minDate = `${today.getFullYear()}-${String(
-    today.getMonth() + 1
-  ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
+  const minDate = useMemo(() => {
+    const today = new Date();
+    return days.length === 0 ? `${today.getFullYear()}-${String(
+      today.getMonth() + 1
+    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`
+    :  
+    days[days.length - 1] ? `${days[days.length - 1].date.getFullYear()}-${String(
+      days[days.length - 1].date.getMonth() + 1
+    ).padStart(2, "0")}-${String(days[days.length - 1].date.getDate()).padStart(2, "0")}` : ""
+  }, [days]);
   return (
-    <ul>
+    <ul className="flex flex-col gap-2">
       <button type="button" className="w-fit" onClick={addDayToStore}>
         + Add Day
       </button>
       {days.map(({ date }, index) => {
-        const dateString = createDateString(date);
+        // const dateString = createDateString(date);
         return (
           <li className="relative" key={index}>
             {/* {days.length > 1 && ( */}
@@ -276,27 +279,34 @@ const Days = ({
             >
               - remove day
             </button>
-            {/* )} */}
-            <FormInput
-              key={dateString}
-              register={register}
-              name={`dates[${index}]` as any}
-              placeholder={date.toDateString()}
-              className="w-full"
-              type="date"
-              title={`Day ${index + 1}`}
-              minDate={minDate}
-              value={date}  
-              onDateChange={(e) => {
-                // e.preventDefault();
-                const [year, month, day] = e.target.value
-                  .split("-")
-                  .map(Number);
-                const newDate = new Date(year, month - 1, day);
-                console.log({ newDate });
-                // changeCurrentDate(index, newDate);
-              }}
-            />
+            
+            <label htmlFor={`dates[${index}]`} className="relative">
+              <input
+                // key={key}
+                {...register(`dates[${index}]` as any)}
+                onChange={(e) => {
+                  // setInputValue(e.target.value);
+                  // if (onDateChange) {
+                  const [year, month, day] = e.target.value
+                    .split("-")
+                    .map(Number);
+                  const newDate = new Date(year, month - 1, day);
+                  // console.log({ newDate });
+                  changeCurrentDate(index, newDate); // }
+                  // onDateChange(e);
+                }}
+                type="date"
+                name={`dates[${index}]`}
+                placeholder={date.toDateString()}
+                value={date.toISOString().substring(0, 10)}
+                // min={minDate}
+                className={`pl-5 border text-black border-secondary-admin-border rounded-[20px] py-2 px-3 `}
+              />
+              {/* <>{date.toDateString()}</> */}
+              {/* <div className="absolute top-1/2 -translate-y-1/2 translate-x-4 bg-white h-2/5 place-content-center grid">
+            {value}
+          </div> */}
+            </label>
           </li>
         );
       })}

@@ -38,7 +38,6 @@ const CreateVenueForm = ({
   const router = useRouter();
 
   const fileId = useVenueImageIdStore((state) => state.fileId);
-  console.log({ fileId });
   const tables = useTableStore((state) => state.tables);
 
   const formInputs = Object.keys(zodVenueSchema.shape)
@@ -85,7 +84,6 @@ const CreateVenueForm = ({
         }
       }
 
-      console.log("err", errorMessage);
       setError("root", { type: "manual", message: errorMessage });
     }
     else {
@@ -241,7 +239,6 @@ const useTableStore = create<TableStore>((set) => ({
         const lastTableItem = +state.tables[state.tables.length - 1];
         const newTableItem = lastTableItem + 1;
         const newTables = [...state.tables, newTableItem.toString()];
-        console.log(newTables, "newTables");
         return { tables: newTables };
       }
       return { tables: [...state.tables, table] };
