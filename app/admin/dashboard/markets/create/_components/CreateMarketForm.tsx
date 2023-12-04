@@ -54,8 +54,10 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
       _type: "market",
       marketCover: fileId,
       venue: { _ref: selectedVenue._id },
-      dates: days.map((day) => createDateString(day.date)),
+      dates: days.map((day) => day.date),
     };
+
+    // console.log({marketObj, days})
 
     try {
       await fetch(`/admin/dashboard/markets/create/api`, {
@@ -183,7 +185,7 @@ const FormSection = ({
 };
 
 type Day = {
-  date: Date;
+  date: string;
 };
 type DaysStore = {
   days: Day[];
@@ -196,18 +198,29 @@ export const useDaysStore = create<DaysStore>((set) => ({
   days: [],
   addDay: () =>
     set((state) => {
-
+      const offset = -5; // Offset for EST timezone
       if (state.days.length === 0) {
-        return { ...state, days: [{ date: new Date() }] };
+        const today = new Date();
+        const estToday = new Date(
+          today.getUTCFullYear(),
+          today.getUTCMonth(),
+          today.getUTCDate(),
+          offset
+        );
+        return { ...state, days: [{ date: createDateString(estToday) }] };
       }
 
       const lastDate = new Date(state.days[state.days.length - 1].date);
       const nextDate = new Date(
-        lastDate.getFullYear(),
-        lastDate.getMonth(),
-        lastDate.getDate() + 1
-        );
-      return { ...state, days: [...state.days, { date: nextDate }] };
+        lastDate.getUTCFullYear(),
+        lastDate.getUTCMonth(),
+        lastDate.getUTCDate() + 2,
+        offset
+      );
+      return {
+        ...state,
+        days: [...state.days, { date: createDateString(nextDate) }],
+      };
     }),
   removeDay: (index: number) =>
     set((state) => ({
@@ -218,7 +231,7 @@ export const useDaysStore = create<DaysStore>((set) => ({
     set((state) => {
       const newDays = [...state.days];
 
-      newDays[index] = { date: newDate };
+      newDays[index] = { date: createDateString(newDate) };
 
       return {
         ...state,
@@ -249,17 +262,6 @@ const Days = ({
     addDay();
   };
 
-  const today = new Date();
-  const minDate = useMemo(() => {
-    const today = new Date();
-    return days.length === 0 ? `${today.getFullYear()}-${String(
-      today.getMonth() + 1
-    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`
-    :  
-    days[days.length - 1] ? `${days[days.length - 1].date.getFullYear()}-${String(
-      days[days.length - 1].date.getMonth() + 1
-    ).padStart(2, "0")}-${String(days[days.length - 1].date.getDate()).padStart(2, "0")}` : ""
-  }, [days]);
   return (
     <ul className="flex flex-col gap-2">
       <button type="button" className="w-fit" onClick={addDayToStore}>
@@ -279,7 +281,7 @@ const Days = ({
             >
               - remove day
             </button>
-            
+
             <label htmlFor={`dates[${index}]`} className="relative">
               <input
                 // key={key}
@@ -297,8 +299,8 @@ const Days = ({
                 }}
                 type="date"
                 name={`dates[${index}]`}
-                placeholder={date.toDateString()}
-                value={date.toISOString().substring(0, 10)}
+                placeholder={date}
+                value={new Date(date).toISOString().slice(0, 10)}
                 // min={minDate}
                 className={`pl-5 border text-black border-secondary-admin-border rounded-[20px] py-2 px-3 `}
               />

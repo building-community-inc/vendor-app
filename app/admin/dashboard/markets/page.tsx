@@ -12,7 +12,7 @@ const Page = async () => {
   // const venues = await getAllVenues();
 
   const markets = await getAllMarkets();
-
+  // console.log({markets, last: markets[1]?.dates})
   return (
     <main className="pt-10 px-5 w-full min-h-screen">
       <h1 className="font-bold text-xl">Markets</h1>
