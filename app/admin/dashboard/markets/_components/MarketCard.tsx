@@ -10,23 +10,28 @@ const MarketCard = ({
   dateToDisplay: string;
 }) => {
   return (
-    <article className="flex flex-col gap-2 border rounded-[20px] p-2  border-[#292929] shadow-[0px_3px_6px_#00000029]">
-      <header className="flex justify-between">
-        <div>
+    <article className="h-[645px] flex flex-col gap-2 border rounded-[20px] overflow-hidden  border-[#292929] shadow-[0px_3px_6px_#00000029]">
+      <header className="flex justify-between h-[60%] w-full">
+        <Image
+          src={market.marketCover}
+          width={500}
+          height={387}
+          alt={market.name}
+          className="w-full max-h-full object-cover"
+        />
+      </header>
+      <section className="px-2 my-2 flex justify-between">
+        <article>
           <h4 className="font-bold font-roboto text-sm">{dateToDisplay}</h4>
           <h4 className="font-bold font-roboto text-sm">{market.name}</h4>
           <p>{market.venue.title}</p>
           <p>{market.venue.address}</p>
-        </div>
-        <Image
-          src={market.marketCover}
-          width={500}
-          height={350}
-          alt={market.name}
-          className="w-1/2 object-cover"
-        />
-      </header>
-      <div className="flex gap-4 justify-evenly">
+        </article>
+        <p>
+          <strong> {market.price}</strong> per table
+        </p>
+      </section>
+      <footer className="flex gap-4 justify-evenly">
         <TableView
           amount={market.venue.tables.length}
           title="Available Tables"
@@ -41,7 +46,7 @@ const MarketCard = ({
           title="Vendors Confirmed"
           type="confirmed"
         />
-      </div>
+      </footer>
     </article>
   );
 };
