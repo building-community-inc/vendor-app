@@ -14,7 +14,7 @@ const Page = async () => {
   const markets = await getAllMarkets();
   // console.log({markets, last: markets[1]?.dates})
   return (
-    <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto">
+    <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto w-[80%]">
       <h1 className="font-bold text-xl">Markets</h1>
       <FormTitleDivider title="Live Markets" />
       <MarketList markets={markets || []} />
