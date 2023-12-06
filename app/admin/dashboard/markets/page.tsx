@@ -14,7 +14,7 @@ const Page = async () => {
   const markets = await getAllMarkets();
   // console.log({markets, last: markets[1]?.dates})
   return (
-    <main className="pt-10 px-5 w-full min-h-screen max-w-3xl mx-auto">
+    <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto">
       <h1 className="font-bold text-xl">Markets</h1>
       <FormTitleDivider title="Live Markets" />
       <MarketList markets={markets || []} />
@@ -29,7 +29,7 @@ export default Page;
 const MarketList = ({ markets }: { markets: TSanityMarket[] }) => {
   // console.log("dates", markets[0].dates);
   return (
-    <ul className="flex flex-col gap-[15px]">
+    <ul className="flex flex-col gap-[15px] mt-5">
       {markets.length > 0 ? (
         markets.map((market) => {
           const dateToDisplay = dateArrayToDisplayableText(market.dates);

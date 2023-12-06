@@ -25,7 +25,7 @@ const Page = async ({params}: {
     tables
   }
   return (
-    <main className="pt-10 px-5 w-full">
+    <main className="pt-14 px-5 w-full">
       <h1 className="font-bold text-xl">Update Venue {defaultValues?.title}</h1>
       <section className="w-full">
         <CreateVenueForm

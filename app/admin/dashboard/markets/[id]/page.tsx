@@ -18,7 +18,7 @@ const Page = async ({
   const dateToDisplay = dateArrayToDisplayableText(market.dates);
 
   return (
-    <main className="pt-10 px-5 w-full flex flex-col gap-8">
+    <main className="pt-14 px-5 w-full flex flex-col gap-8">
       <h1 className="font-bold text-xl">{market?.name}</h1>
       <MarketCard market={market} dateToDisplay={dateToDisplay} />
       {market.venue.venueMap && (

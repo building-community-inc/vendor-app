@@ -9,7 +9,7 @@ const Page = async () => {
   const venues = await getAllVenues();
 
   return (
-    <main className="pt-10 px-5 w-full">
+    <main className="pt-14 px-5 w-full">
       <h1 className="font-bold text-xl">Venues</h1>
       <FormTitleDivider title="Live Venues" />
       {venues && <VenueList venues={venues} />}
