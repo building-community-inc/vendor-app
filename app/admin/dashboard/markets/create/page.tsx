@@ -10,7 +10,7 @@ const Page = async () => {
 
   // console.log({ venues });
   return (
-    <main className="pt-14 px-5 w-full">
+    <main className="pt-14 px-5 w-full max-w-3xl mx-auto">
       <h1 className="font-bold text-xl">Create New Market</h1>
       <section className="w-full pb-10">
         <CreateMarketForm venues={venues ?? []} />
