@@ -37,11 +37,4 @@ export const getSanityUserByEmail = async (email: string) => {
 
     return validatedUser.data;
 
-    // console.log({user});
-
-    // if (!user) {
-    //     throw new Error(`No user found with email ${email}`);
-    // }
-
-    // return user;
 }

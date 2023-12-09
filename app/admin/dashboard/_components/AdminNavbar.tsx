@@ -3,12 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import navOptions from "./navOptions.json";
 import { SignOutButton } from "@clerk/nextjs";
-import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { usePathname } from "next/navigation";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Burger from "@/app/_components/Burger";
 
-const AdminNavbar = ({ user }: { user: TUserWithOptionalBusinessRef }) => {
+const AdminNavbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const pathname = usePathname();
   // console.log({ pathname });
