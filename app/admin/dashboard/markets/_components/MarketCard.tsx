@@ -13,7 +13,7 @@ const MarketCard = ({
     <article className="h-[645px] flex flex-col gap-2 border rounded-[20px] overflow-hidden  border-[#292929] shadow-[0px_3px_6px_#00000029]">
       <header className="flex justify-between h-[60%] w-full">
         <Image
-          src={market.marketCover}
+          src={market.marketCover.url}
           width={500}
           height={387}
           alt={market.name}

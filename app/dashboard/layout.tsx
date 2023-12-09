@@ -3,7 +3,7 @@ import { SignOutButton, currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import VendorNavBar from "./_components/vendorNavBar";
+import VendorNavBar from "./_components/VendorNavBar";
 
 const navOptions = [
   {

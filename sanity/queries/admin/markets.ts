@@ -1,3 +1,4 @@
+import { metadata } from "./../../../app/layout";
 import { sanityClient } from "@/sanity/lib/client";
 import { zodMarketFormSchema } from "@/zod/markets";
 import { z } from "zod";
@@ -8,7 +9,14 @@ const marketQueryString = `
   description,
   price,
   dates,
-  "marketCover": marketCover.asset->url,
+  "marketCover": marketCover {
+    "url": asset -> url,
+    "dimensions": asset -> metadata.dimensions {
+        height,
+        width,
+        aspectRatio
+    }
+  },
   "venue": venue->{
     title,
     address,  
@@ -23,7 +31,14 @@ const individualMarketQueryString = `
   description,
   price,
   dates,
-  "marketCover": marketCover.asset->url,
+  "marketCover": marketCover {
+    "url": asset -> url,
+    "dimensions": asset -> metadata.dimensions {
+        height,
+        width,
+        aspectRatio
+    }
+  },
   "venue": venue->{
     title,
     address,  
@@ -40,7 +55,14 @@ const individualMarketQueryString = `
 const zodMarketQuery = zodMarketFormSchema.merge(
   z.object({
     _id: z.string(),
-    marketCover: z.string(),
+    marketCover: z.object({
+      url: z.string(),
+      dimensions: z.object({
+        height: z.number(),
+        width: z.number(),
+        aspectRatio: z.number(),
+      }),
+    }),
     venue: z.object({
       title: z.string(),
       address: z.string(),
@@ -66,7 +88,6 @@ export const getAllMarkets = async () => {
     if (!parsedResult.success) {
       throw new Error(parsedResult.error.message);
     }
-
     return parsedResult.data;
   } catch (error) {
     console.error(error);

@@ -13,24 +13,27 @@ export const dateArrayToDisplayableText = function (dates: string[]): string {
     month: "short",
     day: "numeric",
   };
-  // console.log({dates})
+
   const offset = 5; // Offset for EST timezone
-const startDate = new Date(
-  Date.UTC(
-    +dates[0].slice(0, 4),
-    +dates[0].slice(5, 7) - 1,
-    +dates[0].slice(8, 10),
-    offset
-  )
-);
-const endDate = new Date(
-  Date.UTC(
-    +dates[dates.length - 1].slice(0, 4),
-    +dates[dates.length - 1].slice(5, 7) - 1,
-    +dates[dates.length - 1].slice(8, 10),
-    offset
-  )
-);
+  const startParts = dates[0].split('-').map(part => +part);
+  const endParts = dates[dates.length - 1].split('-').map(part => +part);
+
+  const startDate = new Date(
+    Date.UTC(
+      startParts[0],
+      startParts[1] - 1,
+      startParts[2],
+      offset
+    )
+  );
+  const endDate = new Date(
+    Date.UTC(
+      endParts[0],
+      endParts[1] - 1,
+      endParts[2],
+      offset
+    )
+  );
 
   const formattedStartDate = startDate.toLocaleString("en-US", {
     ...options,

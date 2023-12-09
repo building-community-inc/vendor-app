@@ -47,7 +47,7 @@ const VendorNavBar = ({ user }: { user: TUserWithOptionalBusinessRef }) => {
         <Burger
           isNavOpen={isNavOpen}
           onClickHandler={() => setIsNavOpen(!isNavOpen)}
-          barColor={isNavOpen ? "bg-black" : "bg-nav-bg"}
+          barColor={pathname.includes("explore") ? "bg-black" : isNavOpen ? "bg-black" : "bg-nav-bg"}
         />
       </div>
       <div className={`${isNavOpen ? "" : "hidden"} md:block`}>
