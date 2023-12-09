@@ -13,8 +13,8 @@ import {
   TUserWithOptionalBusinessRef,
   zodBusiness,
   zodBusinessForm,
-} from "@/zod/types";
-import FileInput from "./FileInput";
+} from "@/zod/user-business";
+import FileInput from "../../_components/FileInput";
 import { useFileStore } from "@/app/_components/store/fileStore";
 
 type TVendorCategory = {
@@ -26,17 +26,18 @@ type TBIFProps = {
   vendorCategories: TVendorCategory[];
 };
 
-const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
+const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
   const router = useRouter();
   const {
     register,
     handleSubmit,
     reset,
-    control,
+    // control,
     formState: { errors, isSubmitting },
   } = useForm<TBusiness>({
     resolver: zodResolver(zodBusiness),
   });
+
   const fileId = useFileStore((state) => state.fileId);
   const formInputs = Object.keys(zodBusiness.shape)
     .filter((key) => key !== "industry" && key !== "logo")
@@ -109,7 +110,7 @@ const BusinessInfoForm = ({ user, vendorCategories }: TBIFProps) => {
         <span className="text-red-500">{errors["industry"]?.message}</span>
       )}
       <div className="mx-auto mt-5">
-        <FileInput />
+        <FileInput useStore={useFileStore} title="upload your logo" />
       </div>
       {errors["logo"] && (
         <span className="text-red-500">{errors["logo"]?.message}</span>

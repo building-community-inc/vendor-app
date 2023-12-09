@@ -20,3 +20,18 @@ export const useFileStore = create<TFileStore>((set) => ({
 }))
 
 
+export const useMarketImageIdStore = create<TFileStore>((set) => ({
+  fileId: '',
+  setFileId: (fileId: string) => set({fileId}),
+  clearFileId: () => set({fileId: ''}),
+}))
+
+
+export const useVenueImageIdStore = create<TFileStore>((set) => ({
+  fileId: '',
+  setFileId: (fileId: string) => set({fileId}),
+  clearFileId: () => set({fileId: ''}),
+}))
+
+
+

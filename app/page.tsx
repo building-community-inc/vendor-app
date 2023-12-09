@@ -4,34 +4,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import Button from "./_components/Button";
 
-export const clerkLoginAppearance = {
-  variables: {
-    colorBackground: "transparent",
-    colorPrimary: "#fff",
-    colorText: "#fff",
-    colorInputText: "#fff",
-  },
-  elements: {
-    card: {
-      boxShadow: "none",
-      border: "none",
-    },
-    header: {
-      display: "none",
-    },
-    formFieldLabel: {
-      // color: "#fff",
-    },
-    socialButtons: {
-      background: "black",
-      borderRadius: "0.5rem",
-    },
-    formButtonPrimary: {
-      color: "black",
-    },
-  },
-};
-
 export default async function Home() {
   const user = await currentUser();
 
@@ -41,7 +13,7 @@ export default async function Home() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen">
       <header>
-        <Image src="/logo-on-black-bg-low-res.png" width={468} height={468} alt="logo" />
+        <Image src="/logo-on-black-bg-low-res.jpg" width={468} height={468} alt="logo" />
       </header>
       <section className="flex flex-col items-center gap-6">
         <Link href="/sign-in">

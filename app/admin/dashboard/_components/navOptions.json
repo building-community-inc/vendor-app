@@ -1,0 +1,88 @@
+[
+  {
+    "title": "Dashboard",
+    "href": "/admin/dashboard"
+  },
+  {
+    "title": "Markets",
+    "href": "/admin/dashboard/markets",
+    "links": [
+      {
+        "title": "Create New Market",
+        "href": "/admin/dashboard/markets/create"
+      },
+      {
+        "title": "Market Monitoring",
+        "href": "/admin/dashboard/markets"
+      }
+    ]
+  },
+  {
+    "title": "Vendors",
+    "href": "/admin/dashboard/vendors",
+    "links": [
+      {
+        "title": "Vendor Listings",
+        "href": "/admin/dashboard/vendors/listings"
+      }
+    ]
+  },
+  {
+    "title": "Payments",
+    "href": "/admin/dashboard/payments",
+    "links": [
+      {
+        "title": "Payment History",
+        "href": "/admin/dashboard/payments/history"
+      },
+      {
+        "title": "Invoices",
+        "href": "/admin/dashboard/payments/invoices"
+      },
+      {
+        "title": "Payment Information",
+        "href": "/admin/dashboard/payments/information"
+      }
+    ]
+  },
+  {
+    "title": "Message Centre",
+    "href": "/admin/dashboard/messages",
+    "links": [
+      {
+        "title": "Message Vendors",
+        "href": "/admin/dashboard/messages/vendors"
+      },
+      {
+        "title": "Notifications",
+        "href": "/admin/dashboard/messages/notifications"
+      }
+    ]
+  },
+  {
+    "title": "Venues",
+    "href": "/admin/dashboard/venues",
+    "links": [
+      {
+        "title": "Venue List",
+        "href": "/admin/dashboard/venues"
+      },
+      {
+        "title": "Create New Venue",
+        "href": "/admin/dashboard/venues/create"
+      }
+    ]
+  },
+  {
+    "title": "Terms & Conditions",
+    "href": "/admin/dashboard/terms"
+  },
+  {
+    "title": "View Vendor Dashboard",
+    "href": "/dashboard"
+  },
+  {
+    "title": "Logout",
+    "href": "/admin/dashboard/logout"
+  }
+]

@@ -1,7 +1,7 @@
 "use client";
 import Button from "@/app/_components/Button";
 import { Input } from "@/app/_components/Input";
-import { zodUserWithOptionalBusinessRef } from "@/zod/types";
+import { zodUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { User } from "@clerk/nextjs/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {

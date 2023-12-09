@@ -1,5 +1,5 @@
 "use client";
-import { useFileStore } from "@/app/_components/store/fileStore";
+import { TFileStore, useFileStore } from "@/app/_components/store/fileStore";
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { cn } from "@/utils";
 import Image from "next/image";
@@ -24,8 +24,12 @@ const addFilesToInput = () => ({
 type Action = ReturnType<typeof addFilesToInput>;
 type State = TFileWithUrl[];
 
-const FileInput = () => {
-  const setFileId = useFileStore((state) => state.setFileId);
+const FileInput = ({useStore, title, classNames}: {
+  useStore: () => TFileStore;
+  title: string;
+  classNames?: string;
+}) => {
+  const {setFileId} = useStore();
   const [input, dispatch] = useReducer((state: State, action: Action) => {
     switch (action.type) {
       case "ADD_FILES_TO_INPUT": {
@@ -85,20 +89,20 @@ const FileInput = () => {
             key={file.url}
             src={file.url}
             alt={file.name}
-            width={100}
-            height={100}
+            width={500}
+            height={500}
             className="object-cover mx-auto mt-2"
           />
         ))
       ) : (
         <label
           htmlFor={"file"}
-          className={cn(
+          className={classNames ? classNames : cn(
             "group relative p-2 w-fit flex flex-col items-center justify-center border-2 border-slate-300 border-dashed rounded-lg dark:border-gray-600 transition",
             // { "dark:border-slate-400 dark:bg-slate-800": dragActive },
             { "h-fit aspect-auto": !noInput },
             { "items-start justify-start": !noInput },
-            { "dark:hover:border-gray-500 dark:hover:bg-slate-800": noInput }
+            { "hover:border-gray-500 hover:bg-slate-800 hover:text-white": noInput }
           )}
         >
           <input
@@ -111,7 +115,7 @@ const FileInput = () => {
             type="file"
             className="hidden"
           />
-          upload your logo
+          {title}
         </label>
       )}
     </>

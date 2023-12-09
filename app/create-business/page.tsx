@@ -15,7 +15,7 @@ const Page = async () => {
   const vendorCategories = await getAllVendorCategories();
 
   return (
-    <main className="min-h-screen flex flex-col pt-10">
+    <main className="min-h-screen flex flex-col pt-14">
       <header>
         <h1 className="uppercase text-center">Create Business Profile</h1>
       </header>

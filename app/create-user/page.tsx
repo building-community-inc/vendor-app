@@ -2,7 +2,7 @@ import { sanityWriteClient } from "@/sanity/lib/client";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import Spinner from "../_components/Spinner";
-import { zodUserBase } from "@/zod/types";
+import { zodUserBase } from "@/zod/user-business";
 
 const Page = async () => {
   const clerkUser = await currentUser();

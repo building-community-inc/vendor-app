@@ -6,7 +6,8 @@ export const sanityClient = createClient({
   apiVersion,
   dataset,
   projectId,
-  useCdn,
+  useCdn: false,
+  // fetch: (url, options) => fetch(url, { ...options, cache: 'no-cache' }),
 });
 
 export const sanityWriteClient = createClient({

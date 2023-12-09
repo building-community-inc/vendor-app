@@ -1,5 +1,5 @@
 
-import { clerkLoginAppearance } from "@/app/page";
+import { clerkLoginAppearance } from "@/app/_components/clerk/styles";
 import { SignIn } from "@clerk/nextjs";
 import Image from "next/image";
 
