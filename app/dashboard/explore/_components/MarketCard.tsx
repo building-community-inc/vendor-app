@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const MarketCard = ({ market }: { market: TSanityMarket }) => {
   const dateToDisplay = dateArrayToDisplayableText(market.dates);
-  console.log({dates: market.dates, dateToDisplay})
+
   return (
     <li key={market._id} className="flex flex-col gap-2">
       <Link href={`/dashboard/markets/${market._id}`}>
@@ -21,6 +21,7 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
       <h3 className="text-2xl font-bold font-inter">{market.name}</h3>
       <p className="font-roboto">{market.description}</p>
       <p className="font-roboto">{dateToDisplay}</p>
+      <p className="font-roboto">{market.venue.hours}</p>
     </li>
   );
 };

@@ -21,7 +21,8 @@ const marketQueryString = `
     title,
     address,  
     city,
-    tables
+    tables,
+    hours
   },
 `;
 
@@ -44,7 +45,8 @@ const individualMarketQueryString = `
     address,  
     city,
     tables,
-    "venueMap": venueMap.asset->url
+    "venueMap": venueMap.asset->url,
+    hours
   },
   "vendors": vendors[] {
     vendor,
@@ -69,6 +71,7 @@ const zodMarketQuery = zodMarketFormSchema.merge(
       city: z.string(),
       tables: z.array(z.string()),
       venueMap: z.string().optional(),
+      hours: z.string(),
     }),
   })
 );
@@ -83,6 +86,7 @@ export const getAllMarkets = async () => {
       }`
     );
 
+    // console.log({result: result.map(m =>  m.venue)})
     const parsedResult = zodMarketQueryArray.safeParse(result);
 
     if (!parsedResult.success) {
