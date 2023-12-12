@@ -15,6 +15,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <section className="flex  h-screen overflow-y-hidden">
       <VendorNavBar user={sanityUser} />
+      
       <div className="h-full overflow-y-scroll w-full hide-scrollbar pb-5">
         {children}
       </div>
