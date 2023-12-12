@@ -17,7 +17,9 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
           className="w-full object-cover max-h-[271px] rounded-xl"
         />
       </Link>
-      <strong>{market.price} per day</strong>
+      <span>
+        <strong>${market.price}</strong> per day
+      </span>
       <h3 className="text-2xl font-bold font-inter">{market.name}</h3>
       <p className="font-roboto">{market.description}</p>
       <p className="font-roboto">{dateToDisplay}</p>
