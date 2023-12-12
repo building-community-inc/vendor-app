@@ -34,10 +34,10 @@ const Page = async ({
       {market.venue.venueMap && (
         <article className="flex flex-wrap justify-center">
           <Image
-            src={market.venue.venueMap?.url}
+            src={market.venue.venueMap.url}
             alt={market.name}
-            width={market.venue.venueMap?.dimensions.width}
-            height={market.venue.venueMap?.dimensions.height}
+            width={market.venue.venueMap.dimensions.width}
+            height={market.venue.venueMap.dimensions.height}
             className="rounded-lg w-[60%] object-cover max-h-[271px]"
           />
           <SelectOptions market={market} />

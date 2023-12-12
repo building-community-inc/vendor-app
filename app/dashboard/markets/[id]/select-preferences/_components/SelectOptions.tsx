@@ -3,18 +3,22 @@ import { TSanityMarket } from "@/sanity/queries/admin/markets";
 import SelectDates from "./SelectDates";
 import ContinueButton from "../../_components/ContinueButton";
 import { useState } from "react";
+import { TUserBase } from "@/zod/user-business";
+// import { useRouter } from "next/navigation";
 
 const SelectOptions = ({ market }: { market: TSanityMarket }) => {
+  // const { push } = useRouter();
+  
   const [specialRequest, setSpecialRequest] = useState<string>("");
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
   const price = market.price.replace("$", "");
-  console.log({ price: market.price, selectedDates })
   const totalToPay = selectedDates.length * Number(price);
-  
+
   const options = {
     selectedDates,
     totalToPay,
     specialRequest,
+    marketId: market._id,
   };
 
   const handleDateSelect = (date: string) => {
@@ -24,8 +28,20 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
       setSelectedDates((prev) => [...prev, date]);
     }
   };
+
+  const handleProceedToCheckout = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const params = new URLSearchParams();
+    params.append("options", JSON.stringify(options));
+    console.log(params.get("options"));
+    // push(`/checkout?${params.toString()}`);
+  };
   return (
-    <form className="w-[40%] min-w-[250px] flex flex-col gap-5 px-5">
+    <form
+      onSubmit={handleProceedToCheckout}
+      className="w-[40%] min-w-[250px] flex flex-col gap-5 px-5"
+    >
       <header>
         <h1>Select Table Location preference</h1>
         <span>Note: Table selection is not guaranteed</span>

@@ -1,7 +1,6 @@
 "use client";
 import { TSanityMarket } from "@/sanity/queries/admin/markets";
 import { formatMarketDate } from "@/utils/helpers";
-import { useState } from "react";
 
 const SelectDates = ({
   market,
@@ -37,8 +36,8 @@ const SelectDates = ({
                   <option value="null">Table</option>
                   {date.tables
                     .filter((table) => table.available)
-                    .map((table) => (
-                      <option value={table.table}>{table.table}</option>
+                    .map((table, index) => (
+                      <option key={`${table.table}-${index}`} value={table.table}>{table.table}</option>
                     ))}
                 </select>
               )}
