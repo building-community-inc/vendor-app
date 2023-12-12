@@ -1,7 +1,7 @@
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import VendorNavBar from "./_components/VendorNavBar-copy";
+import VendorNavBar from "./_components/VendorNavBar";
 
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
