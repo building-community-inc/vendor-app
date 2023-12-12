@@ -30,7 +30,7 @@ const Page = async ({
 
   // const dateToDisplay = dateArrayToDisplayableText(market.dates);
   return (
-    <main className="pt-14 px-5 w-full flex flex-col gap-8">
+    <main className="pt-14 px-5 w-full max-w-3xl mx-auto flex flex-col gap-8">
       <h1>{market.name}</h1>
       <Image
         src={market.marketCover.url}
