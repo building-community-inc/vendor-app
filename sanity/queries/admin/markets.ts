@@ -26,6 +26,16 @@ const marketQueryString = `
     tables,
     hours
   },
+  "daysWithTables": daysWithTables[] {
+    date,
+
+    "tables": tables[] {
+      table,
+      available,
+      reserved,
+      confirmed
+    }
+  }
 `;
 
 const individualMarketQueryString = `
@@ -49,9 +59,24 @@ const individualMarketQueryString = `
   },
   "vendors": vendors[] {
     vendor,
-    datesSelected,
+    "datesSelected": datesSelected[] {
+      date, 
+      tableSelected,
+      tableConfirmed,
+      confirmed
+    },
     specialRequests
-  } 
+  },
+  "daysWithTables": daysWithTables[] {
+    date,
+
+    "tables": tables[] {
+      table,
+      available,
+      reserved,
+      confirmed
+    }
+  }
 `;
 
 const zodImageSchema = z.object({
@@ -79,6 +104,30 @@ const zodMarketQuery = zodMarketFormSchema.merge(
       loadInInstructions: z.string().optional().nullable(),
     }),
     vendorInstructions: z.string().optional().nullable(),
+    vendors: z.array(
+      z.object({
+        vendor: z.string(),
+        datesSelected: z.array(
+          z.object({
+            date: z.string(),
+            tableSelected: z.string(),
+            tableConfirmed: z.string().optional().nullable(),
+            confirmed: z.boolean(),
+          })
+        ),
+        specialRequests: z.string().optional().nullable(),
+      })
+    ).optional().nullable(),
+
+    daysWithTables: z.array(z.object({
+      date: z.string(),
+      tables: z.array(z.object({
+        table: z.string(),
+        available: z.boolean(),
+        reserved: z.object({}).passthrough().optional().nullable(),
+        confirmed: z.object({}).passthrough().optional().nullable()
+      }))
+    })).optional().nullable()
   })
 );
 export type TSanityMarket = z.infer<typeof zodMarketQuery>;

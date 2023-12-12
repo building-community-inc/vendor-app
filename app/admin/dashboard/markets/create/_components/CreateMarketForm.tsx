@@ -12,6 +12,7 @@ import { useState } from "react";
 import { TMarketFormSchema, zodMarketFormSchema } from "@/zod/markets";
 import { useRouter } from "next/navigation";
 import { createDateString } from "@/utils/helpers";
+import { nanoid } from 'nanoid';
 
 const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
   const [selectedVenue, setSelectedVenue] = useState<TVenueFront | null>(null);
@@ -55,6 +56,17 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
       marketCover: fileId,
       venue: { _ref: selectedVenue._id },
       dates: days.map((day) => day.date),
+      daysWithTables: days.map((day) => ({
+        date: day.date,
+        _key: nanoid(),
+        tables: selectedVenue.tables?.map((table) => ({
+          table,
+          _key: nanoid(),
+          available: true,
+          reserved: null,
+          confirmed: null,
+        })),
+      })),
     };
 
     // console.log({marketObj, days})

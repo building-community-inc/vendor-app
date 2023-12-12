@@ -5,6 +5,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import SelectDates from "./_components/SelectDates";
 import ContinueButton from "../_components/ContinueButton";
+import SelectOptions from "./_components/SelectOptions";
 
 const Page = async ({
   params,
@@ -39,19 +40,7 @@ const Page = async ({
             height={market.venue.venueMap?.dimensions.height}
             className="rounded-lg w-[60%] object-cover max-h-[271px]"
           />
-          <section className="w-[40%] min-w-[250px] flex flex-col gap-5 px-5">
-            <header>
-              <h1>Select Table Location preference</h1>
-              <span>Note: Table selection is not guaranteed</span>
-            </header>
-            <SelectDates market={market} />
-            <textarea
-              rows={2}
-              placeholder="Special Requests"
-              className="rounded-3xl py-5 px-3 text-black"
-            />
-            <ContinueButton>Checkout</ContinueButton>
-          </section>
+          <SelectOptions market={market} />
         </article>
       )}
     </main>

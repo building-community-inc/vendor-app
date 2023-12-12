@@ -48,6 +48,62 @@ export const marketSchema = defineType({
       type: "text",
     }),
     defineField({
+      name: "daysWithTables",
+      title: "Days With Tables",
+      type: "array",
+      of: [
+        defineArrayMember({
+          name: "day",
+          title: "Day",
+          type: "object",
+          fields: [
+            defineField({
+              name: "date",
+              title: "Date",
+              type: "string",
+            }),
+            defineField({
+              name: "tables",
+              title: "Tables",
+              type: "array",
+              of: [
+                defineArrayMember({
+                  name: "table",
+                  title: "Table",
+                  type: "object",
+                  fields: [
+                    defineField({
+                      name: "table",
+                      title: "Table",
+                      type: "string",
+                    }),
+                    defineField({
+                      name: "available",
+                      title: "Availability",
+                      type: "boolean",
+                    }),
+                    defineField({
+                      name: "reserved",
+                      title: "Reserved",
+                      type: "reference",
+                      to: [{ type: "user",  }],
+                    }),
+                    defineField({
+                      name: "confirmed",
+                      title: "Confirmed",
+                      type: "reference",
+                      to: [{ type: "user",  }],
+                    }),
+                  ],
+                })
+              ],
+            }),
+          ],
+        }),
+
+      ],
+    }),
+    defineField({
       name: "vendors",
       title: "Vendors",
       type: "array",
