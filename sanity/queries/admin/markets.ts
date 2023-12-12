@@ -1,7 +1,16 @@
-import { metadata } from "./../../../app/layout";
 import { sanityClient } from "@/sanity/lib/client";
 import { zodMarketFormSchema } from "@/zod/markets";
 import { z } from "zod";
+
+const imageQueryString = `{
+  "url": asset -> url,
+  "dimensions": asset -> metadata.dimensions {
+    height,
+    width,
+    aspectRatio
+  }
+}
+`;
 
 const marketQueryString = `
   _id,
@@ -9,14 +18,7 @@ const marketQueryString = `
   description,
   price,
   dates,
-  "marketCover": marketCover {
-    "url": asset -> url,
-    "dimensions": asset -> metadata.dimensions {
-        height,
-        width,
-        aspectRatio
-    }
-  },
+  "marketCover": marketCover ${imageQueryString},
   "venue": venue->{
     title,
     address,  
@@ -32,21 +34,18 @@ const individualMarketQueryString = `
   description,
   price,
   dates,
-  "marketCover": marketCover {
-    "url": asset -> url,
-    "dimensions": asset -> metadata.dimensions {
-        height,
-        width,
-        aspectRatio
-    }
-  },
+  "marketCover": marketCover ${imageQueryString},
   "venue": venue->{
     title,
     address,  
     city,
     tables,
-    "venueMap": venueMap.asset->url,
-    hours
+    "venueMap": venueMap ${imageQueryString},
+    hours,
+    phone,
+    securityPhone,
+    loadInInstructions,
+    vendorInstructions
   },
   "vendors": vendors[] {
     vendor,
@@ -54,25 +53,32 @@ const individualMarketQueryString = `
     specialRequests
   } 
 `;
+
+const zodImageSchema = z.object({
+  url: z.string(),
+  dimensions: z.object({
+    height: z.number(),
+    width: z.number(),
+    aspectRatio: z.number(),
+  }),
+});
+
 const zodMarketQuery = zodMarketFormSchema.merge(
   z.object({
     _id: z.string(),
-    marketCover: z.object({
-      url: z.string(),
-      dimensions: z.object({
-        height: z.number(),
-        width: z.number(),
-        aspectRatio: z.number(),
-      }),
-    }),
+    marketCover: zodImageSchema,
     venue: z.object({
       title: z.string(),
       address: z.string(),
       city: z.string(),
       tables: z.array(z.string()),
-      venueMap: z.string().optional(),
-      hours: z.string(),
+      venueMap: zodImageSchema.optional(),
+      hours: z.string().optional(),
+      phone: z.string().optional(),
+      securityPhone: z.string().optional(),
+      loadInInstructions: z.string().optional().nullable(),
     }),
+    vendorInstructions: z.string().optional().nullable(),
   })
 );
 export type TSanityMarket = z.infer<typeof zodMarketQuery>;

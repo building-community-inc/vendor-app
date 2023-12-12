@@ -1,5 +1,5 @@
 "use client";
-import { TFileStore, useFileStore } from "@/app/_components/store/fileStore";
+import { TFileStore } from "@/app/_components/store/fileStore";
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { cn } from "@/utils";
 import Image from "next/image";

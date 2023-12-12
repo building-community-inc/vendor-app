@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TVenueFront } from "@/sanity/queries/admin/venues";
 import { VenueCard } from "../../../venues/_components/VenueListItem";
 import { create } from "zustand";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { TMarketFormSchema, zodMarketFormSchema } from "@/zod/markets";
 import { useRouter } from "next/navigation";
 import { createDateString } from "@/utils/helpers";
@@ -103,9 +103,21 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
           placeholder="Market Description"
           className="h-[85px]"
         />
-        {errors.name && (
+        {errors.description && (
           <span className="text-red-500 text-center">
-            {errors.name?.message}
+            {errors.description?.message}
+          </span>
+        )}
+        <FormInput
+          register={register}
+          type="textarea"
+          name="vendorInstructions"
+          placeholder="Market Vendor Instructions"
+          className="h-[85px]"
+        />
+        {errors.description && (
+          <span className="text-red-500 text-center">
+            {errors.description?.message}
           </span>
         )}
         <Days register={register} errors={errors} />

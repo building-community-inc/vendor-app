@@ -23,7 +23,7 @@ const Page = async ({
       <MarketCard market={market} dateToDisplay={dateToDisplay} />
       {market.venue.venueMap && (
         <Image
-          src={market.venue.venueMap}
+          src={market.venue.venueMap.url}
           alt={market.venue.title}
           width={500}
           height={500}

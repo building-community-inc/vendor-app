@@ -5,6 +5,7 @@ const zodDaySchema = z.string();
 export const zodMarketFormSchema = z.object({
   name: z.string().min(1, "Name of the Market is required"),
   description: z.string().min(1, "Description of the Market is required"),
+  vendorInstructions: z.string().min(1, "Description of the Market is required"),
   price: z.string().min(1, "Price per day is required"),
   dates: z.array(zodDaySchema).min(1, "At least one day is required"),
   marketCover: z

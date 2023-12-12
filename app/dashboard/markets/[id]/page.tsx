@@ -1,9 +1,11 @@
 import { getMarketById } from "@/sanity/queries/admin/markets";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { dateArrayToDisplayableText, formatMarketDate } from "@/utils/helpers";
+import { formatMarketDate } from "@/utils/helpers";
 import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import ContinueButton from "./_components/ContinueButton";
 
 const Page = async ({
   params,
@@ -50,16 +52,56 @@ const Page = async ({
         ))}
       </ul>
       <h2 className="font-bold text-lg">Venue Details:</h2>
-      <div className="flex gap-[1ch]">
-        <h3 className="font-bold">Address:</h3>
-        <span>{market.venue.address}</span>
-      </div>
-      <div className="flex gap-[1ch]">
-        <h3 className="font-bold">Hours:</h3>
-        <span className="max-w-[30ch]">{market.venue.hours}</span>
-      </div>
+
+      <DetailSection title={market.venue.title} description={""} />
+      <DetailSection title={"Address:"} description={market.venue.address} />
+      {market.venue.hours && (
+        <DetailSection title={"Hours:"} description={market.venue.hours} />
+      )}
+      {market.venue.phone && (
+        <DetailSection title={"Phone:"} description={market.venue.phone} />
+      )}
+      {market.venue.securityPhone && (
+        <DetailSection
+          title={"Security:"}
+          description={market.venue.securityPhone}
+        />
+      )}
+      {market.venue.loadInInstructions && (
+        <DetailSection
+          title={"Load In Instructions:"}
+          description={market.venue.loadInInstructions}
+        />
+      )}
+      {market.vendorInstructions && (
+        <DetailSection
+          title={"Load In Instructions:"}
+          description={market.vendorInstructions}
+        />
+      )}
+
+      <ContinueButton>
+        <Link href={`/dashboard/markets/${market._id}/select-preferences`}>
+          Book this market
+        </Link>
+      </ContinueButton>
     </main>
   );
 };
 
 export default Page;
+
+const DetailSection = ({
+  description,
+  title,
+}: {
+  description: string;
+  title: string;
+}) => {
+  return (
+    <div className="flex gap-[1ch]">
+      <h3 className="font-bold">{title}</h3>
+      <span className="max-w-[30ch]">{description}</span>
+    </div>
+  );
+};

@@ -1,5 +1,5 @@
 
-interface BurgerProps {
+type BurgerProps = {
   onClickHandler?: React.MouseEventHandler<HTMLDivElement>;
   isNavOpen: boolean;
   barColor?: string;
@@ -27,7 +27,7 @@ const Burger = ({ onClickHandler, isNavOpen, barColor }: BurgerProps) => {
     </div>
   );
 };
-interface BarProps {
+type BarProps = {
   width?: string;
   rotateZ?:
     | "rotate-45 translate-y-3"

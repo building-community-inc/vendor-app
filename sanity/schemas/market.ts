@@ -43,6 +43,11 @@ export const marketSchema = defineType({
       to: [{ type: "venue" }],
     }),
     defineField({
+      name: "vendorInstructions",
+      title: "Vendor Instructions",
+      type: "text",
+    }),
+    defineField({
       name: "vendors",
       title: "Vendors",
       type: "array",

@@ -1,28 +1,9 @@
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { SignOutButton, currentUser } from "@clerk/nextjs";
-import Image from "next/image";
-import Link from "next/link";
+import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import VendorNavBar from "./_components/VendorNavBar";
 
-const navOptions = [
-  {
-    title: "My Profile",
-    href: "/dashboard",
-  },
-  {
-    title: "Exlore Markets",
-    href: "/dashboard/explore",
-  },
-  {
-    title: "Payments",
-    href: "/dashboard/payments",
-  },
-  {
-    title: "Logout",
-    href: "/dashboard/logout",
-  },
-];
+
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await currentUser();
   if (!user) redirect("/");
