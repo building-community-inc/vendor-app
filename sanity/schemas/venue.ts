@@ -54,9 +54,33 @@ export const venueSchema = defineType({
           name: "table",
           title: "Table Number",
           type: "string",
-        })
-      ]
-    })
+        }),
+      ],
+    }),
+    defineField({
+      name: "TableInfo",
+      title: "New Tables",
+      type: "array",
+      of: [
+        defineArrayMember({
+          name: "table",
+          title: "Table",
+          type: "object",
+          fields: [
+            defineField({
+              name: "id",
+              title: "Id",
+              type: "string",
+            }),
+            defineField({
+              name: "price",
+              title: "Price",
+              type: "number",
+            }),
+          ],
+        }),
+      ],
+    }),
   ],
   preview: {
     select: {
@@ -66,7 +90,7 @@ export const venueSchema = defineType({
     prepare({ title, media }) {
       return {
         title,
-        media
+        media,
       };
     },
   },

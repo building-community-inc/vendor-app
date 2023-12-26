@@ -11,6 +11,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSubmitOnEnter } from "@/utils/hooks/useSubmitOnEnter";
 import { create } from "zustand";
+import TableInfo, { useTableInfoStore } from "./TableInfo";
 
 // type TVenueDefaultFormValues = Omit<TVenueFront, 'venueMap'> & { venueMap: string };
 const CreateVenueForm = ({
@@ -39,6 +40,9 @@ const CreateVenueForm = ({
 
   const fileId = useVenueImageIdStore((state) => state.fileId);
   const tables = useTableStore((state) => state.tables);
+  
+  const tableInfo = useTableInfoStore((state) => state.tables);
+
 
   const formInputs = Object.keys(zodVenueSchema.shape)
     .filter((key) => key !== "venueMap")
@@ -63,6 +67,7 @@ const CreateVenueForm = ({
       venueMap: defaultImage ? defaultImage._id : fileId,
       _id: defaultValues ? defaultValues._id : undefined,
       tables,
+      tableInfo
     };
 
     const parsedVenueObj = zodVenueFormSchema.safeParse(venueObj);
@@ -86,6 +91,7 @@ const CreateVenueForm = ({
 
       setError("root", { type: "manual", message: errorMessage });
     }
+
     else {
       try {
         const res = await fetch(
@@ -171,11 +177,8 @@ const CreateVenueForm = ({
         </span>
       )}
 
-      {/* {!!fileId ||
-        (!!defaultImage && (
-          ))} */}
-
       <Tables register={register} defaultTables={defaultValues?.tables || []} />
+      <TableInfo defaultTables={[]} />
       {errors && errors.root && (
         <span className="text-red-500 text-center">{errors.root.message}</span>
       )}
@@ -309,3 +312,5 @@ const Tables = ({
     </div>
   );
 };
+
+
