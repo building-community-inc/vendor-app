@@ -30,11 +30,15 @@ export const sanityZodMarketFormSchema = zodMarketFormSchema.merge(
         _key: z.string(),
         tables: z.array(
           z.object({
-            table: z.string(),
+            table: z.object({
+              _key: z.string(),
+              id: z.string(),
+              price: z.number(),
+            }),
             _key: z.string(),
-            available: z.boolean(),
-            reserved: z.object({}).passthrough().optional().nullable(),
-            confirmed: z.object({}).passthrough().optional().nullable(),
+            booked: z.object({
+              _ref: z.string().optional().nullable()
+            }).optional().nullable(),
           })
         ),
       })

@@ -17,6 +17,7 @@ const venueQueryString = `
   },
   tables,
   "tableInfo": tableInfo[] {
+    _key,
     id,
     price
   }
@@ -37,6 +38,7 @@ const zodVenueQuery = zodVenueSchema.merge(
         z.object({
           id: z.string(),
           price: z.number(),
+          _key: z.string(),
         })
       )
       .optional()

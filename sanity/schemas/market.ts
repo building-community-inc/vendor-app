@@ -75,22 +75,23 @@ export const marketSchema = defineType({
                     defineField({
                       name: "table",
                       title: "Table",
-                      type: "string",
+                      type: "object",
+                      fields: [
+                        defineField({
+                          name: "id",
+                          title: "Id",
+                          type: "string"
+                        }),
+                        defineField({
+                          name: "price",
+                          title: "Price",
+                          type: "number"
+                        })
+                      ]
                     }),
                     defineField({
-                      name: "available",
-                      title: "Availability",
-                      type: "boolean",
-                    }),
-                    defineField({
-                      name: "reserved",
-                      title: "Reserved",
-                      type: "reference",
-                      to: [{ type: "user",  }],
-                    }),
-                    defineField({
-                      name: "confirmed",
-                      title: "Confirmed",
+                      name: "booked",
+                      title: "Booked",
                       type: "reference",
                       to: [{ type: "user",  }],
                     }),

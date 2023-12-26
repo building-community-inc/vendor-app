@@ -45,29 +45,20 @@ const MarketCard = ({
               <div className="flex gap-2">
                 <TableView
                   amount={
-                    day.tables.filter((tables) => tables.available === true)
+                    day.tables.filter((tables) => !tables.booked)
                       .length
                   }
                   title="Available Tables"
                 />
                 <TableView
                   amount={
-                    day.tables.filter((table) =>
-                      table.reserved ? true : false
-                    ).length
+                    day.tables.filter((tables) => tables.booked)
+                      .length
                   }
-                  title="Vendors Applied"
-                  type="applied"
-                />
-                <TableView
-                  amount={
-                    day.tables.filter((table) =>
-                      table.confirmed ? true : false
-                    ).length
-                  }
-                  title="Vendors Confirmed"
+                  title="Booked Tables"
                   type="confirmed"
                 />
+                
               </div>
             </li>
           ))}

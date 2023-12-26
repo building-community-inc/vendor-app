@@ -30,7 +30,10 @@ const marketQueryString = `
     date,
 
     "tables": tables[] {
-      table,
+      "table": table {
+        id,
+        price
+      },
       available,
       reserved,
       confirmed
@@ -71,10 +74,11 @@ const individualMarketQueryString = `
     date,
 
     "tables": tables[] {
-      table,
-      available,
-      reserved,
-      confirmed
+      "table": {
+        id,
+        price
+      },
+      booked
     }
   }
 `;
@@ -122,10 +126,11 @@ const zodMarketQuery = zodMarketFormSchema.merge(
     daysWithTables: z.array(z.object({
       date: z.string(),
       tables: z.array(z.object({
-        table: z.string(),
-        available: z.boolean(),
-        reserved: z.object({}).passthrough().optional().nullable(),
-        confirmed: z.object({}).passthrough().optional().nullable()
+        table: z.object({
+          id: z.string(),
+          price: z.number()
+        }),
+        booked: z.object({}).passthrough().optional().nullable(),
       }))
     })).optional().nullable()
   })
