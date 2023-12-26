@@ -26,7 +26,7 @@ export const zodVenueFormSchema = zodVenueSchema.merge(
     _type: z.literal("venue"),
     _id: z.string().optional(),
     tables: z.array(z.string()).min(1, "At least one table is required"),
-    tableInfo: z.array(zodTableSchema),
+    tableInfo: z.array(zodTableSchema).min(1, "At least one table is required"),
   })
 );
 

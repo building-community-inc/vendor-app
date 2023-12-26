@@ -32,7 +32,7 @@ export const VenueCard = ({ venue, withAvailableTables }: TVenueCardProps) => {
           className="w-full h-full object-cover"
         />
       </header>
-      <section className="px-2 py-7 flex flex-col gap-2 justify-between h-[40%]">
+      <section className="px-2 py-7 flex flex-col gap-2 justify-between h-[40%] overflow-y-scroll">
         <h2 className="font-semibold text-center capitalize">{venue.title}</h2>
         <div className="flex items-center">
           <section className="w-1/2">
@@ -43,7 +43,8 @@ export const VenueCard = ({ venue, withAvailableTables }: TVenueCardProps) => {
                   key !== "title" &&
                   key !== "_id" &&
                   key !== "loadInInstructions" &&
-                  key !== "tables"
+                  key !== "tables" &&
+                  key !== "tableInfo"
               )
               .map(([key, value]) => (
                 <p key={key} className="max-w-full">
@@ -59,7 +60,7 @@ export const VenueCard = ({ venue, withAvailableTables }: TVenueCardProps) => {
             <div className="mx-auto w-fit">
               <TableView
                 title="Available Tables"
-                amount={venue?.tables?.length || 0}
+                amount={venue?.tableInfo?.length || 0}
                 // type="available"
               />
             </div>
