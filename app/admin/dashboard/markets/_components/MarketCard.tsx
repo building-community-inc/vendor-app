@@ -1,6 +1,7 @@
 import { TSanityMarket } from "@/sanity/queries/admin/markets";
 import TableView from "../../venues/_components/TableView";
 import Image from "next/image";
+import { formatMarketDate } from "@/utils/helpers";
 
 const MarketCard = ({
   market,
@@ -10,10 +11,10 @@ const MarketCard = ({
   dateToDisplay: string;
 }) => {
   return (
-    <article className="h-[645px] flex flex-col gap-2 border rounded-[20px] overflow-hidden  border-[#292929] shadow-[0px_3px_6px_#00000029]">
+    <article className="min-h-[645px] flex flex-col gap-2 border rounded-[20px] overflow-hidden  border-[#292929] shadow-[0px_3px_6px_#00000029]">
       <header className="flex justify-between h-[60%] w-full">
         <Image
-          src={market.marketCover}
+          src={market.marketCover.url}
           width={500}
           height={387}
           alt={market.name}
@@ -31,21 +32,46 @@ const MarketCard = ({
           <strong> {market.price}</strong> per table
         </p>
       </section>
-      <footer className="flex gap-4 justify-evenly">
-        <TableView
-          amount={market.venue.tables.length}
-          title="Available Tables"
-        />
-        <TableView
-          amount={market.venue.tables.length}
-          title="Vendors Applied"
-          type="applied"
-        />
-        <TableView
-          amount={market.venue.tables.length}
-          title="Vendors Confirmed"
-          type="confirmed"
-        />
+      <footer className="flex gap-4 justify-evenly pb-5">
+        <ul className="flex flex-col gap-4 w-full">
+          {market.daysWithTables?.map((day, index) => (
+            <li
+              key={`${day.date}-${index}`}
+              className="flex gap-2 items-center justify-between w-full px-5"
+            >
+              <h4 className="font-bold font-roboto text-sm">
+                {formatMarketDate(day.date)}
+              </h4>
+              <div className="flex gap-2">
+                <TableView
+                  amount={
+                    day.tables.filter((tables) => tables.available === true)
+                      .length
+                  }
+                  title="Available Tables"
+                />
+                <TableView
+                  amount={
+                    day.tables.filter((table) =>
+                      table.reserved ? true : false
+                    ).length
+                  }
+                  title="Vendors Applied"
+                  type="applied"
+                />
+                <TableView
+                  amount={
+                    day.tables.filter((table) =>
+                      table.confirmed ? true : false
+                    ).length
+                  }
+                  title="Vendors Confirmed"
+                  type="confirmed"
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
       </footer>
     </article>
   );

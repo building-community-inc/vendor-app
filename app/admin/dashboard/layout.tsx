@@ -17,8 +17,8 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <section className="flex bg-nav-bg text-nav-text h-screen overflow-y-hidden">
-      <AdminNavbar user={sanityUser} />
-      <div className="h-full overflow-y-scroll w-full hide-scrollbar">{children}</div>
+      <AdminNavbar/>
+      <div className="h-full overflow-y-scroll w-full hide-scrollbar pb-5">{children}</div>
     </section>
   );
 };

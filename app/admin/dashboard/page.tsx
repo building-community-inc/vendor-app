@@ -1,6 +1,5 @@
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
-import Image from "next/image";
 import { redirect } from "next/navigation";
 
 const page = async () => {
