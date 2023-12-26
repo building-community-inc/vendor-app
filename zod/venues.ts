@@ -15,12 +15,18 @@ export const zodVenueSchema = z.object({
   // tables: z.array(z.any()).optional(),
 });
 
+const zodTableSchema = z.object({
+  id: z.string(),
+  price: z.number(),
+  _key: z.string(),
+});
+
 export const zodVenueFormSchema = zodVenueSchema.merge(
   z.object({
     _type: z.literal("venue"),
     _id: z.string().optional(),
     tables: z.array(z.string()).min(1, "At least one table is required"),
-    tableInfo: z.array(z.object({ id: z.string(), price: z.number() })),
+    tableInfo: z.array(zodTableSchema),
   })
 );
 

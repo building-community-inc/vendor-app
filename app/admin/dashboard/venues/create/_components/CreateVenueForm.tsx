@@ -36,6 +36,7 @@ const CreateVenueForm = ({
     resolver: zodResolver(zodVenueSchema),
     defaultValues,
   });
+
   const router = useRouter();
 
   const fileId = useVenueImageIdStore((state) => state.fileId);
@@ -178,7 +179,7 @@ const CreateVenueForm = ({
       )}
 
       <Tables register={register} defaultTables={defaultValues?.tables || []} />
-      <TableInfo defaultTables={[]} />
+      <TableInfo defaultTables={defaultValues?.tableInfo || []} />
       {errors && errors.root && (
         <span className="text-red-500 text-center">{errors.root.message}</span>
       )}

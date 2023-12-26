@@ -10,7 +10,7 @@ const Page = async ({params}: {
   }
 }) => {
 
-  const {title, address, city, hours, phone, securityPhone, loadInInstructions, venueMap, _id, tables} = await getVenueById(params.id)
+  const {title, address, city, hours, phone, securityPhone, loadInInstructions, venueMap, _id, tables, tableInfo} = await getVenueById(params.id)
 
 
   const defaultValues = {
@@ -22,10 +22,11 @@ const Page = async ({params}: {
     securityPhone,
     loadInInstructions,
     _id,
-    tables
+    tables,
+    tableInfo
   }
   return (
-    <main className="pt-14 px-5 w-full">
+    <main className="pt-14 px-5 w-full max-w-3xl mx-auto">
       <h1 className="font-bold text-xl">Update Venue {defaultValues?.title}</h1>
       <section className="w-full">
         <CreateVenueForm

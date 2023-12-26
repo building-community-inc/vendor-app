@@ -1,9 +1,11 @@
+import { nanoid } from "nanoid";
 import { useEffect } from "react";
 import { create } from "zustand";
 
 type Table = {
   id: string;
   price: number;
+  key?: string;
 };
 
 type TableStore = {
@@ -17,16 +19,17 @@ type TableStore = {
 export const useTableInfoStore = create<TableStore>((set) => ({
   tables: [],
   addTable: (table: Table) =>
-    set((state) => {
-      if (state.tables.length > 0) {
-        const lastTableItem = state.tables[state.tables.length - 1];
-        const newTableItem = isNaN(+lastTableItem.id)
-          ? { ...table, id: `${lastTableItem.id}1` }
-          : { ...table, id: `${+lastTableItem.id + 1}` };
-        return { tables: [...state.tables, newTableItem] };
-      }
-      return { tables: [...state.tables, table] };
-    }),
+  set((state) => {
+    const newTable = { ...table, _key: nanoid() };
+    if (state.tables.length > 0) {
+      const lastTableItem = state.tables[state.tables.length - 1];
+      const newTableItem = isNaN(+lastTableItem.id)
+        ? { ...newTable, id: `${lastTableItem.id}1` }
+        : { ...newTable, id: `${+lastTableItem.id + 1}` };
+      return { tables: [...state.tables, newTableItem] };
+    }
+    return { tables: [...state.tables, newTable] };
+  }),
   removeTable: (table) =>
     set((state) => ({ tables: state.tables.filter((t) => t.id !== table.id) })),
   resetTables: () => set({ tables: [] }),
@@ -42,6 +45,7 @@ export const useTableInfoStore = create<TableStore>((set) => ({
 }));
 
 const TableInfo = ({ defaultTables }: { defaultTables?: Table[] }) => {
+
   const { tables, addTable, removeTable, resetTables, changeTableValue } =
     useTableInfoStore();
 
@@ -66,7 +70,7 @@ const TableInfo = ({ defaultTables }: { defaultTables?: Table[] }) => {
                 value={table.id}
                 className={`border border-secondary-admin-border rounded-[20px] py-2 px-3 w-1/2`}
                 onChange={(e) => changeTableValue(i, { ...table, id: e.target.value })}
-              />
+                />
             </label>
             <label className="flex gap-2 items-center">
               Table Price:
@@ -74,6 +78,8 @@ const TableInfo = ({ defaultTables }: { defaultTables?: Table[] }) => {
                 value={table.price}
                 type="number"
                 className={`border border-secondary-admin-border rounded-[20px] py-2 px-3 w-1/2`}
+                onChange={(e) => changeTableValue(i, { ...table, price: +e.target.value })}
+                
               />
             </label>
             <button type="button" onClick={() => removeTable(table)}>
