@@ -29,12 +29,6 @@ const Page = async ({
 
   // const dateToDisplay = dateArrayToDisplayableText(market.dates);
 
-  console.log({
-    m: market.daysWithTables?.map((day) =>
-      day.tables.map((t) => t.table.price)
-    ),
-  });
-
   const prices =
     market.daysWithTables?.flatMap((day) =>
       day.tables.map((t) => t.table.price)
@@ -43,7 +37,6 @@ const Page = async ({
   const maxPrice = Math.max(...prices);
 
   const priceToDisplay = tablePriceTodisplay(minPrice, maxPrice);
-  console.log({ priceToDisplay });
 
   return (
     <main className="pt-14 px-5 w-full max-w-3xl mx-auto flex flex-col gap-8">

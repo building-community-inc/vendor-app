@@ -83,7 +83,7 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
     }
   
     console.log(params.get("options"));
-    push(`/checkout?${params.toString()}`);
+    alert(`/checkout?${params.toString()}`);
   };
   return (
     <form

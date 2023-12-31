@@ -128,13 +128,7 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
           </span>
         )}
         <Days register={register} errors={errors} />
-        <FormInput
-          register={register}
-          name="price"
-          title="Table Price per Day"
-          placeholder="$200"
-          type="price"
-        />
+  
       </FormSection>
       <FormSection>
         <h3>Market Cover</h3>

@@ -54,7 +54,9 @@ const TableInfo = ({ defaultTables }: { defaultTables?: Table[] }) => {
       resetTables();
       defaultTables.forEach((table) => addTable(table));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  
   return (
     <div className="flex flex-col gap-4">
       <h4 className="font-bold text-lg text-center">Tables</h4>

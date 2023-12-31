@@ -1,11 +1,18 @@
 import type { TSanityMarket } from "@/sanity/queries/admin/markets";
-import { dateArrayToDisplayableText } from "@/utils/helpers";
+import { dateArrayToDisplayableText, tablePriceTodisplay } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
 
 const MarketCard = ({ market }: { market: TSanityMarket }) => {
   const dateToDisplay = dateArrayToDisplayableText(market.dates);
+  const prices =
+    market.daysWithTables?.flatMap((day) =>
+      day.tables.map((t) => t.table.price)
+    ) || [];
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
 
+  const priceToDisplay = tablePriceTodisplay(minPrice, maxPrice);
   return (
     <li key={market._id} className="flex flex-col gap-2">
       <Link href={`/dashboard/markets/${market._id}`}>
@@ -18,7 +25,7 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
         />
       </Link>
       <span>
-        <strong>${market.price}</strong> per day
+        <strong>{priceToDisplay}</strong> per day
       </span>
       <h3 className="text-2xl font-bold font-inter">{market.name}</h3>
       <p className="font-roboto">{market.description}</p>
