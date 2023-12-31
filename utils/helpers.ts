@@ -1,3 +1,6 @@
+export const tablePriceTodisplay = (minPrice: number, maxPrice: number) =>
+  minPrice === maxPrice ? `$${minPrice}` : `$${minPrice} - $${maxPrice}`;
+
 export const camelCaseToTitleCase = function (input: string): string {
   return input
     .replace(/([a-z])([A-Z])/g, "$1 $2") // Add space between lowercase and uppercase letters
@@ -15,24 +18,14 @@ export const dateArrayToDisplayableText = function (dates: string[]): string {
   };
 
   const offset = 5; // Offset for EST timezone
-  const startParts = dates[0].split('-').map(part => +part);
-  const endParts = dates[dates.length - 1].split('-').map(part => +part);
+  const startParts = dates[0].split("-").map((part) => +part);
+  const endParts = dates[dates.length - 1].split("-").map((part) => +part);
 
   const startDate = new Date(
-    Date.UTC(
-      startParts[0],
-      startParts[1] - 1,
-      startParts[2],
-      offset
-    )
+    Date.UTC(startParts[0], startParts[1] - 1, startParts[2], offset)
   );
   const endDate = new Date(
-    Date.UTC(
-      endParts[0],
-      endParts[1] - 1,
-      endParts[2],
-      offset
-    )
+    Date.UTC(endParts[0], endParts[1] - 1, endParts[2], offset)
   );
 
   const formattedStartDate = startDate.toLocaleString("en-US", {

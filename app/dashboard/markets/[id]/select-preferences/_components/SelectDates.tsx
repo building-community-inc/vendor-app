@@ -1,16 +1,23 @@
 "use client";
-import { TSanityMarket } from "@/sanity/queries/admin/markets";
+import {
+  TDayWithTable,
+  TSanityMarket,
+  TTableInDay,
+} from "@/sanity/queries/admin/markets";
 import { formatMarketDate } from "@/utils/helpers";
+import { TDateType } from "./SelectOptions";
 
 const SelectDates = ({
   market,
   handleDateSelect,
   selectedDates,
   totalToPay,
+  handleOnTableChange,
 }: {
   market: TSanityMarket;
-  handleDateSelect: (date: string) => void;
-  selectedDates: string[];
+  handleDateSelect: (date: TDayWithTable) => void;
+  handleOnTableChange: (table: TTableInDay, date: TDateType) => void;
+  selectedDates: TDayWithTable[];
   totalToPay: number | null;
 }) => {
   return (
@@ -27,17 +34,33 @@ const SelectDates = ({
                 type="checkbox"
                 name={`date-[${index}]`}
                 id={date.date}
-                onChange={() => handleDateSelect(date.date)}
-                checked={!!selectedDates.find((d) => d === date.date)}
+                onChange={() => handleDateSelect(date)}
+                checked={!!selectedDates.find((d) => d && d.date === date.date)}
               />
               {formatMarketDate(date.date)}
-              {!!selectedDates.find((d) => d === date.date) && (
-                <select name="table" id="table" className="text-black">
+              {!!selectedDates.find((d) => d.date === date.date) && (
+                <select
+                  name="table"
+                  id="table"
+                  className="text-black"
+                  onChange={(e) => {
+                    const newTable = date.tables.find(
+                      (t) => t.table.id === e.target.value
+                    );
+                    if (newTable === undefined) return;
+                    handleOnTableChange(newTable, date);
+                  }}
+                >
                   <option value="null">Table</option>
                   {date.tables
-                    .filter((table) => table.available)
+                    .filter((table) => !table.booked)
                     .map((table, index) => (
-                      <option key={`${table.table}-${index}`} value={table.table}>{table.table}</option>
+                      <option
+                        key={`${table.table}-${index}`}
+                        value={table.table.id}
+                      >
+                        Table: {table.table.id} Price: ${table.table.price}
+                      </option>
                     ))}
                 </select>
               )}
@@ -47,7 +70,7 @@ const SelectDates = ({
       </ul>
       {typeof totalToPay === "number" ? (
         totalToPay < 1 ? (
-          <span className="">Please select at least one date</span>
+          <span className="">Please select at least one date and a table</span>
         ) : (
           <>
             <h2>Total To Booking Cost:</h2>

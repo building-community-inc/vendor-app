@@ -1,6 +1,6 @@
 import { getMarketById } from "@/sanity/queries/admin/markets";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { formatMarketDate } from "@/utils/helpers";
+import { formatMarketDate, tablePriceTodisplay } from "@/utils/helpers";
 import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,12 +23,28 @@ const Page = async ({
   );
 
   if (!sanityUser) redirect("/");
-
   const market = await getMarketById(params.id);
 
   if (!market) return <div>no market found</div>;
 
   // const dateToDisplay = dateArrayToDisplayableText(market.dates);
+
+  console.log({
+    m: market.daysWithTables?.map((day) =>
+      day.tables.map((t) => t.table.price)
+    ),
+  });
+
+  const prices =
+    market.daysWithTables?.flatMap((day) =>
+      day.tables.map((t) => t.table.price)
+    ) || [];
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+
+  const priceToDisplay = tablePriceTodisplay(minPrice, maxPrice);
+  console.log({ priceToDisplay });
+
   return (
     <main className="pt-14 px-5 w-full max-w-3xl mx-auto flex flex-col gap-8">
       <h1>{market.name}</h1>
@@ -41,7 +57,7 @@ const Page = async ({
       />
       <p>{market.description}</p>
       <span className="flex gap-[1ch]">
-        <strong>{market.price}</strong>/ day
+        <strong>{priceToDisplay}</strong>/ day
       </span>
       <h2 className="font-bold text-lg">Dates:</h2>
       <ul className="flex gap-[1ch]">

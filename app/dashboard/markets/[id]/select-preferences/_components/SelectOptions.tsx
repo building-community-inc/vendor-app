@@ -1,32 +1,75 @@
 "use client";
-import { TSanityMarket } from "@/sanity/queries/admin/markets";
+import { TDayWithTable, TSanityMarket, TTable, TTableInDay } from "@/sanity/queries/admin/markets";
 import SelectDates from "./SelectDates";
 import ContinueButton from "../../_components/ContinueButton";
 import { useState } from "react";
-import { TUserBase } from "@/zod/user-business";
+import { useRouter } from "next/navigation";
 // import { useRouter } from "next/navigation";
-
+type TSelectedTableType = {
+  date: string;
+  table: TTableInDay;
+};
+export type TDateType = {
+  date: string;
+  tables: TTableInDay[];
+};
 const SelectOptions = ({ market }: { market: TSanityMarket }) => {
-  // const { push } = useRouter();
+  const { push } = useRouter();
   
   const [specialRequest, setSpecialRequest] = useState<string>("");
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
-  const price = market.price.replace("$", "");
-  const totalToPay = selectedDates.length * Number(price);
+  const [selectedTables, setSelectedTables] = useState<TSelectedTableType[]>([]);
+
+
+  const [newSelectedDates, setNewSelectedDates] = useState<TDayWithTable[]>([]);
+  
+  const totalToPay = selectedTables.reduce((total, table) => total + table.table.table.price, 0);
 
   const options = {
-    selectedDates,
+    selectedTables,
     totalToPay,
     specialRequest,
     marketId: market._id,
   };
 
-  const handleDateSelect = (date: string) => {
-    if (selectedDates.includes(date)) {
-      setSelectedDates((prev) => prev.filter((d) => d !== date));
+  const handleNewDateSelect = (date: TDayWithTable) => {
+    console.log("here", date)
+    if (newSelectedDates.includes(date)) {
+      setNewSelectedDates((prev) => prev.filter((d) => d !== date));
     } else {
-      setSelectedDates((prev) => [...prev, date]);
+      setNewSelectedDates((prev) => [...prev, date]);
     }
+  };
+  // const handleDateSelect = (date: string) => {
+  //   if (selectedDates.includes(date)) {
+  //     setSelectedDates((prev) => prev.filter((d) => d !== date));
+  //   } else {
+  //     setSelectedDates((prev) => [...prev, date]);
+  //   }
+  // };
+
+  // const handleOnTableChange = (table: TTableInDay) => {
+  //   if (selectedTables.includes(table)) {
+  //     setSelectedTables((prev) => prev.filter((t) => t.table.id !== table.table.id));
+  //   } else {
+  //     setSelectedTables((prev) => [...prev, table]);
+  //   }
+  // }
+  
+
+  const handleOnTableChange = (table: TTableInDay, date: TDateType) => {
+    setSelectedTables(prevTables => {
+      // Check if the date is already in the selected tables
+      const existingDate = prevTables.find(t => t.date === date.date);
+  
+      if (existingDate) {
+        // If the date is already in the selected tables, replace its table with the new table
+        return prevTables.map(t => t.date === date.date ? { ...t, table } : t);
+      } else {
+        // If the date is not in the selected tables, add a new entry with the date and table
+        return [...prevTables, { date: date.date, table }];
+      }
+    });
   };
 
   const handleProceedToCheckout = (event: React.FormEvent) => {
@@ -34,8 +77,13 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
 
     const params = new URLSearchParams();
     params.append("options", JSON.stringify(options));
+    if (!options.selectedTables || options.selectedTables.length === 0) {
+      alert("Please select tables before proceeding to checkout.");
+      return;
+    }
+  
     console.log(params.get("options"));
-    // push(`/checkout?${params.toString()}`);
+    push(`/checkout?${params.toString()}`);
   };
   return (
     <form
@@ -48,9 +96,10 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
       </header>
       <SelectDates
         market={market}
-        handleDateSelect={handleDateSelect}
-        selectedDates={selectedDates}
+        handleDateSelect={handleNewDateSelect}
+        selectedDates={newSelectedDates}
         totalToPay={totalToPay}
+        handleOnTableChange={handleOnTableChange}
       />
       <textarea
         rows={2}
