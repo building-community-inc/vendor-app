@@ -15,7 +15,12 @@ const venueQueryString = `
     "url": venueMap.asset->url,
     "_id": venueMap.asset->_id
   },
-  tables
+  tables,
+  "tableInfo": tableInfo[] {
+    _key,
+    id,
+    price
+  }
 `;
 
 const zodVenueQuery = zodVenueSchema.merge(
@@ -26,7 +31,18 @@ const zodVenueQuery = zodVenueSchema.merge(
       _id: z.string(),
     }),
     // tables: z.array(z.string()).optional().nullable(),
-      tables: z.array(z.any()).optional(),
+    tables: z.array(z.any()).optional(),
+
+    tableInfo: z
+      .array(
+        z.object({
+          id: z.string(),
+          price: z.number(),
+          _key: z.string(),
+        })
+      )
+      .optional()
+      .nullable(),
 
     loadInInstructions: z.string().optional().nullable(),
   })
@@ -38,7 +54,6 @@ const zodVenueQueryArray = z.array(zodVenueQuery);
 
 export const getAllVenues = async () => {
   try {
-    
     const result = await sanityClient.fetch(
       `*[_type == 'venue']{
      ${venueQueryString}

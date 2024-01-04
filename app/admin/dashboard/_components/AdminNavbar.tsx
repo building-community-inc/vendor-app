@@ -2,10 +2,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import navOptions from "./navOptions.json";
-import { SignOutButton } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Burger from "@/app/_components/Burger";
+import SignOutButton from "@/app/_components/clerk/SignOut";
 
 const AdminNavbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);

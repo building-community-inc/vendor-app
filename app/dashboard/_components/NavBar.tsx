@@ -1,8 +1,8 @@
 "use client";
 
 import Burger from "@/app/_components/Burger";
+import SignOutButton from "@/app/_components/clerk/SignOut";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
-import { SignOutButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

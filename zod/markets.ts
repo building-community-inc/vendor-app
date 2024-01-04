@@ -7,7 +7,6 @@ export const zodMarketFormSchema = z.object({
   description: z.string().min(1, "Description of the Market is required"),
   vendorInstructions: z
     .string().optional().nullable(),
-  price: z.string().min(1, "Price per day is required"),
   dates: z.array(zodDaySchema).min(1, "At least one day is required"),
   marketCover: z
     .string()
@@ -30,11 +29,15 @@ export const sanityZodMarketFormSchema = zodMarketFormSchema.merge(
         _key: z.string(),
         tables: z.array(
           z.object({
-            table: z.string(),
+            table: z.object({
+              _key: z.string(),
+              id: z.string(),
+              price: z.number(),
+            }),
             _key: z.string(),
-            available: z.boolean(),
-            reserved: z.object({}).passthrough().optional().nullable(),
-            confirmed: z.object({}).passthrough().optional().nullable(),
+            booked: z.object({
+              _ref: z.string().optional().nullable()
+            }).optional().nullable(),
           })
         ),
       })

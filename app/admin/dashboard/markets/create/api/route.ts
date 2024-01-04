@@ -43,19 +43,24 @@ export const POST = async (req: Request) => {
   // console.log({daysW: body.daysWithTables[0]})
   const parsedMarket = sanityZodMarketFormSchema.safeParse(body);
 
-  // console.log({ parsedMarket });
   if (!parsedMarket.success) {
     return Response.json({
       status: 401,
       body: { error: parsedMarket.error.message },
     });
   }
-
+  
+  
   try {
-    const response = await sanityWriteClient.create(parsedMarket.data);
 
+    const response = await sanityWriteClient.create(parsedMarket.data);
+    
+    console.log({ response, here: true });
+    console.log({ here: "true???" });
+    
     return Response.json(response);
   } catch (error) {
+    
     return Response.json({ status: 401, error });
   }
 

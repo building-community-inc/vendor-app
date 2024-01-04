@@ -8,11 +8,10 @@ import { camelCaseToTitleCase } from "@/utils/helpers";
 import { useRouter } from "next/navigation";
 import { TVenue, zodVenueFormSchema, zodVenueSchema } from "@/zod/venues";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSubmitOnEnter } from "@/utils/hooks/useSubmitOnEnter";
-import { create } from "zustand";
+import TableInfo, { useTableInfoStore } from "./TableInfo";
 
-// type TVenueDefaultFormValues = Omit<TVenueFront, 'venueMap'> & { venueMap: string };
 const CreateVenueForm = ({
   defaultValues,
   defaultImage,
@@ -35,10 +34,13 @@ const CreateVenueForm = ({
     resolver: zodResolver(zodVenueSchema),
     defaultValues,
   });
+
   const router = useRouter();
 
   const fileId = useVenueImageIdStore((state) => state.fileId);
-  const tables = useTableStore((state) => state.tables);
+  
+  const tableInfo = useTableInfoStore((state) => state.tables);
+
 
   const formInputs = Object.keys(zodVenueSchema.shape)
     .filter((key) => key !== "venueMap")
@@ -62,7 +64,7 @@ const CreateVenueForm = ({
       _type: "venue",
       venueMap: defaultImage ? defaultImage._id : fileId,
       _id: defaultValues ? defaultValues._id : undefined,
-      tables,
+      tableInfo
     };
 
     const parsedVenueObj = zodVenueFormSchema.safeParse(venueObj);
@@ -86,6 +88,7 @@ const CreateVenueForm = ({
 
       setError("root", { type: "manual", message: errorMessage });
     }
+
     else {
       try {
         const res = await fetch(
@@ -171,11 +174,7 @@ const CreateVenueForm = ({
         </span>
       )}
 
-      {/* {!!fileId ||
-        (!!defaultImage && (
-          ))} */}
-
-      <Tables register={register} defaultTables={defaultValues?.tables || []} />
+      <TableInfo defaultTables={defaultValues?.tableInfo || []} />
       {errors && errors.root && (
         <span className="text-red-500 text-center">{errors.root.message}</span>
       )}
@@ -223,89 +222,7 @@ const VenueFormInputComp = ({
   );
 };
 
-type TableStore = {
-  tables: string[];
-  addTable: (table: string) => void;
-  removeTable: (table: string) => void;
-  resetTables: () => void;
-  changeTableValue: (index: number, value: string) => void;
-};
 
-const useTableStore = create<TableStore>((set) => ({
-  tables: [],
-  addTable: (table) =>
-    set((state) => {
-      if (state.tables.length > 0) {
-        const lastTableItem = +state.tables[state.tables.length - 1];
-        const newTableItem = lastTableItem + 1;
-        const newTables = [...state.tables, newTableItem.toString()];
-        return { tables: newTables };
-      }
-      return { tables: [...state.tables, table] };
-    }),
-  removeTable: (table) =>
-    set((state) => ({ tables: state.tables.filter((t) => t !== table) })),
-  resetTables: () => set({ tables: [] }),
-  changeTableValue: (index, value) => {
-    set((state) => {
-      const newTables = [...state.tables];
-      newTables[index] = value;
-      return {
-        tables: newTables,
-      };
-    });
-  },
-}));
 
-const Tables = ({
-  register,
-  defaultTables,
-}: {
-  register: UseFormRegister<TVenue>;
-  defaultTables?: string[];
-}) => {
-  const { tables, addTable, removeTable, resetTables, changeTableValue } =
-    useTableStore();
 
-  useEffect(() => {
-    if (defaultTables) {
-      resetTables();
-      defaultTables.forEach((table) => addTable(table));
-    }
-  }, []);
-  return (
-    <div>
-      <h4 className="font-bold text-lg text-center">Tables</h4>
-      <button type="button" onClick={() => addTable("1")}>
-        + add Table
-      </button>
-      <ul className="flex flex-col gap-2">
-        {tables.map((table, i) => (
-          <li key={i} className="flex justify-between">
-            {/* <FormInput
-              name={`tables[${i}]` as any}
-              register={register}
-              placeholder="table number"
-              type="input"
-              value={table}
-              onChange={(e) => {
-                // e.preventDefault();
-                changeTableValue(i, e.target.value);
-              }}
-              controlled
-            /> */}
 
-            <div
-              className={`border border-secondary-admin-border rounded-[20px] py-2 px-3 w-1/2`}
-            >
-              {table}
-            </div>
-            <button type="button" onClick={() => removeTable(table)}>
-              - remove table
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};

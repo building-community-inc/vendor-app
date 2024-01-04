@@ -1,5 +1,6 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+
 export const venueSchema = defineType({
   name: "venue",
   title: "Venue",
@@ -54,9 +55,45 @@ export const venueSchema = defineType({
           name: "table",
           title: "Table Number",
           type: "string",
-        })
-      ]
-    })
+        }),
+      ],
+    }),
+    defineField({
+      name: "tableInfo",
+      title: "New Tables",
+      type: "array",
+      of: [
+        defineArrayMember({
+          name: "table",
+          title: "Table",
+          type: "object",
+          fields: [
+            defineField({
+              name: "id",
+              title: "Id",
+              type: "string",
+            }),
+            defineField({
+              name: "price",
+              title: "Price",
+              type: "number",
+            }),
+          ],
+          preview: {
+            select: {
+              title: "id",
+              subtitle: "price"
+            },
+            prepare({title, subtitle}) {
+              return {
+                title: `Id: ${title}`,
+                subtitle: `Price: ${subtitle}`
+              }
+            }
+          }
+        }),
+      ],
+    }),
   ],
   preview: {
     select: {
@@ -66,7 +103,7 @@ export const venueSchema = defineType({
     prepare({ title, media }) {
       return {
         title,
-        media
+        media,
       };
     },
   },

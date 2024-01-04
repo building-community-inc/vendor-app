@@ -30,7 +30,10 @@ const marketQueryString = `
     date,
 
     "tables": tables[] {
-      table,
+      "table": table {
+        id,
+        price
+      },
       available,
       reserved,
       confirmed
@@ -71,10 +74,11 @@ const individualMarketQueryString = `
     date,
 
     "tables": tables[] {
-      table,
-      available,
-      reserved,
-      confirmed
+      "table": table {
+        id, 
+        price
+      },
+      booked
     }
   }
 `;
@@ -87,6 +91,28 @@ const zodImageSchema = z.object({
     aspectRatio: z.number(),
   }),
 });
+
+const zodTable = z.object({
+  id: z.string(),
+  price: z.number()
+});
+
+const zodTableInDay = z.object({
+  table: zodTable,
+  booked: z.object({}).passthrough().optional().nullable(),
+})
+
+const zodDayWithTable = z.object({
+  date: z.string(),
+  tables: z.array(zodTableInDay)
+})
+
+export type TDayWithTable = z.infer<typeof zodDayWithTable>
+export type TTable = z.infer<typeof zodTable>
+export type TTableInDay = z.infer<typeof zodTableInDay>
+
+
+const zodDaysWithTables = z.array(zodDayWithTable).optional().nullable()
 
 const zodMarketQuery = zodMarketFormSchema.merge(
   z.object({
@@ -119,15 +145,7 @@ const zodMarketQuery = zodMarketFormSchema.merge(
       })
     ).optional().nullable(),
 
-    daysWithTables: z.array(z.object({
-      date: z.string(),
-      tables: z.array(z.object({
-        table: z.string(),
-        available: z.boolean(),
-        reserved: z.object({}).passthrough().optional().nullable(),
-        confirmed: z.object({}).passthrough().optional().nullable()
-      }))
-    })).optional().nullable()
+    daysWithTables: zodDaysWithTables
   })
 );
 export type TSanityMarket = z.infer<typeof zodMarketQuery>;
@@ -140,7 +158,7 @@ export const getAllMarkets = async () => {
         ${marketQueryString}
       }`
     );
-
+      // console.log({result})
     // console.log({result: result.map(m =>  m.venue)})
     const parsedResult = zodMarketQueryArray.safeParse(result);
 

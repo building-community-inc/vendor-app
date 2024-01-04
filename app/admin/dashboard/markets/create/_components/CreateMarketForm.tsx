@@ -59,17 +59,12 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
       daysWithTables: days.map((day) => ({
         date: day.date,
         _key: nanoid(),
-        tables: selectedVenue.tables?.map((table) => ({
+        tables: selectedVenue.tableInfo?.map((table) => ({
           table,
           _key: nanoid(),
-          available: true,
-          reserved: null,
-          confirmed: null,
         })),
       })),
     };
-
-    // console.log({marketObj, days})
 
     try {
       await fetch(`/admin/dashboard/markets/create/api`, {
@@ -133,13 +128,7 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
           </span>
         )}
         <Days register={register} errors={errors} />
-        <FormInput
-          register={register}
-          name="price"
-          title="Table Price per Day"
-          placeholder="$200"
-          type="price"
-        />
+  
       </FormSection>
       <FormSection>
         <h3>Market Cover</h3>

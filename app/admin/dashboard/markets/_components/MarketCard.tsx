@@ -1,7 +1,7 @@
 import { TSanityMarket } from "@/sanity/queries/admin/markets";
 import TableView from "../../venues/_components/TableView";
 import Image from "next/image";
-import { formatMarketDate } from "@/utils/helpers";
+import { formatMarketDate, tablePriceTodisplay } from "@/utils/helpers";
 
 const MarketCard = ({
   market,
@@ -10,6 +10,14 @@ const MarketCard = ({
   market: TSanityMarket;
   dateToDisplay: string;
 }) => {
+  const prices =
+    market.daysWithTables?.flatMap((day) =>
+      day.tables.map((t) => t.table.price)
+    ) || [];
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+
+  const priceToDisplay = tablePriceTodisplay(minPrice, maxPrice);
   return (
     <article className="min-h-[645px] flex flex-col gap-2 border rounded-[20px] overflow-hidden  border-[#292929] shadow-[0px_3px_6px_#00000029]">
       <header className="flex justify-between h-[60%] w-full">
@@ -29,7 +37,7 @@ const MarketCard = ({
           <p>{market.venue.address}</p>
         </article>
         <p>
-          <strong> {market.price}</strong> per table
+          <strong> {priceToDisplay}</strong> per table
         </p>
       </section>
       <footer className="flex gap-4 justify-evenly pb-5">
@@ -44,28 +52,12 @@ const MarketCard = ({
               </h4>
               <div className="flex gap-2">
                 <TableView
-                  amount={
-                    day.tables.filter((tables) => tables.available === true)
-                      .length
-                  }
+                  amount={day.tables.filter((tables) => !tables.booked).length}
                   title="Available Tables"
                 />
                 <TableView
-                  amount={
-                    day.tables.filter((table) =>
-                      table.reserved ? true : false
-                    ).length
-                  }
-                  title="Vendors Applied"
-                  type="applied"
-                />
-                <TableView
-                  amount={
-                    day.tables.filter((table) =>
-                      table.confirmed ? true : false
-                    ).length
-                  }
-                  title="Vendors Confirmed"
+                  amount={day.tables.filter((tables) => tables.booked).length}
+                  title="Booked Tables"
                   type="confirmed"
                 />
               </div>
