@@ -7,6 +7,11 @@ export const businessSchema = defineType({
   type: "document",
   fields: [
     defineField({
+      name: 'funny',
+      title: 'funny 1',
+      type: 'string'
+    }),
+    defineField({
       name: 'address1',
       title: 'Address 1',
       type: 'string'
@@ -60,6 +65,12 @@ export const businessSchema = defineType({
       name: "logo",
       title: "Logo",
       type: "image"
+    }),
+    defineField({
+      name: "pdf",
+      title: "Pdf",
+      type: "array",
+      of: [{type: "file"}]
     }),
   ],
   preview: {

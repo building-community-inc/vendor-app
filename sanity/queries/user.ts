@@ -26,10 +26,10 @@ export const getSanityUserByEmail = async (email: string) => {
             phone,
             instagramHandle,
             industry,
-            "logoUrl": logo.asset->url
+            "logoUrl": logo.asset->url,
+            "pdfUrl": pdf.asset->url,
         }
     }`);
-
     const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
     if (!validatedUser.success) {
         throw new Error(validatedUser.error.message);

@@ -24,11 +24,19 @@ export const zodBusiness = z.object({
   phone: z.string().min(1, "Phone is required"),
   instagramHandle: z.string().nullable(),
   industry: z.string().min(1, "Industry is required"),
-  
+
   logo: z
     .string()
     .optional()
     .transform((refId) => ({ _type: "image", asset: { _ref: refId } })),
+
+  pdf: z
+    .array(z.string())
+    .optional()
+    .nullable()
+    .transform((refIds) =>
+      refIds?.map((refId) => ({ _type: "image", asset: { _ref: refId } }))
+    ),
 });
 
 export const zodBusinessForm = zodBusiness.merge(
@@ -36,7 +44,6 @@ export const zodBusinessForm = zodBusiness.merge(
     _type: z.literal("business"),
   })
 );
-
 
 export const zodSanityBusiness = zodBusiness.merge(
   z.object({
@@ -51,7 +58,7 @@ export const zodSanityBusiness = zodBusiness.merge(
 );
 export const zodBusinessQuery = zodBusinessForm.merge(
   z.object({
-    logoUrl: z.string().optional().nullable( ),
+    logoUrl: z.string().optional().nullable(),
   })
 );
 // export const zodBusinessForm = zodBusiness.merge(

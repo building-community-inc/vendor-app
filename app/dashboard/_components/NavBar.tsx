@@ -14,7 +14,7 @@ const navOptions = [
     href: "/dashboard",
   },
   {
-    title: "Exlore Markets",
+    title: "Explore Markets",
     href: "/dashboard/explore",
   },
   {

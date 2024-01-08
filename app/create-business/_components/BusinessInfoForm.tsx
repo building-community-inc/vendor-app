@@ -15,7 +15,12 @@ import {
   zodBusinessForm,
 } from "@/zod/user-business";
 import FileInput from "../../_components/FileInput";
-import { useFileStore } from "@/app/_components/store/fileStore";
+import {
+  useFileStore,
+  usePdfFileStore,
+} from "@/app/_components/store/fileStore";
+import PdfUpload from "@/app/_components/PdfUpload";
+import { useState } from "react";
 
 type TVendorCategory = {
   name: string;
@@ -27,7 +32,9 @@ type TBIFProps = {
 };
 
 const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
+  const [addSupportingDocs, setAddSupportingDocs] = useState(false);
   const router = useRouter();
+  const { fileIds: pdfFileIds } = usePdfFileStore();
   const {
     register,
     handleSubmit,
@@ -49,8 +56,6 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
     }) as { name: keyof TBusiness; title: string }[];
 
   const onSubmit = async (data: TBusiness) => {
-
-    
     const businessObj = {
       ...data,
       _type: "business",
@@ -109,6 +114,21 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
       {errors["industry"] && (
         <span className="text-red-500">{errors["industry"]?.message}</span>
       )}
+      <>
+        <div className="mx-auto mt-5 flex flex-col items-start w-full">
+          <label htmlFor="pdfFile">
+            Certificates or Supporting Documents (Optional) PDF Only
+          </label>
+          <PdfUpload
+            useStore={usePdfFileStore}
+          />
+        </div>
+
+        {errors["pdf"] && (
+          <span className="text-red-500">{errors["pdf"]?.message}</span>
+        )}
+      </>
+
       <div className="mx-auto mt-5">
         <FileInput useStore={useFileStore} title="upload your logo" />
       </div>
@@ -121,7 +141,7 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
         className="disabled:bg-red-200 bg-secondary text-primary rounded-md w-fit px-2 py-1 mx-auto mt-8 text-2xl"
         type="submit"
       >
-        {"->"}
+        {"Next"}
       </button>
     </form>
   );
