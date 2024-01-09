@@ -27,9 +27,13 @@ export const getSanityUserByEmail = async (email: string) => {
             instagramHandle,
             industry,
             "logoUrl": logo.asset->url,
-            "pdfUrl": pdf.asset->url,
+            "pdfs": pdf[] {
+                "url": asset -> url,
+                "name": asset -> originalFilename
+            },
         }
     }`);
+
     const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
     if (!validatedUser.success) {
         throw new Error(validatedUser.error.message);

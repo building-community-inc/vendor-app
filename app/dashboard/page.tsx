@@ -10,6 +10,7 @@ const page = async () => {
   const sanityUser = await getSanityUserByEmail(
     user.emailAddresses[0].emailAddress
   );
+  // console.log({ sanityUser, pdf: saityUser.business?.pdfs });
 
   return (
     <main className="flex gap-2 min-h-screen w-full">
@@ -72,11 +73,17 @@ const page = async () => {
             </p>
             <p className="flex gap-2">
               <strong>Instagram Handle:</strong>
-              <span className="text-[#0A6FA2]">@{sanityUser.business.instagramHandle ?? ""}</span>
+              <span className="text-[#0A6FA2]">
+                @{sanityUser.business.instagramHandle ?? ""}
+              </span>
             </p>
-            <p className="flex gap-2">
-              <strong>Supporting Documents:</strong> foodCertificate.pdf
-            </p>
+            <ul className="flex gap-2 flex-col">
+              <strong>Supporting Documents:</strong>
+              {sanityUser.business.pdfs &&
+                sanityUser.business.pdfs.map((pdf) => (
+                  <li key={pdf.url}>- {pdf.name}</li>
+                ))}
+            </ul>
           </section>
           <section>
             <h3>My Markets</h3>

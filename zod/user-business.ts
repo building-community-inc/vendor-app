@@ -59,7 +59,7 @@ export const zodSanityBusiness = zodBusiness.merge(
         _ref: z.string(),
       }),
     }),
-    pdf: z.array(
+    pdfs: z.array(
       z.object({
         _type: z.literal("file"),
         asset: z.object({
@@ -73,6 +73,12 @@ export const zodSanityBusiness = zodBusiness.merge(
 export const zodBusinessQuery = zodBusinessForm.merge(
   z.object({
     logoUrl: z.string().optional().nullable(),
+    pdfs: z.array(
+      z.object({
+        url: z.string(),
+        name: z.string(),
+      })
+    ),
   })
 );
 // export const zodBusinessForm = zodBusiness.merge(
