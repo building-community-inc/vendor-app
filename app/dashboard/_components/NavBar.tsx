@@ -61,16 +61,16 @@ const NavBar = ({ user }: { user: TUserWithOptionalBusinessRef }) => {
         </Link>
         <ul className="flex flex-col gap-4">
           {navOptions.map((option) => (
-            <li key={option.title} className="w-fit mx-auto">
+            <li key={option.title} className="w-fit mx-auto hover:scale-105 transition-all">
               {option.title === "Logout" ? (
-                <div className="text-center uppercase font-bold text-xl hover:text-2xl transition-all">
+                <div className="text-center uppercase font-bold text-xl">
                   <SignOutButton key={option.href} />
                 </div>
               ) : (
                 <Link
                   href={option.href}
                   key={option.title}
-                  className="text-center uppercase font-bold text-xl hover:text-2xl transition-all"
+                  className="text-center uppercase font-bold text-xl"
                 >
                   {option.title}
                 </Link>
