@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { z } from "zod";
 
 export const zodUserBase = z.object({
@@ -35,7 +36,11 @@ export const zodBusiness = z.object({
     .optional()
     .nullable()
     .transform((refIds) =>
-      refIds?.map((refId) => ({ _type: "image", asset: { _ref: refId } }))
+      refIds?.map((refId) => ({
+        _type: "file",
+        asset: { _ref: refId },
+        _key: nanoid(),
+      }))
     ),
 });
 
@@ -54,6 +59,15 @@ export const zodSanityBusiness = zodBusiness.merge(
         _ref: z.string(),
       }),
     }),
+    pdf: z.array(
+      z.object({
+        _type: z.literal("file"),
+        asset: z.object({
+          _ref: z.string(),
+        }),
+        _key: z.string(),
+      })
+    ),
   })
 );
 export const zodBusinessQuery = zodBusinessForm.merge(

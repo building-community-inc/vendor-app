@@ -47,7 +47,7 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
 
   const fileId = useFileStore((state) => state.fileId);
   const formInputs = Object.keys(zodBusiness.shape)
-    .filter((key) => key !== "industry" && key !== "logo")
+    .filter((key) => key !== "industry" && key !== "logo" && key !== "pdf")
     .map((key) => {
       return {
         name: key,
@@ -60,10 +60,14 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
       ...data,
       _type: "business",
       logo: fileId,
+      pdf: pdfFileIds,
     };
 
+    console.log({businessObj})
+    
     const parsedBusinesObj = zodBusinessForm.safeParse(businessObj);
-
+    
+    console.log({parsedBusinesObj})
     if (!parsedBusinesObj.success) {
       throw new Error(parsedBusinesObj.error.message);
     }
