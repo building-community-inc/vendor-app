@@ -77,13 +77,14 @@ const page = async () => {
                 @{sanityUser.business.instagramHandle ?? ""}
               </span>
             </p>
-            <ul className="flex gap-2 flex-col">
-              <strong>Supporting Documents:</strong>
-              {sanityUser.business.pdfs &&
-                sanityUser.business.pdfs.map((pdf) => (
+            {sanityUser.business.pdfs && (
+              <ul className="flex gap-2 flex-col">
+                <strong>Supporting Documents:</strong>
+                {sanityUser.business.pdfs.map((pdf) => (
                   <li key={pdf.url}>- {pdf.name}</li>
                 ))}
-            </ul>
+              </ul>
+            )}
           </section>
           <section>
             <h3>My Markets</h3>
