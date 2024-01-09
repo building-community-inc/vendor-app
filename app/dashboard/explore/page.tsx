@@ -1,4 +1,4 @@
-import { getAllMarkets } from "@/sanity/queries/admin/markets";
+import { getCurrentMarkets } from "@/sanity/queries/admin/markets";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
@@ -6,10 +6,12 @@ import MarketCard from "./_components/MarketCard";
 import Search from "./_components/Search";
 
 export const dynamic = "force-dynamic";
-const ExplorePage = async ({searchParams}: {
+const ExplorePage = async ({
+  searchParams,
+}: {
   searchParams: {
     [key: string]: string | undefined;
-  }
+  };
 }) => {
   const user = await currentUser();
 
@@ -20,26 +22,34 @@ const ExplorePage = async ({searchParams}: {
   );
 
   if (!sanityUser) redirect("/");
-  const markets = await getAllMarkets();
+  const markets = await getCurrentMarkets();
 
-
-  const filteredMarketsByName = markets?.filter(market => {
+  const filteredMarketsByName = markets?.filter((market) => {
     if (searchParams.search) {
-      return market.name.toLowerCase().includes(searchParams.search.toLowerCase())
+      return market.name
+        .toLowerCase()
+        .includes(searchParams.search.toLowerCase());
     }
     return true;
-  })
+  });
 
   return (
     <main className="flex flex-col gap-2 min-h-screen w-full">
       <header className="bg-nav-bg w-full flex justify-center py-10 items-center">
         <Search />
       </header>
-      <ul className="flex flex-col w-[80%] min-h-screen max-w-3xl mx-auto gap-16 py-10">
-        {filteredMarketsByName?.map((market) => (
-          <MarketCard key={market._id} market={market} />
-        ))}
-      </ul>
+      {filteredMarketsByName?.length === 0 ? (
+        <div className="flex flex-col items-center justify-center w-full h-full">
+          <h2 className="text-3xl font-bold">No Markets Found</h2>
+          <p className="text-xl">Try searching for something else</p>
+        </div>
+      ) : (
+        <ul className="flex flex-col w-[80%] min-h-screen max-w-3xl mx-auto gap-16 py-10">
+          {filteredMarketsByName?.map((market) => (
+            <MarketCard key={market._id} market={market} />
+          ))}
+        </ul>
+      )}
     </main>
   );
 };

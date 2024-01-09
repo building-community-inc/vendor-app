@@ -191,3 +191,25 @@ export const getMarketById = async (id: string) => {
     console.error(error);
   }
 };
+
+export const getCurrentMarkets = async () => {
+  const currentDate = new Date().toISOString().split('T')[0];
+  
+  try {
+    const result = await sanityClient.fetch(
+      `*[_type == 'market' && date >= $currentDate]{
+        ${marketQueryString}
+      }`,
+      { currentDate }
+    );
+
+    const parsedResult = zodMarketQueryArray.safeParse(result);
+
+    if (!parsedResult.success) {
+      throw new Error(parsedResult.error.message);
+    }
+    return parsedResult.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
