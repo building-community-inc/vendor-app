@@ -35,7 +35,7 @@ export const VenueCard = ({ venue, withAvailableTables }: TVenueCardProps) => {
       <section className="px-2 py-7 flex flex-col gap-2 justify-between h-[40%] overflow-y-scroll">
         <h2 className="font-semibold text-center capitalize">{venue.title}</h2>
         <div className="flex items-center">
-          <section className="w-1/2">
+          <section className="w-1/2 text-left">
             {Object.entries(venue)
               .filter(
                 ([key, _]) =>

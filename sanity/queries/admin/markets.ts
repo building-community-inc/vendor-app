@@ -94,25 +94,24 @@ const zodImageSchema = z.object({
 
 const zodTable = z.object({
   id: z.string(),
-  price: z.number()
+  price: z.number(),
 });
 
 const zodTableInDay = z.object({
   table: zodTable,
   booked: z.object({}).passthrough().optional().nullable(),
-})
+});
 
 const zodDayWithTable = z.object({
   date: z.string(),
-  tables: z.array(zodTableInDay)
-})
+  tables: z.array(zodTableInDay),
+});
 
-export type TDayWithTable = z.infer<typeof zodDayWithTable>
-export type TTable = z.infer<typeof zodTable>
-export type TTableInDay = z.infer<typeof zodTableInDay>
+export type TDayWithTable = z.infer<typeof zodDayWithTable>;
+export type TTable = z.infer<typeof zodTable>;
+export type TTableInDay = z.infer<typeof zodTableInDay>;
 
-
-const zodDaysWithTables = z.array(zodDayWithTable).optional().nullable()
+const zodDaysWithTables = z.array(zodDayWithTable).optional().nullable();
 
 const zodMarketQuery = zodMarketFormSchema.merge(
   z.object({
@@ -130,22 +129,25 @@ const zodMarketQuery = zodMarketFormSchema.merge(
       loadInInstructions: z.string().optional().nullable(),
     }),
     vendorInstructions: z.string().optional().nullable(),
-    vendors: z.array(
-      z.object({
-        vendor: z.string(),
-        datesSelected: z.array(
-          z.object({
-            date: z.string(),
-            tableSelected: z.string(),
-            tableConfirmed: z.string().optional().nullable(),
-            confirmed: z.boolean(),
-          })
-        ),
-        specialRequests: z.string().optional().nullable(),
-      })
-    ).optional().nullable(),
+    vendors: z
+      .array(
+        z.object({
+          vendor: z.string(),
+          datesSelected: z.array(
+            z.object({
+              date: z.string(),
+              tableSelected: z.string(),
+              tableConfirmed: z.string().optional().nullable(),
+              confirmed: z.boolean(),
+            })
+          ),
+          specialRequests: z.string().optional().nullable(),
+        })
+      )
+      .optional()
+      .nullable(),
 
-    daysWithTables: zodDaysWithTables
+    daysWithTables: zodDaysWithTables,
   })
 );
 export type TSanityMarket = z.infer<typeof zodMarketQuery>;
@@ -158,7 +160,7 @@ export const getAllMarkets = async () => {
         ${marketQueryString}
       }`
     );
-      // console.log({result})
+    // console.log({result})
     // console.log({result: result.map(m =>  m.venue)})
     const parsedResult = zodMarketQueryArray.safeParse(result);
 
@@ -192,12 +194,25 @@ export const getMarketById = async (id: string) => {
   }
 };
 
+const filterCurrentMarkets = (markets: TSanityMarket[]) => {
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  return markets.filter((market) =>
+    market.dates.some((date) => {
+      const marketDate = new Date(date);
+      return marketDate >= new Date(currentDate);
+    })
+  );
+};
+
 export const getCurrentMarkets = async () => {
-  const currentDate = new Date().toISOString().split('T')[0];
-  
+  const currentDate = new Date().toISOString().split("T")[0];
+
   try {
     const result = await sanityClient.fetch(
-      `*[_type == 'market' && date >= $currentDate]{
+      // `*[_type == 'market' && date >= $currentDate]{
+      `*[_type == 'market']{
+
         ${marketQueryString}
       }`,
       { currentDate }
@@ -208,7 +223,8 @@ export const getCurrentMarkets = async () => {
     if (!parsedResult.success) {
       throw new Error(parsedResult.error.message);
     }
-    return parsedResult.data;
+
+    return filterCurrentMarkets(parsedResult.data);
   } catch (error) {
     console.error(error);
   }

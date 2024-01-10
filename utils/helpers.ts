@@ -1,3 +1,9 @@
+import {
+  SortOption,
+  SortOptionKey,
+} from "@/app/dashboard/explore/_components/SortBy";
+import { ReadonlyURLSearchParams } from "next/navigation";
+
 export const tablePriceTodisplay = (minPrice: number, maxPrice: number) =>
   minPrice === maxPrice ? `$${minPrice}` : `$${minPrice} - $${maxPrice}`;
 
@@ -55,4 +61,26 @@ export const formatMarketDate = function (date: string): string {
 
 export const createDateString = (date: Date): string => {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+};
+
+export const createUrl = (
+  pathname: string,
+  params: URLSearchParams | ReadonlyURLSearchParams
+) => {
+  const paramsString = params.toString();
+  const queryString = `${paramsString.length ? "?" : ""}${paramsString}`;
+
+  return `${pathname}${queryString}`;
+};
+type SortOptionsType = { [K in SortOptionKey]: SortOption };
+
+export const getKeyByValue = (
+  value: SortOption,
+  sortOptions: SortOptionsType
+): SortOptionKey | undefined => {
+  for (const [key, val] of Object.entries(sortOptions)) {
+    if (val === value) {
+      return key as SortOptionKey;
+    }
+  }
 };

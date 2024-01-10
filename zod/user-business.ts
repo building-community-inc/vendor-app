@@ -78,7 +78,7 @@ export const zodBusinessQuery = zodBusinessForm.merge(
         url: z.string(),
         name: z.string(),
       })
-    ),
+    ).optional().nullable(),
   })
 );
 // export const zodBusinessForm = zodBusiness.merge(

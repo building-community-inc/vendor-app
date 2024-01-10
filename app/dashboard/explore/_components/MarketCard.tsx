@@ -21,7 +21,7 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
           width={market.marketCover.dimensions.width}
           height={market.marketCover.dimensions.height}
           alt={market.name}
-          className="w-full object-cover max-h-[271px] rounded-xl"
+          className="w-full object-cover rounded-xl aspect-video"
         />
       </Link>
       <span>
