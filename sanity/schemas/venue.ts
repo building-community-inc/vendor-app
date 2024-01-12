@@ -50,6 +50,7 @@ export const venueSchema = defineType({
       name: "tables",
       title: "Tables",
       type: "array",
+      hidden: true,
       of: [
         defineArrayMember({
           name: "table",
