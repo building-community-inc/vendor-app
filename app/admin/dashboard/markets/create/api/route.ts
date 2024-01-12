@@ -1,3 +1,4 @@
+import { stripe } from '@/stripe/';
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { sanityZodMarketFormSchema } from "@/zod/markets";
@@ -55,6 +56,16 @@ export const POST = async (req: Request) => {
 
     const response = await sanityWriteClient.create(parsedMarket.data);
     
+
+    const stripeProduct = await stripe.products.create({
+      name: parsedMarket.data.name,
+      
+    }) 
+
+
+    console.log({stripeProduct})
+
+
     return Response.json(response);
   } catch (error) {
     

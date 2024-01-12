@@ -114,7 +114,7 @@ const FileInput = ({
           className="object-cover mx-auto mt-2"
         />
       )}
-      <div className={cn("",
+      <div className={cn("flex gap-4",
         {"mt-5" : input.length > 0},
         {"flex" : input.length > 1}
       )}>
@@ -142,7 +142,7 @@ const FileInput = ({
             type="file"
             className="hidden"
           />
-          {uploading ? "Uploading" : input.length > 0 ? "Change Logo" : title}
+          {uploading ? "Uploading" : input.length > 0 ? "Change Image" : title}
         </label>
         {input.length > 1 && (
           <button
@@ -162,7 +162,7 @@ const FileInput = ({
                   )
             }
           >
-            Revert Logo
+            Revert Image
           </button>
         )}
       </div>
