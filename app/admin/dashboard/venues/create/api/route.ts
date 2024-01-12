@@ -35,7 +35,6 @@ export const POST = async (req: Request) => {
 
   const parsedVenue = zodSanityVenue.safeParse(body);
 
-  console.log({parsedVenue});
   if (!parsedVenue.success) {
     throw new Error(parsedVenue.error.message);
   }

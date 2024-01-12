@@ -4,7 +4,7 @@ import { sanityWriteClient } from "@/sanity/lib/client";
 import { cn } from "@/utils";
 import Image from "next/image";
 import { useReducer, type ChangeEvent, useState } from "react";
-const ALLOWED_FILE_TYPES = ["image/png", "image/jpeg"];
+const ALLOWED_FILE_TYPES = ["image/png"];
 
 export function validateFileType(file: File) {
   return ALLOWED_FILE_TYPES.includes(file.type);
@@ -60,6 +60,7 @@ const FileInput = ({
   const noInput = input.length === 0;
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    // console.log("handleChange", e.target.files[0])
     e.preventDefault();
     try {
       if (e.target.files && e.target.files[0]) {
@@ -68,6 +69,7 @@ const FileInput = ({
 
         // validate file type
         const valid = validateFileType(e.target.files[0]);
+
         if (!valid) {
           alert("invalid file type");
           return;
@@ -89,7 +91,10 @@ const FileInput = ({
         setFileId(_id);
         setUploading(false);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      // setUploading(false);
+    }
   };
   const addFilesToState = (files: TFileWithUrl[]) => {
     dispatch({ type: "ADD_FILES_TO_INPUT", payload: files });

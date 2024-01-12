@@ -63,11 +63,10 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
       pdf: pdfFileIds,
     };
 
-    console.log({businessObj})
+    // console.log({businessObj})
     
     const parsedBusinesObj = zodBusinessForm.safeParse(businessObj);
     
-    console.log({parsedBusinesObj})
     if (!parsedBusinesObj.success) {
       throw new Error(parsedBusinesObj.error.message);
     }
@@ -103,7 +102,7 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
         );
       })}
 
-      <label htmlFor={"industry"} className="mt-4">
+      <label htmlFor={"industry"} className="mt-4 px-12">
         {"Industry"}
       </label>
       <select
@@ -119,7 +118,7 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
         <span className="text-red-500">{errors["industry"]?.message}</span>
       )}
       <>
-        <div className="mx-auto mt-5 flex flex-col items-start w-full">
+        <div className="mx-auto mt-5 flex flex-col items-start w-full px-12 gap-5">
           <label htmlFor="pdfFile">
             Certificates or Supporting Documents (Optional) PDF Only
           </label>
@@ -133,7 +132,7 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
         )}
       </>
 
-      <div className="mx-auto mt-5">
+      <div className="mx-auto mt-5 px-12">
         <FileInput useStore={useFileStore} title="upload your logo" />
       </div>
       {errors["logo"] && (

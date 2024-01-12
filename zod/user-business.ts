@@ -59,7 +59,7 @@ export const zodSanityBusiness = zodBusiness.merge(
         _ref: z.string(),
       }),
     }),
-    pdfs: z.array(
+    pdf: z.array(
       z.object({
         _type: z.literal("file"),
         asset: z.object({

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^4.27.2",
+    "@clerk/themes": "^1.7.9",
     "@hookform/resolvers": "^3.3.2",
     "@portabletext/react": "^3.0.11",
     "@sanity/client": "6.8.6",
