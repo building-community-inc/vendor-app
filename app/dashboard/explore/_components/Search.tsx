@@ -15,7 +15,7 @@ const Search = () => {
       type="text"
       placeholder="FIND A MARKET"
       onChange={handleSearch}
-      className="bg-background rounded-full px-3 py-2 max-w-[654px] w-[40%]"
+      className="bg-background rounded-full px-3 py-2 max-w-[654px] w-[100%]"
     />
   );
 };

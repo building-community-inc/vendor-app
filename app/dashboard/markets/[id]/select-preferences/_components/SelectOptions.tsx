@@ -33,7 +33,6 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
   };
 
   const handleNewDateSelect = (date: TDayWithTable) => {
-    console.log("here", date)
     if (newSelectedDates.includes(date)) {
       setNewSelectedDates((prev) => prev.filter((d) => d !== date));
     } else {
@@ -82,7 +81,6 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
       return;
     }
   
-    console.log(params.get("options"));
     alert(`/checkout?${params.toString()}`);
   };
   return (

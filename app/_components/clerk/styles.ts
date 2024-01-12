@@ -9,6 +9,7 @@ export const clerkLoginAppearance = {
       boxShadow: "none",
       border: "none",
     },
+    
     header: {
       display: "none",
     },

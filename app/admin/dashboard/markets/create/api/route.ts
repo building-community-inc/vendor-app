@@ -55,9 +55,6 @@ export const POST = async (req: Request) => {
 
     const response = await sanityWriteClient.create(parsedMarket.data);
     
-    console.log({ response, here: true });
-    console.log({ here: "true???" });
-    
     return Response.json(response);
   } catch (error) {
     

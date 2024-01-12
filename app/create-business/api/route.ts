@@ -33,6 +33,7 @@ export const POST = async (req: Request) => {
 
   const body = await req.json();
   let response;
+
   const parsedBusinesObj = zodSanityBusiness.safeParse(body);
 
   if (!parsedBusinesObj.success) {

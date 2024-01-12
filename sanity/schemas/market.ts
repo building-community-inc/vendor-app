@@ -17,12 +17,7 @@ export const marketSchema = defineType({
       type: "string",
       // validation: Rule => Rule.min(1, "Description of the Market is required")
     }),
-    defineField({
-      name: "price",
-      title: "Price",
-      type: "string",
-      // validation: Rule => Rule.min(1, "Price per day is required")
-    }),
+    
     defineField({
       name: "dates",
       title: "Dates",

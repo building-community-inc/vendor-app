@@ -26,7 +26,11 @@ export const getSanityUserByEmail = async (email: string) => {
             phone,
             instagramHandle,
             industry,
-            "logoUrl": logo.asset->url
+            "logoUrl": logo.asset->url,
+            "pdfs": pdf[] {
+                "url": asset -> url,
+                "name": asset -> originalFilename
+            },
         }
     }`);
 

@@ -15,7 +15,12 @@ import {
   zodBusinessForm,
 } from "@/zod/user-business";
 import FileInput from "../../_components/FileInput";
-import { useFileStore } from "@/app/_components/store/fileStore";
+import {
+  useFileStore,
+  usePdfFileStore,
+} from "@/app/_components/store/fileStore";
+import PdfUpload from "@/app/_components/PdfUpload";
+import { useState } from "react";
 
 type TVendorCategory = {
   name: string;
@@ -27,7 +32,9 @@ type TBIFProps = {
 };
 
 const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
+  const [addSupportingDocs, setAddSupportingDocs] = useState(false);
   const router = useRouter();
+  const { fileIds: pdfFileIds } = usePdfFileStore();
   const {
     register,
     handleSubmit,
@@ -40,7 +47,7 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
 
   const fileId = useFileStore((state) => state.fileId);
   const formInputs = Object.keys(zodBusiness.shape)
-    .filter((key) => key !== "industry" && key !== "logo")
+    .filter((key) => key !== "industry" && key !== "logo" && key !== "pdf")
     .map((key) => {
       return {
         name: key,
@@ -49,16 +56,17 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
     }) as { name: keyof TBusiness; title: string }[];
 
   const onSubmit = async (data: TBusiness) => {
-
-    
     const businessObj = {
       ...data,
       _type: "business",
       logo: fileId,
+      pdf: pdfFileIds,
     };
 
+    // console.log({businessObj})
+    
     const parsedBusinesObj = zodBusinessForm.safeParse(businessObj);
-
+    
     if (!parsedBusinesObj.success) {
       throw new Error(parsedBusinesObj.error.message);
     }
@@ -94,7 +102,7 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
         );
       })}
 
-      <label htmlFor={"industry"} className="mt-4">
+      <label htmlFor={"industry"} className="mt-4 px-12">
         {"Industry"}
       </label>
       <select
@@ -109,7 +117,22 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
       {errors["industry"] && (
         <span className="text-red-500">{errors["industry"]?.message}</span>
       )}
-      <div className="mx-auto mt-5">
+      <>
+        <div className="mx-auto mt-5 flex flex-col items-start w-full px-12 gap-5">
+          <label htmlFor="pdfFile">
+            Certificates or Supporting Documents (Optional) PDF Only
+          </label>
+          <PdfUpload
+            useStore={usePdfFileStore}
+          />
+        </div>
+
+        {errors["pdf"] && (
+          <span className="text-red-500">{errors["pdf"]?.message}</span>
+        )}
+      </>
+
+      <div className="mx-auto mt-5 px-12">
         <FileInput useStore={useFileStore} title="upload your logo" />
       </div>
       {errors["logo"] && (
@@ -121,7 +144,7 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
         className="disabled:bg-red-200 bg-secondary text-primary rounded-md w-fit px-2 py-1 mx-auto mt-8 text-2xl"
         type="submit"
       >
-        {"->"}
+        {"Next"}
       </button>
     </form>
   );
