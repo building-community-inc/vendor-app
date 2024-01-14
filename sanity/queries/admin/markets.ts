@@ -102,6 +102,13 @@ const zodTableInDay = z.object({
   booked: z.object({}).passthrough().optional().nullable(),
 });
 
+const zodSelectedTable = z.object({
+  date: z.string(),
+  table: zodTable, 
+});
+
+export type TSelectedTable = z.infer<typeof zodSelectedTable>;
+
 const zodDayWithTable = z.object({
   date: z.string(),
   tables: z.array(zodTableInDay),

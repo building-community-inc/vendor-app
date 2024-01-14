@@ -21,9 +21,9 @@ const SelectDates = ({
   totalToPay: number | null;
 }) => {
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-4 w-full">
       <h2>Select Dates</h2>
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-3 w-full">
         {market.daysWithTables?.map((date, index) => (
           <li key={date.date}>
             <label
@@ -37,19 +37,27 @@ const SelectDates = ({
                 onChange={() => handleDateSelect(date)}
                 checked={!!selectedDates.find((d) => d && d.date === date.date)}
               />
-              {formatMarketDate(date.date)}
+              <span className="whitespace-nowrap">
+                {formatMarketDate(date.date)}
+              </span>
               {!!selectedDates.find((d) => d.date === date.date) && (
                 <select
                   name="table"
+                  required={
+                    !!selectedDates.find((d) => d && d.date === date.date)
+                  }
                   id="table"
-                  className="text-black"
+                  className="text-black w-full"
                   onChange={(e) => {
                     const newTable = date.tables.find(
                       (t) => t.table.id === e.target.value
                     );
+
+                    console.log({ newTable });
                     if (newTable === undefined) return;
                     handleOnTableChange(newTable, date);
                   }}
+      
                 >
                   <option value="null">Table</option>
                   {date.tables
@@ -82,7 +90,7 @@ const SelectDates = ({
       )}
       <div className="w-full">
         <span>Due Now:</span>
-        <span>$50</span>
+        <span> $50</span>
       </div>
     </section>
   );

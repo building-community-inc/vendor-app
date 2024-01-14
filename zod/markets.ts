@@ -45,4 +45,8 @@ export const sanityZodMarketFormSchema = zodMarketFormSchema.merge(
   })
 );
 
+
+export const zodMarketWithVendorsSchema = sanityZodMarketFormSchema.merge(z.object({
+  vendors: z.array(z.any()).optional().nullable()
+}))
 export type TMarketFormSchema = z.infer<typeof zodMarketFormSchema>;

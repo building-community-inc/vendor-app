@@ -1,5 +1,10 @@
 "use client";
-import { TDayWithTable, TSanityMarket, TTable, TTableInDay } from "@/sanity/queries/admin/markets";
+import {
+  TDayWithTable,
+  TSanityMarket,
+  TTable,
+  TTableInDay,
+} from "@/sanity/queries/admin/markets";
 import SelectDates from "./SelectDates";
 import ContinueButton from "../../_components/ContinueButton";
 import { useState } from "react";
@@ -15,21 +20,25 @@ export type TDateType = {
 };
 const SelectOptions = ({ market }: { market: TSanityMarket }) => {
   const { push } = useRouter();
-  
+
   const [specialRequest, setSpecialRequest] = useState<string>("");
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
-  const [selectedTables, setSelectedTables] = useState<TSelectedTableType[]>([]);
-
+  const [selectedTables, setSelectedTables] = useState<TSelectedTableType[]>(
+    []
+  );
 
   const [newSelectedDates, setNewSelectedDates] = useState<TDayWithTable[]>([]);
-  
-  const totalToPay = selectedTables.reduce((total, table) => total + table.table.table.price, 0);
+
+  const totalToPay = selectedTables.reduce(
+    (total, table) => total + table.table.table.price,
+    0
+  );
 
   const options = {
     selectedTables,
     totalToPay,
     specialRequest,
-    marketId: market._id,
+    market,
   };
 
   const handleNewDateSelect = (date: TDayWithTable) => {
@@ -39,31 +48,17 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
       setNewSelectedDates((prev) => [...prev, date]);
     }
   };
-  // const handleDateSelect = (date: string) => {
-  //   if (selectedDates.includes(date)) {
-  //     setSelectedDates((prev) => prev.filter((d) => d !== date));
-  //   } else {
-  //     setSelectedDates((prev) => [...prev, date]);
-  //   }
-  // };
-
-  // const handleOnTableChange = (table: TTableInDay) => {
-  //   if (selectedTables.includes(table)) {
-  //     setSelectedTables((prev) => prev.filter((t) => t.table.id !== table.table.id));
-  //   } else {
-  //     setSelectedTables((prev) => [...prev, table]);
-  //   }
-  // }
-  
 
   const handleOnTableChange = (table: TTableInDay, date: TDateType) => {
-    setSelectedTables(prevTables => {
+    setSelectedTables((prevTables) => {
       // Check if the date is already in the selected tables
-      const existingDate = prevTables.find(t => t.date === date.date);
-  
+      const existingDate = prevTables.find((t) => t.date === date.date);
+      console.log({ existingDate })
       if (existingDate) {
         // If the date is already in the selected tables, replace its table with the new table
-        return prevTables.map(t => t.date === date.date ? { ...t, table } : t);
+        return prevTables.map((t) =>
+          t.date === date.date ? { ...t, table } : t
+        );
       } else {
         // If the date is not in the selected tables, add a new entry with the date and table
         return [...prevTables, { date: date.date, table }];
@@ -71,22 +66,57 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
     });
   };
 
-  const handleProceedToCheckout = (event: React.FormEvent) => {
+  const handleProceedToCheckout = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const params = new URLSearchParams();
-    params.append("options", JSON.stringify(options));
+    // const params = new URLSearchParams();
+    // params.append("options", JSON.stringify(options));
+    const checkboxes = document.querySelectorAll<HTMLInputElement>(
+      'input[type="checkbox"]'
+    );
+    const selects = document.querySelectorAll<HTMLSelectElement>('select');
+  
+    let uncheckedTableDate = '';
+    const isAnyCheckboxCheckedWithoutSelect = Array.from(checkboxes).some((checkbox, index) => {
+      const correspondingSelect = selects[index];
+      if (checkbox.checked && (!correspondingSelect || correspondingSelect.value === null || correspondingSelect.value === undefined || correspondingSelect.value === 'null')) {
+        uncheckedTableDate = checkbox.nextSibling?.textContent || '';
+        return true;
+      }
+      return false;
+    });
+
+    if (isAnyCheckboxCheckedWithoutSelect) {
+      alert(`Please select a table for the date ${uncheckedTableDate} before proceeding to checkout.`);
+      return;
+    }
+
+
     if (!options.selectedTables || options.selectedTables.length === 0) {
       alert("Please select tables before proceeding to checkout.");
       return;
     }
-  
-    alert(`/checkout?${params.toString()}`);
+
+    try {
+      const res = await fetch("/dashboard/checkout/api/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(options),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+
+    // alert(`/checkout?${params.toString()}`);
   };
+
+  // console.log({ options })
   return (
     <form
       onSubmit={handleProceedToCheckout}
-      className="w-[40%] min-w-[250px] flex flex-col gap-5 px-5"
+      className="w-full md:w-[40%] min-w-[250px] flex flex-col gap-5 md:p-5"
     >
       <header>
         <h1>Select Table Location preference</h1>
@@ -107,7 +137,7 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
         onChange={(e) => setSpecialRequest(e.target.value)}
       />
       <ContinueButton type="submit">Checkout</ContinueButton>
-      {JSON.stringify(options)}
+      {/* {JSON.stringify(options)} */}
     </form>
   );
 };

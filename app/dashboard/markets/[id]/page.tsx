@@ -89,14 +89,14 @@ const Page = async ({
         />
       )}
 
-      {/* <ContinueButton>
+      <ContinueButton>
         <Link href={`/dashboard/markets/${market._id}/select-preferences`}>
           Book this market
         </Link>
-      </ContinueButton> */}
-      <ContinueButton>
-          coming soon!
       </ContinueButton>
+      {/* <ContinueButton>
+          coming soon!
+      </ContinueButton> */}
     </main>
   );
 };

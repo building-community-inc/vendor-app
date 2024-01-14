@@ -1,4 +1,4 @@
-import { stripe } from '@/stripe/';
+// import { stripe } from '@/stripe/';
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { sanityZodMarketFormSchema } from "@/zod/markets";
@@ -57,13 +57,18 @@ export const POST = async (req: Request) => {
     const response = await sanityWriteClient.create(parsedMarket.data);
     
 
-    const stripeProduct = await stripe.products.create({
-      name: parsedMarket.data.name,
+    // const stripeProduct = await stripe.products.create({
+    //   name: parsedMarket.data.name,
+    //   default_price_data: {
+    //     currency: "cad",
+    //     // unit_amount: parsedMarket.data.price * 100,
+
+    //   }
       
-    }) 
+    // }) 
 
 
-    console.log({stripeProduct})
+    // console.log({stripeProduct})
 
 
     return Response.json(response);
