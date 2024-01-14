@@ -15,7 +15,6 @@ const venueQueryString = `
     "url": venueMap.asset->url,
     "_id": venueMap.asset->_id
   },
-  tables,
   "tableInfo": tableInfo[] {
     _key,
     id,
@@ -31,7 +30,6 @@ const zodVenueQuery = zodVenueSchema.merge(
       _id: z.string(),
     }),
     // tables: z.array(z.string()).optional().nullable(),
-    tables: z.array(z.any()).optional(),
 
     tableInfo: z
       .array(
