@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zodImageSchema } from "./image";
 
 export const zodVenueSchema = z.object({
   title: z.string().min(1, "Venue name is required"),
@@ -40,6 +41,11 @@ export const zodSanityVenue = zodVenueFormSchema.merge(
     }),
   })
 );
+
+
+export const zodVenueWithVenueMapAsImage = zodVenueSchema.merge(z.object({
+  venueMap: zodImageSchema
+}))
 
 export const zodSanityUpdateVenue = zodSanityVenue.merge(
   z.object({

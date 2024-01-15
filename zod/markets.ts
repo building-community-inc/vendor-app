@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zodVenueWithVenueMapAsImage } from "./venues";
 
 const zodDaySchema = z.string();
 
@@ -49,4 +50,10 @@ export const sanityZodMarketFormSchema = zodMarketFormSchema.merge(
 export const zodMarketWithVendorsSchema = sanityZodMarketFormSchema.merge(z.object({
   vendors: z.array(z.any()).optional().nullable()
 }))
+
+export const zodMarketWithMarketCoverObjectSchema = zodMarketWithVendorsSchema.merge(z.object({
+  marketCover: z.any().optional().nullable(),
+  venue: zodVenueWithVenueMapAsImage
+}))
+
 export type TMarketFormSchema = z.infer<typeof zodMarketFormSchema>;

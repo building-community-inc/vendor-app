@@ -1,12 +1,15 @@
 import { z } from "zod";
-import { zodMarketWithVendorsSchema } from "./markets";
+import { zodMarketWithMarketCoverObjectSchema } from "./markets";
+import { zodImageSchema } from "./image";
+
+const zodTableSch = z.object({
+  id: z.string(),
+  price: z.number(),
+})
 
 const zodTableSchema = z.object({
   booked: z.boolean().optional().nullable(),
-  table: z.object({
-    id: z.string(),
-    price: z.number(),
-  }),
+  table: zodTableSch
 });
 
 const zodDateSchema = z.object({
@@ -20,12 +23,41 @@ export const zodBookMarketWithoutMarketSchema = z.object({
   totalToPay: z.number(),
 });
 
-export type TBookMarketWithoutMarketSchema = z.infer<typeof zodBookMarketWithoutMarketSchema>;
+export type TBookMarketWithoutMarketSchema = z.infer<
+  typeof zodBookMarketWithoutMarketSchema
+>;
 
 export const zodBookMarketOptionsSchema =
   zodBookMarketWithoutMarketSchema.merge(
     z.object({
-      market: zodMarketWithVendorsSchema,
+      market: z.object({
+        name: z.string(),
+        description: z.string(),
+        dates: z.array(z.string()),
+        marketCover: zodImageSchema,
+        venue: z.object({
+          title: z.string(),
+          address: z.string(),
+          city: z.string(),
+          tableInfo: z.array(
+            z.object({
+              id: z.string(),
+              price: z.number(),
+            })
+          ),
+          venueMap: zodImageSchema,
+          securityPhone: z.string(),
+          hours: z.string(),
+          phone: z.string(),
+          loadInInstructions: z.string(),
+        }),
+        _id: z.string(),
+        vendors: z.array(z.any()).optional().nullable(),
+        daysWithTables: z.array(z.object({
+          date: z.string(),
+          tables: z.array(zodTableSchema),
+        })),
+      }),
     })
   );
 

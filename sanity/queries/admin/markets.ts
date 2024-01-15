@@ -1,4 +1,5 @@
 import { sanityClient } from "@/sanity/lib/client";
+import { zodImageSchema } from "@/zod/image";
 import { zodMarketFormSchema } from "@/zod/markets";
 import { z } from "zod";
 
@@ -52,7 +53,7 @@ const individualMarketQueryString = `
     title,
     address,  
     city,
-    tables,
+    tableInfo,
     "venueMap": venueMap ${imageQueryString},
     hours,
     phone,
@@ -83,14 +84,7 @@ const individualMarketQueryString = `
   }
 `;
 
-const zodImageSchema = z.object({
-  url: z.string(),
-  dimensions: z.object({
-    height: z.number(),
-    width: z.number(),
-    aspectRatio: z.number(),
-  }),
-});
+
 
 const zodTable = z.object({
   id: z.string(),
@@ -128,7 +122,14 @@ const zodMarketQuery = zodMarketFormSchema.merge(
       title: z.string(),
       address: z.string(),
       city: z.string(),
+<<<<<<< HEAD
       tableInfo: z.array(zodTable),
+=======
+      tableInfo: z.array( z.object({
+        id: z.string(),
+        price: z.number(),
+      })),
+>>>>>>> 2d231a0 (Add @stripe/react-stripe-js package and update dependencies)
       venueMap: zodImageSchema.optional(),
       hours: z.string().optional(),
       phone: z.string().optional(),

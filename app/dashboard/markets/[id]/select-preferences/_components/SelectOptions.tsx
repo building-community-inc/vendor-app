@@ -69,8 +69,8 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
   const handleProceedToCheckout = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // const params = new URLSearchParams();
-    // params.append("options", JSON.stringify(options));
+    const params = new URLSearchParams();
+    params.append("options", JSON.stringify(options));
     const checkboxes = document.querySelectorAll<HTMLInputElement>(
       'input[type="checkbox"]'
     );
@@ -98,18 +98,18 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
     }
 
     try {
-      const res = await fetch("/dashboard/checkout/api/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(options),
-      });
+      // const res = await fetch("/dashboard/checkout/api/", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(options),
+      // });
+      push(`/checkout?${params.toString()}`);
     } catch (error) {
       console.error(error);
     }
 
-    // alert(`/checkout?${params.toString()}`);
   };
 
   // console.log({ options })
