@@ -10,7 +10,7 @@ const Page = async ({params}: {
   }
 }) => {
 
-  const {title, address, city, hours, phone, securityPhone, loadInInstructions, venueMap, _id, tables, tableInfo} = await getVenueById(params.id)
+  const {title, address, city, hours, phone, securityPhone, loadInInstructions, venueMap, _id, tableInfo} = await getVenueById(params.id)
 
 
   const defaultValues = {
@@ -22,7 +22,6 @@ const Page = async ({params}: {
     securityPhone,
     loadInInstructions,
     _id,
-    tables,
     tableInfo
   }
   return (
