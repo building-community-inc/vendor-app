@@ -9,6 +9,7 @@ import SelectDates from "./SelectDates";
 import ContinueButton from "../../_components/ContinueButton";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { zodBookMarketOptionsSchema } from "@/zod/checkout";
 // import { useRouter } from "next/navigation";
 type TSelectedTableType = {
   date: string;
@@ -69,8 +70,7 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
   const handleProceedToCheckout = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const params = new URLSearchParams();
-    params.append("options", JSON.stringify(options));
+    
     const checkboxes = document.querySelectorAll<HTMLInputElement>(
       'input[type="checkbox"]'
     );
@@ -105,7 +105,23 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
       //   },
       //   body: JSON.stringify(options),
       // });
-      push(`/checkout?${params.toString()}`);
+
+      const parsedOptions = zodBookMarketOptionsSchema.safeParse(options);
+      const params = new URLSearchParams();
+
+      if (!parsedOptions.success) {
+        console.error(parsedOptions.error);
+        return;
+      }
+
+
+      for (const [key, value] of Object.entries(parsedOptions.data)) {
+        params.append(key, JSON.stringify(value));
+      }
+      
+
+      // console.log({parsedOptions, params: params.toString()})
+      push(`/dashboard/checkout?${params.toString()}`);
     } catch (error) {
       console.error(error);
     }
