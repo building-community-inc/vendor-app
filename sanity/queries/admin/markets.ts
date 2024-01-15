@@ -122,14 +122,7 @@ const zodMarketQuery = zodMarketFormSchema.merge(
       title: z.string(),
       address: z.string(),
       city: z.string(),
-<<<<<<< HEAD
       tableInfo: z.array(zodTable),
-=======
-      tableInfo: z.array( z.object({
-        id: z.string(),
-        price: z.number(),
-      })),
->>>>>>> 2d231a0 (Add @stripe/react-stripe-js package and update dependencies)
       venueMap: zodImageSchema.optional(),
       hours: z.string().optional(),
       phone: z.string().optional(),
