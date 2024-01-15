@@ -29,8 +29,9 @@ export const zodBusiness = z.object({
   logo: z
     .string()
     .optional()
-    .transform((refId) => ({ _type: "image", asset: { _ref: refId } })),
-
+    .nullable()
+    .transform((refId) => refId ? { _type: "image", asset: { _ref: refId } } : null),
+    
   pdf: z
     .array(z.string())
     .optional()
@@ -58,7 +59,7 @@ export const zodSanityBusiness = zodBusiness.merge(
       asset: z.object({
         _ref: z.string(),
       }),
-    }),
+    }).optional().nullable(),
     pdf: z.array(
       z.object({
         _type: z.literal("file"),
@@ -67,7 +68,7 @@ export const zodSanityBusiness = zodBusiness.merge(
         }),
         _key: z.string(),
       })
-    ),
+    ).optional().nullable(),
   })
 );
 export const zodBusinessQuery = zodBusinessForm.merge(
