@@ -53,7 +53,6 @@ const exploreSorts: { [key: string]: (markets: TSanityMarket[]) => void } = {
 
       const minPriceA = Math.min(...pricesA);
       const minPriceB = Math.min(...pricesB);
-      console.log({ minPriceA, minPriceB });
       return minPriceA - minPriceB;
     });
   },

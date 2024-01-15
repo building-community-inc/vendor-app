@@ -216,7 +216,6 @@ export const getCurrentMarkets = async () => {
       }`,
       { currentDate }
     );
-    console.log({result, tableInfo: result[0].venue.tableInfo})
 
     const parsedResult = zodMarketQueryArray.safeParse(result);
 

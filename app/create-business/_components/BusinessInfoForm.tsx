@@ -20,7 +20,7 @@ import {
   usePdfFileStore,
 } from "@/app/_components/store/fileStore";
 import PdfUpload from "@/app/_components/PdfUpload";
-import { useState } from "react";
+// import { useState } from "react";
 
 type TVendorCategory = {
   name: string;
@@ -32,7 +32,7 @@ type TBIFProps = {
 };
 
 const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
-  const [addSupportingDocs, setAddSupportingDocs] = useState(false);
+  // const [addSupportingDocs, setAddSupportingDocs] = useState(false);
   const router = useRouter();
   const { fileIds: pdfFileIds } = usePdfFileStore();
   const {

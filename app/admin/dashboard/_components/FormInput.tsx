@@ -108,7 +108,7 @@ const FormInput = <TFormValues extends FieldValues>({
   }
 
   if (controlled) {
-    console.log({ value }, "controlled");
+    // console.log({ value }, "controlled");
     return (
       <InputSection title={title}>
         <input
