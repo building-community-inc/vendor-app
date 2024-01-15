@@ -23,7 +23,7 @@ const marketQueryString = `
     title,
     address,  
     city,
-    tables,
+    tableInfo,
     hours
   },
   "daysWithTables": daysWithTables[] {
@@ -121,7 +121,7 @@ const zodMarketQuery = zodMarketFormSchema.merge(
       title: z.string(),
       address: z.string(),
       city: z.string(),
-      tables: z.array(z.string()),
+      tableInfo: z.array(zodTable),
       venueMap: zodImageSchema.optional(),
       hours: z.string().optional(),
       phone: z.string().optional(),
@@ -160,7 +160,6 @@ export const getAllMarkets = async () => {
         ${marketQueryString}
       }`
     );
-    // console.log({result})
     // console.log({result: result.map(m =>  m.venue)})
     const parsedResult = zodMarketQueryArray.safeParse(result);
 
@@ -217,6 +216,7 @@ export const getCurrentMarkets = async () => {
       }`,
       { currentDate }
     );
+    console.log({result, tableInfo: result[0].venue.tableInfo})
 
     const parsedResult = zodMarketQueryArray.safeParse(result);
 
