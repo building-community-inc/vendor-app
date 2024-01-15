@@ -1,7 +1,10 @@
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import Button from "../_components/Button";
+import NoBz from "./_components/NoBz";
 
 const page = async () => {
   const user = await currentUser();
@@ -14,7 +17,7 @@ const page = async () => {
 
   return (
     <main className="flex gap-2 min-h-screen w-full">
-      {sanityUser.business && (
+      {sanityUser.business ? (
         <section className="flex flex-wrap gap-5 xl:gap-10 items-center justify-center w-full px-10">
           {sanityUser.business.logoUrl ? (
             <Image
@@ -90,6 +93,8 @@ const page = async () => {
             <h3>My Markets</h3>
           </section>
         </section>
+      ) : (
+        <NoBz />
       )}
     </main>
   );
