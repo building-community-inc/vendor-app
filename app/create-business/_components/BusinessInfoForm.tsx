@@ -132,8 +132,9 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
         )}
       </>
 
-      <div className="mx-auto mt-5 px-12">
+      <div className="mx-auto mt-5 px-12 flex flex-col items-center gap-5">
         <FileInput useStore={useFileStore} title="upload your logo" />
+        <span className="text-sm">* only upload .png</span>
       </div>
       {errors["logo"] && (
         <span className="text-red-500">{errors["logo"]?.message}</span>
