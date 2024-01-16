@@ -5,6 +5,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { StripePaymentElementOptions } from "@stripe/stripe-js";
+import ContinueButton from "../../markets/[id]/_components/ContinueButton";
 
 export default function CheckoutForm() {
   const stripe = useStripe();
@@ -54,6 +55,8 @@ export default function CheckoutForm() {
       // Make sure to disable form submission until Stripe.js has loaded.
       return;
     }
+    
+    const localUrl = window.location.href.split("/dashboard")[0];
 
     setIsLoading(true);
 
@@ -61,8 +64,9 @@ export default function CheckoutForm() {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "http://localhost:3000/dashboard/checkout/success",
+        return_url: `${localUrl}/dashboard/checkout/success`,
         receipt_email: "julian.m.bustos@gmail.com",
+        save_payment_method: true,
       },
     });
 
@@ -82,18 +86,19 @@ export default function CheckoutForm() {
 
   const paymentElementOptions: StripePaymentElementOptions = {
     layout: "auto",
+
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit} className="bg-red-900">
-      <PaymentElement id="payment-element" options={paymentElementOptions} />
-      <button disabled={isLoading || !stripe || !elements} id="submit">
+    <form id="payment-form" onSubmit={handleSubmit} className="flex flex-col px-10 py-20">
+      <PaymentElement id="payment-element" options={paymentElementOptions} className="py-10" />
+      <ContinueButton disabled={isLoading || !stripe || !elements} id="submit">
         <span id="button-text">
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+          {isLoading ? <div className="spinner" id="spinner">paying...</div> : "Pay now"}
         </span>
-      </button>
+      </ContinueButton>
       {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
+      {message && <div id="payment-message" className="text-red-300 mt-3 mx-auto">{message}</div>}
     </form>
   );
 }

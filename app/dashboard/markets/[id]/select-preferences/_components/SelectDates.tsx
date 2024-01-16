@@ -28,18 +28,23 @@ const SelectDates = ({
           <li key={date.date}>
             <label
               htmlFor={`date-[${index}]`}
-              className="flex items-center gap-4"
+              className="flex items-center justify-between"
             >
-              <input
-                type="checkbox"
-                name={`date-[${index}]`}
-                id={date.date}
-                onChange={() => handleDateSelect(date)}
-                checked={!!selectedDates.find((d) => d && d.date === date.date)}
-              />
-              <span className="whitespace-nowrap">
-                {formatMarketDate(date.date)}
-              </span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name={`date-[${index}]`}
+                  id={date.date}
+                  className=""
+                  onChange={() => handleDateSelect(date)}
+                  checked={
+                    !!selectedDates.find((d) => d && d.date === date.date)
+                  }
+                />
+                <span className="whitespace-nowrap">
+                  {formatMarketDate(date.date)}
+                </span>
+              </div>
               {!!selectedDates.find((d) => d.date === date.date) && (
                 <select
                   name="table"
@@ -47,7 +52,7 @@ const SelectDates = ({
                     !!selectedDates.find((d) => d && d.date === date.date)
                   }
                   id="table"
-                  className="text-black w-full"
+                  className="text-black w-fit"
                   onChange={(e) => {
                     const newTable = date.tables.find(
                       (t) => t.table.id === e.target.value
@@ -57,7 +62,6 @@ const SelectDates = ({
                     if (newTable === undefined) return;
                     handleOnTableChange(newTable, date);
                   }}
-      
                 >
                   <option value="null">Table</option>
                   {date.tables

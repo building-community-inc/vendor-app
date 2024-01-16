@@ -1,3 +1,4 @@
+import { TShortMarketSchema } from './../../../../zod/checkout';
 import { currentUser } from '@clerk/nextjs';
 import { metadata } from './../../../layout';
 import { getSanityUserByEmail } from '@/sanity/queries/user';
@@ -6,7 +7,7 @@ import { getSanityUserByEmail } from '@/sanity/queries/user';
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 export const POST = async (req: Request) => {
-  const {items} = await req.json();
+  const {items, market, specialRequest, totalToPay } = await req.json();
 
   const clerkUser = await currentUser();
 
@@ -32,12 +33,14 @@ export const POST = async (req: Request) => {
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: items.reduce((acc: number, item: {price: number; name: string; date: string; marketId: string}) => acc + item.price, 0),
+    amount: totalToPay * 100,
     currency: "cad",
     metadata: {
       items: JSON.stringify(items),
       userEmail: user.email,
       business: user.business?.businessName,
+      specialRequest,
+      market: JSON.stringify(market)
     },
     // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
     automatic_payment_methods: {
@@ -46,7 +49,7 @@ export const POST = async (req: Request) => {
 
   });
 
-  console.log({ paymentIntent , items })
+  // console.log({ paymentIntent , items })
 
   return Response.json({
     clientSecret: paymentIntent.client_secret,

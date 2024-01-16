@@ -132,7 +132,7 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
   return (
     <form
       onSubmit={handleProceedToCheckout}
-      className="w-full md:w-[40%] min-w-[250px] flex flex-col gap-5 md:p-5"
+      className="w-full lg:w-[40%] min-w-[250px] flex flex-col gap-5 md:p-5"
     >
       <header>
         <h1>Select Table Location preference</h1>

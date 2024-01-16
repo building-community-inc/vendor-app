@@ -6,7 +6,7 @@ const Page = ({
   searchParams: { [key: string]: string | string[] | undefined }
 }) => {
   return (
-    <main>
+    <main className="min-h-full flex flex-col items-center justify-center">
       <Checkout searchParams={searchParams} />
     </main>
   );

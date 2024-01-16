@@ -5,6 +5,7 @@ import { businessSchema } from './schemas/business'
 import { termsSchema } from './schemas/terms'
 import { venueSchema } from './schemas/venue'
 import { marketSchema } from './schemas/market'
+import { paymentSchema } from './schemas/payment'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -13,6 +14,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     businessSchema,
     termsSchema,
     venueSchema,
-    marketSchema
+    marketSchema,
+    paymentSchema,
   ],
 }

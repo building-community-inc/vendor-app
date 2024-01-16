@@ -47,9 +47,9 @@ export default function Checkout({
   const items = selectedTables.map((table: TSelectedTableType) => {
     return {
       price: table.table.table.price,
+      tableId: table.table.table.id,
       name: `${market.name} at ${market.venue.title} in ${market.venue.city} on ${table.date}}`,
       date: table.date,
-      marketId: market._id,
     };
   });
   // console.log({items})
@@ -58,7 +58,7 @@ export default function Checkout({
     fetch("/dashboard/checkout/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items }),
+      body: JSON.stringify({ items, market, specialRequest, totalToPay }),
     })
       .then((res) => res.json())
       .then((data) => setClientSecret(data.clientSecret));
