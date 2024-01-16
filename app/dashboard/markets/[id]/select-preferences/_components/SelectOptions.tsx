@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodBookMarketOptionsSchema } from "@/zod/checkout";
 // import { useRouter } from "next/navigation";
-type TSelectedTableType = {
+export type TSelectedTableType = {
   date: string;
   table: TTableInDay;
 };

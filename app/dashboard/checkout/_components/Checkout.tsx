@@ -8,6 +8,7 @@ import {
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm";
 import { TShortMarketSchema } from "@/zod/checkout";
+import { TSelectedTableType } from "../../markets/[id]/select-preferences/_components/SelectOptions";
 
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
@@ -16,35 +17,48 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
 );
 
-export default function Checkout({searchParams}: {
-  searchParams: { [key: string]: string | string[] | undefined }
+export default function Checkout({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const [clientSecret, setClientSecret] = useState("");
 
   console.log({ searchParams: searchParams });
-  const selectedTables = typeof searchParams.selectedTables === 'string' ? JSON.parse(searchParams.selectedTables) : [];
-  const specialRequest = typeof searchParams.specialRequest === 'string' ? JSON.parse(searchParams.specialRequest) : "";
-  const totalToPay = typeof searchParams.totalToPay === 'string' ? Number(searchParams.totalToPay) : 0;
-  const market: TShortMarketSchema = typeof searchParams.market === 'string' ? JSON.parse(searchParams.market) : {};
+  const selectedTables =
+    typeof searchParams.selectedTables === "string"
+      ? JSON.parse(searchParams.selectedTables)
+      : [];
+  const specialRequest =
+    typeof searchParams.specialRequest === "string"
+      ? JSON.parse(searchParams.specialRequest)
+      : "";
+  const totalToPay =
+    typeof searchParams.totalToPay === "string"
+      ? Number(searchParams.totalToPay)
+      : 0;
+  const market: TShortMarketSchema =
+    typeof searchParams.market === "string"
+      ? JSON.parse(searchParams.market)
+      : {};
 
-  console.log({ selectedTables, specialRequest, totalToPay, market });
+  // console.log({ selectedTables, specialRequest, totalToPay, market });
 
-  const items = selectedTables.map((table: any) => {
+  const items = selectedTables.map((table: TSelectedTableType) => {
     return {
-      price: table.,
+      price: table.table.table.price,
       name: `${market.name} at ${market.venue.title} in ${market.venue.city} on ${table.date}}`,
       date: table.date,
-    }
-  }
-
-  );
-  console.log({items})
+      marketId: market._id,
+    };
+  });
+  // console.log({items})
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     fetch("/dashboard/checkout/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items: [{ id: "xl-tshirt" }] }),
+      body: JSON.stringify({ items }),
     })
       .then((res) => res.json())
       .then((data) => setClientSecret(data.clientSecret));
