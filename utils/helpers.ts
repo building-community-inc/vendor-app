@@ -84,3 +84,14 @@ export const getKeyByValue = (
     }
   }
 };
+
+
+export function formatDateStringToMMMDDYYYY(dateStr: string): string {
+  // Create a Date object from the date string
+  const date = new Date(dateStr);
+
+  // Format the date
+  const formattedDate = date.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  return formattedDate;
+}
