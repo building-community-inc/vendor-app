@@ -57,7 +57,7 @@ const MarketDays = ({
                 (date) => date.date === selectedDay
               );
               return (
-                <tr className="text-center capitalize py-2">
+                <tr key={vendor.vendor.businessName} className="text-center capitalize py-2">
                   <td>{vendor.vendor.businessName}</td>
                   <td>{vendor.vendor.businessCategory}</td>
                   <td>
