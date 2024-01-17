@@ -58,7 +58,6 @@ const SelectDates = ({
                       (t) => t.table.id === e.target.value
                     );
 
-                    console.log({ newTable });
                     if (newTable === undefined) return;
                     handleOnTableChange(newTable, date);
                   }}

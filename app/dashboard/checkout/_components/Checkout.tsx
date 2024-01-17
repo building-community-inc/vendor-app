@@ -42,7 +42,6 @@ export default function Checkout({
       ? JSON.parse(searchParams.market)
       : {};
 
-  // console.log({ selectedTables, specialRequest, totalToPay, market });
 
   const items = selectedTables.map((table: TSelectedTableType) => {
     return {
@@ -52,7 +51,6 @@ export default function Checkout({
       date: table.date,
     };
   });
-  // console.log({items})
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     fetch("/dashboard/checkout/create-payment-intent", {

@@ -101,7 +101,6 @@ const PdfUpload = ({
       //   fetchedFile => !input.some(inputFile => inputFile.id === fetchedFile.id)
       // );
 
-      // console.log({ newFiles })
       dispatch({ type: "REPLACE_FILES_IN_INPUT", payload: files });
     };
 

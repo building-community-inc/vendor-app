@@ -33,7 +33,6 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
   const fileId = useMarketImageIdStore((state) => state.fileId);
 
   const onSubmit = async (data: TMarketFormSchema) => {
-    // console.log({ data, fileId, selectedVenue });
 
     if (!fileId) {
       setError("marketCover", {
@@ -88,7 +87,6 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
 
   // useSubmitOnEnter(() => handleSubmit(onSubmit));
 
-  // console.log({ errors });
 
   return (
     <form
@@ -306,7 +304,6 @@ const Days = ({
                     .split("-")
                     .map(Number);
                   const newDate = new Date(year, month - 1, day);
-                  // console.log({ newDate });
                   changeCurrentDate(index, newDate); // }
                   // onDateChange(e);
                 }}

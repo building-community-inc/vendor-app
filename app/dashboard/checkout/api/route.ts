@@ -8,14 +8,9 @@ export const POST = async (req: Request) => {
   try {
     const body = await req.json();
 
-    console.log({ body, DWT: body.market.daysWithTables, tables: body.market.daysWithTables[0].tables });
+    // console.log({ body, DWT: body.market.daysWithTables, tables: body.market.daysWithTables[0].tables });
 
     const parsedData = zodBookMarketOptionsSchema.safeParse(body);
-
-
-    
-    console.log({ parsedData }, "here");
-    // console.log({venue: body.market.venue})
     
     if (!parsedData.success) {
       return Response.json({

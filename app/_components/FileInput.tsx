@@ -60,7 +60,6 @@ const FileInput = ({
   const noInput = input.length === 0;
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    // console.log("handleChange", e.target.files[0])
     e.preventDefault();
     try {
       if (e.target.files && e.target.files[0]) {
@@ -87,7 +86,6 @@ const FileInput = ({
 
         const { name, size } = e.target.files[0];
         addFilesToState([{ name, url, size }]);
-        // console.log("sanityResp", sanityResp);
         setFileId(_id);
         setUploading(false);
       }

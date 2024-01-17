@@ -62,12 +62,13 @@ const individualMarketQueryString = `
     vendorInstructions
   },
   "vendors": vendors[] {
-    vendor,
-    "datesSelected": datesSelected[] {
+    "vendor": vendor->{
+      "businessName": business -> businessName,
+      "businessCategory": business -> industry, 
+    },
+    "datesBooked": datesBooked[] {
       date, 
-      tableSelected,
-      tableConfirmed,
-      confirmed
+      tableId,
     },
     specialRequests
   },
@@ -84,8 +85,6 @@ const individualMarketQueryString = `
   }
 `;
 
-
-
 const zodTable = z.object({
   id: z.string(),
   price: z.number(),
@@ -98,7 +97,7 @@ const zodTableInDay = z.object({
 
 const zodSelectedTable = z.object({
   date: z.string(),
-  table: zodTable, 
+  table: zodTable,
 });
 
 export type TSelectedTable = z.infer<typeof zodSelectedTable>;
@@ -113,6 +112,22 @@ export type TTable = z.infer<typeof zodTable>;
 export type TTableInDay = z.infer<typeof zodTableInDay>;
 
 const zodDaysWithTables = z.array(zodDayWithTable).optional().nullable();
+
+const zodVendorSchema = z.object({
+  vendor: z.object({
+    businessName: z.string(),
+    businessCategory: z.string(),
+  }),
+  datesBooked: z.array(
+    z.object({
+      date: z.string(),
+      tableId: z.string(),
+    })
+  ),
+  specialRequests: z.string().optional().nullable(),
+});
+
+export type TVendor = z.infer<typeof zodVendorSchema>;
 
 const zodMarketQuery = zodMarketFormSchema.merge(
   z.object({
@@ -130,23 +145,7 @@ const zodMarketQuery = zodMarketFormSchema.merge(
       loadInInstructions: z.string().optional().nullable(),
     }),
     vendorInstructions: z.string().optional().nullable(),
-    vendors: z
-      .array(
-        z.object({
-          vendor: z.string(),
-          datesSelected: z.array(
-            z.object({
-              date: z.string(),
-              tableSelected: z.string(),
-              tableConfirmed: z.string().optional().nullable(),
-              confirmed: z.boolean(),
-            })
-          ),
-          specialRequests: z.string().optional().nullable(),
-        })
-      )
-      .optional()
-      .nullable(),
+    vendors: z.array(zodVendorSchema).optional().nullable(),
 
     daysWithTables: zodDaysWithTables,
   })
@@ -161,7 +160,6 @@ export const getAllMarkets = async () => {
         ${marketQueryString}
       }`
     );
-    // console.log({result: result.map(m =>  m.venue)})
     const parsedResult = zodMarketQueryArray.safeParse(result);
 
     if (!parsedResult.success) {

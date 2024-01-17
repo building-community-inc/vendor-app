@@ -115,7 +115,6 @@ const ExplorePage = async ({
     exploreSorts[sort](sortedMarkets); // Call the sorting function
   }
 
-  // console.log(sortedMarkets);
   return (
     <main className="flex flex-col gap-2 min-h-screen w-full">
       <header className="bg-nav-bg w-full flex justify-center  items-center relative">

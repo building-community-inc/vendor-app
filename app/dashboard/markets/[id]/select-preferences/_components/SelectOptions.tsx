@@ -54,7 +54,6 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
     setSelectedTables((prevTables) => {
       // Check if the date is already in the selected tables
       const existingDate = prevTables.find((t) => t.date === date.date);
-      console.log({ existingDate })
       if (existingDate) {
         // If the date is already in the selected tables, replace its table with the new table
         return prevTables.map((t) =>
@@ -120,7 +119,6 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
       }
       
 
-      // console.log({parsedOptions, params: params.toString()})
       push(`/dashboard/checkout?${params.toString()}`);
     } catch (error) {
       console.error(error);
@@ -128,7 +126,6 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
 
   };
 
-  // console.log({ options })
   return (
     <form
       onSubmit={handleProceedToCheckout}

@@ -14,7 +14,6 @@ const page = async () => {
   const sanityUser = await getSanityUserByEmail(
     user.emailAddresses[0].emailAddress
   );
-  // console.log({ sanityUser, pdf: saityUser.business?.pdfs });
 
   const userMarkets = await getUserMarkets(sanityUser._id);
 
@@ -94,38 +93,42 @@ const page = async () => {
               )}
             </section>
           </section>
-          <section>
-            <div className="flex items-center gap-5">
-              <h3 className="whitespace-nowrap flex-shrink-0 font-bold text-lg">My Markets</h3>
-              <div className="h-[1px] w-full flex-grow bg-[#707070] " />
-            </div>
-            <table className="table-auto w-full border-collapse">
-              <thead>
-                <tr>
-                  <th className="text-left p-2">Market Date</th>
-                  <th className="text-left p-2">Market</th>
-                  <th className="text-left p-2">Amount</th>
-                  <th className="text-left p-2">Table Id</th>
-                </tr>
-              </thead>
-              <tbody>
-                {userMarkets.map((market) => (
-                  <>
-                    {market.items.map((item) => (
-                      <tr key={market._id}>
-                        <td className="text-left p-2">
-                          {formatDateStringToMMMDDYYYY(item.date)}
-                        </td>
-                        <td className="text-left p-2">{market.market}</td>
-                        <td className="text-left p-2">${item.price}</td>
-                        <td className="text-left p-2">{item.tableId}</td>
-                      </tr>
-                    ))}
-                  </>
-                ))}
-              </tbody>
-            </table>
-          </section>
+          {userMarkets.length > 0 && (
+            <section>
+              <div className="flex items-center gap-5">
+                <h3 className="whitespace-nowrap flex-shrink-0 font-bold text-lg">
+                  My Markets
+                </h3>
+                <div className="h-[1px] w-full flex-grow bg-[#707070] " />
+              </div>
+              <table className="table-auto w-full border-collapse">
+                <thead>
+                  <tr>
+                    <th className="text-left p-2">Market Date</th>
+                    <th className="text-left p-2">Market</th>
+                    <th className="text-left p-2">Amount</th>
+                    <th className="text-left p-2">Table Id</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {userMarkets.map((market) => (
+                    <>
+                      {market.items.map((item) => (
+                        <tr key={market._id}>
+                          <td className="text-left p-2">
+                            {formatDateStringToMMMDDYYYY(item.date)}
+                          </td>
+                          <td className="text-left p-2">{market.market}</td>
+                          <td className="text-left p-2">${item.price}</td>
+                          <td className="text-left p-2">{item.tableId}</td>
+                        </tr>
+                      ))}
+                    </>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+          )}
         </section>
       ) : (
         <NoBz />

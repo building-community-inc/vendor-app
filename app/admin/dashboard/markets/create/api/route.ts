@@ -41,7 +41,6 @@ export const POST = async (req: Request) => {
 
   const body = await req.json();
 
-  // console.log({daysW: body.daysWithTables[0]})
   const parsedMarket = sanityZodMarketFormSchema.safeParse(body);
 
   if (!parsedMarket.success) {
@@ -68,7 +67,6 @@ export const POST = async (req: Request) => {
     // }) 
 
 
-    // console.log({stripeProduct})
 
 
     return Response.json(response);

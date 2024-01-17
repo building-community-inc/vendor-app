@@ -34,8 +34,9 @@ export const POST = async (req: Request, res: Response) => {
     });
   }
 
-  const { paymentIntent } = (await req.json()) as {
+  const { paymentIntent, specialRequest } = (await req.json()) as {
     paymentIntent: Stripe.PaymentIntent;
+    specialRequest: string;
   };
 
   const items = JSON.parse(paymentIntent.metadata.items) as {
@@ -54,7 +55,22 @@ export const POST = async (req: Request, res: Response) => {
   );
 
   // Find the day and table to update
-  const updatedTables = [];
+  const datesBooked = items.map(item => ({
+    date: item.date,
+    tableId: item.tableId,
+    _key: nanoid()
+  }));
+  const vendorDetails = {
+    vendor: {
+      _type: "reference",
+      _ref: user._id, // The ID of the vendor
+    },
+    specialRequests: specialRequest, // Any special requests
+    datesBooked: datesBooked,
+    _key: nanoid(),
+  };
+
+  // console.log({ vendorDetails });
 
   // Find the day and table to update
   for (const item of items) {
@@ -78,7 +94,6 @@ export const POST = async (req: Request, res: Response) => {
         // console.log({ table });
 
         // Add the updated table to the array
-        updatedTables.push({ table, day: day.date });
       }
     }
   }
@@ -103,7 +118,7 @@ export const POST = async (req: Request, res: Response) => {
       _key: nanoid(),
     })),
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
 
   const existingPayment = await sanityWriteClient.fetch(
@@ -119,17 +134,22 @@ export const POST = async (req: Request, res: Response) => {
   // });
 
   if (!existingPayment) {
+
+    const updatedMarket = {
+      ...marketDocument,
+      vendors: [...marketDocument.vendors || [], vendorDetails],
+    }
+    console.log({updatedMarket})
     const createdPayment = await sanityWriteClient.create(payment);
     // Update the market document in the database
 
-    const updatedMarket = await sanityWriteClient
+    const sanityUpdatedMarketResp = await sanityWriteClient
       .patch(market._id)
-      .set(marketDocument)
+      .set(updatedMarket)
       .commit();
-    console.log({ createdPayment, updatedMarket });
+    // console.log({ createdPayment, sanityUpdatedMarketResp });
   }
 
-  // console.log({ updatedMarket });
   return Response.json({
     message: "success",
   });

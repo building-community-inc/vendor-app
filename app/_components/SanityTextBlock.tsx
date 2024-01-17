@@ -8,7 +8,6 @@ const components: PortableTextComponents = {
     h1: ({ children }) => <h1 className="text-2xl">{children}</h1>,
     normal: ({ children }) => <p className="w-full min-h-[16px] mt-[1rem]" style={{ whiteSpace: 'pre-line' }}>{children}</p>,
     // span: ({ children }) => {
-    //   console.log({ children })
     //   return <span className="w-full min-h-[16px]">{children}</span>},
   },
 };

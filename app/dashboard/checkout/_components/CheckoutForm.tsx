@@ -66,7 +66,7 @@ export default function CheckoutForm() {
         // Make sure to change this to your payment completion page
         return_url: `${localUrl}/dashboard/checkout/success`,
         receipt_email: "julian.m.bustos@gmail.com",
-        save_payment_method: true,
+        // save_payment_method: true,
       },
     });
 

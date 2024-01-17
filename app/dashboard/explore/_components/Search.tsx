@@ -7,7 +7,6 @@ const Search = () => {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    // console.log({ value })
     push(`/dashboard/explore?search=${value}`);
   };
   return (

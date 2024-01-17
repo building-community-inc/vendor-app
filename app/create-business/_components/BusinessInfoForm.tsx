@@ -63,7 +63,6 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
       pdf: pdfFileIds,
     };
 
-    // console.log({businessObj})
     
     const parsedBusinesObj = zodBusinessForm.safeParse(businessObj);
     

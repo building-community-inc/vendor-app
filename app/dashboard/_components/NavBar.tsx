@@ -30,7 +30,6 @@ const navOptions = [
 const NavBar = ({ user }: { user: TUserWithOptionalBusinessRef }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const pathname = usePathname();
-  // console.log({ pathname });
 
   useEffect(() => {
     setIsNavOpen(false);

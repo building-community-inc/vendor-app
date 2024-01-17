@@ -10,8 +10,6 @@ import SignOutButton from "@/app/_components/clerk/SignOut";
 const AdminNavbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const pathname = usePathname();
-  // console.log({ pathname });
-
 
   useEffect(() => {
     setIsNavOpen(false);
