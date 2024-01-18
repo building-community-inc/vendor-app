@@ -38,7 +38,7 @@ const MarketCard = ({
           width={500}
           height={387}
           alt={market.name}
-          className="w-full max-h-full object-cover"
+          className="w-full max-h-full object-cover aspect-video"
         />
       </header>
       <section className="px-2 my-2 flex justify-between">

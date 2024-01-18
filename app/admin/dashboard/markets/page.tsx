@@ -5,20 +5,113 @@ import Link from "next/link";
 import MarketCard from "./_components/MarketCard";
 import { dateArrayToDisplayableText } from "@/utils/helpers";
 import { unstable_noStore as noStore } from 'next/cache';
+import Search from "@/app/dashboard/explore/_components/Search";
 // import VenueList from "./_components/VenueList";
 
 // export const dynamic = "force-dynamic";
+const exploreSorts: { [key: string]: (markets: TSanityMarket[]) => void } = {
+  date_upcoming: (markets: TSanityMarket[]) => {
+    markets.sort((a, b) => {
+      const nextADate = a.dates.find((date) => new Date(date) >= new Date());
+      const nextBDate = b.dates.find((date) => new Date(date) >= new Date());
+      if (!nextADate || !nextBDate) {
+        return 0;
+      }
 
-const Page = async () => {
+      return new Date(nextADate).getTime() - new Date(nextBDate).getTime();
+    });
+  },
+  price_highest: (markets: TSanityMarket[]) => {
+    markets.sort((a, b) => {
+      const pricesA =
+        a.daysWithTables?.flatMap((day) =>
+          day.tables.map((t) => t.table.price)
+        ) || [];
+      const pricesB =
+        b.daysWithTables?.flatMap((day) =>
+          day.tables.map((t) => t.table.price)
+        ) || [];
+
+      const maxPriceA = Math.max(...pricesA);
+      const maxPriceB = Math.max(...pricesB);
+
+      return maxPriceB - maxPriceA;
+    });
+  },
+  price_lowest: (markets: TSanityMarket[]) => {
+    markets.sort((a, b) => {
+      const pricesA =
+        a.daysWithTables?.flatMap((day) =>
+          day.tables.map((t) => t.table.price)
+        ) || [];
+      const pricesB =
+        b.daysWithTables?.flatMap((day) =>
+          day.tables.map((t) => t.table.price)
+        ) || [];
+
+      const minPriceA = Math.min(...pricesA);
+      const minPriceB = Math.min(...pricesB);
+      return minPriceA - minPriceB;
+    });
+  },
+  venue_az: (markets: TSanityMarket[]) => {
+    markets.sort((a, b) => {
+      if (a.venue.title < b.venue.title) {
+        return -1;
+      }
+      if (a.venue.title > b.venue.title) {
+        return 1;
+      }
+      return 0;
+    });
+  },
+  venue_za: (markets: TSanityMarket[]) => {
+    markets.sort((a, b) => {
+      if (a.venue.title > b.venue.title) {
+        return -1;
+      }
+      if (a.venue.title < b.venue.title) {
+        return 1;
+      }
+      return 0;
+    });
+  },
+};
+const Page = async ({
+  searchParams,
+}: {
+  searchParams: {
+    [key: string]: string | undefined;
+  };
+}) => {
   noStore();
   // const venues = await getAllVenues();
 
   const markets = await getAllMarkets();
+
+  const filteredMarketsByName = markets?.filter((market) => {
+    if (searchParams.search) {
+      return market.name
+        .toLowerCase()
+        .includes(searchParams.search.toLowerCase());
+    }
+    return true;
+  });
+
+  const sort = searchParams.sort || undefined;
+
+  let sortedMarkets = filteredMarketsByName ? [...filteredMarketsByName] : [];
+
+  if (sort && exploreSorts[sort]) {
+    exploreSorts[sort](sortedMarkets); // Call the sorting function
+  }
+
   return (
     <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto w-[80%]">
+      <Search urlForSearch="/admin/dashboard/markets" theme="light" />
       <h1 className="font-bold text-xl">Markets</h1>
       <FormTitleDivider title="Live Markets" />
-      <MarketList markets={markets || []} />
+      <MarketList markets={sortedMarkets || []} />
       {/* {venues && <VenueList venues={venues} />} */}
       {/* <Image src={markets.} */}
     </main>
