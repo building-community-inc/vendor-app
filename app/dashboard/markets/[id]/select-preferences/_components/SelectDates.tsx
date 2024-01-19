@@ -30,7 +30,10 @@ const SelectDates = ({
               htmlFor={`date-[${index}]`}
               className="flex items-center justify-between"
             >
-              <div className="flex items-center gap-2">
+              <div
+                className="flex items-center gap-2"
+                onClick={() => handleDateSelect(date)}
+              >
                 <input
                   type="checkbox"
                   name={`date-[${index}]`}

@@ -51,6 +51,7 @@ export default function Checkout({
       date: table.date,
     };
   });
+  
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     fetch("/dashboard/checkout/create-payment-intent", {

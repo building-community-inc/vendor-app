@@ -1,13 +1,13 @@
-import { TShortMarketSchema } from './../../../../zod/checkout';
-import { currentUser } from '@clerk/nextjs';
-import { metadata } from './../../../layout';
-import { getSanityUserByEmail } from '@/sanity/queries/user';
+import { TShortMarketSchema } from "./../../../../zod/checkout";
+import { currentUser } from "@clerk/nextjs";
+import { metadata } from "./../../../layout";
+import { getSanityUserByEmail } from "@/sanity/queries/user";
 
 // This is your test secret API key.
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 export const POST = async (req: Request) => {
-  const {items, market, specialRequest, totalToPay } = await req.json();
+  const { items, market, specialRequest, totalToPay } = await req.json();
 
   const clerkUser = await currentUser();
 
@@ -29,7 +29,8 @@ export const POST = async (req: Request) => {
     });
   }
 
-  if (!items) return Response.json({status: 400, body: {message: "No items"}});
+  if (!items)
+    return Response.json({ status: 400, body: { message: "No items" } });
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
@@ -40,13 +41,12 @@ export const POST = async (req: Request) => {
       userEmail: user.email,
       business: user.business?.businessName,
       specialRequest,
-      market: JSON.stringify(market)
+      marketId: market._id,
     },
     // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-    automatic_payment_methods: {
-      enabled: true,
-    },
-
+    // automatic_payment_methods: {
+    //   enabled: true,
+    // },
   });
 
   // console.log({ paymentIntent , items })

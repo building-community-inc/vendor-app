@@ -32,6 +32,11 @@ p {
 
 @media screen and (min-width: 300px) {
   #payment-element > div > iframe {
-    min-height: 350px;
+    min-height: 450px;
   }
 }
+
+
+/* table {
+  border: 1px solid white;
+} */

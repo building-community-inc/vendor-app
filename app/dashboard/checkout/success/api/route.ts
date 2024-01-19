@@ -1,12 +1,17 @@
 import { sanityWriteClient } from "@/sanity/lib/client";
-import { metadata } from "./../../../../layout";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { TShortMarketSchema } from "@/zod/checkout";
 import { currentUser } from "@clerk/nextjs";
 import { Stripe } from "stripe";
 import { nanoid } from "nanoid";
 
-export const POST = async (req: Request, res: Response) => {
+export type TPaymentItem = {
+  price: number;
+  name: string;
+  date: string;
+  tableId: string;
+}
+
+export const POST = async (req: Request) => {
   if (req.method !== "POST") {
     return Response.json({
       status: 405,
@@ -34,24 +39,40 @@ export const POST = async (req: Request, res: Response) => {
     });
   }
 
-  const { paymentIntent, specialRequest } = (await req.json()) as {
+  const rawBody = await req.text();
+  // console.log({rawBody});
+  
+  const { paymentIntent, specialRequest } = JSON.parse(rawBody) as {
     paymentIntent: Stripe.PaymentIntent;
     specialRequest: string;
   };
 
-  const items = JSON.parse(paymentIntent.metadata.items) as {
-    price: number;
-    name: string;
-    date: string;
-    tableId: string;
-  }[];
-  const market = JSON.parse(
-    paymentIntent.metadata.market
-  ) as TShortMarketSchema;
+  if (!paymentIntent) {
+    return Response.json({
+      status: 400,
+      body: { message: "No payment intent" },
+    });
+  }
+  
+  const existingPayment = await sanityWriteClient.fetch(
+    '*[_type == "payment" && stripePaymentIntendId == $paymentId][0]',
+    { paymentId: paymentIntent.id }
+  );
+
+  if (existingPayment) {
+    console.log("exiting:", {existingPayment})
+    return Response.json({
+      status: 400,
+      body: { message: "Payment already exists" },
+    });
+  }
+
+  const items = JSON.parse(paymentIntent.metadata.items) as TPaymentItem[];
+  const marketId = paymentIntent.metadata.marketId as string;
 
   const marketDocument = await sanityWriteClient.fetch(
     "*[_id == $id][0]{...}",
-    { id: market._id }
+    { id: marketId }
   );
 
   // Find the day and table to update
@@ -108,7 +129,7 @@ export const POST = async (req: Request, res: Response) => {
     },
     market: {
       _type: "reference",
-      _ref: market._id,
+      _ref: marketId,
     },
     amount: paymentIntent.amount, // replace with the actual amount
     status: paymentIntent.status,
@@ -121,10 +142,6 @@ export const POST = async (req: Request, res: Response) => {
     updatedAt: new Date().toISOString(),
   };
 
-  const existingPayment = await sanityWriteClient.fetch(
-    '*[_type == "payment" && stripePaymentIntendId == $paymentId][0]',
-    { paymentId: paymentIntent.id }
-  );
 
   // console.log({
   //   updatedTables,
@@ -144,7 +161,7 @@ export const POST = async (req: Request, res: Response) => {
     // Update the market document in the database
 
     const sanityUpdatedMarketResp = await sanityWriteClient
-      .patch(market._id)
+      .patch(marketId)
       .set(updatedMarket)
       .commit();
     // console.log({ createdPayment, sanityUpdatedMarketResp });
