@@ -35,9 +35,7 @@ const marketQueryString = `
         id,
         price
       },
-      available,
-      reserved,
-      confirmed
+      booked
     }
   }
 `;
