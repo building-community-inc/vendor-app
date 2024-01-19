@@ -101,7 +101,7 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
             {errors.name?.message}
           </span>
         )}
-        <FormInput
+        {/* <FormInput
           register={register}
           type="textarea"
           name="description"
@@ -112,7 +112,7 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
           <span className="text-red-500 text-center">
             {errors.description?.message}
           </span>
-        )}
+        )} */}
         <FormInput
           register={register}
           type="textarea"
@@ -120,9 +120,9 @@ const CreateMarketForm = ({ venues }: { venues: TVenueFront[] }) => {
           placeholder="Market Vendor Instructions"
           className="h-[85px]"
         />
-        {errors.description && (
+        {errors.vendorInstructions && (
           <span className="text-red-500 text-center">
-            {errors.description?.message}
+            {errors.vendorInstructions?.message}
           </span>
         )}
         <Days register={register} errors={errors} />

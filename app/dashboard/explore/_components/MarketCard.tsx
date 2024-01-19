@@ -28,7 +28,7 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
         <strong>${minPrice}</strong> /day
       </span>
       <h3 className="text-2xl font-bold font-inter">{market.name}</h3>
-      <p className="font-roboto">{market.description}</p>
+      {/* <p className="font-roboto">{market.description}</p> */}
       <p className="font-roboto">{dateToDisplay}</p>
     </li>
   );

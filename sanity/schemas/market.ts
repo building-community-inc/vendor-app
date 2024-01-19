@@ -11,12 +11,12 @@ export const marketSchema = defineType({
       type: "string",
       // validation: Rule => Rule.min(1, "Name of the Market is required")
     }),
-    defineField({
-      name: "description",
-      title: "Description",
-      type: "string",
-      // validation: Rule => Rule.min(1, "Description of the Market is required")
-    }),
+    // defineField({
+    //   name: "description",
+    //   title: "Description",
+    //   type: "string",
+    //   // validation: Rule => Rule.min(1, "Description of the Market is required")
+    // }),
 
     defineField({
       name: "dates",

@@ -48,7 +48,7 @@ const Page = async ({
         height={market.marketCover.dimensions.height}
         className="rounded-lg w-full object-cover max-h-[271px]"
       />
-      <p>{market.description}</p>
+      {/* <p>{market.description}</p> */}
       <span className="flex gap-[1ch]">
         <strong>{priceToDisplay}</strong>/ day
       </span>

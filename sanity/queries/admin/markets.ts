@@ -16,7 +16,6 @@ const imageQueryString = `{
 const marketQueryString = `
   _id,
   name,
-  description,
   price,
   dates,
   "marketCover": marketCover ${imageQueryString},
@@ -43,7 +42,6 @@ const marketQueryString = `
 const individualMarketQueryString = `
   _id,
   name,
-  description,
   price,
   dates,
   "marketCover": marketCover ${imageQueryString},

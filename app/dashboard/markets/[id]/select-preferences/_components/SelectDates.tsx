@@ -20,6 +20,13 @@ const SelectDates = ({
   selectedDates: TDayWithTable[];
   totalToPay: number | null;
 }) => {
+  const safeFormatMarketDate = (date: string) => {
+    try {
+      return formatMarketDate(date);
+    } catch {
+      return date;
+    }
+  };
   return (
     <section className="flex flex-col gap-4 w-full">
       <h2>Select Dates</h2>
@@ -45,7 +52,7 @@ const SelectDates = ({
                   }
                 />
                 <span className="whitespace-nowrap">
-                  {formatMarketDate(date.date)}
+                  {safeFormatMarketDate(date.date)}
                 </span>
               </div>
               {!!selectedDates.find((d) => d.date === date.date) && (
