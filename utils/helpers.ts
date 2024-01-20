@@ -68,6 +68,31 @@ export const formatMarketDate = function (date: string): string {
   return formattedDate;
 };
 
+export const formatMarketWithDateTime = function (date: string): string {
+  const dateOptions: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  };
+
+  const timeOptions: Intl.DateTimeFormatOptions = {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true
+  };
+
+  const dateObject = new Date(date);
+
+  const formattedDate = dateObject.toLocaleString("en-US", dateOptions);
+  const formattedTime = dateObject.toLocaleString("en-US", timeOptions);
+
+  if (formattedDate === "Invalid Date" || formattedTime === "Invalid Date") {
+    return date;
+  }
+
+  return `${formattedDate} at ${formattedTime}`;
+};
+
 export const createDateString = (date: Date): string => {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 };

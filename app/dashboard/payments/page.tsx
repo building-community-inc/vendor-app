@@ -2,7 +2,7 @@ import {
   getAllUserPaymentsById,
   getSanityUserByEmail,
 } from "@/sanity/queries/user";
-import { formatMarketDate } from "@/utils/helpers";
+import { formatMarketDate, formatMarketWithDateTime } from "@/utils/helpers";
 import { currentUser } from "@clerk/nextjs";
 
 const PaymentsPage = async () => {
@@ -26,40 +26,56 @@ const PaymentsPage = async () => {
 
   return (
     <main className="flex flex-col pt-20 px-10 gap-2 min-h-screen w-full text-xs sm:text-sm md:text-base">
-      <h1 className="font-bold text-xl pl-2">Payments</h1>
-      <table className="text-left ">
-        <thead>
-          <tr>
-            <th className="px-2">Purchased On</th>
-            <th className="px-2">Amount</th>
-            <th className="px-2">Market</th>
-            <th className="px-2">Booked Dates</th>
-          </tr>
-        </thead>
-        <tbody>
-          {userPayments?.map((payment) => (
-            <tr key={payment.stripePaymentIntendId}>
-              <td className="whitespace-nowrap px-2 align-top">
-                {formatMarketDate(payment.createdAt)}
-              </td>
-              <td className="px-2 align-top">${payment.amount / 100}</td>
-              <td className="px-2 align-top">{payment.market.name}</td>
-              <td className="px-2 align-top">
-                <ul>
-                  {payment.items.map((item, index) => (
-                    <li key={item.name}>
-                      {formatMarketDate(item.date)} - {item.tableId}
-                      {index < payment.items.length - 1 ? ',' : ''}
-                    </li>
-                  ))}
-                </ul>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <header className="flex items-center justify-between gap-2">
+        <h1 className="font-bold text-xl">Payments</h1>
+        <div className="flex-grow h-[1px] bg-white" />
+      </header>
+
+      <ul className="flex flex-col">
+        {userPayments?.map((payment) => (
+          <li key={payment.stripePaymentIntendId} className="border-b border-white">
+            <InfoItem title="Id">
+              <p>
+                {payment.stripePaymentIntendId}
+              </p>
+            </InfoItem>
+            <InfoItem title="Date">
+              <p>
+                {formatMarketWithDateTime(payment.createdAt)}
+              </p>
+            </InfoItem>
+            <span className="font-bold">
+              {formatMarketDate(payment.createdAt)}
+            </span>
+            <span>${payment.amount / 100}</span>
+            <ul>
+              {payment.items?.map((item) => (
+                <li key={item.name}>
+                  <span>{item.tableId}</span>
+                  <span>{item.date}</span>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
     </main>
   );
 };
 
 export default PaymentsPage;
+
+
+const InfoItem = ({ title, children }: {
+  title: string;
+  children: React.ReactNode;
+}) => {
+  return (
+    <div className="flex md:flex-col">
+      <h3 className="font-bold">
+        {title}:
+      </h3>
+      {children}
+    </div>
+  )
+}
