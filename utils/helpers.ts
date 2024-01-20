@@ -53,8 +53,17 @@ export const formatMarketDate = function (date: string): string {
     day: "numeric",
   };
 
-  const dateObject = new Date(date);
+  const offset = 5; // Offset for EST timezone
+  const dateParts = date.split("-").map((part) => +part);
+  const dateObject = new Date(
+    Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2], offset)
+  );
+  
   const formattedDate = dateObject.toLocaleString("en-US", options);
+
+  if (formattedDate === "Invalid Date") {
+    return date;
+  }
 
   return formattedDate;
 };
