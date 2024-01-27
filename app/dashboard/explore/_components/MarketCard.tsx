@@ -23,13 +23,13 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
           alt={market.name}
           className="w-full object-cover rounded-xl aspect-video"
         />
+        <span>
+          <strong>${minPrice}</strong> /day
+        </span>
+        <h3 className="text-2xl font-bold font-inter">{market.name}</h3>
+        {/* <p className="font-roboto">{market.description}</p> */}
+        <p className="font-roboto">{dateToDisplay}</p>
       </Link>
-      <span>
-        <strong>${minPrice}</strong> /day
-      </span>
-      <h3 className="text-2xl font-bold font-inter">{market.name}</h3>
-      {/* <p className="font-roboto">{market.description}</p> */}
-      <p className="font-roboto">{dateToDisplay}</p>
     </li>
   );
 };

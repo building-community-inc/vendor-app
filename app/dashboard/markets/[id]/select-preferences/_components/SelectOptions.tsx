@@ -2,14 +2,14 @@
 import {
   TDayWithTable,
   TSanityMarket,
-  TTable,
   TTableInDay,
 } from "@/sanity/queries/admin/markets";
 import SelectDates from "./SelectDates";
 import ContinueButton from "../../_components/ContinueButton";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { zodBookMarketOptionsSchema } from "@/zod/checkout";
+import { zodBookMarketOptionsSchema, zodCheckoutStateSchemaRequired, zodShortMarketSchema } from "@/zod/checkout";
+import { useCheckoutStore } from "@/app/dashboard/checkout/_components/checkoutStore";
 // import { useRouter } from "next/navigation";
 export type TSelectedTableType = {
   date: string;
@@ -23,28 +23,34 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
   const { push } = useRouter();
 
   const [specialRequest, setSpecialRequest] = useState<string>("");
-  const [selectedDates, setSelectedDates] = useState<string[]>([]);
   const [selectedTables, setSelectedTables] = useState<TSelectedTableType[]>(
     []
   );
 
+  const [isPayNowSelected, setIsPayNowSelected] = useState<boolean>(true);
+
   const [newSelectedDates, setNewSelectedDates] = useState<TDayWithTable[]>([]);
 
+  const { setCheckoutItems, setAllCheckoutData } = useCheckoutStore();
   const totalToPay = selectedTables.reduce(
     (total, table) => total + table.table.table.price,
     0
   );
+
+  const dueNow = isPayNowSelected ? totalToPay : selectedTables.length * 50;
 
   const options = {
     selectedTables,
     totalToPay,
     specialRequest,
     market,
+    dueNow
   };
 
   const handleNewDateSelect = (date: TDayWithTable) => {
-    if (newSelectedDates.includes(date)) {
-      setNewSelectedDates((prev) => prev.filter((d) => d !== date));
+    if (newSelectedDates.some(d => d.date === date.date)) {
+      setNewSelectedDates((prev) => prev.filter((d) => d.date !== date.date));
+      setSelectedTables((prevTables) => prevTables.filter((t) => t.date !== date.date));
     } else {
       setNewSelectedDates((prev) => [...prev, date]);
     }
@@ -69,12 +75,12 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
   const handleProceedToCheckout = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    
+
     const checkboxes = document.querySelectorAll<HTMLInputElement>(
       'input[type="checkbox"]'
     );
     const selects = document.querySelectorAll<HTMLSelectElement>('select');
-  
+
     let uncheckedTableDate = '';
     const isAnyCheckboxCheckedWithoutSelect = Array.from(checkboxes).some((checkbox, index) => {
       const correspondingSelect = selects[index];
@@ -106,20 +112,61 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
       // });
 
       const parsedOptions = zodBookMarketOptionsSchema.safeParse(options);
-      const params = new URLSearchParams();
+      // const params = new URLSearchParams();
 
       if (!parsedOptions.success) {
         console.error(parsedOptions.error);
         return;
       }
 
+      const items = selectedTables.map((table: TSelectedTableType) => {
+        return {
+          price: table.table.table.price,
+          tableId: table.table.table.id,
+          name: `${market.name} at ${market.venue.title} in ${market.venue.city} on ${table.date}}`,
+          date: table.date,
+        };
+      });
 
-      for (const [key, value] of Object.entries(parsedOptions.data)) {
-        params.append(key, JSON.stringify(value));
+      // setCheckoutItems(items);
+      const parsedMarket = zodShortMarketSchema.safeParse(market);
+      if (!parsedMarket.success) {
+        console.error(parsedMarket.error);
+        return;
       }
-      
 
-      push(`/dashboard/checkout?${params.toString()}`);
+      const parsedCheckoutState = zodCheckoutStateSchemaRequired.safeParse({
+        market: parsedMarket.data,
+        items,
+        specialRequest,
+        dueNow,
+        totalToPay,
+        paymentType: isPayNowSelected ? 'full' : 'partial',
+      })
+      // console.log({
+      //   parsedCheckoutState, state: {
+      //     market: parsedMarket.data,
+      //     items,
+      //     specialRequest,
+      //     dueNow,
+      //     totalToPay,
+      //     paymentType: isPayNowSelected ? 'full' : 'partial',
+      //   }
+      // })
+      if (!parsedCheckoutState.success) {
+        console.error(parsedCheckoutState.error);
+        return;
+      }
+
+      setAllCheckoutData(parsedCheckoutState.data)
+
+
+      // for (const [key, value] of Object.entries(parsedOptions.data)) {
+      //   params.append(key, JSON.stringify(value));
+      // }
+      // console.log({ params: params.toString() })
+
+      push(`/dashboard/checkout`);
     } catch (error) {
       console.error(error);
     }
@@ -129,7 +176,7 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
   return (
     <form
       onSubmit={handleProceedToCheckout}
-      className="w-full lg:w-[40%] min-w-[250px] flex flex-col gap-5 md:p-5"
+      className="w-full lg:w-[40%] min-w-[250px] flex flex-col gap-5 md:p-5 pb-10"
     >
       <header>
         <h1>Select Table Location preference</h1>
@@ -141,6 +188,7 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
         selectedDates={newSelectedDates}
         totalToPay={totalToPay}
         handleOnTableChange={handleOnTableChange}
+        dueNow={dueNow}
       />
       <textarea
         rows={2}
@@ -149,6 +197,21 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
         value={specialRequest}
         onChange={(e) => setSpecialRequest(e.target.value)}
       />
+      {/* <ContinueButton type="button" onClick={() => setIsPayNowSelected(!isPayNowSelected)}>
+        {isPayNowSelected ? "Pay Now" : "Pay Later"}
+      </ContinueButton> */}
+
+      <section>
+        <label htmlFor="pay-now">Pay Now
+          <input type="radio" name="pay-now" id="pay-now" checked={isPayNowSelected} onChange={() => setIsPayNowSelected(true)} />
+        </label>
+        <label htmlFor="pay-later">Pay Later
+          <input type="radio" name="pay-later" id="pay-later" checked={!isPayNowSelected} onChange={() => setIsPayNowSelected(false)} />
+        </label>
+        {!isPayNowSelected && (
+          <p><strong> Amount Owed:</strong> {totalToPay - dueNow}</p>
+        )}
+      </section>
       <ContinueButton type="submit">Checkout</ContinueButton>
       {/* {JSON.stringify(options)} */}
     </form>

@@ -85,7 +85,7 @@ export const getUserMarkets = async (userId: string) => {
       { userId }
     );
 
-    console.log({ payments });
+    // console.log({ payments });
     const validatedPayments = zodUserMarkets.safeParse(payments);
 
     if (!validatedPayments.success) {
@@ -98,7 +98,14 @@ export const getUserMarkets = async (userId: string) => {
   }
 };
 
+const zodPayment = z.object({
+  amount: z.number(),
+  paymentDate: z.string(),
+  stripePaymentIntentId: z.string(),
+});
+
 const zodUserPayment = z.object({
+  _id: z.string(),
   createdAt: z.string(),
   items: z.array(
     z.object({
@@ -112,8 +119,12 @@ const zodUserPayment = z.object({
     name: z.string(),
     _id: z.string(),
   }),
-  stripePaymentIntendId: z.string(),
-  amount: z.number(),
+  payments: z.array(zodPayment),
+  amount: z.object({
+    total: z.number(),
+    paid: z.number(),
+    owed: z.number(),
+  }),
 });
 
 const zodUserPayments = z.array(zodUserPayment);
@@ -121,15 +132,30 @@ const zodUserPayments = z.array(zodUserPayment);
 export const getAllUserPaymentsById = async (userId: string) => {
   try {
     const result = await sanityClient.fetch(
-      `*[_type == 'payment' && user._ref == $userId]{
+      `*[_type == 'paymentRecord' && user._ref == $userId]{
+        _id,
         createdAt,
-        items,
+        "items": items[] {
+          price,
+          name,
+          date,
+          tableId
+        },
         "market": market -> {
           name,
           _id
         },
         stripePaymentIntendId,
-        amount
+        "amount": amount {
+          total,
+          paid,
+          owed
+        },
+        "payments": payments[] {
+          amount,
+          paymentDate,
+          stripePaymentIntentId
+        }
       }`,
       { userId }
     );

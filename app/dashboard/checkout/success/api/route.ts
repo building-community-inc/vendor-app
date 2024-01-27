@@ -3,13 +3,14 @@ import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import { Stripe } from "stripe";
 import { nanoid } from "nanoid";
+import { getExistingPayment } from "@/sanity/queries/payments";
 
 export type TPaymentItem = {
   price: number;
   name: string;
   date: string;
   tableId: string;
-}
+};
 
 export const POST = async (req: Request) => {
   if (req.method !== "POST") {
@@ -40,11 +41,13 @@ export const POST = async (req: Request) => {
   }
 
   const rawBody = await req.text();
-  // console.log({rawBody});
-  
-  const { paymentIntent, specialRequest } = JSON.parse(rawBody) as {
+
+  const { paymentIntent, specialRequest, idForPaymentRecord } = JSON.parse(
+    rawBody
+  ) as {
     paymentIntent: Stripe.PaymentIntent;
     specialRequest: string;
+    idForPaymentRecord: string;
   };
 
   if (!paymentIntent) {
@@ -53,14 +56,11 @@ export const POST = async (req: Request) => {
       body: { message: "No payment intent" },
     });
   }
-  
-  const existingPayment = await sanityWriteClient.fetch(
-    '*[_type == "payment" && stripePaymentIntendId == $paymentId][0]',
-    { paymentId: paymentIntent.id }
-  );
+
+  const existingPayment = await getExistingPayment(paymentIntent.id);
 
   if (existingPayment) {
-    console.log("exiting:", {existingPayment})
+    // console.log("exiting:", { existingPayment });
     return Response.json({
       status: 400,
       body: { message: "Payment already exists" },
@@ -76,10 +76,10 @@ export const POST = async (req: Request) => {
   );
 
   // Find the day and table to update
-  const datesBooked = items.map(item => ({
+  const datesBooked = items.map((item) => ({
     date: item.date,
     tableId: item.tableId,
-    _key: nanoid()
+    _key: nanoid(),
   }));
   const vendorDetails = {
     vendor: {
@@ -90,8 +90,6 @@ export const POST = async (req: Request) => {
     datesBooked: datesBooked,
     _key: nanoid(),
   };
-
-  // console.log({ vendorDetails });
 
   // Find the day and table to update
   for (const item of items) {
@@ -112,17 +110,12 @@ export const POST = async (req: Request) => {
           _type: "reference",
           _ref: user._id,
         };
-        // console.log({ table });
-
-        // Add the updated table to the array
       }
     }
   }
-
-  // Create the payment document
-  const payment = {
-    _type: "payment",
-    _id: paymentIntent.id,
+  const paymentRecord = {
+    _type: "paymentRecord",
+    _id: idForPaymentRecord, // generate a unique ID
     user: {
       _type: "reference",
       _ref: user._id,
@@ -131,43 +124,45 @@ export const POST = async (req: Request) => {
       _type: "reference",
       _ref: marketId,
     },
-    amount: paymentIntent.amount, // replace with the actual amount
-    status: paymentIntent.status,
-    stripePaymentIntendId: paymentIntent.id,
+    amount: {
+      _type: "object",
+      total: +paymentIntent.metadata.totalToPay,
+      paid: paymentIntent.amount / 100,
+      owed: +paymentIntent.metadata.totalToPay - paymentIntent.amount / 100,
+    },
     items: items.map((item) => ({
       ...item,
       _key: nanoid(),
     })),
+    payments: [
+      {
+        _type: "payment",
+        stripePaymentIntentId: paymentIntent.id,
+        amount: paymentIntent.amount / 100,
+        paymentDate: new Date().toISOString(),
+        _key: nanoid(),
+      },
+      // add more payments as needed
+    ],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 
-
-  // console.log({
-  //   updatedTables,
-  //   paymentIntent,
-  //   payment,
-  //   existingPayment,
-  // });
-
   if (!existingPayment) {
-
     const updatedMarket = {
       ...marketDocument,
-      vendors: [...marketDocument.vendors || [], vendorDetails],
-    }
-    console.log({updatedMarket})
-    const createdPayment = await sanityWriteClient.create(payment);
+      vendors: [...(marketDocument.vendors || []), vendorDetails],
+    };
+    // console.log({ updatedMarket });
+    const createdPaymentRecord = await sanityWriteClient.create(paymentRecord);
     // Update the market document in the database
 
     const sanityUpdatedMarketResp = await sanityWriteClient
       .patch(marketId)
       .set(updatedMarket)
       .commit();
-    // console.log({ createdPayment, sanityUpdatedMarketResp });
+    return Response.json({
+      message: "success",
+    });
   }
-
-  return Response.json({
-    message: "success",
-  });
 };

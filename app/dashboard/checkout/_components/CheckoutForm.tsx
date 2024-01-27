@@ -90,8 +90,8 @@ export default function CheckoutForm() {
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit} className="flex flex-col px-10 py-20">
-      <PaymentElement id="payment-element" options={paymentElementOptions} className="py-10" />
+    <form id="payment-form" onSubmit={handleSubmit} className="flex flex-col px-10">
+      <PaymentElement id="payment-element" options={paymentElementOptions} className="" />
       <ContinueButton disabled={isLoading || !stripe || !elements} id="submit">
         <span id="button-text">
           {isLoading ? <div className="spinner" id="spinner">paying...</div> : "Pay now"}

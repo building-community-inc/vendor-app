@@ -1,12 +1,22 @@
 "use client";
 
+import { getExistingPayment } from "@/sanity/queries/payments";
 import { useEffect } from "react";
 
-const AddBookingToDb = ({ paymentIntent }: { paymentIntent: string }) => {
+const AddBookingToDb = ({ paymentIntent, paymentIntentId }: { paymentIntent: string, paymentIntentId: string }) => {
+  // console.log("adding payment to db")
+
   useEffect(() => {
     const localUrl = window.location.href.split("/dashboard")[0];
 
     const addBookingToBackend = async () => {
+      const existingPayment = await getExistingPayment(paymentIntentId);
+
+      // console.log({ existingPayment })
+      if (existingPayment) {
+        return;
+      }
+
       const response = await fetch(
         `${localUrl}/dashboard/checkout/success/api`,
         {
@@ -15,6 +25,7 @@ const AddBookingToDb = ({ paymentIntent }: { paymentIntent: string }) => {
           body: paymentIntent,
         }
       );
+
       return response;
     };
     const res = addBookingToBackend();

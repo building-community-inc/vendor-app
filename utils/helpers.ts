@@ -46,7 +46,7 @@ export const dateArrayToDisplayableText = function (dates: string[]): string {
   return `${formattedStartDate} - ${formattedEndDate}`;
 };
 
-export const formatMarketDate = function (date: string): string {
+export const formatMarketDate = function (date: string | Date): string {
   const options: Intl.DateTimeFormatOptions = {
     weekday: "long",
     month: "short",
@@ -95,3 +95,9 @@ export function formatDateStringToMMMDDYYYY(dateStr: string): string {
 
   return formattedDate;
 }
+
+
+export const buildOrderUrl = (localUrl: string, paymentIntentId: string) => {
+  return `${localUrl}/dashboard/checkout/success?payment_intent=${paymentIntentId}`
+};
+

@@ -13,12 +13,14 @@ const SelectDates = ({
   selectedDates,
   totalToPay,
   handleOnTableChange,
+  dueNow
 }: {
   market: TSanityMarket;
   handleDateSelect: (date: TDayWithTable) => void;
   handleOnTableChange: (table: TTableInDay, date: TDateType) => void;
   selectedDates: TDayWithTable[];
   totalToPay: number | null;
+  dueNow: number;
 }) => {
   const safeFormatMarketDate = (date: string) => {
     try {
@@ -91,6 +93,7 @@ const SelectDates = ({
       </ul>
       {typeof totalToPay === "number" ? (
         totalToPay < 1 ? (
+
           <span className="">Please select at least one date and a table</span>
         ) : (
           <>
@@ -103,7 +106,7 @@ const SelectDates = ({
       )}
       <div className="w-full">
         <span>Due Now:</span>
-        <span> $50</span>
+        <span> ${dueNow}</span>
       </div>
     </section>
   );

@@ -1,9 +1,9 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 import {StarIcon} from '@sanity/icons'
 
-export const paymentSchema = defineType({
-  name: "payment",
-  title: "Payments",
+export const paymentRecordSchema = defineType({
+  name: "paymentRecord",
+  title: "Payment Record",
   type: "document",
   fields: [
     defineField({
@@ -21,17 +21,53 @@ export const paymentSchema = defineType({
     defineField({
       name: "amount",
       title: "Amount",
-      type: "number",
+      type: "object",
+      fields: [
+        defineField({
+          name: "total",
+          title: "Total",
+          type: "number",
+        }),
+        defineField({
+          name: "paid",
+          title: "Paid",
+          type: "number",
+        }),
+        defineField({
+          name: "owed",
+          title: "Owed",
+          type: "number",
+        }),
+      ]
     }),
     defineField({
-      name: "status",
-      title: "Status",
-      type: "string",
-    }),
-    defineField({
-      name: "stripePaymentIntendId",
-      title: "Stripe Payment Intent ID",
-      type: "string",
+      name: "payments",
+      title: "Payments",
+      type: "array",
+      of: [
+        defineArrayMember({
+          name: "payment",
+          title: "Payment",
+          type: "object",
+          fields: [
+            defineField({
+              name: "stripePaymentIntentId",
+              title: "Stripe Payment Intent ID",
+              type: "string",
+            }),
+            defineField({
+              name: "amount",
+              title: "Amount",
+              type: "number",
+            }),
+            defineField({
+              name: "paymentDate",
+              title: "Payment Date",
+              type: "datetime",
+            }),
+          ],
+        }),
+      ],
     }),
 
     defineField({

@@ -9,6 +9,9 @@ import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm";
 import { TShortMarketSchema } from "@/zod/checkout";
 import { TSelectedTableType } from "../../markets/[id]/select-preferences/_components/SelectOptions";
+import { TPaymentItem } from "../success/api/route";
+import { formatMarketDate } from "@/utils/helpers";
+import { useCheckoutStore } from "./checkoutStore";
 
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
@@ -17,47 +20,48 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
 );
 
-export default function Checkout({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default function Checkout() {
   const [clientSecret, setClientSecret] = useState("");
 
-  console.log({ searchParams: searchParams });
-  const selectedTables =
-    typeof searchParams.selectedTables === "string"
-      ? JSON.parse(searchParams.selectedTables)
-      : [];
-  const specialRequest =
-    typeof searchParams.specialRequest === "string"
-      ? JSON.parse(searchParams.specialRequest)
-      : "";
-  const totalToPay =
-    typeof searchParams.totalToPay === "string"
-      ? Number(searchParams.totalToPay)
-      : 0;
-  const market: TShortMarketSchema =
-    typeof searchParams.market === "string"
-      ? JSON.parse(searchParams.market)
-      : {};
+  // console.log({ searchParams });
+  // const selectedTables =
+  //   typeof searchParams.selectedTables === "string"
+  //     ? JSON.parse(searchParams.selectedTables)
+  //     : [];
+  // const specialRequest =
+  //   typeof searchParams.specialRequest === "string"
+  //     ? JSON.parse(searchParams.specialRequest)
+  //     : "";
+  // const totalToPay =
+  //   typeof searchParams.totalToPay === "string"
+  //     ? Number(searchParams.totalToPay)
+  //     : 0;
+  // const market: TShortMarketSchema =
+  //   typeof searchParams.market === "string"
+  //     ? JSON.parse(searchParams.market)
+  //     : {};
+  // const dueNow = typeof searchParams.dueNow === "string" ? Number(searchParams.dueNow) : 0;
 
+  // const items = typeof searchParams.items === "string"
+  //   ? JSON.parse(searchParams.items)
+  //   : selectedTables.map((table: TSelectedTableType) => {
+  //     return {
+  //       price: table.table.table.price,
+  //       tableId: table.table.table.id,
+  //       name: `${market.name} at ${market.venue.title} in ${market.venue.city} on ${table.date}}`,
+  //       date: table.date,
+  //     };
+  //   });
 
-  const items = selectedTables.map((table: TSelectedTableType) => {
-    return {
-      price: table.table.table.price,
-      tableId: table.table.table.id,
-      name: `${market.name} at ${market.venue.title} in ${market.venue.city} on ${table.date}}`,
-      date: table.date,
-    };
-  });
-  
+  const {items, market, specialRequest, totalToPay, dueNow, paymentType} = useCheckoutStore();
+
+    // http://localhost:3000/dashboard/checkout?items=something&totalToPay=1&market=something&dueNow=0
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     fetch("/dashboard/checkout/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items, market, specialRequest, totalToPay }),
+      body: JSON.stringify({ items, market, specialRequest, totalToPay, dueNow, paymentType }),
     })
       .then((res) => res.json())
       .then((data) => setClientSecret(data.clientSecret));
@@ -72,12 +76,59 @@ export default function Checkout({
   };
 
   return (
-    <>
+    <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto">
       {clientSecret && (
-        <Elements options={options} stripe={stripePromise}>
-          <CheckoutForm />
-        </Elements>
+        <section className="flex flex-col md:flex-row">
+          <Elements options={options} stripe={stripePromise}>
+            <CheckoutForm />
+          </Elements>
+          <section>
+
+            <h3 className="text-lg font-semibold">Items:</h3>
+            <table className="w-full">
+              <thead>
+                <tr className="w-full">
+                  <th>Date</th>
+                  <th>Table ID</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items?.map((item: TPaymentItem, index: number) => (
+                  <tr key={index} className="w-full">
+                    <td className="text-center">{formatMarketDate(item.date)}</td>
+                    <td className="text-center">{item.tableId}</td>
+                    <td className="text-center">{item.price}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p>
+              <strong>Market:</strong>
+              {market?.name}
+            </p>
+            <p>
+              <strong>Amount Being Paid Now:</strong>
+              ${dueNow}
+            </p>
+            <p>
+              <strong>Amount Owed:</strong>
+              ${totalToPay - dueNow}
+            </p>
+            <p>
+              <strong>Total:</strong>
+              ${totalToPay}
+            </p>
+
+            {specialRequest && (
+              <p>
+                <strong>Special Request:</strong>
+                {specialRequest}
+              </p>
+            )}
+          </section>
+        </section>
       )}
-    </>
+    </main>
   );
 }
