@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodBookMarketOptionsSchema, zodCheckoutStateSchemaRequired, zodShortMarketSchema } from "@/zod/checkout";
 import { useCheckoutStore } from "@/app/dashboard/checkout/_components/checkoutStore";
+import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 // import { useRouter } from "next/navigation";
 export type TSelectedTableType = {
   date: string;
@@ -19,7 +20,7 @@ export type TDateType = {
   date: string;
   tables: TTableInDay[];
 };
-const SelectOptions = ({ market }: { market: TSanityMarket }) => {
+const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWithOptionalBusinessRef }) => {
   const { push } = useRouter();
 
   const [specialRequest, setSpecialRequest] = useState<string>("");
@@ -31,7 +32,7 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
 
   const [newSelectedDates, setNewSelectedDates] = useState<TDayWithTable[]>([]);
 
-  const { setCheckoutItems, setAllCheckoutData } = useCheckoutStore();
+  const { setAllCheckoutData } = useCheckoutStore();
   const totalToPay = selectedTables.reduce(
     (total, table) => total + table.table.table.price,
     0
@@ -158,6 +159,35 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
 
   };
 
+  const sortedDates = market.dates
+    .map(date => new Date(date))
+    .sort((a, b) => a.getTime() - b.getTime());
+
+  // Get today's date at midnight for comparison
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Find the next event date that is after today
+  const nextEventDate = sortedDates.find(date => date > today);
+
+  // Calculate the difference between today and the next event date
+  let diffInDays = null;
+  if (nextEventDate) {
+    diffInDays = Math.ceil((nextEventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  }
+
+  const isEventInLessThan60Days = diffInDays && diffInDays <= 60;
+  const isItTooLateToBook = diffInDays && diffInDays <= 0;
+
+  if (isItTooLateToBook) {
+    return (
+      <div>
+        <h1>It's the day before the event</h1>
+        <p>Sorry, you can't book a table the day before the event.</p>
+      </div>
+    )
+  }
+
   return (
     <form
       onSubmit={handleProceedToCheckout}
@@ -174,6 +204,7 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
         totalToPay={totalToPay}
         handleOnTableChange={handleOnTableChange}
         dueNow={dueNow}
+        businessCategory={user?.business?.industry || ''}
       />
       <section className="flex flex-col text-zinc-400">
         <h2 className="text-white font-bold">Select Payment Option</h2>
@@ -181,11 +212,15 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
           <input type="radio" name="pay-now" id="pay-now" checked={isPayNowSelected} onChange={() => setIsPayNowSelected(true)} />
           <span>Pay in Full</span>
         </label>
-        <label htmlFor="pay-later" className="flex gap-2">
-          <input type="radio" name="pay-later" id="pay-later" checked={!isPayNowSelected} onChange={() => setIsPayNowSelected(false)} />
-          <span>Deposit</span>
-        </label>
-        <p>Vendors can pay a $50/day non-refundable deposit to secure their table reservation. The remaining amount of the booking is due 60 days before the first day of the market</p>
+        {!isEventInLessThan60Days && (
+          <>
+            <label htmlFor="pay-later" className="flex gap-2">
+              <input type="radio" name="pay-later" id="pay-later" checked={!isPayNowSelected} onChange={() => setIsPayNowSelected(false)} />
+              <span>Deposit</span>
+            </label>
+            <p>Vendors can pay a $50/day non-refundable deposit to secure their table reservation. The remaining amount of the booking is due 60 days before the first day of the market</p>
+          </>
+        )}
         {/* {!isPayNowSelected && ( */}
         {/* )} */}
         {typeof totalToPay === "number" ? (

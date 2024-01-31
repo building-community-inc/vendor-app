@@ -28,6 +28,7 @@ const Page = async ({
 
   if (!market) return <div>no market found</div>;
 
+
   // const dateToDisplay = dateArrayToDisplayableText(market.dates);
   return (
     <main className="pt-14 px-5 w-full flex flex-col gap-8 justify-center h-screen screen">
@@ -40,7 +41,7 @@ const Page = async ({
             height={market.venue.venueMap.dimensions.height}
             className="rounded-lg w-[60%] object-cover max-h-[271px]"
           />
-          <SelectOptions market={market} />
+          <SelectOptions market={market} user={sanityUser} />
         </article>
       )}
     </main>

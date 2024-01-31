@@ -13,7 +13,8 @@ const SelectDates = ({
   selectedDates,
   totalToPay,
   handleOnTableChange,
-  dueNow
+  dueNow,
+  businessCategory
 }: {
   market: TSanityMarket;
   handleDateSelect: (date: TDayWithTable) => void;
@@ -21,6 +22,7 @@ const SelectDates = ({
   selectedDates: TDayWithTable[];
   totalToPay: number | null;
   dueNow: number;
+  businessCategory: string;
 }) => {
   const safeFormatMarketDate = (date: string) => {
     try {
@@ -29,11 +31,33 @@ const SelectDates = ({
       return date;
     }
   };
+
+
+
+  // Filter out the days that already have a business with the same category
+  const availableDays = market.daysWithTables?.filter(day => {
+    // Check if there is a vendor with the same category that has booked this day
+    const isBooked = market.vendors?.some(vendor =>
+      vendor.vendor.businessCategory === businessCategory &&
+      vendor.datesBooked.some(bookedDate => bookedDate.date === day.date)
+    );
+
+    // Return true if the day is not booked, false otherwise
+    return !isBooked;
+  });
+
+  if (availableDays?.length === 0) {
+    return (
+      <section className="flex flex-col gap-4 w-full">
+        <p className="text-red-500">No available dates for this market</p>
+      </section>
+    )
+  }
   return (
     <section className="flex flex-col gap-4 w-full">
       <h2>Select Dates</h2>
       <ul className="flex flex-col gap-3 w-full">
-        {market.daysWithTables?.map((date, index) => (
+        {availableDays?.map((date, index) => (
           <li key={date.date}>
             <label
               htmlFor={`date-[${index}]`}
@@ -91,7 +115,7 @@ const SelectDates = ({
           </li>
         ))}
       </ul>
-     
+
     </section>
   );
 };
