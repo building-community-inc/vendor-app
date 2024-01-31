@@ -143,28 +143,13 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
         totalToPay,
         paymentType: isPayNowSelected ? 'full' : 'partial',
       })
-      // console.log({
-      //   parsedCheckoutState, state: {
-      //     market: parsedMarket.data,
-      //     items,
-      //     specialRequest,
-      //     dueNow,
-      //     totalToPay,
-      //     paymentType: isPayNowSelected ? 'full' : 'partial',
-      //   }
-      // })
+
       if (!parsedCheckoutState.success) {
         console.error(parsedCheckoutState.error);
         return;
       }
 
       setAllCheckoutData(parsedCheckoutState.data)
-
-
-      // for (const [key, value] of Object.entries(parsedOptions.data)) {
-      //   params.append(key, JSON.stringify(value));
-      // }
-      // console.log({ params: params.toString() })
 
       push(`/dashboard/checkout`);
     } catch (error) {
@@ -190,6 +175,44 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
         handleOnTableChange={handleOnTableChange}
         dueNow={dueNow}
       />
+      <section className="flex flex-col text-zinc-400">
+        <h2 className="text-white font-bold">Select Payment Option</h2>
+        <label htmlFor="pay-now" className="flex gap-2">
+          <input type="radio" name="pay-now" id="pay-now" checked={isPayNowSelected} onChange={() => setIsPayNowSelected(true)} />
+          <span>Pay in Full</span>
+        </label>
+        <label htmlFor="pay-later" className="flex gap-2">
+          <input type="radio" name="pay-later" id="pay-later" checked={!isPayNowSelected} onChange={() => setIsPayNowSelected(false)} />
+          <span>Deposit</span>
+        </label>
+        <p>Vendors can pay a $50/day non-refundable deposit to secure their table reservation. The remaining amount of the booking is due 60 days before the first day of the market</p>
+        {/* {!isPayNowSelected && ( */}
+        {/* )} */}
+        {typeof totalToPay === "number" ? (
+          totalToPay < 1 ? (
+
+            <span className="">Please select at least one date and a table</span>
+          ) : (
+            <>
+              <h2 className="text-white font-bold">Total To Booking Cost:</h2>
+              <span>$ {totalToPay}</span>
+              <div className="w-full">
+                <h2 className="text-white font-bold">Due Now:</h2>
+                <span> ${dueNow}</span>
+              </div>
+              <div>
+                <h2 className="text-white font-bold">Amount Owing:</h2>
+                <p>$
+                  {totalToPay - dueNow}</p>
+              </div>
+
+            </>
+          )
+        ) : (
+          <span className="text-red-400">Something went wrong</span>
+        )}
+
+      </section>
       <textarea
         rows={2}
         placeholder="Special Requests"
@@ -201,17 +224,7 @@ const SelectOptions = ({ market }: { market: TSanityMarket }) => {
         {isPayNowSelected ? "Pay Now" : "Pay Later"}
       </ContinueButton> */}
 
-      <section>
-        <label htmlFor="pay-now">Pay Now
-          <input type="radio" name="pay-now" id="pay-now" checked={isPayNowSelected} onChange={() => setIsPayNowSelected(true)} />
-        </label>
-        <label htmlFor="pay-later">Pay Later
-          <input type="radio" name="pay-later" id="pay-later" checked={!isPayNowSelected} onChange={() => setIsPayNowSelected(false)} />
-        </label>
-        {!isPayNowSelected && (
-          <p><strong> Amount Owed:</strong> {totalToPay - dueNow}</p>
-        )}
-      </section>
+
       <ContinueButton type="submit">Checkout</ContinueButton>
       {/* {JSON.stringify(options)} */}
     </form>

@@ -111,9 +111,9 @@ const DetailSection = ({
   title: string;
 }) => {
   return (
-    <div className="flex gap-[1ch]">
-      <h3 className="font-bold">{title}</h3>
-      <span className="max-w-[30ch]">{description}</span>
+    <div className="flex gap-[1ch] flex-wrap">
+      <h3 className="font-bold flex-shrink">{title}</h3>
+      <p className="flex-grow">{description}</p>
     </div>
   );
 };

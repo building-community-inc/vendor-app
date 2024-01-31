@@ -91,23 +91,7 @@ const SelectDates = ({
           </li>
         ))}
       </ul>
-      {typeof totalToPay === "number" ? (
-        totalToPay < 1 ? (
-
-          <span className="">Please select at least one date and a table</span>
-        ) : (
-          <>
-            <h2>Total To Booking Cost:</h2>
-            <span>$ {totalToPay}</span>
-          </>
-        )
-      ) : (
-        <span className="text-red-400">Something went wrong</span>
-      )}
-      <div className="w-full">
-        <span>Due Now:</span>
-        <span> ${dueNow}</span>
-      </div>
+     
     </section>
   );
 };
