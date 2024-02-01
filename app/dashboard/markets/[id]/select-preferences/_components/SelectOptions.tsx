@@ -182,8 +182,8 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
   if (isItTooLateToBook) {
     return (
       <div>
-        <h1>It's the day before the event</h1>
-        <p>Sorry, you can't book a table the day before the event.</p>
+        <h1>It&apos;s the day before the event</h1>
+        <p>Sorry, you can&apos;t book a table the day before the event.</p>
       </div>
     )
   }
@@ -218,8 +218,8 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
               <input type="radio" name="pay-later" id="pay-later" checked={!isPayNowSelected} onChange={() => setIsPayNowSelected(false)} />
               <span>Deposit</span>
             </label>
-            <p>Vendors can pay a $50/day non-refundable deposit to secure their table reservation. The remaining amount of the booking is due 60 days before the first day of the market</p>
-          </>
+            <p>Vendors can pay a $50/day non-refundable deposit to secure their table reservation. The remaining amount of the booking is due 60 days before the first day of the market</p>  
+                    </>
         )}
         {/* {!isPayNowSelected && ( */}
         {/* )} */}
