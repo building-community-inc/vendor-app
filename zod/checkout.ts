@@ -123,3 +123,16 @@ export const zodPaymentIntentSchema = z.object({
     paymentType: z.enum(["full", "partial"]),
   }),
 });
+
+export const zodLaterPaymentIntentSchema = z.object({
+  amount: z.number(),
+  currency: z.string(),
+  metadata: z.object({
+    items: z.string(),
+    userEmail: z.string(),
+    business: z.string().optional(),
+    marketId: z.string(),
+    amountOwing: z.number(),
+    paymentType: z.enum(["full", "partial"]),
+  }),
+});

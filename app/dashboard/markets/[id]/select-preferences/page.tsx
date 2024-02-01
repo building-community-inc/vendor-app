@@ -3,8 +3,6 @@ import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import SelectDates from "./_components/SelectDates";
-import ContinueButton from "../_components/ContinueButton";
 import SelectOptions from "./_components/SelectOptions";
 
 const Page = async ({

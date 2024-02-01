@@ -6,12 +6,10 @@ import {
   loadStripe,
 } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import CheckoutForm from "./CheckoutForm";
-import { TShortMarketSchema } from "@/zod/checkout";
-import { TSelectedTableType } from "../../markets/[id]/select-preferences/_components/SelectOptions";
-import { TPaymentItem } from "../success/api/route";
-import { formatMarketDate } from "@/utils/helpers";
-import { useCheckoutStore } from "./checkoutStore";
+import { usePayLaterStore } from "./store";
+import CheckoutLateForm from "./CheckoutLateForm";
+// import CheckoutForm from "./CheckoutForm";
+
 
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
@@ -20,18 +18,18 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
 );
 
-export default function Checkout() {
-  const [clientSecret, setClientSecret] = useState("");
+export default function CheckoutLate() {
+  // const [clientSecret, setClientSecret] = useState("");
 
 
-  const {items, market, specialRequest, totalToPay, dueNow, paymentType} = useCheckoutStore();
 
+  const { userPayment, clientSecret, setClientSecret } = usePayLaterStore();
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
-    fetch("/dashboard/checkout/create-payment-intent", {
+    fetch("/dashboard/checkout/create-later-payment-intent/api", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items, market, specialRequest, totalToPay, dueNow, paymentType }),
+      body: JSON.stringify({ userPayment }),
     })
       .then((res) => res.json())
       .then((data) => setClientSecret(data.clientSecret));
@@ -41,7 +39,7 @@ export default function Checkout() {
     theme: "night",
   };
   const options: StripeElementsOptions = {
-    clientSecret,
+    clientSecret: clientSecret ? clientSecret : undefined,
     appearance,
   };
 
@@ -50,11 +48,35 @@ export default function Checkout() {
       {clientSecret && (
         <section className="flex flex-col md:flex-row">
           <Elements options={options} stripe={stripePromise}>
-            <CheckoutForm />
+            <CheckoutLateForm />
           </Elements>
-          <section>
-
-            <h3 className="text-lg font-semibold">Items:</h3>
+        </section>
+      )}
+      <p>
+        <strong>
+          Amount Owed:
+        </strong>
+        ${userPayment?.amount.owed}
+      </p>
+      <p>
+        <strong>
+          Amount already paid:
+        </strong>
+        ${userPayment?.amount.paid}
+      </p>
+      <p>
+        <strong>
+          Total Order:
+        </strong>
+        ${userPayment?.amount.total}
+      </p>
+      <strong>
+        Market:
+      </strong>
+      <p>
+        {userPayment?.market.name}
+      </p>
+      {/* <h3 className="text-lg font-semibold">Items:</h3>
             <table className="w-full">
               <thead>
                 <tr className="w-full">
@@ -97,8 +119,7 @@ export default function Checkout() {
               </p>
             )}
           </section>
-        </section>
-      )}
+        </section> */}
     </main>
   );
 }

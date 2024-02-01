@@ -8,6 +8,7 @@ import { currentUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { TPaymentItem } from "../checkout/success/api/route";
 import PaymentNotification from "./_components/PaymentNotification";
+import PayNow from "./_components/PayNow";
 
 const DAYS_FOR_PAYMENT = 60;
 const PaymentsPage = async () => {
@@ -56,6 +57,7 @@ const PaymentsPage = async () => {
     const timeDiff = dueDate.getTime() - now.getTime();
     return Math.ceil(timeDiff / (1000 * 3600 * 24));
   }
+
   return (
     <main className="overflow-x-auto flex flex-col pt-20 px-10 gap-10 min-h-screen w-full text-xs sm:text-sm md:text-base">
       <h1 className="font-bold text-xl">Payments</h1>
@@ -99,7 +101,8 @@ const PaymentsPage = async () => {
                 <section className="flex items-center px-2 w-fit">
                   {/* <strong>Actions:</strong> */}
                   {order.amount.owed > 0 && (
-                    <button className="flex-shrink-0 py-1 px-2 w-fit bg-secondary text-black font-bold rounded-md">Pay Now</button>
+
+                    <PayNow userPayment={order} />
                   )}
                   {/* <Link href={buildOrderUrl("http://localhost:3000", order.payments[0].stripePaymentIntentId)}>
                     <button className="py-1 bg-secondary text-black font-bold rounded-md">Email My Receipt</button>

@@ -1,9 +1,6 @@
-import {
-  zodCheckoutStateSchemaRequired,
-  zodPaymentIntentSchema,
-} from "@/zod/checkout";
 import { currentUser } from "@clerk/nextjs";
-import { getSanityUserByEmail } from "@/sanity/queries/user";
+import { getSanityUserByEmail, zodUserPayment } from "@/sanity/queries/user";
+import { zodLaterPaymentIntentSchema } from "@/zod/checkout";
 // This is your test secret API key.
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -30,37 +27,29 @@ export const POST = async (req: Request) => {
     });
   }
 
-  if (!body.items) {
-    return Response.json({ status: 400, body: { message: "No items" } });
-  }
-  console.log("in create-later-payment-intent", { body });
+  const parseUserPayment = zodUserPayment.safeParse(body.userPayment);
 
-  const parsedBody = zodCheckoutStateSchemaRequired.safeParse(body);
-
-  if (!parsedBody.success) {
+  if (!parseUserPayment.success) {
     return Response.json({
       status: 400,
-      body: { message: parsedBody.error },
+      body: { message: parseUserPayment.error },
     });
   }
 
   const paymentObj = {
-    amount: parsedBody.data.dueNow * 100,
+    amount: parseUserPayment.data.amount.owed * 100,
     currency: "cad",
     metadata: {
-      items: JSON.stringify(parsedBody.data.items),
+      items: JSON.stringify(parseUserPayment.data.items),
       userEmail: user.email,
       business: user.business?.businessName,
-      specialRequest: parsedBody.data.specialRequest,
-      marketId: parsedBody.data.market._id,
-      amountOwing: parsedBody.data.totalToPay - parsedBody.data.dueNow,
-      totalToPay: parsedBody.data.totalToPay,
-      paidNow: parsedBody.data.dueNow,
-      paymentType: parsedBody.data.paymentType,
+      marketId: parseUserPayment.data.market._id,
+      amountOwing: 0,
+      paymentType: "full",
     },
   };
 
-  const parsedPaymentObj = zodPaymentIntentSchema.safeParse(paymentObj);
+  const parsedPaymentObj = zodLaterPaymentIntentSchema.safeParse(paymentObj);
 
   if (!parsedPaymentObj.success) {
     return Response.json({
@@ -72,7 +61,6 @@ export const POST = async (req: Request) => {
   const paymentIntent = await stripe.paymentIntents.create(
     parsedPaymentObj.data
   );
-
 
   return Response.json({
     clientSecret: paymentIntent.client_secret,

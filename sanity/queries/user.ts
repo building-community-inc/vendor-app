@@ -104,7 +104,7 @@ const zodPayment = z.object({
   stripePaymentIntentId: z.string(),
 });
 
-const zodUserPayment = z.object({
+export const zodUserPayment = z.object({
   _id: z.string(),
   createdAt: z.string(),
   items: z.array(
@@ -126,6 +126,8 @@ const zodUserPayment = z.object({
     owed: z.number(),
   }),
 });
+
+export type TUserPayment = z.infer<typeof zodUserPayment>;
 
 const zodUserPayments = z.array(zodUserPayment);
 
