@@ -25,13 +25,22 @@ const SelectDates = ({
   businessCategory: string;
 }) => {
   const safeFormatMarketDate = (date: string) => {
-    try {
-      return formatMarketDate(date);
-    } catch {
-      return date;
-    }
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    
+    const dateArray = date.split("-");
+    const monthIndex = parseInt(dateArray[1]) - 1;
+    const day = parseInt(dateArray[2]);
+    const year = parseInt(dateArray[0]);
+  
+    // Create a new Date object
+    const dateObject = new Date(year, monthIndex, day);
+  
+    // Get the day of the week
+    const dayOfWeek = days[dateObject.getDay()];
+  
+    return `${dayOfWeek}, ${months[monthIndex]} ${day}, ${year}`;
   };
-
 
 
   // Filter out the days that already have a business with the same category

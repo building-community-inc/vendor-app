@@ -51,6 +51,8 @@ export const formatMarketDate = function (date: string | Date): string {
     weekday: "long",
     month: "short",
     day: "numeric",
+    year: "numeric",
+    timeZone: "America/Toronto"
   };
 
   const dateObject = new Date(date);

@@ -206,20 +206,20 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         dueNow={dueNow}
         businessCategory={user?.business?.industry || ''}
       />
-      <section className="flex flex-col text-zinc-400">
-        <h2 className="text-white font-bold">Select Payment Option</h2>
-        <label htmlFor="pay-now" className="flex gap-2">
+      <section className="flex flex-col gap-2 text-zinc-400">
+        <h2 className="text-white font-bold">Select Payment Options</h2>
+        <label htmlFor="pay-now" className="flex text-[19px] items-center gap-2">
           <input type="radio" name="pay-now" id="pay-now" checked={isPayNowSelected} onChange={() => setIsPayNowSelected(true)} />
           <span>Pay in Full</span>
         </label>
         {!isEventInLessThan60Days && (
           <>
-            <label htmlFor="pay-later" className="flex gap-2">
+            <label htmlFor="pay-later" className="flex text-[19px] items-center gap-2">
               <input type="radio" name="pay-later" id="pay-later" checked={!isPayNowSelected} onChange={() => setIsPayNowSelected(false)} />
               <span>Deposit</span>
             </label>
-            <p>Vendors can pay a $50/day non-refundable deposit to secure their table reservation. The remaining amount of the booking is due 60 days before the first day of the market</p>  
-                    </>
+            <p>Vendors can pay a $50/day non-refundable deposit to secure their table reservation. The remaining amount of the booking is due 60 days before the first day of the market</p>
+          </>
         )}
         {/* {!isPayNowSelected && ( */}
         {/* )} */}
