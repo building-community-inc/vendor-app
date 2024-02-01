@@ -148,7 +148,8 @@ const PaymentsPage = async () => {
 
                 </section>
                 <section className="grid place-content-center gap-2">
-                  <Link href={buildOrderUrl("http://localhost:3000", order.payments[0].stripePaymentIntentId)}>
+                  {/* <Link href={buildOrderUrl("http://localhost:3000", order.payments[0].stripePaymentIntentId)}> */}
+                  <Link href={`/dashboard/checkout/create-later-payment-intent/success?paymentId=${order._id}`}>
                     <button className="flex-shring-0 px-2 py-1 bg-secondary text-black font-bold rounded-md">View Payment</button>
                   </Link>
                 </section>

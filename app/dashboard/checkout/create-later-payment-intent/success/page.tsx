@@ -1,5 +1,8 @@
+import ContinueButton from "@/app/dashboard/markets/[id]/_components/ContinueButton";
 import { getPaymentByIdWithMarket } from "@/sanity/queries/payments";
 import { formatMarketDate } from "@/utils/helpers";
+import { CheckmarkIcon } from "@sanity/icons";
+import Link from "next/link";
 
 const Page = async ({
   searchParams,
@@ -19,8 +22,9 @@ const Page = async ({
 
   const payment = await getPaymentByIdWithMarket(searchParams.paymentId);
   return (
-    <main className="flex flex-col items-center h-full justify-center">
-      <h1 className="font-bold text-xl">Payment Successful</h1>
+    <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto flex flex-col items-center gap-6">
+      <CheckmarkIcon className="text-[#35d124] border-2 w-24 h-24 border-secondary rounded-full" />
+      <h1 className="text-xl font-semibold">Payments Success!</h1>
 
       <p><strong>Order Id:</strong>{payment._id}</p>
       <p><strong>Market:</strong>{payment.market.name}</p>
@@ -53,6 +57,19 @@ const Page = async ({
           </li>
         ))}
       </ul>
+      <footer className="flex gap-10 flex-wrap">
+
+        <ContinueButton>
+          <Link href="/dashboard/">
+            Back to Profile
+          </Link>
+        </ContinueButton>
+        <ContinueButton>
+          <Link href="/dashboard/explore">
+            Book Another Market
+          </Link>
+        </ContinueButton>
+      </footer>
     </main>
   );
 }
