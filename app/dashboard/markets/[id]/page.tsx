@@ -89,11 +89,11 @@ const Page = async ({
         />
       )}
 
-      <ContinueButton>
-        <Link href={`/dashboard/markets/${market._id}/select-preferences`}>
+      <Link href={`/dashboard/markets/${market._id}/select-preferences`} className="mx-auto">
+        <ContinueButton>
           Book this market
-        </Link>
-      </ContinueButton>
+        </ContinueButton>
+      </Link>
       {/* <ContinueButton>
           coming soon!
       </ContinueButton> */}
