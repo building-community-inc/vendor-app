@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import ContinueButton from "./_components/ContinueButton";
+import { DateTime } from "luxon";
 
 const Page = async ({
   params,
@@ -53,12 +54,18 @@ const Page = async ({
         <strong>{priceToDisplay}</strong>/ day
       </span>
       <h2 className="font-bold text-lg">Dates:</h2>
-      <ul className="flex gap-[1ch]">
-        {market.dates.map((date, index) => (
-          <li key={`${date}-${index}`}>
-            {formatMarketDate(date)} {index !== market.dates.length - 1 && "-"}{" "}
-          </li>
-        ))}
+      <ul className="flex flex-col md:flex-row gap-[1ch]">
+        {market.dates.map((date, index) => {
+          const [year, month, day] = date.split('-').map(Number);
+          const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+          const newDate = DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
+          const formattedDateString = newDate.toFormat('EEE, MMM d, yyyy');
+          return (
+            <li key={`${date}-${index}`}>
+              {formattedDateString}
+            </li>
+          )
+        })}
       </ul>
       <h2 className="font-bold text-lg">Venue Details:</h2>
 

@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { zodBookMarketOptionsSchema, zodCheckoutStateSchemaRequired, zodShortMarketSchema } from "@/zod/checkout";
 import { useCheckoutStore } from "@/app/dashboard/checkout/_components/checkoutStore";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
+import { DateTime } from "luxon";
 // import { useRouter } from "next/navigation";
 export type TSelectedTableType = {
   date: string;
@@ -160,25 +161,27 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
   };
 
   const sortedDates = market.dates
-    .map(date => new Date(date))
-    .sort((a, b) => a.getTime() - b.getTime());
+    .map(date => {
+      const [year, month, day] = date.split('-').map(Number);
+      const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+      const newDate = DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
+      return newDate;
+    })
+    .sort((a, b) => a.toMillis() - b.toMillis());
 
   // Get today's date at midnight for comparison
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = DateTime.local().setZone('America/Toronto').startOf('day');
 
   // Find the next event date that is after today
   const nextEventDate = sortedDates.find(date => date > today);
-
   // Calculate the difference between today and the next event date
   let diffInDays = null;
   if (nextEventDate) {
-    diffInDays = Math.ceil((nextEventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    diffInDays = Math.ceil((nextEventDate.toMillis() - today.toMillis()) / (1000 * 60 * 60 * 24));
   }
 
   const isEventInLessThan60Days = diffInDays && diffInDays <= 60;
   const isItTooLateToBook = diffInDays && diffInDays <= 0;
-
   if (isItTooLateToBook) {
     return (
       <div>
@@ -208,14 +211,14 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
       />
       <section className="flex flex-col gap-2 text-zinc-400">
         <h2 className="text-white font-bold">Select Payment Options</h2>
-        <label htmlFor="pay-now" className="flex text-[19px] items-center gap-2">
-          <input type="radio" name="pay-now" id="pay-now" checked={isPayNowSelected} onChange={() => setIsPayNowSelected(true)} />
+        <label htmlFor="pay-now" className="flex text-[19px] items-center gap-2 relative z-10">
+          <input type="radio" name="pay-now" className="pointer-events-none relative z-[2]" id="pay-now" checked={isPayNowSelected} onChange={() => setIsPayNowSelected(true)} />
           <span>Pay in Full</span>
         </label>
         {!isEventInLessThan60Days && (
           <>
-            <label htmlFor="pay-later" className="flex text-[19px] items-center gap-2">
-              <input type="radio" name="pay-later" id="pay-later" checked={!isPayNowSelected} onChange={() => setIsPayNowSelected(false)} />
+            <label htmlFor="pay-later" className="flex text-[19px] items-center gap-2 relative z-10" onClick={() => setIsPayNowSelected(false)}>
+              <input type="radio" name="pay-later" id="pay-later" className="pointer-events-none relative z-[2]" checked={!isPayNowSelected} onChange={() => setIsPayNowSelected(false)} />
               <span>Deposit</span>
             </label>
             <p>Vendors can pay a $50/day non-refundable deposit to secure their table reservation. The remaining amount of the booking is due 60 days before the first day of the market</p>

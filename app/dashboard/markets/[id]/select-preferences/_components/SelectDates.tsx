@@ -6,6 +6,7 @@ import {
 } from "@/sanity/queries/admin/markets";
 import { formatMarketDate } from "@/utils/helpers";
 import { TDateType } from "./SelectOptions";
+import { DateTime } from "luxon";
 
 const SelectDates = ({
   market,
@@ -27,18 +28,18 @@ const SelectDates = ({
   const safeFormatMarketDate = (date: string) => {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    
+
     const dateArray = date.split("-");
     const monthIndex = parseInt(dateArray[1]) - 1;
     const day = parseInt(dateArray[2]);
     const year = parseInt(dateArray[0]);
-  
+
     // Create a new Date object
     const dateObject = new Date(year, monthIndex, day);
-  
+
     // Get the day of the week
     const dayOfWeek = days[dateObject.getDay()];
-  
+
     return `${dayOfWeek}, ${months[monthIndex]} ${day}, ${year}`;
   };
 
@@ -66,63 +67,70 @@ const SelectDates = ({
     <section className="flex flex-col gap-4 w-full">
       <h2>Select Dates</h2>
       <ul className="flex flex-col gap-3 w-full">
-        {availableDays?.map((date, index) => (
-          <li key={date.date}>
-            <label
-              htmlFor={`date-[${index}]`}
-              className="flex items-center justify-between"
-            >
-              <div
-                className="flex items-center gap-2"
-                onClick={() => handleDateSelect(date)}
-              >
-                <input
-                  type="checkbox"
-                  name={`date-[${index}]`}
-                  id={date.date}
-                  className=""
-                  onChange={() => handleDateSelect(date)}
-                  checked={
-                    !!selectedDates.find((d) => d && d.date === date.date)
-                  }
-                />
-                <span className="whitespace-nowrap">
-                  {safeFormatMarketDate(date.date)}
-                </span>
-              </div>
-              {!!selectedDates.find((d) => d.date === date.date) && (
-                <select
-                  name="table"
-                  required={
-                    !!selectedDates.find((d) => d && d.date === date.date)
-                  }
-                  id="table"
-                  className="text-black w-fit"
-                  onChange={(e) => {
-                    const newTable = date.tables.find(
-                      (t) => t.table.id === e.target.value
-                    );
+        {availableDays?.map((dayObj, index) => {
+          const [year, month, day] = dayObj.date.split('-').map(Number);
+          const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+          const newDate = DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
+          const formattedDateString = newDate.toFormat('EEE, MMM d, yyyy');
 
-                    if (newTable === undefined) return;
-                    handleOnTableChange(newTable, date);
-                  }}
+          return (
+            <li key={dayObj.date}>
+              <label
+                htmlFor={`date-[${index}]`}
+                className="flex items-center justify-between min-h-[2rem]"
+              >
+                <div
+                  className="flex items-center gap-2 h-full relative z-10"
+                  onClick={() => handleDateSelect(dayObj)}
                 >
-                  <option value="null">Table</option>
-                  {date.tables
-                    .filter((table) => !table.booked)
-                    .map((table, index) => (
-                      <option
-                        key={`${table.table}-${index}`}
-                        value={table.table.id}
-                      >
-                        Table: {table.table.id} Price: ${table.table.price}
-                      </option>
-                    ))}
-                </select>
-              )}
-            </label>
-          </li>
-        ))}
+                  <input
+                    type="checkbox"
+                    name={`date-[${index}]`}
+                    id={dayObj.date}
+                    className="pointer-events-none relative z-[2]"
+                    onChange={() => handleDateSelect(dayObj)}
+                    checked={
+                      !!selectedDates.find((d) => d && d.date === dayObj.date)
+                    }
+                  />
+                  <span className="whitespace-nowrap">
+                    {formattedDateString}
+                  </span>
+                </div>
+                {!!selectedDates.find((d) => d.date === dayObj.date) && (
+                  <select
+                    name="table"
+                    required={
+                      !!selectedDates.find((d) => d && d.date === dayObj.date)
+                    }
+                    id="table"
+                    className="text-black w-fit"
+                    onChange={(e) => {
+                      const newTable = dayObj.tables.find(
+                        (t) => t.table.id === e.target.value
+                      );
+
+                      if (newTable === undefined) return;
+                      handleOnTableChange(newTable, dayObj);
+                    }}
+                  >
+                    <option value="null">Table</option>
+                    {dayObj.tables
+                      .filter((table) => !table.booked)
+                      .map((table, index) => (
+                        <option
+                          key={`${table.table}-${index}`}
+                          value={table.table.id}
+                        >
+                          Table: {table.table.id} Price: ${table.table.price}
+                        </option>
+                      ))}
+                  </select>
+                )}
+              </label>
+            </li>
+          )
+        })}
       </ul>
 
     </section>
