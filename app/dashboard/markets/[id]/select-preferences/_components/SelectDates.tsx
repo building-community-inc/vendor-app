@@ -4,9 +4,9 @@ import {
   TSanityMarket,
   TTableInDay,
 } from "@/sanity/queries/admin/markets";
-import { formatMarketDate } from "@/utils/helpers";
 import { TDateType } from "./SelectOptions";
 import { DateTime } from "luxon";
+import { formatDateWLuxon } from "@/utils/helpers";
 
 const SelectDates = ({
   market,
@@ -25,24 +25,6 @@ const SelectDates = ({
   dueNow: number;
   businessCategory: string;
 }) => {
-  const safeFormatMarketDate = (date: string) => {
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-    const dateArray = date.split("-");
-    const monthIndex = parseInt(dateArray[1]) - 1;
-    const day = parseInt(dateArray[2]);
-    const year = parseInt(dateArray[0]);
-
-    // Create a new Date object
-    const dateObject = new Date(year, monthIndex, day);
-
-    // Get the day of the week
-    const dayOfWeek = days[dateObject.getDay()];
-
-    return `${dayOfWeek}, ${months[monthIndex]} ${day}, ${year}`;
-  };
-
 
   // Filter out the days that already have a business with the same category
   const availableDays = market.daysWithTables?.filter(day => {
@@ -68,10 +50,7 @@ const SelectDates = ({
       <h2>Select Dates</h2>
       <ul className="flex flex-col gap-3 w-full">
         {availableDays?.map((dayObj, index) => {
-          const [year, month, day] = dayObj.date.split('-').map(Number);
-          const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-          const newDate = DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
-          const formattedDateString = newDate.toFormat('EEE, MMM d, yyyy');
+   
 
           return (
             <li key={dayObj.date}>
@@ -94,7 +73,7 @@ const SelectDates = ({
                     }
                   />
                   <span className="whitespace-nowrap">
-                    {formattedDateString}
+                    {formatDateWLuxon(dayObj.date)}
                   </span>
                 </div>
                 {!!selectedDates.find((d) => d.date === dayObj.date) && (

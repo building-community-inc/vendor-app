@@ -1,7 +1,6 @@
 "use client";
 
 import { TUserPayment } from "@/sanity/queries/user";
-import { create } from "zustand";
 import { usePayLaterStore } from "../../checkout/create-later-payment-intent/_components/store";
 import { useRouter } from "next/navigation";
 
@@ -14,24 +13,8 @@ const PayNow = ({ userPayment }: { userPayment: TUserPayment }) => {
 
   const {setUserPayment} = usePayLaterStore()
   const handlePayNow = () => {
-    console.log({ userPayment })
-
     setUserPayment(userPayment)
-
-
     push('/dashboard/checkout/create-later-payment-intent');
-
-    // const post = await fetch('/dashboard/checkout/create-later-payment-intent/api', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({ userPayment })
-    // })
-
-    // const data = await post.json();
-
-    // console.log({ data })
   }
 
   return (

@@ -1,6 +1,6 @@
 import { getMarketById } from "@/sanity/queries/admin/markets";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { formatMarketDate, tablePriceTodisplay } from "@/utils/helpers";
+import { tablePriceTodisplay } from "@/utils/helpers";
 import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";

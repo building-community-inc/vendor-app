@@ -2,6 +2,7 @@ import {
   SortOption,
   SortOptionKey,
 } from "@/app/dashboard/explore/_components/SortBy";
+import { DateTime } from "luxon";
 import { ReadonlyURLSearchParams } from "next/navigation";
 
 export const tablePriceTodisplay = (minPrice: number, maxPrice: number) =>
@@ -103,3 +104,10 @@ export const buildOrderUrl = (localUrl: string, paymentIntentId: string) => {
   return `${localUrl}/dashboard/checkout/success?payment_intent=${paymentIntentId}`
 };
 
+
+export const formatDateWLuxon = function (dateString: string): string {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+  const newDate = DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
+  return newDate.toFormat('EEE, MMM d, yyyy');
+}

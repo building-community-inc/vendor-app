@@ -1,11 +1,10 @@
 import { getSanityUserByEmail, getUserMarkets } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import Button from "../_components/Button";
 import NoBz from "./_components/NoBz";
-import { formatDateStringToMMMDDYYYY } from "@/utils/helpers";
+import { formatDateStringToMMMDDYYYY, formatDateWLuxon } from "@/utils/helpers";
+import { DateTime } from 'luxon';
 
 const page = async () => {
   const user = await currentUser();
@@ -16,6 +15,28 @@ const page = async () => {
   );
 
   const userMarkets = await getUserMarkets(sanityUser._id);
+  
+
+  userMarkets.sort((a, b) => {
+    // Convert the dates from strings to DateTime objects and find the earliest date
+    const datesA = a.market.dates.map(date => {
+      const [year, month, day] = date.split('-').map(Number);
+      const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+      return DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
+    });
+    const datesB = b.market.dates.map(date => {
+      const [year, month, day] = date.split('-').map(Number);
+      const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+      return DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
+    });
+    const minDateA = datesA.reduce((earliest, date) => date < earliest ? date : earliest, DateTime.fromISO('9999-12-31'));
+    const minDateB = datesB.reduce((earliest, date) => date < earliest ? date : earliest, DateTime.fromISO('9999-12-31'));
+  
+    // Compare the two dates
+    return minDateA < minDateB ? -1 : minDateA > minDateB ? 1 : 0;
+  });
+
+  // console.log({ userMarkets });
 
   return (
     <main className="flex gap-2 min-h-screen w-full">
@@ -106,21 +127,19 @@ const page = async () => {
                   <tr>
                     <th className="text-left p-2">Market Date</th>
                     <th className="text-left p-2">Market</th>
-                    <th className="text-left p-2">Amount</th>
                     <th className="text-left p-2">Table Id</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {userMarkets.map((market) => (
+                  {userMarkets.map((booking) => (
                     <>
-                      {market.items.map((item) => (
-                        <tr key={market._id}>
+                      {booking.items.map((item, index) => (
+                        <tr key={`${booking._id}-${index}`}>
                           <td className="text-left p-2">
-                            {formatDateStringToMMMDDYYYY(item.date)}
+                            {formatDateWLuxon(booking.market.dates[0])}
                           </td>
-                          <td className="text-left p-2">{market.market}</td>
-                          <td className="text-left p-2">${item.price}</td>
-                          <td className="text-left p-2">{item.tableId}</td>
+                          <td className="text-left p-2">{booking.market.name}</td>
+                          <td className="text-left p-2">table: {item.tableId} date: {formatDateWLuxon(item.date)}</td>
                         </tr>
                       ))}
                     </>

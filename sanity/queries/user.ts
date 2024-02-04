@@ -44,9 +44,11 @@ export const getSanityUserByEmail = async (email: string) => {
 
 const userMarketQueryString = `
     amount,
-    stripePaymentIntendId,
-    status,
-    "market": market -> name,
+    "market": market -> {
+      name, 
+      _id,
+      dates
+    },
     _id,
     "items": items[] {
         price,
@@ -57,10 +59,16 @@ const userMarketQueryString = `
 `;
 
 const zodUserMarket = z.object({
-  amount: z.number(),
-  stripePaymentIntendId: z.string(),
-  status: z.string(),
-  market: z.string(),
+  amount: z.object({
+    total: z.number(),
+    paid: z.number(),
+    owed: z.number(),
+  }),
+  market: z.object({
+    name: z.string(),
+    dates: z.array(z.string()),
+    _id: z.string(),
+  }),
   _id: z.string(),
   items: z.array(
     z.object({
@@ -79,7 +87,7 @@ export const getUserMarkets = async (userId: string) => {
     // const user = await getSanityUserByEmail(email);
 
     const payments = await sanityClient.fetch(
-      `*[_type == "payment" && user._ref == $userId && status == "succeeded"]{
+      `*[_type == "paymentRecord" && user._ref == $userId]{
         ${userMarketQueryString}
       }`,
       { userId }

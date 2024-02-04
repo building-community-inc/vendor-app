@@ -7,8 +7,6 @@ import {
 } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm";
-import { TShortMarketSchema } from "@/zod/checkout";
-import { TSelectedTableType } from "../../markets/[id]/select-preferences/_components/SelectOptions";
 import { TPaymentItem } from "../success/api/route";
 import { formatMarketDate } from "@/utils/helpers";
 import { useCheckoutStore } from "./checkoutStore";

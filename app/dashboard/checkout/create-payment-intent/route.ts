@@ -33,7 +33,7 @@ export const POST = async (req: Request) => {
   if (!body.items) {
     return Response.json({ status: 400, body: { message: "No items" } });
   }
-  console.log("in create-later-payment-intent", { body });
+  // console.log("in create-later-payment-intent", { body });
 
   const parsedBody = zodCheckoutStateSchemaRequired.safeParse(body);
 
