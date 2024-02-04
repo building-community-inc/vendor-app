@@ -3,7 +3,7 @@ import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import NoBz from "./_components/NoBz";
-import { formatDateStringToMMMDDYYYY, formatDateWLuxon } from "@/utils/helpers";
+import { formatDateWLuxon } from "@/utils/helpers";
 import { DateTime } from 'luxon';
 
 const page = async () => {
@@ -127,7 +127,8 @@ const page = async () => {
                   <tr>
                     <th className="text-left p-2">Market Date</th>
                     <th className="text-left p-2">Market</th>
-                    <th className="text-left p-2">Table Id</th>
+                    <th className="text-left p-2">Table Info</th>
+                    <th className="text-left p-2">Amounts</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -140,6 +141,7 @@ const page = async () => {
                           </td>
                           <td className="text-left p-2">{booking.market.name}</td>
                           <td className="text-left p-2">table: {item.tableId} date: {formatDateWLuxon(item.date)}</td>
+                          <td className="text-left p-2">paid: {booking.amount.paid} total: {booking.amount.total}</td>
                         </tr>
                       ))}
                     </>
