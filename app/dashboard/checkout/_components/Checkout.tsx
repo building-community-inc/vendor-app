@@ -22,7 +22,7 @@ export default function Checkout() {
   const [clientSecret, setClientSecret] = useState("");
 
 
-  const {items, market, specialRequest, totalToPay, dueNow, paymentType} = useCheckoutStore();
+  const { items, market, specialRequest, totalToPay, dueNow, paymentType } = useCheckoutStore();
 
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
@@ -46,14 +46,14 @@ export default function Checkout() {
   return (
     <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto">
       {clientSecret && (
-        <section className="flex flex-col md:flex-row">
-          <Elements options={options} stripe={stripePromise}>
-            <CheckoutForm />
-          </Elements>
-          <section>
+        <section className="flex flex-col">
+          <section className="px-10 py-5">
 
-            <h3 className="text-lg font-semibold">Items:</h3>
-            <table className="w-full">
+            <h1 className="text-lg font-semibold">Complete Your Vendor Table Reservation</h1>
+            <h2 className="font-semibold ">
+              {market?.name}
+            </h2>
+            <table className="w-full text-left">
               <thead>
                 <tr className="w-full">
                   <th>Date</th>
@@ -64,37 +64,43 @@ export default function Checkout() {
               <tbody>
                 {items?.map((item: TPaymentItem, index: number) => (
                   <tr key={index} className="w-full">
-                    <td className="text-center">{formatMarketDate(item.date)}</td>
-                    <td className="text-center">{item.tableId}</td>
-                    <td className="text-center">{item.price}</td>
+                    <td className="">{formatMarketDate(item.date)}</td>
+                    <td className="">{item.tableId}</td>
+                    <td className="">${item.price}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <p>
-              <strong>Market:</strong>
-              {market?.name}
+              <strong className="mr-[1ch]">HST:</strong>
+              ${dueNow * 0.13}
             </p>
             <p>
-              <strong>Amount Being Paid Now:</strong>
+              <strong className="mr-[1ch]">Amount Being Paid Now:</strong>
               ${dueNow}
             </p>
             <p>
-              <strong>Amount Owed:</strong>
+              <strong className="mr-[1ch]">Amount Owed:</strong>
               ${totalToPay - dueNow}
             </p>
             <p>
-              <strong>Total:</strong>
+              <strong className="mr-[1ch]">Total:</strong>
               ${totalToPay}
             </p>
 
             {specialRequest && (
               <p>
-                <strong>Special Request:</strong>
+                <strong className="mr-[1ch]">Special Request:</strong>
                 {specialRequest}
               </p>
             )}
           </section>
+          <div className="">
+
+            <Elements options={options} stripe={stripePromise}>
+              <CheckoutForm />
+            </Elements>
+          </div>
         </section>
       )}
     </main>

@@ -14,9 +14,9 @@ export default function CheckoutLateForm() {
 
   const [message, setMessage] = React.useState<string | null | undefined>(null);
   const [isLoading, setIsLoading] = React.useState(false);
-  
-  const {clientSecret, userPayment} = usePayLaterStore();
-  
+
+  const { clientSecret, userPayment } = usePayLaterStore();
+
   React.useEffect(() => {
     if (!stripe) {
       return;
@@ -55,7 +55,7 @@ export default function CheckoutLateForm() {
       // Make sure to disable form submission until Stripe.js has loaded.
       return;
     }
-    
+
     const localUrl = window.location.href.split("/dashboard")[0];
 
     setIsLoading(true);
@@ -91,12 +91,15 @@ export default function CheckoutLateForm() {
 
   return (
     <form id="payment-form" onSubmit={handleSubmit} className="flex flex-col px-10">
-      <PaymentElement id="payment-element" options={paymentElementOptions} className="" />
-      <ContinueButton disabled={isLoading || !stripe || !elements} id="submit">
-        <span id="button-text">
-          {isLoading ? <div className="spinner" id="spinner">paying...</div> : "Pay now"}
-        </span>
-      </ContinueButton>
+      <PaymentElement id="payment-element" options={paymentElementOptions} className="max-h-[300px] lg:max-h-[260px] xl:max-h-[200px]" />
+      <div className="relative z-10 mx-auto">
+
+        <ContinueButton disabled={isLoading || !stripe || !elements} id="submit">
+          <span id="button-text">
+            {isLoading ? <div className="spinner" id="spinner">paying...</div> : "Pay now"}
+          </span>
+        </ContinueButton>
+      </div>
       {/* Show any error or success messages */}
       {message && <div id="payment-message" className="text-red-300 mt-3 mx-auto">{message}</div>}
     </form>

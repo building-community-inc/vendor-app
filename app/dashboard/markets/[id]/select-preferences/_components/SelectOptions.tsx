@@ -21,6 +21,8 @@ export type TDateType = {
   date: string;
   tables: TTableInDay[];
 };
+
+
 const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWithOptionalBusinessRef }) => {
   const { push } = useRouter();
 
@@ -78,22 +80,34 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
     event.preventDefault();
 
 
-    const checkboxes = document.querySelectorAll<HTMLInputElement>(
+    const checkboxesElems = document.querySelectorAll<HTMLInputElement>(
       'input[type="checkbox"]'
     );
     const selects = document.querySelectorAll<HTMLSelectElement>('select');
 
     let uncheckedTableDate = '';
-    const isAnyCheckboxCheckedWithoutSelect = Array.from(checkboxes).some((checkbox, index) => {
-      const correspondingSelect = selects[index];
-      if (checkbox.checked && (!correspondingSelect || correspondingSelect.value === null || correspondingSelect.value === undefined || correspondingSelect.value === 'null')) {
-        uncheckedTableDate = checkbox.nextSibling?.textContent || '';
-        return true;
-      }
-      return false;
-    });
 
-    if (isAnyCheckboxCheckedWithoutSelect) {
+    const isAnyCheckboxCheckedWithoutSelect = function () {
+      const checkboxes = Array.from(checkboxesElems);
+      
+      const checkedBoxes = checkboxes.filter(checkbox => checkbox.checked);
+      
+      // for (let index = 0; index < checkboxes.length; index++) {
+        for (const checkbox of checkedBoxes) {
+
+          const indexOfCheckbox = checkedBoxes.indexOf(checkbox);
+          const correspondingSelect = selects[indexOfCheckbox];
+        // Check if the checkbox is checked and its corresponding select is unselected
+        if (checkbox.checked && (!correspondingSelect || correspondingSelect.value === null || correspondingSelect.value === undefined || correspondingSelect.value === 'null')) {
+          uncheckedTableDate = checkbox.nextSibling?.textContent || '';
+          return true;
+        }
+      };
+
+      return false;
+    }
+
+    if (isAnyCheckboxCheckedWithoutSelect()) {
       alert(`Please select a table for the date ${uncheckedTableDate} before proceeding to checkout.`);
       return;
     }
@@ -105,16 +119,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
     }
 
     try {
-      // const res = await fetch("/dashboard/checkout/api/", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(options),
-      // });
-
       const parsedOptions = zodBookMarketOptionsSchema.safeParse(options);
-      // const params = new URLSearchParams();
 
       if (!parsedOptions.success) {
         console.error(parsedOptions.error);
@@ -130,7 +135,6 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         };
       });
 
-      // setCheckoutItems(items);
       const parsedMarket = zodShortMarketSchema.safeParse(market);
       if (!parsedMarket.success) {
         console.error(parsedMarket.error);
