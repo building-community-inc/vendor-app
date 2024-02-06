@@ -128,7 +128,8 @@ export const POST = async (req: Request) => {
       _type: "object",
       total: +paymentIntent.metadata.totalToPay,
       paid: paymentIntent.amount / 100,
-      owed: +paymentIntent.metadata.totalToPay - paymentIntent.amount / 100,
+      owed: +paymentIntent.metadata.amountOwing,
+      hst: +paymentIntent.metadata.hst,
     },
     items: items.map((item) => ({
       ...item,

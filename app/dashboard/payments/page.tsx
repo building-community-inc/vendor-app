@@ -9,9 +9,12 @@ import Link from "next/link";
 import { TPaymentItem } from "../checkout/success/api/route";
 import PaymentNotification from "./_components/PaymentNotification";
 import PayNow from "./_components/PayNow";
+import { unstable_noStore as noStore } from "next/cache";
+import ContinueButton from "../markets/[id]/_components/ContinueButton";
 
 const DAYS_FOR_PAYMENT = 60;
 const PaymentsPage = async () => {
+  noStore();
   const clerkUser = await currentUser();
 
   if (!clerkUser) {
@@ -31,7 +34,21 @@ const PaymentsPage = async () => {
   // userPayments[0].items;
   // console.log({ userPayments })
   if (!userPayments || userPayments.length === 0) {
-    return null
+    return <main className="grid place-content-center h-full gap-24">
+      <h1 className="font-bold mx-auto text-lg">No Payments Found</h1>
+      <footer className="flex gap-10 flex-wrap">
+        <ContinueButton>
+          <Link href="/dashboard/">
+            Back to Profile
+          </Link>
+        </ContinueButton>
+        <ContinueButton>
+          <Link href="/dashboard/explore">
+            Book A Market
+          </Link>
+        </ContinueButton>
+      </footer>
+    </main>
   }
 
   const sortedBookedItems = (items: TPaymentItem[]) => {
@@ -79,10 +96,11 @@ const PaymentsPage = async () => {
               <li className="flex w-full">
                 <section className="flex-grow flex flex-wrap gap-4">
                   <PaymentItem title="Id" paragraph={order._id} />
-                  <PaymentItem title="Date" paragraph={formatMarketDate(order.createdAt)} />
-                  {/*  */}
-                  <PaymentItem title="Market Name" paragraph={order.market.name} />
 
+                  <PaymentItem title="Date" paragraph={formatMarketDate(order.createdAt)} />
+
+                  <PaymentItem title="Market Name" paragraph={order.market.name} link={`markets/${order.market._id}`} />
+                  
                   <PaymentItem title="Dates Booked" paragraphs={sortedBookedItems(order.items).map((item, index) => `${formatMarketDate(item.date)} - Table: ${item.tableId} ${index < order.items.length - 1 ? ',' : ''}`)} />
 
                   <PaymentItem title="Payments" paragraphs={order.payments.map((payment, index) => `$${payment.amount} on ${formatMarketDate(payment.paymentDate)} ${index < order.payments.length - 1 ? ',' : ''}`)} />
@@ -90,6 +108,7 @@ const PaymentsPage = async () => {
                   <PaymentItem title="Amounts" paragraphs={[
                     `Amount Owing: $${order.amount.owed}`,
                     `Amount Paid: $${order.amount.paid}`,
+                    `HST: $${order.amount.hst}`,
                     `Total: $${order.amount.total}`
                   ]} />
 
@@ -130,7 +149,7 @@ const PaymentsPage = async () => {
                   <PaymentItem title="Id" paragraph={order._id} />
                   <PaymentItem title="Date" paragraph={formatMarketDate(order.createdAt)} />
                   {/*  */}
-                  <PaymentItem title="Market Name" paragraph={order.market.name} />
+                  <PaymentItem title="Market Name" paragraph={order.market.name} link={`markets/${order.market._id}`} />
 
                   <PaymentItem title="Dates Booked" paragraphs={sortedBookedItems(order.items).map((item, index) => `${formatMarketDate(item.date)} - Table: ${item.tableId} ${index < order.items.length - 1 ? ',' : ''}`)} />
 
@@ -138,8 +157,9 @@ const PaymentsPage = async () => {
 
                   <PaymentItem title="Amounts" paragraphs={[
                     `Amount Owing: $${order.amount.owed}`,
-                    `Amount Paid: $${order.amount.paid}`,
-                    `Total: $${order.amount.total}`
+                    `Subtotal: $${order.amount.total}`,
+                    `HST: $${order.amount.hst}`,
+                    `Total: $${order.amount.paid}`,
                   ]} />
 
                   {dueDate && (
@@ -164,15 +184,20 @@ const PaymentsPage = async () => {
 
 export default PaymentsPage;
 
-const PaymentItem = ({ title, paragraph, paragraphs }: {
+const PaymentItem = ({ title, paragraph, paragraphs, link }: {
   title: string;
   paragraph?: string;
   paragraphs?: string[];
+  link?: string;
 }) => {
   return (
     <section className="align-top w-fit h-fit">
       <PaymentContent title={title}>
-        {paragraph && (
+        {link ? (
+          <Link href={link}>
+            {paragraph}
+          </Link>
+        ) : paragraph && (
           <p className="whitespace-nowrap">
             {paragraph}
           </p>

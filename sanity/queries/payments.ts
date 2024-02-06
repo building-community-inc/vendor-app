@@ -25,6 +25,7 @@ export const zodLatePaymentSchema = z.object({
     paid: z.number(),
     total: z.number(),
     owed: z.number(),
+    hst: z.number(),
   }),
 });
 export const zodLatePaymentWithMarketSchema = z.object({
@@ -68,7 +69,8 @@ const paymentQuery = `
   "amount": amount {
     paid,
     total,
-    owed
+    owed,
+    hst
   },
 `;
 

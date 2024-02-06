@@ -8,6 +8,7 @@ import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { stripe } from "@/stripe";
 import { currentUser } from "@clerk/nextjs";
 import { nanoid } from "nanoid";
+import { HST } from "../../../_components/checkoutStore";
 
 export const GET = async (req: Request) => {
   // console.log("in create-later-payment-intent", { req });
@@ -60,7 +61,9 @@ export const GET = async (req: Request) => {
 
     const amountPaid = stripePayment.amount_received / 100;
 
-    if (sanityPayment.amount.owed !== amountPaid) {
+    const amountPaidWithoutHst = +(amountPaid / (1 + HST)).toFixed(2);
+  
+    if (sanityPayment.amount.owed !== amountPaidWithoutHst) {
       return Response.json({
         message: "Payment amount does not match",
       });
@@ -81,7 +84,8 @@ export const GET = async (req: Request) => {
         amount: {
           ...sanityPayment.amount,
           paid: sanityPayment.amount.paid + amountPaid,
-          owed: sanityPayment.amount.owed - amountPaid,
+          owed: sanityPayment.amount.owed - amountPaidWithoutHst,
+          hst: sanityPayment.amount.hst + +stripePayment.metadata.hstPaid,
         },
       };
 

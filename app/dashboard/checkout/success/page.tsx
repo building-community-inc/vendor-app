@@ -54,7 +54,7 @@ const Page = async ({
   // console.log({ items });
 
   const idForPaymentRecord = nanoid()
-  console.log(paymentIntent.metadata, { idForPaymentRecord })
+  // console.log(paymentIntent.metadata, { idForPaymentRecord })
   return (
     <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto flex flex-col items-center gap-6">
       {!existingPayment && (

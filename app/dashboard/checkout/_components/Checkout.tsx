@@ -10,6 +10,7 @@ import CheckoutForm from "./CheckoutForm";
 import { TPaymentItem } from "../success/api/route";
 import { formatMarketDate } from "@/utils/helpers";
 import { useCheckoutStore } from "./checkoutStore";
+import Spinner from "@/app/_components/Spinner";
 
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
@@ -22,14 +23,14 @@ export default function Checkout() {
   const [clientSecret, setClientSecret] = useState("");
 
 
-  const { items, market, specialRequest, totalToPay, dueNow, paymentType } = useCheckoutStore();
+  const { items, market, specialRequest, totalToPay, dueNow, paymentType, hst, dueNowWithHst } = useCheckoutStore();
 
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     fetch("/dashboard/checkout/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items, market, specialRequest, totalToPay, dueNow, paymentType }),
+      body: JSON.stringify({ items, market, specialRequest, totalToPay, dueNow, paymentType, hst, dueNowWithHst }),
     })
       .then((res) => res.json())
       .then((data) => setClientSecret(data.clientSecret));
@@ -42,10 +43,9 @@ export default function Checkout() {
     clientSecret,
     appearance,
   };
-
   return (
-    <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto">
-      {clientSecret && (
+    <section className={`pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto ${clientSecret ? "" : "grid place-content-center"}`}>
+      {clientSecret ? (
         <section className="flex flex-col">
           <section className="px-10 py-5">
 
@@ -72,12 +72,16 @@ export default function Checkout() {
               </tbody>
             </table>
             <p>
-              <strong className="mr-[1ch]">HST:</strong>
-              ${dueNow * 0.13}
-            </p>
-            <p>
               <strong className="mr-[1ch]">Amount Being Paid Now:</strong>
               ${dueNow}
+            </p>
+            <p>
+              <strong className="mr-[1ch]">HST:</strong>
+              ${hst}
+            </p>
+            <p>
+              <strong className="mr-[1ch]">Total Due Now WIth HST:</strong>
+              ${dueNowWithHst}
             </p>
             <p>
               <strong className="mr-[1ch]">Amount Owed:</strong>
@@ -95,14 +99,17 @@ export default function Checkout() {
               </p>
             )}
           </section>
-          <div className="">
 
-            <Elements options={options} stripe={stripePromise}>
-              <CheckoutForm />
-            </Elements>
-          </div>
+          <Elements options={options} stripe={stripePromise}>
+            <CheckoutForm />
+          </Elements>
         </section>
+      ) : (
+        <div className="w-fit mx-auto ">
+
+          <Spinner />
+        </div>
       )}
-    </main>
+    </section>
   );
 }

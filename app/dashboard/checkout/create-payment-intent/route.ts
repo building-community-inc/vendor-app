@@ -36,16 +36,17 @@ export const POST = async (req: Request) => {
   // console.log("in create-later-payment-intent", { body });
 
   const parsedBody = zodCheckoutStateSchemaRequired.safeParse(body);
-
+  
   if (!parsedBody.success) {
     return Response.json({
       status: 400,
       body: { message: parsedBody.error },
     });
   }
+  // console.log({data: parsedBody.data})
 
   const paymentObj = {
-    amount: parsedBody.data.dueNow * 100,
+    amount: parsedBody.data.dueNowWithHst * 100,
     currency: "cad",
     metadata: {
       items: JSON.stringify(parsedBody.data.items),
@@ -57,11 +58,15 @@ export const POST = async (req: Request) => {
       totalToPay: parsedBody.data.totalToPay,
       paidNow: parsedBody.data.dueNow,
       paymentType: parsedBody.data.paymentType,
+      hst: parsedBody.data.hst,
+      dueNowWithHst: parsedBody.data.dueNowWithHst,
     },
   };
 
   const parsedPaymentObj = zodPaymentIntentSchema.safeParse(paymentObj);
 
+
+  console.log({parsedPaymentObj, metadata: paymentObj.metadata})
   if (!parsedPaymentObj.success) {
     return Response.json({
       status: 400,

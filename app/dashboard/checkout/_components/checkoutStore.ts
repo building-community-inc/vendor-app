@@ -2,6 +2,9 @@ import { zodCheckoutStateSchema } from "@/zod/checkout";
 import { z } from "zod";
 import { create } from "zustand";
 
+
+export const HST = 0.13;
+
 export type TCheckoutState = z.infer<typeof zodCheckoutStateSchema>;
 
 export type TCheckoutItems = TCheckoutState["items"];
@@ -17,6 +20,8 @@ export type TCheckoutActions = {
     previousPayment: TCheckoutState["previousPayment"]
   ) => void;
   setAllCheckoutData: (data: TCheckoutState) => void;
+  setHst: (hst: TCheckoutState["hst"]) => void;
+  setTotalToPayWithHst: (totalToPayWithHst: TCheckoutState["dueNowWithHst"]) => void;
 };
 
 export type TCheckoutStore = TCheckoutState & TCheckoutActions;
@@ -25,10 +30,23 @@ export const useCheckoutStore = create<TCheckoutStore>((set, get) => ({
   items: [],
   market: null,
   specialRequest: null,
+  hst: 0,
   totalToPay: 0,
+  totalToPayWithHst: 0,
   dueNow: 0,
   paymentType: null,
   previousPayment: null,
+  setHst: () => {
+    const totalAmount = get().totalToPay;
+    const hst = totalAmount * HST; // 13% of the total amount
+    set({ hst });
+  },
+  setTotalToPayWithHst: () => {
+    const totalAmount = get().totalToPay;
+    const hst = totalAmount * HST;
+    const totalToPayWithHst = totalAmount + hst;
+    set({ dueNowWithHst: totalToPayWithHst });
+  },
   setCheckoutItems: (items: TCheckoutItems) => {
     if (items === null || items === undefined) {
       // Show error message

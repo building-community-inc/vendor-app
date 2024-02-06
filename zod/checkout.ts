@@ -67,6 +67,8 @@ export const zodCheckoutStateSchema = z.object({
   dueNow: z.number(),
   paymentType: z.enum(["full", "partial"]).optional().nullable(),
   previousPayment: z.number().optional().nullable(),
+  hst: z.number().optional().nullable(),
+  dueNowWithHst: z.number().optional().nullable(),
 });
 
 export const zodCheckoutStateSchemaRequired = z
@@ -80,6 +82,8 @@ export const zodCheckoutStateSchemaRequired = z
       })
     ),
     market: zodShortMarketSchema,
+    hst: z.number(),
+    dueNowWithHst: z.number(),
     specialRequest: z.string().optional().nullable(),
     totalToPay: z.number(),
     dueNow: z.number(),
@@ -106,7 +110,6 @@ export const zodCheckoutStateSchemaRequired = z
     }
   );
 
-
 export const zodPaymentIntentSchema = z.object({
   amount: z.number(),
   currency: z.string(),
@@ -121,6 +124,8 @@ export const zodPaymentIntentSchema = z.object({
     paidNow: z.number(),
     previousPayment: z.number().optional(),
     paymentType: z.enum(["full", "partial"]),
+    hst: z.number(),
+    dueNowWithHst: z.number(),
   }),
 });
 
@@ -133,6 +138,7 @@ export const zodLaterPaymentIntentSchema = z.object({
     business: z.string().optional(),
     marketId: z.string(),
     amountOwing: z.number(),
+    hstPaid: z.number(),
     paymentType: z.enum(["full", "partial"]),
   }),
 });

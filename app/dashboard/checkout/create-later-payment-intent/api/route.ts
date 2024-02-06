@@ -1,6 +1,7 @@
 import { currentUser } from "@clerk/nextjs";
 import { getSanityUserByEmail, zodUserPayment } from "@/sanity/queries/user";
 import { zodLaterPaymentIntentSchema } from "@/zod/checkout";
+import { HST } from "../../_components/checkoutStore";
 // This is your test secret API key.
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -27,28 +28,34 @@ export const POST = async (req: Request) => {
     });
   }
 
-  const parseUserPayment = zodUserPayment.safeParse(body.userPayment);
-
-  if (!parseUserPayment.success) {
+  
+  const parsedUserPayment = zodUserPayment.safeParse(body.userPayment);
+  
+  if (!parsedUserPayment.success) {
     return Response.json({
       status: 400,
-      body: { message: parseUserPayment.error },
+      body: { message: parsedUserPayment.error },
     });
   }
-
+  
+  const newHst = (parsedUserPayment.data.amount.owed * HST).toFixed(2);
+  
+  const amount = +(+parsedUserPayment.data.amount.owed + +newHst).toFixed(2);
+  
   const paymentObj = {
-    amount: parseUserPayment.data.amount.owed * 100,
+    amount: amount * 100,
     currency: "cad",
     metadata: {
-      items: JSON.stringify(parseUserPayment.data.items),
+      items: JSON.stringify(parsedUserPayment.data.items),
       userEmail: user.email,
       business: user.business?.businessName,
-      marketId: parseUserPayment.data.market._id,
+      marketId: parsedUserPayment.data.market._id,
       amountOwing: 0,
+      hstPaid: +newHst,
       paymentType: "full",
     },
   };
-
+  
   const parsedPaymentObj = zodLaterPaymentIntentSchema.safeParse(paymentObj);
 
   if (!parsedPaymentObj.success) {
@@ -61,7 +68,8 @@ export const POST = async (req: Request) => {
   const paymentIntent = await stripe.paymentIntents.create(
     parsedPaymentObj.data
   );
-
+  
+  
   return Response.json({
     clientSecret: paymentIntent.client_secret,
   });

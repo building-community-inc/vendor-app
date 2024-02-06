@@ -132,6 +132,7 @@ export const zodUserPayment = z.object({
     total: z.number(),
     paid: z.number(),
     owed: z.number(),
+    hst: z.number(),
   }),
 });
 
@@ -159,7 +160,8 @@ export const getAllUserPaymentsById = async (userId: string) => {
         "amount": amount {
           total,
           paid,
-          owed
+          owed,
+          hst
         },
         "payments": payments[] {
           amount,

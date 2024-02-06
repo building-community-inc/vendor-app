@@ -35,7 +35,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
 
   const [newSelectedDates, setNewSelectedDates] = useState<TDayWithTable[]>([]);
 
-  const { setAllCheckoutData } = useCheckoutStore();
+  const { setAllCheckoutData,  } = useCheckoutStore();
   const totalToPay = selectedTables.reduce(
     (total, table) => total + table.table.table.price,
     0
@@ -148,6 +148,8 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         dueNow,
         totalToPay,
         paymentType: isPayNowSelected ? 'full' : 'partial',
+        hst: +(dueNow * 0.13).toFixed(2),
+        dueNowWithHst: dueNow + dueNow * 0.13,
       })
 
       if (!parsedCheckoutState.success) {
@@ -246,6 +248,10 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
                 <h2 className="text-white font-bold">Amount Owing:</h2>
                 <p>$
                   {totalToPay - dueNow}</p>
+              </div>
+              <div>
+                <h2 className="text-white font-bold">HST:</h2>
+                <p>${(dueNow * .13).toFixed(2)}</p>
               </div>
 
             </>

@@ -27,7 +27,9 @@ const Page = async ({
       <h1 className="text-xl font-semibold">Payments Success!</h1>
 
       <p><strong>Order Id:</strong>{payment._id}</p>
-      <p><strong>Market:</strong>{payment.market.name}</p>
+      <Link href={`/dashboard/markets/${payment.market._id}`}>
+        <p><strong>Market:</strong>{payment.market.name}</p>
+      </Link>
       <p><strong>Amount Paid:</strong>${payment.amount.paid}</p>
       <p><strong>Amount Owed:</strong>${payment.amount.owed}</p>
       <p><strong>Amount Total:</strong>${payment.amount.total}</p>
