@@ -103,7 +103,7 @@ export default function CheckoutLate() {
             </p>
 
             <p>
-              <strong className="mr-[1ch]">Total today:</strong>
+              <strong className="mr-[1ch]">Total:</strong>
               ${userPayment?.amount.owed && (userPayment.amount.owed + userPayment.amount.owed * HST).toFixed(2)}
             </p>
 

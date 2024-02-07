@@ -30,9 +30,9 @@ const Page = async ({
       <Link href={`/dashboard/markets/${payment.market._id}`}>
         <p><strong>Market:</strong>{payment.market.name}</p>
       </Link>
-      <p><strong>Amount Paid:</strong>${payment.amount.paid}</p>
       <p><strong>Amount Owed:</strong>${payment.amount.owed}</p>
-      <p><strong>Amount Total:</strong>${payment.amount.total}</p>
+      <p><strong>Price before Tax:</strong>${payment.amount.total}</p>
+      <p><strong>Amount Paid:</strong>${payment.amount.paid}</p>
       <ul>
         <h2 className="font-bold text-lg">Payments</h2>
         {payment.payments.map((payment, index) => (

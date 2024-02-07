@@ -95,7 +95,7 @@ const Page = async ({
             <strong>Still Owing:</strong> ${paymentIntent.metadata.amountOwing}
           </p>
           <p>
-            <strong>Total Order:</strong> ${paymentIntent.metadata.totalToPay}
+            <strong>Price before tax:</strong> ${paymentIntent.metadata.totalToPay}
           </p>
         </section>
         <footer className="flex gap-10 flex-wrap">
