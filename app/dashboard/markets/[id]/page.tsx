@@ -1,11 +1,12 @@
 import { getMarketById } from "@/sanity/queries/admin/markets";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { formatMarketDate, tablePriceTodisplay } from "@/utils/helpers";
+import { tablePriceTodisplay } from "@/utils/helpers";
 import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import ContinueButton from "./_components/ContinueButton";
+import { DateTime } from "luxon";
 
 const Page = async ({
   params,
@@ -48,17 +49,23 @@ const Page = async ({
         height={market.marketCover.dimensions.height}
         className="rounded-lg w-full object-cover max-h-[271px]"
       />
-      <p>{market.description}</p>
+      {/* <p>{market.description}</p> */}
       <span className="flex gap-[1ch]">
         <strong>{priceToDisplay}</strong>/ day
       </span>
       <h2 className="font-bold text-lg">Dates:</h2>
-      <ul className="flex gap-[1ch]">
-        {market.dates.map((date, index) => (
-          <li key={`${date}-${index}`}>
-            {formatMarketDate(date)} {index !== market.dates.length - 1 && "-"}{" "}
-          </li>
-        ))}
+      <ul className="flex flex-col md:flex-row gap-[1ch]">
+        {market.dates.map((date, index) => {
+          const [year, month, day] = date.split('-').map(Number);
+          const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+          const newDate = DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
+          const formattedDateString = newDate.toFormat('EEE, MMM d, yyyy');
+          return (
+            <li key={`${date}-${index}`}>
+              {formattedDateString}
+            </li>
+          )
+        })}
       </ul>
       <h2 className="font-bold text-lg">Venue Details:</h2>
 
@@ -89,14 +96,14 @@ const Page = async ({
         />
       )}
 
-      {/* <ContinueButton>
-        <Link href={`/dashboard/markets/${market._id}/select-preferences`}>
+      <Link href={`/dashboard/markets/${market._id}/select-preferences`} className="mx-auto">
+        <ContinueButton>
           Book this market
-        </Link>
-      </ContinueButton> */}
-      <ContinueButton>
+        </ContinueButton>
+      </Link>
+      {/* <ContinueButton>
           coming soon!
-      </ContinueButton>
+      </ContinueButton> */}
     </main>
   );
 };
@@ -111,9 +118,9 @@ const DetailSection = ({
   title: string;
 }) => {
   return (
-    <div className="flex gap-[1ch]">
-      <h3 className="font-bold">{title}</h3>
-      <span className="max-w-[30ch]">{description}</span>
+    <div className="flex gap-[1ch] flex-wrap">
+      <h3 className="font-bold flex-shrink">{title}</h3>
+      <p className="flex-grow">{description}</p>
     </div>
   );
 };

@@ -8,7 +8,6 @@ const Page = async () => {
 
   const venues = await getAllVenues();
 
-  // console.log({ venues });
   return (
     <main className="pt-14 px-5 w-full max-w-3xl mx-auto">
       <h1 className="font-bold text-xl">Create New Market</h1>

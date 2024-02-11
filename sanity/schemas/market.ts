@@ -11,18 +11,18 @@ export const marketSchema = defineType({
       type: "string",
       // validation: Rule => Rule.min(1, "Name of the Market is required")
     }),
-    defineField({
-      name: "description",
-      title: "Description",
-      type: "string",
-      // validation: Rule => Rule.min(1, "Description of the Market is required")
-    }),
-    
+    // defineField({
+    //   name: "description",
+    //   title: "Description",
+    //   type: "string",
+    //   // validation: Rule => Rule.min(1, "Description of the Market is required")
+    // }),
+
     defineField({
       name: "dates",
       title: "Dates",
       type: "array",
-      of: [{ type: "string" }],
+      of: [defineArrayMember({ type: "string" })],
       // validation: Rule => Rule.min(1, "At least one day is required")
     }),
     defineField({
@@ -75,28 +75,27 @@ export const marketSchema = defineType({
                         defineField({
                           name: "id",
                           title: "Id",
-                          type: "string"
+                          type: "string",
                         }),
                         defineField({
                           name: "price",
                           title: "Price",
-                          type: "number"
-                        })
-                      ]
+                          type: "number",
+                        }),
+                      ],
                     }),
                     defineField({
                       name: "booked",
                       title: "Booked",
                       type: "reference",
-                      to: [{ type: "user",  }],
+                      to: [{ type: "user" }],
                     }),
                   ],
-                })
+                }),
               ],
             }),
           ],
         }),
-
       ],
     }),
     defineField({
@@ -113,11 +112,11 @@ export const marketSchema = defineType({
               name: "vendor",
               title: "Vendor",
               type: "reference",
-              to: [{ type: "user",  }]
+              to: [{ type: "user" }],
             }),
             defineField({
-              name: "datesSelected",
-              title: "Dates Selected",
+              name: "datesBooked",
+              title: "Dates Booked",
               type: "array",
               of: [
                 defineArrayMember({
@@ -131,20 +130,10 @@ export const marketSchema = defineType({
                       type: "string",
                     }),
                     defineField({
-                      name: "tableSelected",
-                      title: "Table Selected",
+                      name: "tableId",
+                      title: "Table Id",
                       type: "string",
                     }),
-                    defineField({
-                      name: "tableConfirmed",
-                      title: "Table Confirmed",
-                      type: "string",
-                    }),
-                    defineField({
-                      name: "confirmed",
-                      title: "Confirmed",
-                      type: "boolean",
-                    })
                   ],
                 }),
               ],
@@ -156,6 +145,21 @@ export const marketSchema = defineType({
               type: "string",
             }),
           ],
+          preview: {
+            select: {
+              businessName: "vendor.business.businessName",
+              firstName: "vendor.firstName",
+              lastName: "vendor.lastName",
+              media: "vendor.business.logo",
+            },
+            prepare({firstName, lastName, media, businessName}) {
+              return {
+                title: businessName,
+                subtitle: `${firstName} ${lastName}`,
+                media,
+              };
+            }
+          },
         }),
       ],
     }),

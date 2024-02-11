@@ -1,8 +1,8 @@
 "use client";
 import { TPdfFileStore } from "@/app/_components/store/fileStore";
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
-import { cn } from "@/utils";
-import Image from "next/image";
+// import { cn } from "@/utils";
+// import Image from "next/image";
 import { useReducer, type ChangeEvent, useEffect, useRef } from "react";
 // import { FaTrashAlt } from "react-icons/fa";
 import { TrashIcon } from "@sanity/icons";
@@ -101,7 +101,6 @@ const PdfUpload = ({
       //   fetchedFile => !input.some(inputFile => inputFile.id === fetchedFile.id)
       // );
 
-      // console.log({ newFiles })
       dispatch({ type: "REPLACE_FILES_IN_INPUT", payload: files });
     };
 

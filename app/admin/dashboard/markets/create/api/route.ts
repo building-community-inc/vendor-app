@@ -1,3 +1,4 @@
+// import { stripe } from '@/stripe/';
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { sanityZodMarketFormSchema } from "@/zod/markets";
@@ -40,7 +41,6 @@ export const POST = async (req: Request) => {
 
   const body = await req.json();
 
-  // console.log({daysW: body.daysWithTables[0]})
   const parsedMarket = sanityZodMarketFormSchema.safeParse(body);
 
   if (!parsedMarket.success) {
@@ -55,6 +55,20 @@ export const POST = async (req: Request) => {
 
     const response = await sanityWriteClient.create(parsedMarket.data);
     
+
+    // const stripeProduct = await stripe.products.create({
+    //   name: parsedMarket.data.name,
+    //   default_price_data: {
+    //     currency: "cad",
+    //     // unit_amount: parsedMarket.data.price * 100,
+
+    //   }
+      
+    // }) 
+
+
+
+
     return Response.json(response);
   } catch (error) {
     

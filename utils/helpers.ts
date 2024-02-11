@@ -2,6 +2,7 @@ import {
   SortOption,
   SortOptionKey,
 } from "@/app/dashboard/explore/_components/SortBy";
+import { DateTime } from "luxon";
 import { ReadonlyURLSearchParams } from "next/navigation";
 
 export const tablePriceTodisplay = (minPrice: number, maxPrice: number) =>
@@ -46,11 +47,13 @@ export const dateArrayToDisplayableText = function (dates: string[]): string {
   return `${formattedStartDate} - ${formattedEndDate}`;
 };
 
-export const formatMarketDate = function (date: string): string {
+export const formatMarketDate = function (date: string | Date): string {
   const options: Intl.DateTimeFormatOptions = {
     weekday: "long",
     month: "short",
     day: "numeric",
+    year: "numeric",
+    timeZone: "America/Toronto"
   };
 
   const dateObject = new Date(date);
@@ -84,3 +87,27 @@ export const getKeyByValue = (
     }
   }
 };
+
+
+export function formatDateStringToMMMDDYYYY(dateStr: string): string {
+  // Create a Date object from the date string
+  const date = new Date(dateStr);
+
+  // Format the date
+  const formattedDate = date.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  return formattedDate;
+}
+
+
+export const buildOrderUrl = (localUrl: string, paymentIntentId: string) => {
+  return `${localUrl}/dashboard/checkout/success?payment_intent=${paymentIntentId}`
+};
+
+
+export const formatDateWLuxon = function (dateString: string): string {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+  const newDate = DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
+  return newDate.toFormat('EEE, MMM d, yyyy');
+}

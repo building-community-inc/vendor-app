@@ -18,6 +18,18 @@ const MarketCard = ({
   const maxPrice = Math.max(...prices);
 
   const priceToDisplay = tablePriceTodisplay(minPrice, maxPrice);
+
+  // console.log(
+  //   market.name.includes("BRAMA") && market.name.includes("May 3")
+  //     ? {
+  //         bookedTables: market.daysWithTables?.map(
+  //           (day) => day.tables.filter((tables) => tables.booked).length
+  //         ),
+  //         marketName: market.name,
+  //         days: market.daysWithTables?.map((day) => day),
+  //       }
+  //     : null
+  // );
   return (
     <article className="min-h-[645px] flex flex-col gap-2 border rounded-[20px] overflow-hidden  border-[#292929] shadow-[0px_3px_6px_#00000029]">
       <header className="flex justify-between h-[60%] w-full">
@@ -26,7 +38,7 @@ const MarketCard = ({
           width={500}
           height={387}
           alt={market.name}
-          className="w-full max-h-full object-cover"
+          className="w-full max-h-full object-cover aspect-video"
         />
       </header>
       <section className="px-2 my-2 flex justify-between">

@@ -115,12 +115,11 @@ const ExplorePage = async ({
     exploreSorts[sort](sortedMarkets); // Call the sorting function
   }
 
-  // console.log(sortedMarkets);
   return (
     <main className="flex flex-col gap-2 min-h-screen w-full">
       <header className="bg-nav-bg w-full flex justify-center  items-center relative">
         <div className="relative max-w-xl min-w-[250px] w-[40%] py-10 h-full flex items-center">
-          <Search />
+          <Search urlForSearch="/dashboard/explore" />
           <SortBy />
         </div>
       </header>

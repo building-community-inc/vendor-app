@@ -38,7 +38,6 @@ const SortBy = () => {
 
     setIsSortOpen(false);
   };
-  // console.log({ searchParams: searchParams.toString()})
   return (
     <div className="absolute bottom-0 right-0">
       <button
