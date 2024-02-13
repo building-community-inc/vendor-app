@@ -37,6 +37,7 @@ export const approveVendor = async(formData: FormData) => {
   const sanityRes = await sanityWriteClient.createOrReplace(approvedUser);
   
   revalidatePath("/admin/dashboard/vendors")
+  revalidatePath("/dashboard/explore")
 
   return {
     success: "success"
@@ -73,7 +74,7 @@ export const disapproveVendor = async(formData: FormData) => {
   
   revalidatePath("/admin/dashboard/vendors")
 
-  
+
   return {
     success: "success"
   }

@@ -3,6 +3,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import FormTitleDivider from "../_components/FormTitleDivider";
 import Button from "@/app/_components/Button";
 import { approveVendor, disapproveVendor } from "./actions";
+import Link from "next/link";
 
 
 
@@ -48,6 +49,10 @@ const Page = async () => {
                 </form>
 
               )}
+
+              <Link href={`/admin/dashboard/vendors/${vendor._id}`}>
+                view vendor
+              </Link>
             </div>
           </li>
         ))}
