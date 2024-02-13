@@ -98,7 +98,7 @@ const Page = async ({ params }: {
                   </div>
                 </>
               ) : (
-                <h2>Vendor hasn't filled up his business information</h2>
+                <h2>Vendor hasn&apos;t filled up his business information</h2>
               )}
             </section>
           </section>
