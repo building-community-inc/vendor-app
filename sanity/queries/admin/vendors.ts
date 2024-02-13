@@ -76,7 +76,7 @@ const isDev = process.env.NODE_ENV === "development";
 export const getAllVendors = async () => {
   try {
     const result = await sanityClient.fetch(
-      `*[_type == "user" ${isDev ? "" : "role == 'vendor'"}] ${vendorQuery}`
+      `*[_type == "user" ${isDev ? "" : "&& role == 'vendor'"}] ${vendorQuery}`
     );
 
     const parsedVendors = zodVendorsSchema.safeParse(result);
