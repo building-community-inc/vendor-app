@@ -29,7 +29,6 @@ const Page = async ({ params }: {
   
   const vendor = vendorData.data;
 
-  console.log({ pdf: vendor.business?.docs })
   return (
     <main className="pt-14 px-5 w-[80%] min-h-screen max-w-3xl mx-auto">
       <h1 className="font-segoe text-3xl font-bold">Vendor Profile</h1>
