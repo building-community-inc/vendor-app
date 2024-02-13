@@ -24,16 +24,11 @@ const Page = async ({ params }: {
 
 
   if (!vendorData.success) {
-    return (
-      <main className="pt-14 px-5 w-[80%] min-h-screen max-w-3xl mx-auto">
-        <h1 className="font-segoe font-bold text-3xl">Error</h1>
-        <p>{vendorData.error.message}</p>
-      </main>
-    )
+    return null;
   }
   
   const vendor = vendorData.data;
-  
+
   console.log({ pdf: vendor.business?.docs })
   return (
     <main className="pt-14 px-5 w-[80%] min-h-screen max-w-3xl mx-auto">
