@@ -25,13 +25,13 @@ const Page = async () => {
 
       <ul className="flex gap-2 flex-wrap mb-10 mt-2">
         {pendingVendors?.map((vendor) => (
-          <VendorCard vendor={vendor} />
+          <VendorCard key={vendor._id} vendor={vendor} />
         ))}
       </ul>
       <FormTitleDivider title="Vendors" />
       <ul className="flex gap-2 flex-wrap mt-2">
         {otherVendors?.map((vendor) => (
-          <VendorCard vendor={vendor} />
+          <VendorCard key={vendor._id} vendor={vendor} />
         ))}
       </ul>
     </main>
@@ -46,8 +46,7 @@ const VendorCard = ({ vendor }: {
   vendor: TVendor
 }) => {
   return (
-    <li key={vendor._id} className="shadow-[5px_3px_6px_#00000029] border rounded border-black p-5 w-content flex-grow">
-
+    <li className="shadow-[5px_3px_6px_#00000029] border rounded border-black p-5 w-content flex-grow">
       {vendor.business ? (
         <h2><strong>Business:</strong> {vendor.business.name}</h2>
       ) : (
