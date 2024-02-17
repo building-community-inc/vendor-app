@@ -19,13 +19,7 @@
   },
   {
     "title": "Vendors",
-    "href": "/admin/dashboard/vendors",
-    "links": [
-      {
-        "title": "Vendor Listings",
-        "href": "/admin/dashboard/vendors/listings"
-      }
-    ]
+    "href": "/admin/dashboard/vendors"
   },
   {
     "title": "Payments",
