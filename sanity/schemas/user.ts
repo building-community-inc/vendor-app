@@ -63,6 +63,15 @@ export const userSchema = defineType({
           initialValue: false
         }),
       ]
+    }),
+    defineField({
+      name: "status",
+      title: "Status",
+      type: "string",
+      initialValue: "pending",
+      options: {
+        list: ["approved", "pending", "suspended"]
+      },
     })
   ]
 })

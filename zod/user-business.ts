@@ -10,6 +10,11 @@ export const zodUserBase = z.object({
   hasImage: z.boolean(),
   image: z.string().nullable(),
   role: z.enum(["admin", "vendor", "dev"]),
+  status: z.enum(["pending", "approved", "suspended"]),
+  acceptedTerms: z.object({
+    dateAccepted: z.string().optional().nullable(),
+    accepted: z.boolean(),
+  }).optional().nullable(),
 });
 
 export type TUserBase = z.infer<typeof zodUserBase>;

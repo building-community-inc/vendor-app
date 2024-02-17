@@ -7,11 +7,6 @@ export const businessSchema = defineType({
   type: "document",
   fields: [
     defineField({
-      name: 'funny',
-      title: 'funny 1',
-      type: 'string'
-    }),
-    defineField({
       name: 'address1',
       title: 'Address 1',
       type: 'string'

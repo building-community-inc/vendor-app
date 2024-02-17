@@ -13,6 +13,8 @@ export const getSanityUserByEmail = async (email: string) => {
         hasImage,
         image,
         role,
+        status,
+        acceptedTerms,
         business->{
             _id,
             _type,

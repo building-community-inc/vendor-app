@@ -26,6 +26,7 @@ const config: Config = {
       fontFamily: {
         roboto: ["Roboto", "sans-serif"],
         inter: ["Inter", "sans-serif"],
+        segoe: ["Segoe", "sans-serif"],
       },
     },
   },

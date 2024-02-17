@@ -8,8 +8,10 @@ import { redirect } from "next/navigation";
 import MarketCard from "./_components/MarketCard";
 import Search from "./_components/Search";
 import SortBy from "./_components/SortBy";
+import { unstable_noStore as noStore } from "next/cache";
+import Link from "next/link";
+import { EMAIL } from "@/app/_components/constants";
 
-export const dynamic = "force-dynamic";
 
 const exploreSorts: { [key: string]: (markets: TSanityMarket[]) => void } = {
   date_upcoming: (markets: TSanityMarket[]) => {
@@ -87,6 +89,8 @@ const ExplorePage = async ({
     [key: string]: string | undefined;
   };
 }) => {
+
+  noStore();
   const user = await currentUser();
 
   if (!user) redirect("/");
@@ -96,6 +100,40 @@ const ExplorePage = async ({
   );
 
   if (!sanityUser) redirect("/");
+
+  if (!sanityUser.acceptedTerms || !sanityUser.acceptedTerms.accepted) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <h2 className="text-3xl font-bold">Please accept the terms</h2>
+        <p className="text-xl">
+          You need to accept the terms before you can access the dashboard
+        </p>
+        <Link href="/create-business/accept-terms">
+          <span className="text-xl underline">Terms and Conditions</span>
+        </Link>
+      </div>
+    )
+  }
+  if (sanityUser.status === "suspended") {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <h2 className="text-3xl font-bold">Your account is suspended</h2>
+        <p className="text-xl">
+          Your vendor account has been suspended, please contact us at <a href={`mailto:${EMAIL}`}>{EMAIL}</a>         </p>
+      </div>
+    )
+  }
+
+  if (sanityUser.status === "pending") {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <h2 className="text-3xl font-bold">Your account is pending</h2>
+        <p className="text-xl">
+          Your application needs further review, please contact us at <a href={`mailto:${EMAIL}`}>{EMAIL}</a>            </p>
+      </div>
+    )
+  }
+
   const markets = await getCurrentMarkets();
 
   const filteredMarketsByName = markets?.filter((market) => {
@@ -137,6 +175,7 @@ const ExplorePage = async ({
       )}
     </main>
   );
+
 };
 
 export default ExplorePage;
