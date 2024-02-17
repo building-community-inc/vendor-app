@@ -80,3 +80,43 @@ export const disapproveVendor = async(formData: FormData) => {
   }
 
 }
+
+export const setUserStatus = async function (formData: FormData) {
+  const vendorId = formData.get("vendorId");
+  const status = formData.get("status");
+
+  if (!status) {
+    return {
+      error: "no status"
+    }
+  }
+
+  if (!vendorId) {
+    return {
+      error: "no vendorId"
+    }
+  }
+
+  const parsedVendorId = zodVendorId.safeParse(vendorId);
+
+  if (!parsedVendorId.success) {
+    return {
+      error: parsedVendorId.error
+    }
+  }
+
+  const user = await sanityWriteClient.fetch(`*[_type == "user" && _id == $vendorId][0]`, {vendorId: parsedVendorId.data});
+
+  const updatedUser = {
+    ...user,
+    status: status
+  }
+  const sanityRes = await sanityWriteClient.createOrReplace(updatedUser);
+
+  revalidatePath("/admin/dashboard/vendors")
+  revalidatePath("/dashboard/explore")
+
+  return {
+    success: "success"
+  }
+}

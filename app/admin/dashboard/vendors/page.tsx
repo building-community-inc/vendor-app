@@ -2,7 +2,7 @@ import { getAllVendors } from "@/sanity/queries/admin/vendors";
 import { unstable_noStore as noStore } from "next/cache";
 import FormTitleDivider from "../_components/FormTitleDivider";
 import Button from "@/app/_components/Button";
-import { approveVendor, disapproveVendor } from "./actions";
+import { approveVendor, disapproveVendor, setUserStatus } from "./actions";
 import Link from "next/link";
 
 
@@ -38,16 +38,27 @@ const Page = async () => {
 
               {vendor.status === "pending" ? (
 
-                <form action={approveVendor}>
+                <form action={setUserStatus}>
                   <input type="hidden" name="vendorId" value={vendor._id} />
+                  <input type="hidden" name="status" value={"approved"} />
                   <Button>approve</Button>
                 </form>
               ) : (
-                <form action={disapproveVendor}>
-                  <input type="hidden" name="vendorId" value={vendor._id} />
-                  <Button>disapprove</Button>
-                </form>
-
+                <>
+                  {vendor.status === "suspended" ? (
+                    <form action={setUserStatus}>
+                      <input type="hidden" name="vendorId" value={vendor._id} />
+                      <input type="hidden" name="status" value={"approved"} />
+                      <Button>reactivate</Button>
+                    </form>
+                  ) : (
+                    <form action={setUserStatus}>
+                      <input type="hidden" name="vendorId" value={vendor._id} />
+                      <input type="hidden" name="status" value={"suspended"} />
+                      <Button>suspend</Button>
+                    </form>
+                  )}
+                </>
               )}
 
               <Link href={`/admin/dashboard/vendors/${vendor._id}`}>
