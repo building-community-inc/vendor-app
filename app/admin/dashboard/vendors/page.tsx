@@ -45,7 +45,7 @@ const Page = async () => {
               ) : (
                 <form action={disapproveVendor}>
                   <input type="hidden" name="vendorId" value={vendor._id} />
-                  <Button>disaprove</Button>
+                  <Button>disapprove</Button>
                 </form>
 
               )}

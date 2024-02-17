@@ -1,10 +1,11 @@
 import { getMarketById } from "@/sanity/queries/admin/markets";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
-import Image from "next/image";
 import { redirect } from "next/navigation";
 import SelectOptions from "./_components/SelectOptions";
 import VenueMap from "./_components/VenueMap";
+import Link from "next/link";
+import { EMAIL } from "@/app/_components/constants";
 
 const Page = async ({
   params,
@@ -23,9 +24,42 @@ const Page = async ({
 
   if (!sanityUser) redirect("/");
 
+  if (!sanityUser.acceptedTerms || !sanityUser.acceptedTerms.accepted) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <h2 className="text-3xl font-bold">Please accept the terms</h2>
+        <p className="text-xl">
+          You need to accept the terms before you can access the dashboard
+        </p>
+        <Link href="/create-business/accept-terms">
+          <span className="text-xl underline">Terms and Conditions</span>
+        </Link>
+      </div>
+    )
+  }
+  if (sanityUser.status === "suspended") {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <h2 className="text-3xl font-bold">Your account is suspended</h2>
+        <p className="text-xl">
+          Your vendor account has been suspended, please contact us at <a href={`mailto:${EMAIL}`}>{EMAIL}</a>         </p>
+      </div>
+    )
+  }
+
+  if (sanityUser.status === "pending") {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <h2 className="text-3xl font-bold">Your account is pending</h2>
+        <p className="text-xl">
+          Your application needs further review, please contact us at <a href={`mailto:${EMAIL}`}>{EMAIL}</a>            </p>
+      </div>
+    )
+  }
+
   const market = await getMarketById(params.id);
 
-  if (!market) return <div>no market found</div>;
+  if (!market) return <div>market not found</div>;
 
 
   // const dateToDisplay = dateArrayToDisplayableText(market.dates);
