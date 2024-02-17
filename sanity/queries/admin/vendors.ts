@@ -69,6 +69,7 @@ const zodVendorSchema = z.object({
   role: z.string(),
 });
 
+export type TVendor =  z.infer<typeof zodVendorSchema>;
 const zodVendorsSchema = z.array(zodVendorSchema);
 
 const isDev = process.env.NODE_ENV === "development";
