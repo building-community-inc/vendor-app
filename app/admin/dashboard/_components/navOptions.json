@@ -23,21 +23,7 @@
   },
   {
     "title": "Payments",
-    "href": "/admin/dashboard/payments",
-    "links": [
-      {
-        "title": "Payment History",
-        "href": "/admin/dashboard/payments/history"
-      },
-      {
-        "title": "Invoices",
-        "href": "/admin/dashboard/payments/invoices"
-      },
-      {
-        "title": "Payment Information",
-        "href": "/admin/dashboard/payments/information"
-      }
-    ]
+    "href": "/admin/dashboard/payments"
   },
   {
     "title": "Message Centre",

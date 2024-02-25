@@ -51,12 +51,13 @@ const Page = async () => {
 
               return (
                 <PaymentItem key={payment._id}>
+                  <TitleName title="Vendor Name" name={payment.vendor.businessName} />
                   <TitleName title="Market Name" name={payment.market.name.split(" - ")[0]} />
                   <TitleName title="Market Dates" name={payment.market.name.split(" - ")[1]} />
                   <TitleName title="Dates Booked" list={dateList} />
-                  <TitleName title="Vendor Name" name={payment.vendor.businessName} />
                   <TitleName title="Amount Owing" name={`$${payment.amount.owed}`} />
                   <TitleName title="Due Date" name={formattedDueDateString} />
+                  <TitleName title="Order Id" name={payment._id} />
                 </PaymentItem>
               )
             })}
@@ -77,12 +78,12 @@ const Page = async () => {
               });
               return (
                 <PaymentItem key={payment._id}>
-                  <TitleName title="Order Id" name={payment._id} />
                   <TitleName title="Vendor Name" name={payment.vendor.businessName} />
                   <TitleName title="Market Name" name={payment.market.name.split(" - ")[0]} />
                   <TitleName title="Market Dates" name={payment.market.name.split(" - ")[1]} />
                   <TitleName title="Dates Booked" list={datesBookedList} />
                   <TitleName title="Amount Paid" name={`$${payment.amount.paid}`} />
+                  <TitleName title="Order Id" name={payment._id} />
                 </PaymentItem>
               )
             })}
