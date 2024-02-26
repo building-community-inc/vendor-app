@@ -21,6 +21,11 @@ export default function RootLayout({
   return (
     <ClerkProvider appearance={{ baseTheme: dark }}>
       <html lang="en">
+      <head>
+        {/* <PlausibleProvider domain={isProduction ? "arle.co" : "beta.arle.co"} /> */}
+        {/* <script defer data-domain={url} src="https://plausible.io/js/script.js"></script> */}
+        <script defer data-domain="vendorapp.buildingcommunityinc.com" src="https://plausible.io/js/script.js"></script>
+      </head>
         <body className={`bg-background text-secondary ${inter.className} ${roboto.className} ${segoe}`}>{children}</body>
       </html>
     </ClerkProvider>
