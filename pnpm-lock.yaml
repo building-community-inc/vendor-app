@@ -56,6 +56,9 @@ dependencies:
   next:
     specifier: 14.0.3
     version: 14.0.3(@babel/core@7.23.3)(react-dom@18.2.0)(react@18.2.0)
+  next-plausible:
+    specifier: ^3.12.0
+    version: 3.12.0(next@14.0.3)(react-dom@18.2.0)(react@18.2.0)
   next-sanity:
     specifier: ^6.0.5
     version: 6.0.5(@sanity/client@6.8.6)(@sanity/icons@2.0.0)(@sanity/types@3.19.3)(@sanity/ui@1.8.3)(next@14.0.3)(react@18.2.0)(sanity@3.19.3)(styled-components@6.0.9)
@@ -3960,7 +3963,6 @@ packages:
       loose-envify: 1.4.0
       object-assign: 4.1.1
     dev: false
-    bundledDependencies: false
 
   /crelt@1.0.6:
     resolution: {integrity: sha512-VQ2MBenTq1fWZUH9DJNGti7kKv6EeAuYr3cLwxUWhIu1baTaXh4Ib5W2CqHVqib4/MqbYGJqiL3Zb8GJZr3l4g==}
@@ -6171,6 +6173,18 @@ packages:
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
+
+  /next-plausible@3.12.0(next@14.0.3)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-SSkEqKQ6PgR8fx3sYfIAT69k2xuCUXO5ngkSS19CjxY97lAoZxsfZpYednxB4zo0mHYv87JzhPynrdBPlCBVHg==}
+    peerDependencies:
+      next: ^11.1.0 || ^12.0.0 || ^13.0.0 || ^14.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      next: 14.0.3(@babel/core@7.23.3)(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /next-sanity@6.0.5(@sanity/client@6.8.6)(@sanity/icons@2.0.0)(@sanity/types@3.19.3)(@sanity/ui@1.8.3)(next@14.0.3)(react@18.2.0)(sanity@3.19.3)(styled-components@6.0.9):
     resolution: {integrity: sha512-7y3ax7lXtikHPSHLVLOVlw7YEz3bZVfgDaLh1HYvr08ZXQqzQe2faAOKBt6OpcVbR2Fvs90p8ZqRxxc8CVhsXg==}
