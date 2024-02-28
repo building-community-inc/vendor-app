@@ -38,7 +38,7 @@ const page = async () => {
   });
 
   return (
-    <main className="flex gap-2 min-h-screen w-full">
+    <main className="flex gap-2 min-h-screen w-full flex-wrap">
       {sanityUser.business ? (
         <section className="flex flex-col gap-5 xl:gap-10 items-center justify-center w-full px-10">
           <section className="flex flex-col sm:flex-row items-center gap-10">

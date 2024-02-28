@@ -6,15 +6,20 @@ import { currentUser } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+type FormState = {
+  message: string;
+};
 
-export const updateBusinessLogo = async (data: FormData) => {
-
+export const updateBusinessLogo = async (
+  prevState: FormState,
+  data: FormData
+): Promise<FormState> => {
   const clerkUser = await currentUser();
 
   if (!clerkUser) {
     return {
       message: "Unauthorized",
-    }
+    };
   }
 
   const user = await getSanityUserByEmail(
@@ -24,34 +29,31 @@ export const updateBusinessLogo = async (data: FormData) => {
   if (!user) {
     return {
       message: "Unauthorized",
-    }
+    };
   }
 
   if (!user.business) {
     return {
       message: "Unauthorized",
-    }
+    };
   }
 
   if (!user.business.logo) {
     return {
       message: "Unauthorized",
-    }
+    };
   }
 
-  console.log(user.business?.logo?.asset._ref)
-
-  const newfileId = data.get("newLogoId")
-
+  const newfileId = data.get("newLogoId");
 
   const newLogoAsset = {
     ...user.business.logo.asset,
-    _ref: newfileId
-  }
+    _ref: newfileId,
+  };
 
   const sanityRes = await sanityWriteClient
     .patch(user.business._id)
-    .set({ logo: {asset: newLogoAsset, _type: "image"} })
+    .set({ logo: { asset: newLogoAsset, _type: "image" } })
     .commit()
     .then((res) => {
       return res;
@@ -59,10 +61,10 @@ export const updateBusinessLogo = async (data: FormData) => {
     .catch((err) => {
       throw new Error(err);
     });
-  console.log({ sanityRes });
 
-  revalidatePath("/dashboard")
+  revalidatePath("/dashboard");
+
   return {
     message: "Success",
-  }
+  };
 };
