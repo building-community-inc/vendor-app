@@ -11,15 +11,19 @@ export const zodUserBase = z.object({
   image: z.string().nullable(),
   role: z.enum(["admin", "vendor", "dev"]),
   status: z.enum(["pending", "approved", "suspended"]),
-  acceptedTerms: z.object({
-    dateAccepted: z.string().optional().nullable(),
-    accepted: z.boolean(),
-  }).optional().nullable(),
+  acceptedTerms: z
+    .object({
+      dateAccepted: z.string().optional().nullable(),
+      accepted: z.boolean(),
+    })
+    .optional()
+    .nullable(),
 });
 
 export type TUserBase = z.infer<typeof zodUserBase>;
 
 export const zodBusiness = z.object({
+  _id: z.string().optional().nullable(),
   businessName: z.string().min(1, "Business name is required"),
   address1: z.string().min(1, "Address is required"),
   address2: z.string().nullable(),
@@ -35,8 +39,10 @@ export const zodBusiness = z.object({
     .string()
     .optional()
     .nullable()
-    .transform((refId) => refId ? { _type: "image", asset: { _ref: refId } } : null),
-    
+    .transform((refId) =>
+      refId ? { _type: "image", asset: { _ref: refId } } : null
+    ),
+
   pdf: z
     .array(z.string())
     .optional()
@@ -59,32 +65,51 @@ export const zodBusinessForm = zodBusiness.merge(
 export const zodSanityBusiness = zodBusiness.merge(
   z.object({
     _type: z.literal("business"),
-    logo: z.object({
-      _type: z.literal("image"),
-      asset: z.object({
-        _ref: z.string(),
-      }),
-    }).optional().nullable(),
-    pdf: z.array(
-      z.object({
-        _type: z.literal("file"),
+    logo: z
+      .object({
+        _type: z.literal("image"),
         asset: z.object({
           _ref: z.string(),
         }),
-        _key: z.string(),
       })
-    ).optional().nullable(),
+      .optional()
+      .nullable(),
+    pdf: z
+      .array(
+        z.object({
+          _type: z.literal("file"),
+          asset: z.object({
+            _ref: z.string(),
+          }),
+          _key: z.string(),
+        })
+      )
+      .optional()
+      .nullable(),
   })
 );
 export const zodBusinessQuery = zodBusinessForm.merge(
   z.object({
+    _id: z.string(),
     logoUrl: z.string().optional().nullable(),
-    pdfs: z.array(
-      z.object({
-        url: z.string(),
-        name: z.string(),
+    pdfs: z
+      .array(
+        z.object({
+          url: z.string(),
+          name: z.string(),
+        })
+      )
+      .optional()
+      .nullable(),
+    logo: z
+      .object({
+        _type: z.literal("image"),
+        asset: z.object({
+          _ref: z.string(),
+        }),
       })
-    ).optional().nullable(),
+      .optional()
+      .nullable(),
   })
 );
 // export const zodBusinessForm = zodBusiness.merge(

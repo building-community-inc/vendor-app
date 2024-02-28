@@ -28,6 +28,7 @@ export const getSanityUserByEmail = async (email: string) => {
             phone,
             instagramHandle,
             industry,
+            logo,
             "logoUrl": logo.asset->url,
             "pdfs": pdf[] {
                 "url": asset -> url,

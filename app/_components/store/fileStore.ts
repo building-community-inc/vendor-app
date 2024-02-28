@@ -26,6 +26,11 @@ export const useFileStore = create<TFileStore>((set) => ({
   setFileId: (fileId: string) => set({ fileId }),
   clearFileId: () => set({ fileId: "" }),
 }));
+export const useUpdateProfileImageStore = create<TFileStore>((set) => ({
+  fileId: "",
+  setFileId: (fileId: string) => set({ fileId }),
+  clearFileId: () => set({ fileId: "" }),
+}));
 export const usePdfFileStore = create<TPdfFileStore>((set, get) => ({
   fileIds: [],
   setFileIds: (fileIds: string[]) => set({ fileIds }),

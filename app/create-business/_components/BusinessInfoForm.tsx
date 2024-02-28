@@ -90,6 +90,7 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
       className="flex flex-col mx-auto max-w-7xl py-5"
     >
       {formInputs.map(({ name, title }) => {
+        if (name === "_id") return null;
         return (
           <BusinessFormInputComp
             key={name}
@@ -141,7 +142,7 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
 
       <button
         disabled={isSubmitting}
-        className="disabled:bg-red-200 bg-secondary text-primary rounded-md w-fit px-2 py-1 mx-auto mt-8 text-2xl"
+        className="disabled:bg-slate-200 disabled:text-slate-300 bg-secondary text-primary rounded-md w-fit px-2 py-1 mx-auto mt-8 text-2xl"
         type="submit"
       >
         {"Next"}

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import NoBz from "./_components/NoBz";
 import { formatDateWLuxon } from "@/utils/helpers";
 import { DateTime } from 'luxon';
+import UpdateProfileImage from "./_components/UpdateProfileImage";
 
 const page = async () => {
   const user = await currentUser();
@@ -15,7 +16,7 @@ const page = async () => {
   );
 
   const userMarkets = await getUserMarkets(sanityUser._id);
-  
+
 
   userMarkets.sort((a, b) => {
     // Convert the dates from strings to DateTime objects and find the earliest date
@@ -31,7 +32,7 @@ const page = async () => {
     });
     const minDateA = datesA.reduce((earliest, date) => date < earliest ? date : earliest, DateTime.fromISO('9999-12-31'));
     const minDateB = datesB.reduce((earliest, date) => date < earliest ? date : earliest, DateTime.fromISO('9999-12-31'));
-  
+
     // Compare the two dates
     return minDateA < minDateB ? -1 : minDateA > minDateB ? 1 : 0;
   });
@@ -42,13 +43,9 @@ const page = async () => {
         <section className="flex flex-col gap-5 xl:gap-10 items-center justify-center w-full px-10">
           <section className="flex flex-col sm:flex-row items-center gap-10">
             {sanityUser.business.logoUrl ? (
-              <Image
-                src={sanityUser.business.logoUrl}
-                alt={sanityUser.business.businessName}
-                width={228}
-                height={228}
-                className="rounded-2xl object-cover w-fit h-fit"
-              />
+              <section className="flex flex-col items-center">
+                <UpdateProfileImage businessName={sanityUser.business.businessName} logoUrl={sanityUser.business.logoUrl} currentLogoId={sanityUser.business.logo?.asset._ref} />
+              </section>
             ) : (
               <div className="w-[228px] h-[228px] bg-white flex items-center justify-center text-black rounded-2xl">
                 <p className="font-bold text-center rotate-45 max-w-[6ch] text-xl">
