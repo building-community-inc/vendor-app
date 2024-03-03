@@ -1,10 +1,12 @@
 import { getAllVenues } from "@/sanity/queries/admin/venues";
 import FormTitleDivider from "../_components/FormTitleDivider";
 import VenueList from "./_components/VenueList";
+import { unstable_noStore as noStore } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
 const Page = async () => {
+  noStore();
 
   const venues = await getAllVenues();
 
