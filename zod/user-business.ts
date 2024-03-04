@@ -88,6 +88,19 @@ export const zodSanityBusiness = zodBusiness.merge(
       .nullable(),
   })
 );
+
+export const zodSanityUpdateBusiness = zodSanityBusiness.merge(z.object({
+  _id: z.string(),
+  logo: z
+      .object({
+        _type: z.literal("image"),
+        asset: z.object({
+          _ref: z.string(),
+        }),
+      })
+}))
+
+// export type TSanityBusiness = z.infer<typeof zodSanityBusiness>;
 export const zodBusinessQuery = zodBusinessForm.merge(
   z.object({
     _id: z.string(),
@@ -96,7 +109,9 @@ export const zodBusinessQuery = zodBusinessForm.merge(
       .array(
         z.object({
           url: z.string(),
-          name: z.string(),
+          originalFileName: z.string(),
+          _id: z.string(),
+          size: z.number(),
         })
       )
       .optional()

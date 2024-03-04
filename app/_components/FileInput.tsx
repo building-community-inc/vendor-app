@@ -112,7 +112,7 @@ const FileInput = ({
   };
   
   return (
-    <div>
+    <div className="my-4">
       {input.length > 0 && (
         <Image
           key={input[input.length - 1].url}
@@ -120,7 +120,7 @@ const FileInput = ({
           alt={input[input.length - 1].name}
           width={500}
           height={500}
-          className="object-cover mx-auto mt-2"
+          className="object-cover w-[500px] h-full mx-auto mt-2"
         />
       )}
       <div className={cn("flex gap-4",

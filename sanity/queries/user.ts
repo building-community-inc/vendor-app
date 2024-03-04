@@ -32,11 +32,14 @@ export const getSanityUserByEmail = async (email: string) => {
             "logoUrl": logo.asset->url,
             "pdfs": pdf[] {
                 "url": asset -> url,
-                "name": asset -> originalFilename
+                "originalFileName": asset -> originalFilename,
+                "_id": asset -> _id,
+                "size": asset -> size,
             },
         }
     }`);
-
+  
+    console.log({ pdfs: user.business.pdfs });
   const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
   if (!validatedUser.success) {
     throw new Error(validatedUser.error.message);

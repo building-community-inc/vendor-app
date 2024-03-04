@@ -6,6 +6,7 @@ import NoBz from "./_components/NoBz";
 import { formatDateWLuxon } from "@/utils/helpers";
 import { DateTime } from 'luxon';
 import UpdateProfileImage from "./_components/UpdateProfileImage";
+import Link from "next/link";
 
 const page = async () => {
   const user = await currentUser();
@@ -41,10 +42,17 @@ const page = async () => {
     <main className="flex gap-2 min-h-screen w-full flex-wrap">
       {sanityUser.business ? (
         <section className="flex flex-col gap-5 xl:gap-10 items-center justify-center w-full px-10">
-          <section className="flex flex-col sm:flex-row items-center gap-10">
+          <section className="flex flex-col lg:flex-row items-center gap-10">
             {sanityUser.business.logoUrl ? (
               <section className="flex flex-col items-center">
-                <UpdateProfileImage businessName={sanityUser.business.businessName} logoUrl={sanityUser.business.logoUrl} currentLogoId={sanityUser.business.logo?.asset._ref} />
+                <Image
+                  src={sanityUser.business.logoUrl}
+                  alt={sanityUser.business.businessName}
+                  width={228}
+                  height={228}
+                  className="rounded-2xl"
+                />
+                {/* <UpdateProfileImage businessName={sanityUser.business.businessName} logoUrl={sanityUser.business.logoUrl} currentLogoId={sanityUser.business.logo?.asset._ref} /> */}
               </section>
             ) : (
               <div className="w-[228px] h-[228px] bg-white flex items-center justify-center text-black rounded-2xl">
@@ -99,14 +107,17 @@ const page = async () => {
                   @{sanityUser.business.instagramHandle ?? ""}
                 </span>
               </p>
-              {sanityUser.business.pdfs && (
+              {sanityUser.business.pdfs && sanityUser.business.pdfs.length >= 1 && (
                 <ul className="flex gap-2 flex-col">
                   <strong>Supporting Documents:</strong>
                   {sanityUser.business.pdfs.map((pdf) => (
-                    <li key={pdf.url}>- {pdf.name}</li>
+                    <li key={pdf.url} className="">{pdf.originalFileName}</li>
                   ))}
                 </ul>
               )}
+              <Link href="/dashboard/edit-profile">
+                <span className="text-blue-500">Edit Profile</span>
+              </Link>
             </section>
           </section>
           {userMarkets.length > 0 && (
