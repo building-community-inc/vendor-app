@@ -15,11 +15,7 @@ export const saveNewBusinessInfo = async (
   }[] | null },
   formData: FormData
 ) => {
-  // console.log({ formData })
-
   const data = {
-    // _type: "user",
-    // business: {
     _id: formData.get("_id"),
     _type: "business",
     businessName: formData.get("businessName"),
@@ -45,7 +41,6 @@ export const saveNewBusinessInfo = async (
         _ref: formData.get("logo"),
       },
     },
-    // },
   };
 
   const business = zodSanityUpdateBusiness.safeParse(data);
