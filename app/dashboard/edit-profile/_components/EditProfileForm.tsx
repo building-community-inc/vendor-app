@@ -80,6 +80,7 @@ const EditProfileForm = ({ sanityUser, vendorCategories }: {
 
           {/* {sanityUser.business.pdf?.map((pdf) => (<p>{pdf.asset._ref}</p>)} */}
           {pdfFileIds.length > 0 && pdfFileIds.map(fileId => (
+            
             <input key={fileId} type="hidden" name="pdfs" value={fileId} readOnly />
           )
 
