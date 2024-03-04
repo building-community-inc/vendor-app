@@ -80,14 +80,14 @@ const EditProfileForm = ({ sanityUser, vendorCategories }: {
 
           {/* {sanityUser.business.pdf?.map((pdf) => (<p>{pdf.asset._ref}</p>)} */}
           {pdfFileIds.length > 0 && pdfFileIds.map(fileId => (
-            
+
             <input key={fileId} type="hidden" name="pdfs" value={fileId} readOnly />
           )
 
           )}
         </section>
         {formState.errors && formState.errors.map((error: TErrorType) => (
-          <p className="text-red-500">{error.message}</p>
+          <p className="text-red-500" key={error.path[0]}>{error.message}</p>
         ))
         }
         <button type="submit" className="bg-blue-500 text-white rounded-md px-2 py-1 mb-2">
