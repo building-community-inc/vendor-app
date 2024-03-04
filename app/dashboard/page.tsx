@@ -116,7 +116,7 @@ const page = async () => {
                 </ul>
               )}
               <Link href="/dashboard/edit-profile">
-                <span className="text-blue-500">Edit Profile</span>
+                <span className="text-blue-500">Edit Business Profile</span>
               </Link>
             </section>
           </section>
