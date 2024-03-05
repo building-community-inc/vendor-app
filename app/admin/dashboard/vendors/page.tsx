@@ -9,7 +9,13 @@ import Search from "@/app/dashboard/explore/_components/Search";
 
 
 
-const Page = async () => {
+const Page = async ({
+  searchParams,
+}: {
+  searchParams: {
+    [key: string]: string | undefined;
+  };
+}) => {
   noStore()
   const vendors = await getAllVendors();
 
@@ -18,6 +24,16 @@ const Page = async () => {
   }
   const pendingVendors = vendors.filter(vendor => vendor.status === 'pending');
   const otherVendors = vendors.filter(vendor => vendor.status !== 'pending');
+
+  const search = searchParams.search?.toLowerCase();
+
+  const filterVendors = (arrayVendors: TVendor[]) => arrayVendors.filter((vendor) => {
+    if (!search) {
+      return true;
+    }
+
+    return vendor.business?.name.toLowerCase().includes(search) || vendor.email.toLowerCase().includes(search) || vendor.firstName.toLowerCase().includes(search) || vendor.lastName.toLowerCase().includes(search);
+  });
 
   return (
     <main className="pt-14 px-5 w-full min-h-screen mx-auto">
@@ -28,13 +44,13 @@ const Page = async () => {
       <FormTitleDivider title="Pending Vendors" />
 
       <ul className="flex gap-2 flex-col mb-10 mt-2">
-        {pendingVendors?.map((vendor) => (
+        {filterVendors(pendingVendors)?.map((vendor) => (
           <VendorCard key={vendor._id} vendor={vendor} />
         ))}
       </ul>
       <FormTitleDivider title="Vendors" />
       <ul className="flex gap-2 flex-wrap mt-2">
-        {otherVendors?.map((vendor) => (
+        {filterVendors(otherVendors)?.map((vendor) => (
           <VendorCard key={vendor._id} vendor={vendor} />
         ))}
       </ul>
