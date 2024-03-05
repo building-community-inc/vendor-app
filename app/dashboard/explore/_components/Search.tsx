@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 const Search = ({
   urlForSearch,
   theme = "dark",
+  placeholder = "FIND A MARKET",
 }: {
   urlForSearch: string;
   theme?: "dark" | "light";
+  placeholder?: string;
 }) => {
   const { push } = useRouter();
 
@@ -20,7 +22,7 @@ const Search = ({
   return (
     <input
       type="text"
-      placeholder="FIND A MARKET"
+      placeholder={placeholder}
       onChange={handleSearch}
       className={cn(
         `bg-background text-white rounded-full px-3 py-2 max-w-[654px] w-[100%]`,
