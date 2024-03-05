@@ -32,7 +32,9 @@ const Page = async ({
       return true;
     }
 
-    return vendor.business?.name.toLowerCase().includes(search) || vendor.email.toLowerCase().includes(search) || vendor.firstName.toLowerCase().includes(search) || vendor.lastName.toLowerCase().includes(search) || vendor.status.toLowerCase().includes(search);
+    const vendorBusinessName = vendor.business?.name.toLowerCase() || "No Business";
+
+    return vendorBusinessName.toLowerCase().includes(search) || vendor.email.toLowerCase().includes(search) || vendor.firstName.toLowerCase().includes(search) || vendor.lastName.toLowerCase().includes(search) || vendor.status.toLowerCase().includes(search);
   });
 
   return (
