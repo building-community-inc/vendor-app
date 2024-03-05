@@ -1,26 +1,9 @@
 "use server";
 
 import { sanityWriteClient } from "@/sanity/lib/client";
+import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-
-// type TMessage = {
-//   to: string;
-//   toId: string;
-//   from: string;
-//   subject: string;
-//   body: string;
-// };
-
-const zodMessageSchema = z.object({
-  to: z.string().min(1, "Please select a recipient"),
-  toId: z.string().min(1, "User Not Found"),
-  from: z.string(),
-  subject: z.string().min(1, "Please enter a subject"),
-  body: z.string().min(1, "Please enter a message"),
-});
-
-type TMessage = z.infer<typeof zodMessageSchema>;
 
 export type TCreateMessageFormState = {
   message: string;
@@ -31,16 +14,21 @@ export type TCreateMessageFormState = {
 const zodSanityMessageSchema = z.object({
   // _id: z.string(),
   _type: z.literal("message"),
-  for: z.object({
-    _ref: z.string().min(1, "User not found"),
-    _type: z.literal("reference"),
-  }),
+  for: z.array(
+    z.object({
+      vendor: z.object({
+        _ref: z.string().min(1, "User not found"),
+        _type: z.literal("reference"),
+        _key: z.string().optional(),
+      }),
+    })
+  ),
   from: z.object({
     _ref: z.string(),
     _type: z.literal("reference"),
   }),
   subject: z.string().min(1, "Please enter a subject"),
-  body: z.string().min(1, "Please enter a message")
+  body: z.string().min(1, "Please enter a message"),
 });
 
 type TSanityMessage = z.infer<typeof zodSanityMessageSchema>;
@@ -49,12 +37,15 @@ export const createMessage = async (
   state: TCreateMessageFormState,
   formData: FormData
 ) => {
+  console.log({ vendorId: formData.getAll("vendorId") });
   const rawMessage: TSanityMessage = {
     _type: "message",
-    for: {
-      _ref: formData.get("to_id") as string,
-      _type: "reference",
-    },
+    for: formData
+      .getAll("vendorId")
+      .filter((id): id is string => typeof id === "string")
+      .map((id) => ({
+        vendor: { _ref: id, _type: "reference", _key: nanoid() },
+      })),
     from: {
       _ref: formData.get("from") as string,
       _type: "reference",
@@ -64,7 +55,7 @@ export const createMessage = async (
   };
 
   const message = zodSanityMessageSchema.safeParse(rawMessage);
-  console.log({message})
+  // console.log({ message });
 
   if (!message.success) {
     return {
@@ -77,23 +68,20 @@ export const createMessage = async (
     };
   }
 
-
   // try {
   const sanityResp = await sanityWriteClient.create(message.data).catch((e) => {
     return {
       message: "Message not sent!",
       success: false,
-      errors: [
-        { message: e, path: ["sanity"] },
-      ],
+      errors: [{ message: e, path: ["sanity"] }],
     };
   });
 
-  console.log({sanityResp})
+  console.log({ sanityResp });
 
-  revalidatePath("/admin/dashboard/messages")
-  revalidatePath("dashboard/")
-  revalidatePath("dashboard/messages")
+  revalidatePath("/admin/dashboard/messages");
+  revalidatePath("dashboard/");
+  revalidatePath("dashboard/messages");
 
   return {
     message: "Message sent almost.... lol!",

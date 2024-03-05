@@ -1,5 +1,4 @@
-import { defineField, defineType } from "sanity";
-
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 export const messageSchema = defineType({
   name: "message",
@@ -9,8 +8,31 @@ export const messageSchema = defineType({
     defineField({
       name: "for",
       title: "For",
-      type: "reference",
-      to: [{ type: "user" }],
+      type: "array",
+      of: [
+        defineArrayMember(
+          defineField({
+            name: "forObject",
+            title: "For Object",
+            type: "object",
+            fields: [
+              defineField({
+                name: "vendor",
+                title: "Vendor",
+                type: "reference",
+                to: [{ type: "user" }],
+              }),
+              defineField({
+                name: "read",
+                title: "Read",
+                type: "boolean",
+                initialValue: false,
+              }),
+            ],
+          })
+        ),
+      ],
+      // to: [{ type: "user" }],
     }),
     defineField({
       name: "from",
@@ -28,12 +50,5 @@ export const messageSchema = defineType({
       title: "Body",
       type: "text",
     }),
-    defineField({
-      name: "read",
-      title: "Read",
-      type: "boolean",
-      initialValue: false,
-    }),
-
-  ]
-})
+  ],
+});

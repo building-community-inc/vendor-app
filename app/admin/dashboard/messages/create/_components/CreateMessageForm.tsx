@@ -23,6 +23,7 @@ const CreateMessageForm = ({ sanityUser, allVendors }: {
   console.log({ formState })
   useEffect(() => {
     if (formState.success) {
+      
       redirect("/admin/dashboard/messages");
     }
   }, [formState.success])
