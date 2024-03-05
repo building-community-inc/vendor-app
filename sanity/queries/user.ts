@@ -95,7 +95,6 @@ export const getUserMarkets = async (userId: string) => {
       { userId }
     );
 
-    // console.log({ payments });
     const validatedPayments = zodUserMarkets.safeParse(payments);
 
     if (!validatedPayments.success) {

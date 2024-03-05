@@ -33,7 +33,6 @@ export const POST = async (req: Request) => {
   if (!body.items) {
     return Response.json({ status: 400, body: { message: "No items" } });
   }
-  // console.log("in create-later-payment-intent", { body });
 
   const parsedBody = zodCheckoutStateSchemaRequired.safeParse(body);
   
@@ -43,7 +42,6 @@ export const POST = async (req: Request) => {
       body: { message: parsedBody.error },
     });
   }
-  // console.log({data: parsedBody.data})
 
   const paymentObj = {
     amount: parsedBody.data.dueNowWithHst * 100,
@@ -65,8 +63,6 @@ export const POST = async (req: Request) => {
 
   const parsedPaymentObj = zodPaymentIntentSchema.safeParse(paymentObj);
 
-
-  console.log({parsedPaymentObj, metadata: paymentObj.metadata})
   if (!parsedPaymentObj.success) {
     return Response.json({
       status: 400,

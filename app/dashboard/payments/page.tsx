@@ -31,8 +31,6 @@ const PaymentsPage = async () => {
 
   const userPayments = await getAllUserPaymentsById(user._id);
 
-  // userPayments[0].items;
-  // console.log({ userPayments })
   if (!userPayments || userPayments.length === 0) {
     return <main className="grid place-content-center h-full gap-24">
       <h1 className="font-bold mx-auto text-lg">No Payments Found</h1>

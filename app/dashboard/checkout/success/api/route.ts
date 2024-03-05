@@ -60,7 +60,6 @@ export const POST = async (req: Request) => {
   const existingPayment = await getExistingPayment(paymentIntent.id);
 
   if (existingPayment) {
-    // console.log("exiting:", { existingPayment });
     return Response.json({
       status: 400,
       body: { message: "Payment already exists" },
@@ -154,7 +153,6 @@ export const POST = async (req: Request) => {
       ...marketDocument,
       vendors: [...(marketDocument.vendors || []), vendorDetails],
     };
-    // console.log({ updatedMarket });
     const createdPaymentRecord = await sanityWriteClient.create(paymentRecord);
     // Update the market document in the database
 

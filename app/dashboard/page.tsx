@@ -36,8 +36,6 @@ const page = async () => {
     return minDateA < minDateB ? -1 : minDateA > minDateB ? 1 : 0;
   });
 
-  // console.log({ userMarkets });
-
   return (
     <main className="flex gap-2 min-h-screen w-full">
       {sanityUser.business ? (

@@ -120,3 +120,13 @@ export function formatDateString(dateString: string, timeZone: string = 'America
   const date = DateTime.fromISO(formattedDate, { zone: timeZone }).startOf('day');
   return date.toFormat('EEE, MMM d, yyyy');
 }
+
+export function debounce<F extends (...args: any[]) => any>(func: F, wait: number) {
+  let timeout: NodeJS.Timeout | null;
+  return (...args: Parameters<F>) => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => func(...args), wait);
+  }
+}

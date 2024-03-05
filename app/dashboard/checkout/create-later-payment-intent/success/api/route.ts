@@ -11,7 +11,6 @@ import { nanoid } from "nanoid";
 import { HST } from "../../../_components/checkoutStore";
 
 export const GET = async (req: Request) => {
-  // console.log("in create-later-payment-intent", { req });
 
   const clerkUser = await currentUser();
 
@@ -46,7 +45,6 @@ export const GET = async (req: Request) => {
   if (userPaymentParam) {
     userPayment = JSON.parse(decodeURIComponent(userPaymentParam));
   }
-  // console.log({paymentIntentId, paymentStatus, userPayment})
 
   if (paymentIntentId && paymentStatus === "succeeded") {
     const sanityPayment = await getPaymentById(userPayment._id);
@@ -103,7 +101,6 @@ export const GET = async (req: Request) => {
         .set(parsedPaymentSchema.data)
         .commit() // Perform the update
         .then((updatedDocument) => {
-          console.log("updated document", updatedDocument);
           paymentId = updatedDocument._id;
         })
         .catch((err) => {

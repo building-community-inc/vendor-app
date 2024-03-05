@@ -8,8 +8,6 @@ export const POST = async (req: Request) => {
   try {
     const body = await req.json();
 
-    // console.log({ body, DWT: body.market.daysWithTables, tables: body.market.daysWithTables[0].tables });
-
     const parsedData = zodBookMarketOptionsSchema.safeParse(body);
     
     if (!parsedData.success) {
@@ -39,10 +37,7 @@ export const POST = async (req: Request) => {
       cancel_url: "https://example.com/cancel",
     });
 
-    // console.log({ session });
     const charge = await stripe.charges.retrieve(session.payment_intent as string);
-
-    // console.log({ charge });
 
   } catch (error) {
     console.error(error);

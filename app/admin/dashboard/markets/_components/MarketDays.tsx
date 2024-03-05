@@ -13,15 +13,12 @@ const MarketDays = ({
 }) => {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
-  // console.log({ dates, vendors });
-
   const vendorsForSelectedDay = vendors.filter((vendor) => {
     return vendor.datesBooked.some(
       (bookedDate) => bookedDate.date === selectedDay
     );
   });
 
-  // console.log({ vendorsForSelectedDay });
   return (
     <>
       <div className="flex gap-4 w-fit mx-auto">
