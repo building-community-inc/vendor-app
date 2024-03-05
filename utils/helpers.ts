@@ -111,3 +111,12 @@ export const formatDateWLuxon = function (dateString: string): string {
   const newDate = DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
   return newDate.toFormat('EEE, MMM d, yyyy');
 }
+
+
+
+export function formatDateString(dateString: string, timeZone: string = 'America/Toronto'): string {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+  const date = DateTime.fromISO(formattedDate, { zone: timeZone }).startOf('day');
+  return date.toFormat('EEE, MMM d, yyyy');
+}

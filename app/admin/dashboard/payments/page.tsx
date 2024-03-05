@@ -1,10 +1,18 @@
-import { getAllPayments } from "@/sanity/queries/admin/payments";
+import { TPayment, getAllPayments } from "@/sanity/queries/admin/payments";
 import { unstable_noStore as noStore } from "next/cache";
 import FormTitleDivider from "../_components/FormTitleDivider";
 import { DateTime } from "luxon";
+import Search from "@/app/dashboard/explore/_components/Search";
+import { formatDateString } from "@/utils/helpers";
 
-const Page = async () => {
-  noStore();
+const Page = async ({
+  searchParams,
+}: {
+  searchParams: {
+    [key: string]: string | undefined;
+  };
+}) => {
+  noStore()
 
   const allPayments = await getAllPayments();
 
@@ -22,42 +30,58 @@ const Page = async () => {
   const paymentHistory = allPayments.filter(
     (payment) => payment.amount.owed === 0
   );
-  
 
-  const totalPaid = paymentHistory.reduce((acc, payment) => {
-    return acc + payment.amount.paid;
-  }, 0);
+  const search = searchParams.search?.toLowerCase();
+
+  const filterPayments = (paymentsArray: TPayment[]) => paymentsArray.filter((payment) => {
+    if (!search) {
+      return true;
+    }
+
+    const vendorBusinessName = payment.vendor.businessName?.toLowerCase() || "No Business";
+
+    return vendorBusinessName.toLowerCase().includes(search)
+      || payment.vendor.email.toLowerCase().includes(search)
+      || payment.market.name.toLowerCase().includes(search)
+      || payment._id.toLowerCase().includes(search)
+      || payment.market.dates.map((date) => formatDateString(date)).join().toLowerCase().includes(search)
+      || payment.items.map(({ date }) => formatDateString(date).toLowerCase()).includes(search);
+  });
 
   return (
     <main className="flex flex-col px-10 py-10 gap-2 min-h-screen w-full">
-      <h1 className="font-bold text-xl">Payments</h1>
+      <header className="flex w-full justify-between">
+        <h1 className="font-bold text-xl">Payments</h1>
+        <Search urlForSearch="/admin/dashboard/payments" theme="light" placeholder="Find a Payment" />
+      </header>
       {balancesOwedPayments.length > 0 && (
-        <section className="mt-5">
+        <section className="">
 
           <FormTitleDivider title="Outstanding Balances" />
-          <ul className="flex flex-wrap gap-2">
-            {balancesOwedPayments.map((payment) => {
-              const [dueDateYear, dueDateMonth, dueDateday] = payment.market.dates[0].split('-').map(Number);
-              const formattedDueDate = `${dueDateYear}-${dueDateMonth.toString().padStart(2, '0')}-${dueDateday.toString().padStart(2, '0')}`;
-              const newDueDate = DateTime.fromISO(formattedDueDate, { zone: 'America/Toronto' }).startOf('day');
-              const formattedDueDateString = newDueDate.toFormat('EEE, MMM d, yyyy');
+          <ul className="flex flex-col gap-2">
+            {filterPayments(balancesOwedPayments).map((payment) => {
               const dateList = payment.items.map(({ date }) => {
-                const [year, month, day] = date.split('-').map(Number);
-                const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-                const newDate = DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
-                const formattedDateString = newDate.toFormat('EEE, MMM d, yyyy');
-                return formattedDateString;
+                return formatDateString(date);
               });
 
               return (
                 <PaymentItem key={payment._id}>
-                  <TitleName title="Vendor Name" name={payment.vendor.businessName} />
-                  <TitleName title="Market Name" name={payment.market.name.split(" - ")[0]} />
-                  <TitleName title="Market Dates" name={payment.market.name.split(" - ")[1]} />
+                  <div className="flex gap-5 justify-between">
+
+                    <div className="flex flex-col">
+                      <TitleName title="Vendor Name" name={payment.vendor.businessName} />
+                      <TitleName title="Order Id" name={payment._id} />
+                    </div>
+                    <div className="flex flex-col">
+                      <TitleName title="Market Name" name={payment.market.name.split(" - ")[0]} />
+                      <TitleName title="Market Dates" name={payment.market.name.split(" - ")[1]} />
+                    </div>
+                  </div>
                   <TitleName title="Dates Booked" list={dateList} />
-                  <TitleName title="Amount Owing" name={`$${payment.amount.owed}`} />
-                  <TitleName title="Due Date" name={formattedDueDateString} />
-                  <TitleName title="Order Id" name={payment._id} />
+                  <div className="flex flex-col items-end">
+                    <TitleName title="Amount Owing" name={`$${payment.amount.owed}`} />
+                    <TitleName title="Due Date" name={formatDateString(payment.market.dates[0])} />
+                  </div>
                 </PaymentItem>
               )
             })}
@@ -68,7 +92,7 @@ const Page = async () => {
         <section className="flex flex-col mt-10">
           <FormTitleDivider title="Payment History" />
           <ul className="flex flex-wrap gap-2">
-            {paymentHistory.map((payment) => {
+            {filterPayments(paymentHistory).map((payment) => {
               const datesBookedList = payment.items.map(({ date }) => {
                 const [year, month, day] = date.split('-').map(Number);
                 const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
@@ -78,21 +102,21 @@ const Page = async () => {
               });
               return (
                 <PaymentItem key={payment._id}>
-                  <TitleName title="Vendor Name" name={payment.vendor.businessName} />
-                  <TitleName title="Market Name" name={payment.market.name.split(" - ")[0]} />
-                  <TitleName title="Market Dates" name={payment.market.name.split(" - ")[1]} />
+                  <div className="flex flex-col">
+                    <TitleName title="Vendor Name" name={payment.vendor.businessName} />
+                    <TitleName title="Order Id" name={payment._id} />
+                  </div>                  <div className="flex flex-col">
+                    <TitleName title="Market Name" name={payment.market.name.split(" - ")[0]} />
+                    <TitleName title="Market Dates" name={payment.market.name.split(" - ")[1]} />
+                  </div>
                   <TitleName title="Dates Booked" list={datesBookedList} />
                   <TitleName title="Amount Paid" name={`$${payment.amount.paid}`} />
-                  <TitleName title="Order Id" name={payment._id} />
                 </PaymentItem>
               )
             })}
           </ul>
         </section>
       )}
-
-    <span>Total Paid: {totalPaid}</span>
-
     </main>
   );
 }
@@ -104,7 +128,7 @@ const PaymentItem = ({ children }:
     children: React.ReactNode;
   }) => {
   return (
-    <li className="border border-black rounded flex flex-col p-2 gap-2 flex-grow shadow-[5px_3px_6px_#00000029]">{children}</li>
+    <li className="border border-black rounded flex flex-wrap p-2 gap-2 flex-grow justify-between shadow-[5px_3px_6px_#00000029]">{children}</li>
   )
 }
 const TitleName = ({ title, name, list }: {

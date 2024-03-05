@@ -31,6 +31,8 @@ const zodPaymentSchema = z.object({
   })),
 });
 
+export type TPayment = z.infer<typeof zodPaymentSchema>;
+
 const zodPaymentsSchema = z.array(zodPaymentSchema);
 
 export const getAllPayments = async () => {
@@ -71,8 +73,6 @@ export const getAllPayments = async () => {
         }
       }`
     );
-
-    console.log({items: res[0].items})
 
     const parsedPayments = zodPaymentsSchema.safeParse(res);
 
