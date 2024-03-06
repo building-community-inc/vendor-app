@@ -26,7 +26,7 @@ export const messageQueryString = `
   }
 `;
 
-const zodMessage = z.object({
+export const zodMessage = z.object({
   _id: z.string(),
   _createdAt: z.string(),
   body: z.string(),

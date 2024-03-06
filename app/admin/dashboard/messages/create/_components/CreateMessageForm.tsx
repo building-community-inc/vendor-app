@@ -5,7 +5,7 @@ import To from "./To";
 import Button from "@/app/_components/Button";
 import { TVendor } from "@/sanity/queries/admin/vendors";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import { redirect } from "next/navigation";
 
 const CreateMessageForm = ({ sanityUser, allVendors }: {
@@ -19,8 +19,6 @@ const CreateMessageForm = ({ sanityUser, allVendors }: {
     errors: null
   })
 
-  // const {pending} = useFormStatus()
-  console.log({ formState })
   useEffect(() => {
     if (formState.success) {
       

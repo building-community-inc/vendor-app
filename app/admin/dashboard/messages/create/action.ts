@@ -37,7 +37,6 @@ export const createMessage = async (
   state: TCreateMessageFormState,
   formData: FormData
 ) => {
-  console.log({ vendorId: formData.getAll("vendorId") });
   const rawMessage: TSanityMessage = {
     _type: "message",
     for: formData
@@ -55,7 +54,6 @@ export const createMessage = async (
   };
 
   const message = zodSanityMessageSchema.safeParse(rawMessage);
-  // console.log({ message });
 
   if (!message.success) {
     return {
@@ -76,8 +74,6 @@ export const createMessage = async (
       errors: [{ message: e, path: ["sanity"] }],
     };
   });
-
-  console.log({ sanityResp });
 
   revalidatePath("/admin/dashboard/messages");
   revalidatePath("dashboard/");

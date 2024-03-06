@@ -39,6 +39,8 @@ const NavBar = ({ user, areThereNewMessages }: { user: TUserWithOptionalBusiness
   useEffect(() => {
     setIsNavOpen(false);
   }, [pathname]);
+
+  // console.log({ areThereNewMessages })
   return (
     <aside
       className={`absolute z-10 md:relative md:bg-nav-bg text-nav-text px-10 flex flex-col py-[10px] gap-2 h-screen overflow-y-scroll hide-scrollbar pb-10 ${isNavOpen

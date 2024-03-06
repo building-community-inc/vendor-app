@@ -66,7 +66,6 @@ const To = ({ vendorList }: {
       setSelectedVendors(prevVendors => prevVendors.filter(v => v._id !== vendor._id));
     }
   };
-  console.log({ selectedVendors })
 
   return (
     <div className="relative">

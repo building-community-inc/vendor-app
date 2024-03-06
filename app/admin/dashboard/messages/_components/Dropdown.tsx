@@ -1,11 +1,12 @@
 "use client";
-import { cn } from "@/utils";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import OpenCloseDropdown from "./OpenCloseDropdown";
 
-const Dropdown = ({ children, title }: {
+const Dropdown = ({ children, title, theme = "light", onClick }: {
   children: ReactNode;
   title: string;
+  theme?: "light" | "dark";
+  onClick?: () => void;
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -15,6 +16,11 @@ const Dropdown = ({ children, title }: {
     }
   }, [isDropdownOpen]);
 
+  const handleClick = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+    if (onClick) onClick();
+  }
+
   return (
     <div className="pb-4">
       <div className="flex justify-between">
@@ -23,7 +29,7 @@ const Dropdown = ({ children, title }: {
           {title}
         </span>
 
-        <OpenCloseDropdown isOpen={isDropdownOpen} onClick={() => setIsDropdownOpen(!isDropdownOpen)} />
+        <OpenCloseDropdown theme={theme} isOpen={isDropdownOpen} onClick={handleClick} />
       </div>
       <div
         ref={contentRef}

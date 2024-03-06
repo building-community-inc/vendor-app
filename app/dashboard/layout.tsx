@@ -19,7 +19,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   if (!sanityUser.business)
     return (
       <section className="flex  h-screen overflow-y-hidden">
-        <NavBar areThereNewMessages user={sanityUser} />
+        <NavBar areThereNewMessages={false} user={sanityUser} />
 
         <div className="h-full overflow-y-scroll w-full hide-scrollbar pb-5 grid place-content-center">
           <NoBz />
@@ -27,9 +27,14 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
       </section>
     );
 
-  const userMessages = await getAllUserMessagesById(sanityUser._id);  
+  const userMessages = await getAllUserMessagesById(sanityUser._id);
 
-  const areThereNewMessages = userMessages?.some(message => message.for.some(forObject => forObject.read !== true));  
+  const areThereNewMessages = userMessages?.some(message => 
+    message.for.some(forObject => 
+      forObject.vendor.email === sanityUser.email && !forObject.read
+    )
+  );
+
 
   return (
     <section className="flex  h-screen overflow-y-hidden">

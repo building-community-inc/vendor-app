@@ -29,6 +29,22 @@ export const messageSchema = defineType({
                 initialValue: false,
               }),
             ],
+            preview: {
+              select: {
+                title: "vendor.business.businessName",
+                email: `vendor.email`,
+                name: `vendor.firstName`,
+                lastName: `vendor.lastName`,
+                read: "read",
+              },
+              prepare({ title, read, email, name, lastName }) {
+                const subtitle = `${name} ${lastName} ${read ? "Read" : "Unread"}`
+                return {
+                  title: title || email,
+                  subtitle
+                };
+              },
+            },
           })
         ),
       ],
