@@ -18,36 +18,44 @@ const messageQueryString = `
       firstName,
       lastName,
       email,
+      "business": business->{
+        "name": businessName
+      }
     },
     read
   }
 `;
 
-const zodMessageQueryArray = z.array(
-  z.object({
+const zodMessage = z.object({
+  _id: z.string(),
+  _createdAt: z.string(),
+  body: z.string(),
+  subject: z.string(),
+  from: z.object({
     _id: z.string(),
-    _createdAt: z.string(),
-    body: z.string(),
-    subject: z.string(),
-    from: z.object({
-      _id: z.string(),
-      firstName: z.string(),
-      lastName: z.string(),
-      email: z.string(),
-    }),
-    for: z.array(
-      z.object({
-        vendor: z.object({
-          _id: z.string(),
-          firstName: z.string(),
-          lastName: z.string(),
-          email: z.string(),
-        }),
-        read: z.boolean().optional().nullable(),
-      })
-    ),
-  })
-);
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string(),
+  }),
+  for: z.array(
+    z.object({
+      vendor: z.object({
+        _id: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+        email: z.string(),
+        business: z.object({
+          name: z.string().optional().nullable(),
+        }).optional().nullable(),
+      }),
+      read: z.boolean().optional().nullable(),
+    })
+  ),
+});
+
+const zodMessageQueryArray = z.array(zodMessage);
+
+export type TMessage = z.infer<typeof zodMessage>;
 export const getAllSentMessages = async () => {
   try {
     const result = await sanityClient.fetch(

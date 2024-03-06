@@ -106,7 +106,8 @@ const To = ({ vendorList }: {
                   name="vendorSelected"
                   onChange={handleCheckboxChange(vendor)}
                   checked={selectedVendors.some(selectedVendor => selectedVendor._id === vendor._id)}
-                />                {vendor.email}
+                />
+                {vendor.email}
               </p>
               <div className="flex text-xs gap-2">
                 {vendor.business ? (
