@@ -1,7 +1,7 @@
 import { sanityClient } from "@/sanity/lib/client";
 import { z } from "zod";
 
-const messageQueryString = `
+export const messageQueryString = `
   _id,
   _createdAt,
   body,
@@ -53,7 +53,7 @@ const zodMessage = z.object({
   ),
 });
 
-const zodMessageQueryArray = z.array(zodMessage);
+export const zodMessageQueryArray = z.array(zodMessage);
 
 export type TMessage = z.infer<typeof zodMessage>;
 export const getAllSentMessages = async () => {
