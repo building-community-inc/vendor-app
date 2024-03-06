@@ -57,7 +57,7 @@ const Page = async ({
                 <strong>Sent to:</strong>
                 <ul className="flex flex-col gap-2">
                   {message.for.map(({vendor}) => (
-                    <li className="flex flex-col">
+                    <li className="flex flex-col" key={vendor._id}>
                       <span>
                         {vendor.email}
                       </span>

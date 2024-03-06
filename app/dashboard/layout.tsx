@@ -29,9 +29,8 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 
   const userMessages = await getAllUserMessagesById(sanityUser._id);  
 
-  console.log({userMessages})
   const areThereNewMessages = userMessages?.some(message => message.for.some(forObject => forObject.read !== true));  
-  console.log({areThereNewMessages})
+
   return (
     <section className="flex  h-screen overflow-y-hidden">
       <NavBar user={sanityUser} areThereNewMessages={areThereNewMessages || false} />
