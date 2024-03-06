@@ -30,7 +30,7 @@ const Page = async ({
   return (
     <main className="pt-14 px-5 w-full min-h-screen mx-auto">
       <header className="flex w-full justify-between">
-        <h1 className="font-segoe font-bold text-lg lg:text-3xl">Message Centre</h1>
+        <h1 className="font-segoe font-bold md:text-lg lg:text-3xl">Message Centre</h1>
         <Search urlForSearch="/admin/dashboard/messages" theme="light" placeholder="Find a Message" />
       </header>
       <Link href="/admin/dashboard/messages/create">
