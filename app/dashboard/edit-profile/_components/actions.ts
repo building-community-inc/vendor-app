@@ -74,6 +74,7 @@ export const saveNewBusinessInfo = async (
   // console.log({ sanityResp });
 
   revalidatePath("/dashboard");
+  revalidatePath("/dashboard/edit-profile");
 
   return {
     success: true,

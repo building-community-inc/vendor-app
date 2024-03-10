@@ -20,8 +20,8 @@ const Page = async () => {
 
   
   return (
-    <main>
-      <h1>Edit Your Profile Info</h1>
+    <main className="pt-10">
+      <h1 className="text-center font-semibold text-lg">Edit Your Profile Info</h1>
       <EditProfileForm sanityUser={sanityUser} vendorCategories={vendorCategories} />
     </main>
   );

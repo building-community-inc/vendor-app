@@ -15,7 +15,7 @@ type TFileWithUrl = {
   url: string;
   size: number;
   error?: boolean | null;
-  fileId: string;
+  fileId?: string;
 };
 const addFilesToInput = () => ({
   type: "ADD_FILES_TO_INPUT" as const,
@@ -106,11 +106,11 @@ const FileInput = ({
 
     dispatch({ type: "REMOVE_LAST_FILE_FROM_INPUT" });
     const newLastImage = input[input.length - 2];
-    if (newLastImage) {
+    if (newLastImage.fileId) {
       setFileId(newLastImage.fileId);
     }
   };
-  
+  // console.log("here", input)
   return (
     <div className="my-4">
       {input.length > 0 && (
@@ -151,7 +151,7 @@ const FileInput = ({
             type="file"
             className="hidden"
           />
-          {uploading ? "Uploading" : input.length > 0 ? "Change Image" : title}
+          {uploading ? "Uploading" : input.length > 0 ? "Change or add your logo" : title}
         </label>
         {input.length > 1 && (
           <button

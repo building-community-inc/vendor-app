@@ -17,7 +17,7 @@ const UpdateProfileImage = ({ currentLogoId, businessName, logoUrl }: {
     setFileId(currentLogoId)
   }, [])
 
-  if (!currentLogoId) return null;
+  // if (!currentLogoId) return null;
 
   return (
     <section className="mx-auto mt-5 px-12 flex flex-col items-center gap-5">
