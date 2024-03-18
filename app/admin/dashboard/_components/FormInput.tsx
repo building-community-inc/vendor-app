@@ -57,7 +57,6 @@ const FormInput = <TFormValues extends FieldValues>({
   // });
 
   // useEffect(() => {
-  //   console.log({ value }, "useEffect");
   //   if (type === "date") {
   //     // const newValue =
   //       // value instanceof Date ? value.toISOString().substring(0, 10) : value;

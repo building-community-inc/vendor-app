@@ -20,8 +20,6 @@ const Page = async ({
 
   const dateToDisplay = dateArrayToDisplayableText(market.dates);
 
-
-  // console.log({market, vendors: market.vendors[0].vendor.})
   return (
     <main className="pt-14 px-5 w-full flex flex-col gap-8 max-w-3xl mx-auto">
       <h1 className="font-bold text-xl">{market?.name}</h1>

@@ -21,7 +21,6 @@ const Page = async ({
       : "";
 
   const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-  // console.log({ searchParams, paymentIntent });
 
   if (!paymentIntent || paymentIntent.status !== "succeeded") {
     return (
@@ -45,16 +44,14 @@ const Page = async ({
   //   html: "<p>Congrats on sending your <strong>first email</strong>!</p>",
   // });
 
-  // console.log({ eResp });
 
   const market = await getMarketById(paymentIntent.metadata.marketId);
 
   const items = JSON.parse(paymentIntent.metadata.items) as TPaymentItem[];
 
-  // console.log({ items });
 
   const idForPaymentRecord = nanoid()
-  // console.log(paymentIntent.metadata, { idForPaymentRecord })
+
   return (
     <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto flex flex-col items-center gap-6">
       {!existingPayment && (

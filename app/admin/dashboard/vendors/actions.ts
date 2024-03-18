@@ -19,7 +19,6 @@ export const approveVendor = async(formData: FormData) => {
   const parsedVendorId = zodVendorId.safeParse(vendorId);
 
 
-  // console.log( parsedVendorId.data)
   if (!parsedVendorId.success) {
     return {
       error: parsedVendorId.error
@@ -28,7 +27,6 @@ export const approveVendor = async(formData: FormData) => {
   }
 
   const user = await sanityWriteClient.fetch(`*[_type == "user" && _id == $vendorId][0]`, {vendorId: parsedVendorId.data});
-  // console.log({user})
   
   const approvedUser = {
     ...user,
