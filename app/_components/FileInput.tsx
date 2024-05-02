@@ -15,6 +15,7 @@ type TFileWithUrl = {
   url: string;
   size: number;
   error?: boolean | null;
+  fileId?: string;
 };
 const addFilesToInput = () => ({
   type: "ADD_FILES_TO_INPUT" as const,
@@ -34,10 +35,14 @@ const FileInput = ({
   useStore,
   title,
   classNames,
+  currentImage,
+  currentId
 }: {
   useStore: () => TFileStore;
   title: string;
   classNames?: string;
+  currentImage?: TFileWithUrl;
+  currentId?: string;
 }) => {
   const [uploading, setUploading] = useState(false);
   const { setFileId } = useStore();
@@ -56,7 +61,7 @@ const FileInput = ({
         return state.slice(0, -1);
       // You could extend this, for example to allow removing files
     }
-  }, []);
+  }, currentImage ? [currentImage] : []);
   const noInput = input.length === 0;
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -85,7 +90,7 @@ const FileInput = ({
         const { url, _id } = sanityResp;
 
         const { name, size } = e.target.files[0];
-        addFilesToState([{ name, url, size }]);
+        addFilesToState([{ name, url, size, fileId: _id }]);
         setFileId(_id);
         setUploading(false);
       }
@@ -98,10 +103,16 @@ const FileInput = ({
     dispatch({ type: "ADD_FILES_TO_INPUT", payload: files });
   };
   const revertLogo = () => {
+
     dispatch({ type: "REMOVE_LAST_FILE_FROM_INPUT" });
+    const newLastImage = input[input.length - 2];
+    if (newLastImage.fileId) {
+      setFileId(newLastImage.fileId);
+    }
   };
+  // console.log("here", input)
   return (
-    <div>
+    <div className="my-4">
       {input.length > 0 && (
         <Image
           key={input[input.length - 1].url}
@@ -109,12 +120,12 @@ const FileInput = ({
           alt={input[input.length - 1].name}
           width={500}
           height={500}
-          className="object-cover mx-auto mt-2"
+          className="object-cover w-[500px] h-full mx-auto mt-2"
         />
       )}
       <div className={cn("flex gap-4",
-        {"mt-5" : input.length > 0},
-        {"flex" : input.length > 1}
+        { "mt-5": input.length > 0 },
+        { "flex": input.length > 1 }
       )}>
         <label
           htmlFor={"file"}
@@ -122,6 +133,33 @@ const FileInput = ({
             classNames
               ? classNames
               : cn(
+                "group relative p-2 w-fit flex flex-col mx-auto items-center justify-center border-2 border-slate-300 border-dashed rounded-lg dark:border-gray-600 transition",
+                { "h-fit aspect-auto": !noInput },
+                { "items-start justify-start": !noInput },
+                {
+                  "hover:border-gray-500 hover:bg-slate-800 hover:text-white":
+                    noInput,
+                },
+                { "opacity-50": uploading }
+              )
+          }
+        >
+          <input
+            onChange={handleChange}
+            accept="image/png"
+            id="file"
+            type="file"
+            className="hidden"
+          />
+          {uploading ? "Uploading" : input.length > 0 ? "Change or add your logo" : title}
+        </label>
+        {input.length > 1 && (
+          <button
+            onClick={revertLogo}
+            className={
+              classNames
+                ? classNames
+                : cn(
                   "group relative p-2 w-fit flex flex-col mx-auto items-center justify-center border-2 border-slate-300 border-dashed rounded-lg dark:border-gray-600 transition",
                   { "h-fit aspect-auto": !noInput },
                   { "items-start justify-start": !noInput },
@@ -131,33 +169,6 @@ const FileInput = ({
                   },
                   { "opacity-50": uploading }
                 )
-          }
-        >
-          <input
-            onChange={handleChange}
-            accept="image/jpeg, image/jpg, image/png"
-            id="file"
-            type="file"
-            className="hidden"
-          />
-          {uploading ? "Uploading" : input.length > 0 ? "Change Image" : title}
-        </label>
-        {input.length > 1 && (
-          <button
-            onClick={revertLogo}
-            className={
-              classNames
-                ? classNames
-                : cn(
-                    "group relative p-2 w-fit flex flex-col mx-auto items-center justify-center border-2 border-slate-300 border-dashed rounded-lg dark:border-gray-600 transition",
-                    { "h-fit aspect-auto": !noInput },
-                    { "items-start justify-start": !noInput },
-                    {
-                      "hover:border-gray-500 hover:bg-slate-800 hover:text-white":
-                        noInput,
-                    },
-                    { "opacity-50": uploading }
-                  )
             }
           >
             Revert Image

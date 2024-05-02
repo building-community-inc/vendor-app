@@ -17,7 +17,8 @@ const Page = async () => {
     lastName: clerkUser.lastName,
     hasImage: clerkUser.hasImage,
     image: clerkUser.hasImage ? clerkUser.imageUrl : null,
-    role: "vendor"
+    role: "vendor",
+    status: "pending"
   };
 
   const validatedUser = zodUserBase.safeParse(userToValidate);

@@ -15,7 +15,7 @@ export function validateFileType(file: File) {
 
 type TFileWithUrl = {
   _id: string;
-  originalFilename: string;
+  originalFilename?: string;
   url: string;
   size: number;
 };
@@ -54,7 +54,13 @@ const fetchFileInfo = async (fileId: string) => {
 };
 
 const deleteFileFromSanity = async (fileId: string) => {
-  await sanityWriteClient.delete(fileId);
+  try {
+    await sanityWriteClient.delete(fileId);
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error('Failed to delete file:', error);
+    // Don't throw the error, so the user won't see it
+  }
 };
 
 const PdfUpload = ({
@@ -115,8 +121,10 @@ const PdfUpload = ({
 
         // loop over all selected files
         for (let i = 0; i < e.target.files.length; i++) {
+
           const file = e.target.files[i];
 
+          if (!file.name) throw new Error("File name is missing");
           // validate file type
           const valid = validateFileType(file);
           if (!valid) {
@@ -138,7 +146,7 @@ const PdfUpload = ({
           // add the file to the newFiles array
           newFiles.push({
             _id: _id,
-            originalFilename: file.name,
+            originalFilename: file.name || "something else",
             url: URL.createObjectURL(file),
             size: file.size,
           });
@@ -171,7 +179,7 @@ const PdfUpload = ({
         className="rounded-2xl w-fit mx-auto mt-2 bg-white text-black px-5 py-1 text-lg"
         onClick={() => fileInputRef.current?.click()}
       >
-         {input.length > 0 ? "Add more" : "Browse"}
+        {input.length > 0 ? "Add more" : "Browse"}
       </button>
       <input
         // {...props}
@@ -184,7 +192,7 @@ const PdfUpload = ({
         className="hidden"
       />
       {input.length > 0 && (
-     
+
         <ul className="w-full mt-2 gap-2 flex flex-col">
           {input.map((file) => (
             <li key={file._id} className="flex w-full justify-between items-center">
