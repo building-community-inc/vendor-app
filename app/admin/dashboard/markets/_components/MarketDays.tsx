@@ -5,18 +5,18 @@ import { areDatesSame, formatMarketDate } from "@/utils/helpers";
 import Link from "next/link";
 import { saveMarketChanges } from "./saveMarketChangesAction";
 import { useFormState } from "react-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 export type TDayWithTable = {
   date: string;
   tables: {
     table: TTable;
     booked?:
-      | {
-          _type: string;
-          _ref: string;
-        }
-      | null
-      | undefined;
+    | {
+      _type: string;
+      _ref: string;
+    }
+    | null
+    | undefined;
   }[];
 };
 const MarketDays = ({
@@ -36,11 +36,21 @@ const MarketDays = ({
 }) => {
   const [saveMarketFormState, saveMarketFormAction] = useFormState(saveMarketChanges, { error: "", success: false });
   const [sortedVendors, setSortedVendors] = useState(vendorsForSelectedDay);
+  const [sortedAvailableTables, setSortedAvailableTables] = useState<{ table: TTable }[]>([]);
+
+  const [tableSelectionsChanged, setTableSelectionsChanged] = useState(false);
+
+
+  useEffect(() => {
+    if (availableTablesForDay) {
+      const sortedTables = [...availableTablesForDay].sort((a, b) => Number(a.table.id) - Number(b.table.id));
+      setSortedAvailableTables(sortedTables);
+    }
+  }, [availableTablesForDay]);
 
   useEffect(() => {
     if (!selectedDay) return;
     const sorted = [...vendorsForSelectedDay].sort((a, b) => {
-      console.log("sorting")
       const aBookedDate = a.datesBooked.find(
         (bookedDate) => areDatesSame(bookedDate.date, selectedDay)
       );
@@ -68,7 +78,6 @@ const MarketDays = ({
 
     setSortedVendors(sorted);
   }, [selectedDay, vendorsForSelectedDay]);
-  console.log({ selectedDay, sortedVendors })
 
   return (
     <form action={saveMarketFormAction}>
@@ -123,16 +132,21 @@ const MarketDays = ({
                         <select
                           name="tableSelection"
                           defaultValue={bookedDateForSelectedDay.tableId}
-                        // onChange={e => changeTheTableForBooking(selectedDay, e.currentTarget.value, vendor.vendor._ref)}
+                          // onChange={e => changeTheTableForBooking(selectedDay, e.currentTarget.value, vendor.vendor._ref)}
+
+                          onChange={e => {
+                            setTableSelectionsChanged(true);
+                          }}
                         >
                           <option key={bookedDateForSelectedDay.tableId} value={bookedDateForSelectedDay.tableId}>
                             {bookedDateForSelectedDay.tableId}
                           </option>
-                          {availableTablesForDay.map((table) => (
-                            <option key={table.table.id} value={table.table.id}>
-                              {table.table.id}
-                            </option>
-                          ))}
+                          {sortedAvailableTables
+                            .map((table) => (
+                              <option key={table.table.id} value={table.table.id}>
+                                {table.table.id}
+                              </option>
+                            ))}
                         </select>
                       ) : (
                         'N/A'
@@ -144,9 +158,10 @@ const MarketDays = ({
           </tbody>
         </table>
       )}
-      {selectedDay && (
+      {selectedDay && tableSelectionsChanged && (
         <>
-          <input type="text" hidden name="date" value={selectedDay} />
+          <input type="text" hidden name="date" readOnly value={selectedDay} />
+          <input type="text" hidden name="marketId" readOnly value={marketId} />
           <Button className="my-5 py-2 bg-white border border-primary mx-auto" type="submit">
             save changes
           </Button>

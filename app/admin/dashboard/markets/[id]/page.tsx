@@ -37,7 +37,7 @@ const Page = async ({
   const dayInfo = market.daysWithTables?.find(day => areDatesSame(day.date, selectedDay || ""));
 
   const availableTablesForDay = dayInfo?.tables.filter((table) => table.booked === null) || null;
-  console.log({ dayInfo, availableTablesForDay })
+  // console.log({ dayInfo, availableTablesForDay })
 
 
   // const availableTables = typeof market.daysWithTables?[0].tables === "object" ?.filter(table => table.booked === null);
@@ -48,14 +48,14 @@ const Page = async ({
   // const 
 
 
-  console.log({
+  // console.log({
     // market,
-    availableTablesForDay,
+    // availableTablesForDay,
     // tables: availableTables && availableTables[0],
     // daysWithTables: market.daysWithTables,
     // tables: market.daysWithTables[0].tables[0].table,
     // tables: market.daysWithTables[0]
-  })
+  // })
 
   return (
     <main className="pt-14 px-5 w-full flex flex-col gap-8 max-w-3xl mx-auto">
