@@ -59,6 +59,8 @@ const individualMarketQueryString = `
   },
   "vendors": vendors[] {
     "vendor": vendor->{
+      "_type": "reference",
+      "_ref": _id,
       "businessName": business -> businessName,
       "businessCategory": business -> industry, 
     },
@@ -76,7 +78,10 @@ const individualMarketQueryString = `
         id, 
         price
       },
-      booked
+      "booked": booked -> {
+        "_type": "reference",
+        "_ref": _id
+      }
     }
   }
 `;
@@ -88,7 +93,10 @@ const zodTable = z.object({
 
 const zodTableInDay = z.object({
   table: zodTable,
-  booked: z.object({}).passthrough().optional().nullable(),
+  booked: z.object({
+    _type: z.string(),
+    _ref: z.string()
+  }).optional().nullable(),
 });
 
 const zodSelectedTable = z.object({
@@ -113,6 +121,8 @@ const zodVendorSchema = z.object({
   vendor: z.object({
     businessName: z.string(),
     businessCategory: z.string(),
+    _ref: z.string(),
+    _type: z.string()
   }),
   datesBooked: z.array(
     z.object({

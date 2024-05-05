@@ -5,6 +5,21 @@ import {
 import { DateTime } from "luxon";
 import { ReadonlyURLSearchParams } from "next/navigation";
 
+export function areDatesSame(date1: string, date2: string): boolean {
+  // Ensure dates are in the format "YYYY-MM-DD"
+  if (!date1 || !date2 || date1.length < 1 || date2.length < 1) return false;
+  const [year1, month1, day1] = date1.split('-');
+  const formattedDate1 = `${year1}-${month1.padStart(2, '0')}-${day1.padStart(2, '0')}`;
+
+  const [year2, month2, day2] = date2.split('-');
+  const formattedDate2 = `${year2}-${month2.padStart(2, '0')}-${day2.padStart(2, '0')}`;
+
+  const dateTime1 = DateTime.fromISO(formattedDate1).setZone('utc');
+  const dateTime2 = DateTime.fromISO(formattedDate2).setZone('utc');
+
+  return dateTime1.hasSame(dateTime2, 'day');
+}
+
 export const tablePriceTodisplay = (minPrice: number, maxPrice: number) =>
   minPrice === maxPrice ? `$${minPrice}` : `$${minPrice} - $${maxPrice}`;
 
