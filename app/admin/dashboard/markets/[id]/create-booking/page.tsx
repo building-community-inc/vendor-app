@@ -4,6 +4,10 @@ import { dateArrayToDisplayableText } from "@/utils/helpers";
 import Image from "next/image";
 import { getAllVendors } from "@/sanity/queries/admin/vendors";
 import SelectVendor from "./SelectVendor";
+import SelectOptions from "@/app/dashboard/markets/[id]/select-preferences/_components/SelectOptions";
+import { currentUser } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
+import { getSanityUserByEmail } from "@/sanity/queries/user";
 
 const Page = async ({
   params,
@@ -15,6 +19,14 @@ const Page = async ({
 }) => {
   const market = await getMarketById(params.id);
 
+  const user = await currentUser();
+
+  if (!user) redirect("/");
+
+  const sanityUser = await getSanityUserByEmail(
+    user.emailAddresses[0].emailAddress
+  );
+
   if (!market) return <div>loading...</div>;
 
 
@@ -22,7 +34,6 @@ const Page = async ({
 
   if (!allVendors) return <div>loading...</div>;
 
-  console.log({ allVendors })
   return (
     <main className="pt-14 px-5 w-[80%] min-h-screen max-w-3xl mx-auto">
       <FormTitleDivider title="Create a booking" />
@@ -38,7 +49,8 @@ const Page = async ({
         />
       )}
       <SelectVendor allVendors={allVendors} />
-      
+      <SelectOptions market={market} user={sanityUser} />
+
 
 
 
