@@ -172,12 +172,12 @@ const MarketDays = ({
               edit tables
             </Button>
           )}
-          <Button
+          <Link href={`/admin/dashboard/markets/${marketId}/create-booking`}
             className="my-5 py-2 px-8 bg-black opacity-[1] text-white rounded-none mx-auto"
-            type="button"
           >
+
             Create Booking
-          </Button>
+          </Link>
           {selectedDay && tableSelectionsChanged && (
             <>
               <input type="text" hidden name="date" readOnly value={selectedDay} />
@@ -207,7 +207,7 @@ const MarketDays = ({
               formData.append("reset", "reset");
               saveMarketFormAction(formData);
               setEditTables(true)
-            
+
             }}
             type="button"
           >
