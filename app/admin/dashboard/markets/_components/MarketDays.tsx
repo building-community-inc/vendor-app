@@ -85,11 +85,11 @@ const MarketDays = ({
         {dates.map((date, i) => {
           return (
             // <button
-            //   key={date + i}
             //   type="button"
             //   // onClick={() => setSelectedDay(date)}
             // >
             <Link
+              key={date + i}
               className={`flex flex-col justify-center gap-4 w-fit border-4 border-black p-2 rounded-[20px] ${selectedDay === date ? "border-black" : "border-slate-200"
                 } `}
               href={`${marketId}?selectedDay=${date}`}
