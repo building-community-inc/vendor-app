@@ -91,6 +91,26 @@ export const marketSchema = defineType({
                       to: [{ type: "user" }],
                     }),
                   ],
+                  preview: {
+                    select: {
+                      tableId: "table.id",
+                      businessName: "booked.business.businessName",
+                      firstName: "booked.firstName",
+                      lastName: "booked.lastName",
+                      media: "booked.business.logo",
+                    },
+                    prepare({tableId, firstName, lastName, media, businessName}) {
+                      if (!businessName) return {
+                        title: `table # ${tableId} available`,
+                        // media: 
+                      }
+                      return {
+                        title: businessName,
+                        subtitle: `${firstName} ${lastName}`,
+                        media,
+                      };
+                    }
+                  },
                 }),
               ],
             }),

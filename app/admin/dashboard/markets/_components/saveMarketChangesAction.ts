@@ -1,6 +1,8 @@
 "use server";
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { areDatesSame } from "@/utils/helpers";
+import { nanoid } from "nanoid";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const tableSchema = z.object({
@@ -22,6 +24,7 @@ const tableObjectSchema = z.object({
 });
 
 const daySchema = z.object({
+  _key: z.string(),
   date: z.string(),
   tables: z.array(tableObjectSchema),
 });
@@ -44,11 +47,19 @@ export const saveMarketChanges = async (
 ) => {
   // console.log(formData);
   const rawData = {
+    reset: formData.get("reset"),
     date: formData.get("date"),
     vendorIds: formData.getAll("vendorId"),
     tableSelections: formData.getAll("tableSelection"),
     marketId: formData.get("marketId"),
   };
+
+  if (rawData.reset) {
+    return {
+      success: false,
+      error: ""
+    }
+  }
 
   const parsedData = rawDataParser.safeParse(rawData);
 
@@ -82,6 +93,7 @@ export const saveMarketChanges = async (
     `*[_type == "market" && _id == "${parsedData.data.marketId}"][0] {
       _id,
       "daysWithTables": daysWithTables[] {
+        _key,
         date,
         "tables": tables[] {
           "table": table {
@@ -92,8 +104,21 @@ export const saveMarketChanges = async (
             "_ref": _id
           }
         }
+      },
+      "vendors": vendors[] {
+        "vendor": vendor {
+          _ref,
+          "_type": "reference"
+        },
+        _key,
+        "datesBooked": datesBooked[] {
+          _key,
+          date,
+          tableId,
+          _type
+        }
+        
       }
-
     }`
   );
 
@@ -103,19 +128,37 @@ export const saveMarketChanges = async (
       error: "Error finding market",
     };
 
-  console.log({ table: sanityMarket.daysWithTables[0].tables[0] });
   const zodSanityMarket = z.object({
     _id: z.string(),
     daysWithTables: z.array(
       z.object({
+        _key: z.string().default(() => nanoid()),
         date: z.string(),
         tables: z.array(
           z.object({
+            _key: z.string().default(() => nanoid()),
             table: z.object({
               id: z.string(),
               price: z.number(),
             }),
             booked: zodRefObject.optional().nullable(),
+          })
+        ),
+      })
+    ),
+    vendors: z.array(
+      z.object({
+        vendor: z.object({
+          _ref: z.string(),
+          _type: z.string(),
+        }),
+        _key: z.string().default(() => nanoid()),
+        datesBooked: z.array(
+          z.object({
+            _key: z.string().default(() => nanoid()),
+            date: z.string(),
+            tableId: z.string(),
+            _type: z.string(),
           })
         ),
       })
@@ -143,6 +186,7 @@ export const saveMarketChanges = async (
   }
 
   const dayWithTables: TDaySchema = {
+    _key: dayToUpdate._key,
     date: parsedData.data.date,
     tables: dayToUpdate.tables.map((table) => {
       const vendor = vendors.find(
@@ -164,7 +208,7 @@ export const saveMarketChanges = async (
       } else
         return {
           ...table,
-          booked: null,
+          booked: undefined,
         };
     }),
   };
@@ -182,13 +226,6 @@ export const saveMarketChanges = async (
       error: "issue with the dates",
     };
   }
-
-  // if (!dayToUpdate.tables) {
-  //   return {
-  //     success: false,
-  //     error: "no tables found"
-  //   }
-  // }
 
   if (!areAllTablesInTable2InTable1(dayToUpdate.tables, dayWithTables.tables)) {
     return {
@@ -219,23 +256,69 @@ export const saveMarketChanges = async (
     }
   );
 
-  // const newTables:
-  console.log({
-    areTablesDifferent,
-    updatedDaysWithTables,
-    newTables: updatedDaysWithTables[0].tables,
-    oldTables: dayToUpdate.tables,
+  const updatedVendors = parsedSanityMarket.data.vendors.map((vendor) => {
+    for (const newVendor of vendors) {
+      if (newVendor.vendorId === vendor.vendor._ref) {
+        const dateBooked = vendor.datesBooked.find((date) =>
+          areDatesSame(date.date, parsedData.data.date)
+        );
+        if (dateBooked?.tableId === newVendor.tableSelection) {
+          return vendor;
+        }
+
+        const newDateBooked = {
+          ...dateBooked,
+          tableId: newVendor.tableSelection,
+        };
+
+        return {
+          ...vendor,
+          datesBooked: vendor.datesBooked.map((date) => {
+            if (areDatesSame(date.date, parsedData.data.date)) {
+              return newDateBooked;
+            }
+            return date;
+          }),
+        };
+      }
+    }
+
+    return {
+      ...vendor,
+    };
   });
 
+  // console.log({
+  //   newDatesVendor: updatedVendors[3].datesBooked,
+  //   oldDatesVendor: parsedSanityMarket.data.vendors[3].datesBooked,
+  // });
 
-  // const sanityResp = await sanityWriteClient
-  // .patch(parsedSanityMarket.data._id) // replace '<document-id>' with the id of the document you want to update
-  // .set({
-  //   'daysWithTables': updatedDaysWithTables // replace 'updatedDaysWithTables' with the updated array
-  // })
-  // .commit() // Don't forget to call commit() to send the patch
+  // console.log({newVendor: updatedVendors[1].datesBooked, oldVendor: parsedSanityMarket.data.vendors[1].datesBooked});
 
+  // console.log({
+  //   areTablesDifferent,
+  //   updatedDaysWithTables,
+  //   newTables: updatedDaysWithTables[0].tables,
+  //   oldTables: dayToUpdate.tables,
+  // });
 
+  const sanityResp = await sanityWriteClient
+    .patch(parsedSanityMarket.data._id)
+    .set({
+      daysWithTables: updatedDaysWithTables,
+      vendors: updatedVendors,
+    })
+    .commit();
+
+  if (sanityResp) {
+    revalidatePath("/admin/dashboard/markets");
+    revalidatePath("/dashboard/markets");
+
+    return {
+      success: true,
+      error: "",
+    };
+  }
 
   return {
     success: false,
@@ -286,3 +369,16 @@ function areAllTablesInTable2InTable1(
     tables1.some((table1) => table1.table.id === table2.table?.id)
   );
 }
+
+// const resetFormState = (
+//   formState: {
+//     success: boolean;
+//     error: string;
+//   },
+//   formData: FormData
+// ) => {
+//   return {
+//     success: false,
+//     error: ""
+//   }
+// }
