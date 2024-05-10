@@ -35,12 +35,12 @@ const CreateBookingForm = ({ market, allVendors, sanityUser }: {
       <SelectDetails market={market} user={sanityUser} />
 
 
-      <Button type="submit">Complete Booking</Button>
+      <Button className="rounded-none bg-black text-white py-4 px-6 text-lg mx-auto my-10" type="submit">Complete Booking</Button>
 
       {formState.errors.length > 0 && (
-        <ul>
+        <ul className="flex flex-col w-fit mx-auto">
           {formState.errors.map(err => (
-            <li key={err} className="text-red-700">{err}</li>
+            <li key={err} className="text-red-700 text-left">* {err}</li>
           ))}
         </ul>
       )}

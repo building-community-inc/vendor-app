@@ -33,7 +33,7 @@ const SelectPaymentOptions = ({setIsPayNowSelected} : {
       </div>
 
       <h2 className="font-bold">Payment Types</h2>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 mb-6">
         <label htmlFor="pay-now" className="flex items-center gap-2">
           <input
             type="radio"
@@ -44,7 +44,7 @@ const SelectPaymentOptions = ({setIsPayNowSelected} : {
           />
           <span>Cash</span>
         </label>
-        <label htmlFor="pay-later" className="flex items-center gap-2">
+        <label htmlFor="pay-later" className="flex items-center gap-3 w-full">
           <input
             type="radio"
             id="pay-later"
@@ -53,7 +53,7 @@ const SelectPaymentOptions = ({setIsPayNowSelected} : {
             value="stripe"
           />
           <span>Stripe</span>
-          <input type="text" name="stripePaymentId" placeholder="Stripe Payment Id" className="border border-black rounded-lg p-4" />
+          <input type="text" name="stripePaymentId" placeholder="Stripe Payment Id" className="w-full border border-black rounded-lg px-4 py-2" />
         </label>
       </div>
     </section>

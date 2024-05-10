@@ -57,14 +57,14 @@ const SelectDetails = ({ market, user }: { market: TSanityMarket, user: TUserWit
       <SelectPaymentOptions setIsPayNowSelected={setIsPayNowSelected} />
 
       <h2 className="font-bold">Total Booking Cost:</h2>
-      <span>{totalToPay}</span>
+      <span>${totalToPay}</span>
       <input hidden type="text" value={totalToPay} name="total" readOnly />
 
       <h2 className="font-bold">Total Collected:</h2>
-      <span>{dueNow}</span>
+      <span>${dueNow}</span>
       <input hidden type="text" value={dueNow} name="paid" readOnly />
       <p>Amount Owing:</p>
-      <span>{totalToPay - dueNow}</span>
+      <span>${totalToPay - dueNow}</span>
       <input hidden type="text" value={totalToPay - dueNow} name="owed" readOnly />
 
       
