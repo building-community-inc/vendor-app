@@ -4,7 +4,7 @@ import {
   TSanityMarket,
   TTableInDay,
 } from "@/sanity/queries/admin/markets";
-import { formatDateWLuxon } from "@/utils/helpers";
+import { areDatesSame, formatDateWLuxon } from "@/utils/helpers";
 import { TDateType } from "@/app/dashboard/markets/[id]/select-preferences/_components/SelectOptions";
 
 const SelectDates = ({
@@ -22,13 +22,15 @@ const SelectDates = ({
   businessCategory: string;
 
 }) => {
-
   // Filter out the days that already have a business with the same category
   const availableDays = market.daysWithTables?.filter(day => {
     // Check if there is a vendor with the same category that has booked this day
-    const isBooked = market.vendors?.some(vendor =>
-      vendor.vendor.businessCategory === businessCategory &&
-      vendor.datesBooked.some(bookedDate => bookedDate.date === day.date)
+    const isBooked = market.vendors?.some(vendor => {
+      return (
+        vendor.vendor.businessCategory === businessCategory &&
+        vendor.datesBooked.some(bookedDate => areDatesSame(bookedDate.date, day.date))
+      )
+    }
     );
 
     // Return true if the day is not booked, false otherwise
@@ -38,7 +40,7 @@ const SelectDates = ({
   if (availableDays?.length === 0) {
     return (
       <section className="flex flex-col gap-4 w-full">
-        <p className="text-red-500">No available dates for this market</p>
+        <p className="text-red-700">No available dates for this vendor</p>
       </section>
     )
   }
@@ -57,7 +59,7 @@ const SelectDates = ({
               >
                 <div
                   className="flex items-center gap-2 h-full relative z-10"
-                  // onClick={() => handleDateSelect(dayObj)}
+                // onClick={() => handleDateSelect(dayObj)}
                 >
                   <input
                     type="checkbox"

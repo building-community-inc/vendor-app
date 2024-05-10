@@ -18,7 +18,19 @@ const CreateBookingForm = ({ market, allVendors, sanityUser }: {
 }) => {
 
   const [formState, formAction] = useFormState(createBooking, { errors: [], success: false })
-  console.log({ formState })
+
+  if (formState.success) {
+    return (
+      <div>
+        <h1>Booking Created Successfully</h1>
+        <Button className="rounded-none bg-black text-white py-4 px-6 text-lg mx-auto my-10" type="button">
+          <Link href={`/admin/dashboard/markets/${market._id}`}>
+            Back to Market
+          </Link>
+        </Button>
+      </div>
+    )
+  }
   return (
     <form action={formAction}>
 
@@ -45,7 +57,7 @@ const CreateBookingForm = ({ market, allVendors, sanityUser }: {
       </Button>
 
       {
-        formState.errors.length > 0 && (
+        formState.errors && formState.errors.length > 0 && (
           <ul className="flex flex-col w-fit mx-auto">
             {formState.errors.map(err => (
               <li key={err} className="text-red-700 text-left">* {err}</li>

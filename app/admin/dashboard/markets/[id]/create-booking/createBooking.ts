@@ -112,7 +112,9 @@ export const createBooking = async (
   // TODO UPDATE MARKET DAY WITH TABLES
 
   // TODO UPDATE VENDORS ARRAY IN MARKET
-  // const sanityPaymentResponse = await sanityWriteClient.create(parsedPaymentRecord.data);
+  const sanityPaymentResponse = await sanityWriteClient.create(
+    parsedPaymentRecord.data
+  );
 
   const sanityMarket = await sanityClient.fetch(`
   *[_type == 'market' && _id == "${parsedData.data.marketId}"][0]{
@@ -206,20 +208,29 @@ export const createBooking = async (
   };
 
   console.log({
-    oldVendors: parsedSanityMarket.data.vendors.find(vendor => vendor.vendor._ref === parsedData.data.vendorId)?.datesBooked,
-    newVendors: updatedMarket.vendors.find(vendor => vendor.vendor._ref === parsedData.data.vendorId)?.datesBooked,
+    oldVendors: parsedSanityMarket.data.vendors.find(
+      (vendor) => vendor.vendor._ref === parsedData.data.vendorId
+    )?.datesBooked,
+    newVendors: updatedMarket.vendors.find(
+      (vendor) => vendor.vendor._ref === parsedData.data.vendorId
+    )?.datesBooked,
   });
 
-  // const sanityMarketResponse = await sanityWriteClient
-  //   .patch(parsedSanityMarket.data._id)
-  //   .set(updatedMarket)
-  //   .commit();
+  const sanityMarketResponse = await sanityWriteClient
+    .patch(parsedSanityMarket.data._id)
+    .set(updatedMarket)
+    .commit();
 
-  // console.log({sanityPaymentResponse, sanityMarketResponse})
+  if (!sanityPaymentResponse || !sanityMarketResponse) {
+    return {
+      errors: ["Error creating booking"],
+      success: false,
+    };
+  }
 
   return {
-    errors: ["q paso rick?"],
-    success: false,
+    errors: null,
+    success: true,
   };
 };
 
