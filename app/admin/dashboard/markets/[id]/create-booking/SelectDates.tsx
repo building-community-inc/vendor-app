@@ -83,7 +83,7 @@ const SelectDates = ({
                     className="text-black w-fit"
                     onChange={(e) => {
                       const newTable = dayObj.tables.find(
-                        (t) => t.table.id === e.target.value
+                        (t) => t.table.id === e.target.value.split("-")[0]
                       );
 
                       if (newTable === undefined) return;
@@ -96,7 +96,7 @@ const SelectDates = ({
                       .map((table, index) => (
                         <option
                           key={`${table.table}-${index}`}
-                          value={table.table.id}
+                          value={`${table.table.id}-${table.table.price}`}
                         >
                           Table: {table.table.id} Price: ${table.table.price}
                         </option>

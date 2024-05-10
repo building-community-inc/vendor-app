@@ -115,7 +115,7 @@ export type TDayWithTable = z.infer<typeof zodDayWithTable>;
 export type TTable = z.infer<typeof zodTable>;
 export type TTableInDay = z.infer<typeof zodTableInDay>;
 
-const zodDaysWithTables = z.array(zodDayWithTable).optional().nullable();
+export const zodDaysWithTables = z.array(zodDayWithTable);
 
 const zodVendorSchema = z.object({
   vendor: z.object({
@@ -153,7 +153,7 @@ const zodMarketQuery = zodMarketFormSchema.merge(
     vendorInstructions: z.string().optional().nullable(),
     vendors: z.array(zodVendorSchema).optional().nullable(),
 
-    daysWithTables: zodDaysWithTables,
+    daysWithTables: zodDaysWithTables.optional().nullable(),
   })
 );
 export type TSanityMarket = z.infer<typeof zodMarketQuery>;

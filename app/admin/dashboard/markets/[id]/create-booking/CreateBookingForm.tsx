@@ -1,3 +1,4 @@
+
 "use client"
 import { TSanityMarket } from "@/sanity/queries/admin/markets";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
@@ -8,6 +9,7 @@ import SelectDetails from "./SelectDetails";
 import { TVendor } from "@/sanity/queries/admin/vendors";
 import { createBooking } from "./createBooking";
 import Button from "@/app/_components/Button";
+import Link from "next/link";
 
 const CreateBookingForm = ({ market, allVendors, sanityUser }: {
   market: TSanityMarket;
@@ -36,15 +38,22 @@ const CreateBookingForm = ({ market, allVendors, sanityUser }: {
 
 
       <Button className="rounded-none bg-black text-white py-4 px-6 text-lg mx-auto my-10" type="submit">Complete Booking</Button>
+      <Button className="rounded-none bg-black text-white py-4 px-6 text-lg mx-auto my-10" type="button">
+        <Link href={`/admin/dashboard/markets/${market._id}`}>
+          Back to Market
+        </Link>
+      </Button>
 
-      {formState.errors.length > 0 && (
-        <ul className="flex flex-col w-fit mx-auto">
-          {formState.errors.map(err => (
-            <li key={err} className="text-red-700 text-left">* {err}</li>
-          ))}
-        </ul>
-      )}
-    </form>
+      {
+        formState.errors.length > 0 && (
+          <ul className="flex flex-col w-fit mx-auto">
+            {formState.errors.map(err => (
+              <li key={err} className="text-red-700 text-left">* {err}</li>
+            ))}
+          </ul>
+        )
+      }
+    </form >
 
   );
 }

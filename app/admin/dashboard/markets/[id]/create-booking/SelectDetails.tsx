@@ -6,6 +6,7 @@ import { useState } from "react";
 import { TDateType, TSelectedTableType } from "@/app/dashboard/markets/[id]/select-preferences/_components/SelectOptions";
 import SelectPaymentOptions from "./SelectPaymentOptions";
 import SelectDates from "./SelectDates";
+import { useSearchParams } from 'next/navigation'
 
 const SelectDetails = ({ market, user }: { market: TSanityMarket, user: TUserWithOptionalBusinessRef }) => {
   const [newSelectedDates, setNewSelectedDates] = useState<TDayWithTable[]>([]);
@@ -13,6 +14,9 @@ const SelectDetails = ({ market, user }: { market: TSanityMarket, user: TUserWit
     []
   );
   const [isPayNowSelected, setIsPayNowSelected] = useState<boolean>(true);
+  const searchParams = useSearchParams();
+
+  const selectedBusinessCategory = searchParams.get('businessCategory')
 
 
   const handleNewDateSelect = (date: TDayWithTable) => {
@@ -51,7 +55,7 @@ const SelectDetails = ({ market, user }: { market: TSanityMarket, user: TUserWit
         handleDateSelect={handleNewDateSelect}
         selectedDates={newSelectedDates}
         handleOnTableChange={handleOnTableChange}
-        businessCategory={user?.business?.industry || ''}
+        businessCategory={selectedBusinessCategory ?? ''}
       />
 
       <SelectPaymentOptions setIsPayNowSelected={setIsPayNowSelected} />
@@ -63,9 +67,14 @@ const SelectDetails = ({ market, user }: { market: TSanityMarket, user: TUserWit
       <h2 className="font-bold">Total Collected:</h2>
       <span>${dueNow}</span>
       <input hidden type="text" value={dueNow} name="paid" readOnly />
+      <h2 className="font-bold">HST:</h2>
+      <span>${(dueNow * .13).toFixed(2)}</span>
+      <input hidden type="text" value={dueNow} name="hst" readOnly />
+      
       <p>Amount Owing:</p>
       <span>${totalToPay - dueNow}</span>
       <input hidden type="text" value={totalToPay - dueNow} name="owed" readOnly />
+      <input hidden type="text" value={market._id} name="marketId" readOnly />
 
       
     </>

@@ -3,6 +3,7 @@ import { TVendor } from "@/sanity/queries/admin/vendors";
 import { useRef, useState } from "react";
 import { CloseCircleIcon } from '@sanity/icons'
 import { useClickOutside, useEscapeKey } from "@/app/_components/hooks";
+import { useRouter } from "next/navigation";
 
 const SelectVendor = ({ allVendors }: {
   allVendors: TVendor[];
@@ -11,6 +12,7 @@ const SelectVendor = ({ allVendors }: {
   const [selectedVendor, setSelectedVendor] = useState<TVendor | null>(null)
   const [isInputFocused, setInputFocused] = useState(false);
   const inputRef = useRef(null);
+  const router = useRouter()
 
   const filteredVendors = allVendors.filter(vendor => {
     if (inputText.trim() === '') {
@@ -50,7 +52,16 @@ const SelectVendor = ({ allVendors }: {
             Selected Vendor: {selectedVendor.business?.name || selectedVendor.email}
           </p>
           <input type="hidden" name="vendorId" value={selectedVendor._id} readOnly />
-          <CloseCircleIcon className="w-10 h-10 cursor-pointer" onClick={() => setSelectedVendor(null)} />
+          <CloseCircleIcon 
+          className="w-10 h-10 cursor-pointer" 
+          onClick={() => {
+            setInputText('')
+            router.push(`?businessCategory=`)
+            setSelectedVendor(null)
+          }
+
+
+          } />
         </div>
       ) : (
         <label htmlFor="" className="relative">
@@ -86,6 +97,7 @@ const SelectVendor = ({ allVendors }: {
                     setSelectedVendor(vendor);
                     setInputText(vendor.business?.name || vendor.email); // Update the input text
                     setInputFocused(false);
+                    router.push(`?businessCategory=${vendor.business?.category}`)
                   }}
                 >
                   <span>

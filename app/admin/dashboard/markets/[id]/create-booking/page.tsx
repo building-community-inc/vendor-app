@@ -46,7 +46,7 @@ const Page = async ({
       <h2><strong>{dateArrayToDisplayableText(market.dates)}</strong></h2>
       <h2><strong>{market.name}</strong></h2>
       <CreateBookingForm allVendors={allVendors} market={market} sanityUser={sanityUser} />
-
+    
     </main>
   );
 }
