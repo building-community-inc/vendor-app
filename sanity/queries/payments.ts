@@ -14,9 +14,10 @@ export const zodLatePaymentSchema = z.object({
   _id: z.string(),
   payments: z.array(
     z.object({
+      paymentType: z.union([z.literal("stripe"), z.literal("cash")]),
       _key: z.string(),
       paymentDate: z.string(),
-      stripePaymentIntentId: z.string(),
+      stripePaymentIntentId: z.string().optional().nullable(),
       amount: z.number(),
       _type: z.string(),
     })
@@ -28,34 +29,21 @@ export const zodLatePaymentSchema = z.object({
     hst: z.number(),
   }),
 });
-export const zodLatePaymentWithMarketSchema = z.object({
-  _id: z.string(),
-  payments: z.array(
-    z.object({
-      _key: z.string(),
-      paymentDate: z.string(),
-      stripePaymentIntentId: z.string(),
-      amount: z.number(),
-      _type: z.string(),
-    })
-  ),
-  amount: z.object({
-    paid: z.number(),
-    total: z.number(),
-    owed: z.number(),
-  }),
-  market: z.object({
-    name: z.string(),
-    _id: z.string(),
-  }),
-  items: z.array(
-    z.object({
-      tableId: z.string(),
-      date: z.string(),
-      price: z.number(),
-    })
-  ),
-});
+export const zodLatePaymentWithMarketSchema = zodLatePaymentSchema.merge(
+  z.object({
+    market: z.object({
+      name: z.string(),
+      _id: z.string(),
+    }),
+    items: z.array(
+      z.object({
+        tableId: z.string(),
+        date: z.string(),
+        price: z.number(),
+      })
+    ),
+  })
+);
 
 const paymentQuery = `
   _id,

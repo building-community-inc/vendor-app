@@ -61,6 +61,11 @@ export const paymentRecordSchema = defineType({
               type: "string",
             }),
             defineField({
+              name: "paymentType",
+              title: "Payment Type",
+              type: "string"
+            }),
+            defineField({
               name: "amount",
               title: "Amount",
               type: "number",

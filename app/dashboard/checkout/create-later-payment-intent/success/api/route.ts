@@ -73,6 +73,7 @@ export const GET = async (req: Request) => {
           ...sanityPayment.payments,
           {
             _key: nanoid(),
+            paymentType: "stripe",
             paymentDate,
             stripePaymentIntentId: stripePayment.id,
             amount: amountPaid,

@@ -4,26 +4,23 @@ import {
   TSanityMarket,
   TTableInDay,
 } from "@/sanity/queries/admin/markets";
-import { TDateType } from "./SelectOptions";
-import { DateTime } from "luxon";
 import { formatDateWLuxon } from "@/utils/helpers";
+import { TDateType } from "@/app/dashboard/markets/[id]/select-preferences/_components/SelectOptions";
 
 const SelectDates = ({
   market,
   handleDateSelect,
   selectedDates,
-  totalToPay,
   handleOnTableChange,
-  dueNow,
-  businessCategory
+  businessCategory,
+
 }: {
   market: TSanityMarket;
   handleDateSelect: (date: TDayWithTable) => void;
   handleOnTableChange: (table: TTableInDay, date: TDateType) => void;
   selectedDates: TDayWithTable[];
-  totalToPay: number | null;
-  dueNow: number;
   businessCategory: string;
+
 }) => {
 
   // Filter out the days that already have a business with the same category
@@ -50,21 +47,21 @@ const SelectDates = ({
       <h2 className="font-bold">Select Dates</h2>
       <ul className="flex flex-col gap-3 w-full">
         {availableDays?.map((dayObj, index) => {
-   
+
 
           return (
             <li key={dayObj.date}>
               <label
-                htmlFor={`date-[${index}]`}
+                htmlFor={dayObj.date}
                 className="flex items-center justify-between min-h-[2rem]"
               >
                 <div
                   className="flex items-center gap-2 h-full relative z-10"
-                  onClick={() => handleDateSelect(dayObj)}
+                  // onClick={() => handleDateSelect(dayObj)}
                 >
                   <input
                     type="checkbox"
-                    name={`date-[${index}]`}
+                    name={`date-${dayObj.date}`}
                     id={dayObj.date}
                     className="pointer-events-none relative z-[2]"
                     onChange={() => handleDateSelect(dayObj)}
@@ -78,7 +75,7 @@ const SelectDates = ({
                 </div>
                 {!!selectedDates.find((d) => d.date === dayObj.date) && (
                   <select
-                    name="table"
+                    name={`table-${dayObj.date}`}
                     required={
                       !!selectedDates.find((d) => d && d.date === dayObj.date)
                     }
