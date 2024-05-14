@@ -4,6 +4,7 @@ import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { TVendor } from "@/sanity/queries/admin/markets";
 import { zodLatePaymentWithMarketSchema } from "@/sanity/queries/payments";
 import { nanoid } from "nanoid";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 export const createBooking = async (
@@ -83,6 +84,7 @@ export const createBooking = async (
     },
     items: parsedData.data.bookings.map((booking) => {
       return {
+        _key: nanoid(),
         tableId: booking.tableId,
         date: booking.date,
         price: 50,
@@ -207,14 +209,14 @@ export const createBooking = async (
     ],
   };
 
-  console.log({
-    oldVendors: parsedSanityMarket.data.vendors.find(
-      (vendor) => vendor.vendor._ref === parsedData.data.vendorId
-    )?.datesBooked,
-    newVendors: updatedMarket.vendors.find(
-      (vendor) => vendor.vendor._ref === parsedData.data.vendorId
-    )?.datesBooked,
-  });
+  // console.log({
+  //   oldVendors: parsedSanityMarket.data.vendors.find(
+  //     (vendor) => vendor.vendor._ref === parsedData.data.vendorId
+  //   )?.datesBooked,
+  //   newVendors: updatedMarket.vendors.find(
+  //     (vendor) => vendor.vendor._ref === parsedData.data.vendorId
+  //   )?.datesBooked,
+  // });
 
   const sanityMarketResponse = await sanityWriteClient
     .patch(parsedSanityMarket.data._id)
@@ -227,6 +229,9 @@ export const createBooking = async (
       success: false,
     };
   }
+  revalidatePath("/admin/dashboard/markets/[id]", "page");
+  revalidatePath("/dashboard/markets/[id]", "page");
+  
 
   return {
     errors: null,

@@ -57,7 +57,6 @@ const userMarketQueryString = `
     _id,
     "items": items[] {
         price,
-        name,
         date,
         tableId
     }
@@ -78,7 +77,6 @@ const zodUserMarket = z.object({
   items: z.array(
     z.object({
       price: z.number(),
-      name: z.string(),
       date: z.string(),
       tableId: z.string(),
     })

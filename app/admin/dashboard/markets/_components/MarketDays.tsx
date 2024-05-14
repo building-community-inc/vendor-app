@@ -7,6 +7,9 @@ import { saveMarketChanges } from "./saveMarketChangesAction";
 import { useFormState } from "react-dom";
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
+import { TrashIcon } from '@sanity/icons'
+
+
 export type TDayWithTable = {
   date: string;
   tables: {
@@ -43,6 +46,10 @@ const MarketDays = ({
 
   const [editTables, setEditTables] = useState(false);
 
+
+  const deleteVendor = (vendorId: string) => {
+    setSortedVendors(prevVendors => prevVendors.filter(vendor => vendor.vendor._ref !== vendorId));
+  };
 
 
   useEffect(() => {
@@ -154,6 +161,20 @@ const MarketDays = ({
                         'N/A'
                       )}
                     </td>
+                    {editTables && (
+                      <td>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            deleteVendor(vendor.vendor._ref)
+                            setTableSelectionsChanged(true);
+                          }}
+                          className=" flex items-center"
+                        >
+                          <TrashIcon className="text-2xl" />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 );
               })}

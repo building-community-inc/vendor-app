@@ -17,7 +17,7 @@ const page = async () => {
   );
 
   const userMarkets = await getUserMarkets(sanityUser._id);
-
+  console.log(userMarkets)
 
   userMarkets.sort((a, b) => {
     // Convert the dates from strings to DateTime objects and find the earliest date

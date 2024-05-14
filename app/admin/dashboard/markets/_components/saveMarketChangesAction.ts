@@ -57,8 +57,8 @@ export const saveMarketChanges = async (
   if (rawData.reset) {
     return {
       success: false,
-      error: ""
-    }
+      error: "",
+    };
   }
 
   const parsedData = rawDataParser.safeParse(rawData);
@@ -127,43 +127,6 @@ export const saveMarketChanges = async (
       success: false,
       error: "Error finding market",
     };
-
-  const zodSanityMarket = z.object({
-    _id: z.string(),
-    daysWithTables: z.array(
-      z.object({
-        _key: z.string().default(() => nanoid()),
-        date: z.string(),
-        tables: z.array(
-          z.object({
-            _key: z.string().default(() => nanoid()),
-            table: z.object({
-              id: z.string(),
-              price: z.number(),
-            }),
-            booked: zodRefObject.optional().nullable(),
-          })
-        ),
-      })
-    ),
-    vendors: z.array(
-      z.object({
-        vendor: z.object({
-          _ref: z.string(),
-          _type: z.string(),
-        }),
-        _key: z.string().default(() => nanoid()),
-        datesBooked: z.array(
-          z.object({
-            _key: z.string().default(() => nanoid()),
-            date: z.string(),
-            tableId: z.string(),
-            _type: z.string(),
-          })
-        ),
-      })
-    ),
-  });
 
   const parsedSanityMarket = zodSanityMarket.safeParse(sanityMarket);
 
@@ -256,37 +219,74 @@ export const saveMarketChanges = async (
     }
   );
 
-  const updatedVendors = parsedSanityMarket.data.vendors.map((vendor) => {
-    for (const newVendor of vendors) {
-      if (newVendor.vendorId === vendor.vendor._ref) {
-        const dateBooked = vendor.datesBooked.find((date) =>
-          areDatesSame(date.date, parsedData.data.date)
-        );
-        if (dateBooked?.tableId === newVendor.tableSelection) {
-          return vendor;
-        }
+  // console.log({tableSelections, vendors})
 
-        const newDateBooked = {
-          ...dateBooked,
-          tableId: newVendor.tableSelection,
-        };
+  // const updatedVendors = parsedSanityMarket.data.vendors.map((vendor) => {
+  //   for (const newVendor of vendors) {
+  //     if (newVendor.vendorId === vendor.vendor._ref) {
+  //       const dateBooked = vendor.datesBooked.find((date) =>
+  //         areDatesSame(date.date, parsedData.data.date)
+  //       );
+  //       if (dateBooked?.tableId === newVendor.tableSelection) {
+  //         return vendor;
+  //       }
 
-        return {
-          ...vendor,
-          datesBooked: vendor.datesBooked.map((date) => {
-            if (areDatesSame(date.date, parsedData.data.date)) {
-              return newDateBooked;
-            }
-            return date;
-          }),
-        };
+  //       const newDateBooked = {
+  //         ...dateBooked,
+  //         tableId: newVendor.tableSelection,
+  //       };
+
+  //       return {
+  //         ...vendor,
+  //         datesBooked: vendor.datesBooked.map((date) => {
+  //           if (areDatesSame(date.date, parsedData.data.date)) {
+  //             return newDateBooked;
+  //           }
+  //           return date;
+  //         }),
+  //       };
+  //     }
+  //   }
+
+  //   return {
+  //     ...vendor,
+  //   };
+  // });
+  const updatedVendors = vendors
+    .map((newVendor) => {
+      const vendor = parsedSanityMarket.data.vendors.find(
+        (vendor) => newVendor.vendorId === vendor.vendor._ref
+      );
+
+      if (!vendor) {
+        // Handle the case where the vendor is not found in the Sanity data
+        return null;
       }
-    }
 
-    return {
-      ...vendor,
-    };
-  });
+      const dateBooked = vendor.datesBooked.find((date) =>
+        areDatesSame(date.date, parsedData.data.date)
+      );
+
+      if (dateBooked?.tableId === newVendor.tableSelection) {
+        return vendor;
+      }
+
+      const newDateBooked = {
+        ...dateBooked,
+        tableId: newVendor.tableSelection,
+      };
+
+      return {
+        ...vendor,
+        datesBooked: vendor.datesBooked.map((date) => {
+          if (areDatesSame(date.date, parsedData.data.date)) {
+            return newDateBooked;
+          }
+          return date;
+        }),
+      };
+    })
+    .filter(Boolean); // Remove null values
 
   // console.log({
   //   newDatesVendor: updatedVendors[3].datesBooked,
@@ -311,8 +311,8 @@ export const saveMarketChanges = async (
     .commit();
 
   if (sanityResp) {
-    revalidatePath("/admin/dashboard/markets");
-    revalidatePath("/dashboard/markets");
+    revalidatePath("/admin/dashboard/markets/[id]", "page");
+    revalidatePath("/dashboard/markets/[id]", "page");
 
     return {
       success: true,
@@ -382,3 +382,39 @@ function areAllTablesInTable2InTable1(
 //     error: ""
 //   }
 // }
+const zodSanityMarket = z.object({
+  _id: z.string(),
+  daysWithTables: z.array(
+    z.object({
+      _key: z.string().default(() => nanoid()),
+      date: z.string(),
+      tables: z.array(
+        z.object({
+          _key: z.string().default(() => nanoid()),
+          table: z.object({
+            id: z.string(),
+            price: z.number(),
+          }),
+          booked: zodRefObject.optional().nullable(),
+        })
+      ),
+    })
+  ),
+  vendors: z.array(
+    z.object({
+      vendor: z.object({
+        _ref: z.string(),
+        _type: z.string(),
+      }),
+      _key: z.string().default(() => nanoid()),
+      datesBooked: z.array(
+        z.object({
+          _key: z.string().default(() => nanoid()),
+          date: z.string(),
+          tableId: z.string(),
+          _type: z.string(),
+        })
+      ),
+    })
+  ),
+});
