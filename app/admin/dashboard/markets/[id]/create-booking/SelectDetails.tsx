@@ -69,7 +69,7 @@ const SelectDetails = ({ market, user }: { market: TSanityMarket, user: TUserWit
       <input hidden type="text" value={dueNow} name="paid" readOnly />
       <h2 className="font-bold">HST:</h2>
       <span>${(dueNow * .13).toFixed(2)}</span>
-      <input hidden type="text" value={dueNow} name="hst" readOnly />
+      <input hidden type="text" value={(dueNow * .13).toFixed(2)} name="hst" readOnly />
       
       <p>Amount Owing:</p>
       <span>${totalToPay - dueNow}</span>

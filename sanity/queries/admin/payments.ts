@@ -23,12 +23,14 @@ const zodPaymentSchema = z.object({
     status: z.string(),
     acceptedTerms: z.boolean().optional().nullable(),
   }),
-  items: z.array(z.object({
-    date: z.string(),
-    price: z.number(),
-    name: z.string(),
-    tableId: z.string(),
-  })),
+  items: z.array(
+    z.object({
+      date: z.string(),
+      price: z.number(),
+      tableId: z.string(),
+    })
+  ),
+  paymentReturned: z.boolean().optional().nullable()
 });
 
 export type TPayment = z.infer<typeof zodPaymentSchema>;
@@ -68,7 +70,6 @@ export const getAllPayments = async () => {
         "items": items[] {
           date,
           price,
-          name,
           tableId
         }
       }`
@@ -81,7 +82,57 @@ export const getAllPayments = async () => {
     }
 
     return parsedPayments.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
+export const getAllPaymentsForAMarket = async (marketId: string) => {
+  try {
+    const res = await sanityClient.fetch(
+      `*[_type == "paymentRecord" && market._ref == "${marketId}"]{
+        _id,
+        market->{
+          _id,
+          name,
+          dates
+        },
+        "amount": amount {
+          total,
+          paid,
+          owed,
+          hst
+        },
+        "payments": payments [] {
+          stripePaymentIntentId,
+          amount,
+          paymentDate
+        },
+        "vendor": user->{
+          _id,
+          "businessName":  business->businessName,
+          firstName, 
+          lastName,
+          email,
+          status,
+          "acceptedTerms": acceptedTerms.accepted,
+        },
+        "items": items[] {
+          date,
+          price,
+          tableId
+        },
+        paymentReturned
+      }`
+    );
+
+    const parsedPayments = zodPaymentsSchema.safeParse(res);
+
+    if (!parsedPayments.success) {
+      throw new Error(parsedPayments.error.message);
+    }
+
+    return parsedPayments.data;
   } catch (error) {
     console.error(error);
   }

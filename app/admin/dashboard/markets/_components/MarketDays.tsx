@@ -5,9 +5,10 @@ import { areDatesSame, formatMarketDate } from "@/utils/helpers";
 import Link from "next/link";
 import { saveMarketChanges } from "./saveMarketChangesAction";
 import { useFormState } from "react-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { nanoid } from "nanoid";
 import { TrashIcon } from '@sanity/icons'
+import Dialog from "@/app/_components/Dialog";
 
 
 export type TDayWithTable = {
@@ -46,10 +47,35 @@ const MarketDays = ({
 
   const [editTables, setEditTables] = useState(false);
 
+  const [deletedVendors, setDeletedVendors] = useState<TVendor[]>([]);
 
   const deleteVendor = (vendorId: string) => {
-    setSortedVendors(prevVendors => prevVendors.filter(vendor => vendor.vendor._ref !== vendorId));
+    setSortedVendors(prevVendors => {
+      const vendorToDelete = prevVendors.find(vendor => vendor.vendor._ref === vendorId);
+      if (vendorToDelete) {
+        setDeletedVendors(prevDeletedVendors => {
+          if (!prevDeletedVendors.some(vendor => vendor.vendor._ref === vendorId)) {
+            return [...prevDeletedVendors, vendorToDelete];
+          }
+          return prevDeletedVendors;
+        });
+      }
+      return prevVendors.filter(vendor => vendor.vendor._ref !== vendorId);
+    });
   };
+
+
+
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  const formRef = useRef<HTMLFormElement>(null);
+
+
+
+
+  // const deleteVendor = (vendorId: string) => {
+  //   setSortedVendors(prevVendors => prevVendors.filter(vendor => vendor.vendor._ref !== vendorId));
+  // };
 
 
   useEffect(() => {
@@ -96,8 +122,19 @@ const MarketDays = ({
     }
   }, [saveMarketFormState.success])
 
+
+  function toggleDialog() {
+    if (!dialogRef.current) {
+      return;
+    }
+    dialogRef.current.hasAttribute("open")
+      ? dialogRef.current.close()
+      : dialogRef.current.showModal();
+  }
+
+
   return (
-    <form action={saveMarketFormAction}>
+    <form action={saveMarketFormAction} ref={formRef}>
       <div className="flex gap-4 w-fit mx-auto">
         {dates.map((date, i) => {
           return (
@@ -172,6 +209,7 @@ const MarketDays = ({
                           className=" flex items-center"
                         >
                           <TrashIcon className="text-2xl" />
+
                         </button>
                       </td>
                     )}
@@ -201,42 +239,73 @@ const MarketDays = ({
           </Link>
           {selectedDay && tableSelectionsChanged && (
             <>
+              <div className="flex flex-col">
+
+                {deletedVendors.map(vendor => (
+                  <input key={vendor.vendor._ref} type="text" name="deletedVendors" hidden readOnly value={JSON.stringify(vendor)} />
+                ))}
+              </div>
               <input type="text" hidden name="date" readOnly value={selectedDay} />
               <input type="text" hidden name="marketId" readOnly value={marketId} />
               <Button
                 className="my-5 py-2 px-8 bg-black opacity-[1] text-white rounded-none mx-auto"
-
-                // className="my-5 py-2 bg-white border border-primary mx-auto"
-                type="submit">
+                type="button"
+                onClick={() => toggleDialog()}
+              >
                 save changes
               </Button>
             </>
           )}
         </section>
-      )}
-      {saveMarketFormState.error.length > 1 && (
-        <p className="text-red-500 mx-auto w-fit">{saveMarketFormState.error}</p>
-      )}
-      {saveMarketFormState.success && (
-        <section>
+      )
+      }
+      {
+        saveMarketFormState.error.length > 1 && (
+          <p className="text-red-500 mx-auto w-fit">{saveMarketFormState.error}</p>
+        )
+      }
+      {
+        saveMarketFormState.success && (
+          <section>
 
-          <p className="text-green-500 mx-auto w-fit">Changes saved successfully!</p>
-          <Button
-            className="my-5 py-2 px-8 bg-black opacity-[1] text-white rounded-none mx-auto"
-            onClick={() => {
-              const formData = new FormData();
-              formData.append("reset", "reset");
-              saveMarketFormAction(formData);
-              setEditTables(true)
+            <p className="text-green-500 mx-auto w-fit">Changes saved successfully!</p>
+            <Button
+              className="my-5 py-2 px-8 bg-black opacity-[1] text-white rounded-none mx-auto"
+              onClick={() => {
+                const formData = new FormData();
+                formData.append("reset", "reset");
+                saveMarketFormAction(formData);
+                setEditTables(true)
 
-            }}
-            type="button"
-          >
-            edit tables
-          </Button>
-        </section>
-      )}
-    </form>
+              }}
+              type="button"
+            >
+              edit tables
+            </Button>
+          </section>
+        )
+      }
+
+      <Dialog toggleDialog={toggleDialog} ref={dialogRef}>
+        <div>
+          Are you sure you want to save the changes?
+          <footer className="flex gap-2 justify-center mt-2">
+
+            <Button type="button" onClick={() => {
+              if (formRef.current) {
+                formRef.current.requestSubmit();
+              }
+              toggleDialog();
+            }}>
+              Save changes
+            </Button>
+            <Button type="button" onClick={toggleDialog}>
+              Cancel
+            </Button>
+          </footer>
+        </div>
+      </Dialog>
+    </form >
   );
 };
 

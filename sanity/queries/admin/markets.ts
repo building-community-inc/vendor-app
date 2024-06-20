@@ -117,7 +117,7 @@ export type TTableInDay = z.infer<typeof zodTableInDay>;
 
 export const zodDaysWithTables = z.array(zodDayWithTable);
 
-const zodVendorSchema = z.object({
+export const zodVendorSchema = z.object({
   vendor: z.object({
     businessName: z.string(),
     businessCategory: z.string(),

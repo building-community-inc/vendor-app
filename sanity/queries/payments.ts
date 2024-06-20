@@ -29,19 +29,20 @@ export const zodLatePaymentSchema = z.object({
     hst: z.number(),
   }),
 });
+
+export const zodPaymentItem = z.object({
+  tableId: z.string(),
+  date: z.string(),
+  price: z.number(),
+});
+
 export const zodLatePaymentWithMarketSchema = zodLatePaymentSchema.merge(
   z.object({
     market: z.object({
       name: z.string(),
       _id: z.string(),
     }),
-    items: z.array(
-      z.object({
-        tableId: z.string(),
-        date: z.string(),
-        price: z.number(),
-      })
-    ),
+    items: z.array(zodPaymentItem),
   })
 );
 
