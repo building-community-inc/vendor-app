@@ -316,7 +316,7 @@ export const saveMarketChanges = async (
 
       const updatedUserCredits =
         Number(vendor.credits) +
-        (deletedPayment.amount.paid - deletedPayment.amount.hst);
+        (deletedPayment.amount.paid);
       // add payment value to credits
 
       await sanityWriteClient
