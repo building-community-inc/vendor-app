@@ -22,4 +22,7 @@ const Dialog = forwardRef<HTMLDialogElement, Props>(
     );
   }
 );
+
+Dialog.displayName = "Dialog";
+
 export default Dialog;
