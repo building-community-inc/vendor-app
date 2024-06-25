@@ -1,7 +1,6 @@
 "use server";
 
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
-import { TVendor } from "@/sanity/queries/admin/markets";
 import {
   zodLatePaymentWithMarketSchema,
   zodPaymentItem,

@@ -1,6 +1,6 @@
 "use server";
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
-import { zodVendorSchema } from "@/sanity/queries/admin/markets";
+import { zodVendorSchema } from "@/sanity/queries/admin/markets/zods";
 import { getAllPaymentsForAMarket } from "@/sanity/queries/admin/payments";
 import { areDatesSame } from "@/utils/helpers";
 import { DateTime } from "luxon";

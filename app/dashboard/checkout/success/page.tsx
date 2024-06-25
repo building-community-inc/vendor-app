@@ -1,6 +1,6 @@
 import { stripe } from "@/stripe";
 import AddBookingToDb from "./_components/AddBookingToDb";
-import { getMarketById } from "@/sanity/queries/admin/markets";
+import { getMarketById } from "@/sanity/queries/admin/markets/markets";
 import { TPaymentItem } from "./api/route";
 import { formatMarketDate } from "@/utils/helpers";
 import { sanityClient } from "@/sanity/lib/client";

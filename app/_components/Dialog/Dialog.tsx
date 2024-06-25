@@ -1,12 +1,16 @@
+"use client"
 import { forwardRef } from "react";
+import "./Dialog.css";
+import { cn } from "@/utils";
 
 type Props = {
   children: React.ReactNode;
   toggleDialog: () => void;
+  className?: string;
 };
 
 const Dialog = forwardRef<HTMLDialogElement, Props>(
-  ({ children, toggleDialog }, ref) => {
+  ({ children, toggleDialog, className = "" }, ref) => {
     return (
       <dialog
         ref={ref}
@@ -15,7 +19,7 @@ const Dialog = forwardRef<HTMLDialogElement, Props>(
             toggleDialog();
           }
         }}
-        className="p-5"
+        className={cn("p-5", className)}
       >
         {children}
       </dialog>

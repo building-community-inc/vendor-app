@@ -102,8 +102,5 @@ export const getVendorById = async (id: string) => {
     const parsedVendor = zodVendorSchema.safeParse(result);
 
     return parsedVendor;
-  // } catch (error) {
-  //   console.error(error);
-  //   return { error };
-  // }
+
 };

@@ -1,4 +1,4 @@
-import { getMarketById } from "@/sanity/queries/admin/markets";
+import { getMarketById } from "@/sanity/queries/admin/markets/markets";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";

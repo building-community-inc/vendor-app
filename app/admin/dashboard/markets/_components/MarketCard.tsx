@@ -1,4 +1,4 @@
-import { TSanityMarket } from "@/sanity/queries/admin/markets";
+import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 import TableView from "../../venues/_components/TableView";
 import Image from "next/image";
 import { formatMarketDate, tablePriceTodisplay } from "@/utils/helpers";

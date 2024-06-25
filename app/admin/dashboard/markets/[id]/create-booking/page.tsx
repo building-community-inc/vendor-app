@@ -1,4 +1,4 @@
-import { getMarketById } from "@/sanity/queries/admin/markets";
+import { getMarketById } from "@/sanity/queries/admin/markets/markets";
 import FormTitleDivider from "../../../_components/FormTitleDivider";
 import { dateArrayToDisplayableText } from "@/utils/helpers";
 import { getAllVendors } from "@/sanity/queries/admin/vendors";

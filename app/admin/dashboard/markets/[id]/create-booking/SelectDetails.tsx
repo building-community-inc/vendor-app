@@ -1,5 +1,5 @@
 "use client"
-import { TSanityMarket, TTableInDay } from "@/sanity/queries/admin/markets";
+import { TSanityMarket, TTableInDay } from "@/sanity/queries/admin/markets/zods";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { TDayWithTable } from "../../_components/MarketDays";
 import { useState } from "react";

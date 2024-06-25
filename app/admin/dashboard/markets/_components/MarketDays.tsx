@@ -1,6 +1,5 @@
 "use client"
 import Button from "@/app/_components/Button";
-import { TTable, TVendor } from "@/sanity/queries/admin/markets";
 import { areDatesSame, formatMarketDate } from "@/utils/helpers";
 import Link from "next/link";
 import { saveMarketChanges } from "./saveMarketChangesAction";
@@ -8,7 +7,8 @@ import { useFormState } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 import { nanoid } from "nanoid";
 import { TrashIcon } from '@sanity/icons'
-import Dialog from "@/app/_components/Dialog";
+import Dialog from "@/app/_components/Dialog/Dialog";
+import { TTable, TVendor } from "@/sanity/queries/admin/markets/zods";
 
 
 export type TDayWithTable = {
