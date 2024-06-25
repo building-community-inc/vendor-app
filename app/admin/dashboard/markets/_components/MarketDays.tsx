@@ -30,7 +30,7 @@ const MarketDays = ({
   marketId,
   selectedDay,
   availableTablesForDay,
-  daysWithTables
+  cancelled
 }: {
   marketId: string;
   dates: string[];
@@ -38,6 +38,7 @@ const MarketDays = ({
   selectedDay: string | null;
   availableTablesForDay: { table: TTable }[] | null;
   daysWithTables: TDayWithTable[] | null | undefined;
+  cancelled?: boolean | null | undefined;
 }) => {
   const [saveMarketFormState, saveMarketFormAction] = useFormState(saveMarketChanges, { error: "", success: false });
   const [sortedVendors, setSortedVendors] = useState(vendorsForSelectedDay);
@@ -219,7 +220,7 @@ const MarketDays = ({
           </tbody>
         </table>
       )}
-      {!saveMarketFormState.success && (
+      {!saveMarketFormState.success || cancelled && (
         <section className="flex max-w-md mx-auto gap-4">
           {!editTables && (
 

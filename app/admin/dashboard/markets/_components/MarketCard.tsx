@@ -19,6 +19,8 @@ const MarketCard = ({
 
   const priceToDisplay = tablePriceTodisplay(minPrice, maxPrice);
 
+  console.log({ market })
+
   return (
     <article className="min-h-[645px] flex flex-col gap-2 border rounded-[20px] overflow-hidden  border-[#292929] shadow-[0px_3px_6px_#00000029]">
       <header className="flex justify-between h-[60%] w-full">
@@ -30,6 +32,9 @@ const MarketCard = ({
           className="w-full max-h-full object-cover aspect-video"
         />
       </header>
+      {market.cancelled && (
+        <p className="m-2 text-red-600">Market has been cancelled</p>
+      )}
       <section className="px-2 my-2 flex justify-between">
         <article>
           <h4 className="font-bold font-roboto text-sm">{dateToDisplay}</h4>

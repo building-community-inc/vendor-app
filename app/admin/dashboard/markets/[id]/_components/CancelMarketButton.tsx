@@ -2,7 +2,7 @@
 
 import Button from "@/app/_components/Button";
 import Dialog from "@/app/_components/Dialog/Dialog";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { cancelMarket } from "./cancelMarketAction";
 import { useFormState } from "react-dom";
 
@@ -23,6 +23,12 @@ const CancelMarketButton = ({marketId}: {
   }
 
   console.log({formState})
+
+  useEffect(() => {
+    if (formState.success) {
+      toggleDialog()
+    }
+  }, [formState.success])
   return (
     <>
       <Button onClick={toggleDialog} className="bg-red-600 px-5 py-2 text-lg w-fit mx-auto text-white">Cancel Market</Button>

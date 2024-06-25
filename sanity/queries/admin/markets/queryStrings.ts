@@ -31,7 +31,8 @@ export const marketQueryString = `
       },
       booked
     }
-  }
+  },
+  cancelled
 `;
 
 export const individualMarketQueryString = `
@@ -78,5 +79,6 @@ export const individualMarketQueryString = `
         "_ref": _id
       }
     }
-  }
+  },
+  cancelled
 `;

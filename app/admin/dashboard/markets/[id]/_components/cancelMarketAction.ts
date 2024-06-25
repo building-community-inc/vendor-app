@@ -3,6 +3,7 @@
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { getAllPaymentsForAMarket } from "@/sanity/queries/admin/payments";
 import { DateTime } from "luxon";
+import { revalidatePath } from "next/cache";
 
 export const cancelMarket = async (
   formState: { errors: string[] | null; success: boolean },
@@ -71,7 +72,7 @@ export const cancelMarket = async (
       } catch (err) {
         return {
           success: false,
-          error: "Error updating payment record",
+          errors: ["Error updating payment record"]
         };
       }
     }
@@ -84,6 +85,10 @@ export const cancelMarket = async (
 
     // TODO notify the users a market has been cancelled and the credits have been added to their accounts
 
+    revalidatePath("/admin/dashboard/markets");
+    revalidatePath("/admin/dashboard/markets/[id]");
+    revalidatePath("/dashboard/markets");
+    revalidatePath("/dashboard/markets[id]");
     return {
       success: true,
       errors: null,

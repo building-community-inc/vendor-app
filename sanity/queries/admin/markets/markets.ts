@@ -2,7 +2,6 @@ import { sanityClient } from "@/sanity/lib/client";
 import { individualMarketQueryString, marketQueryString } from "./queryStrings";
 import { TSanityMarket, zodMarketQuery, zodMarketQueryArray } from "./zods";
 
-
 export const getAllMarkets = async () => {
   try {
     const result = await sanityClient.fetch(
@@ -45,11 +44,13 @@ export const getMarketById = async (id: string) => {
 const filterCurrentMarkets = (markets: TSanityMarket[]) => {
   const currentDate = new Date().toISOString().split("T")[0];
 
-  return markets.filter((market) =>
-    market.dates.some((date) => {
-      const marketDate = new Date(date);
-      return marketDate >= new Date(currentDate);
-    })
+  return markets.filter(
+    (market) =>
+      !market.cancelled &&
+      market.dates.some((date) => {
+        const marketDate = new Date(date);
+        return marketDate >= new Date(currentDate);
+      })
   );
 };
 
@@ -87,15 +88,13 @@ export const findAllVendorsForAMarket = async (marketId: string) => {
     }
 
     if (!market.vendors) {
-      throw new Error("No vendors found")
+      throw new Error("No vendors found");
     }
 
-    return market.vendors
-
-
+    return market.vendors;
   } catch (error) {
     console.error(error);
 
-    throw new Error(JSON.stringify(error))
+    throw new Error(JSON.stringify(error));
   }
-}
+};
