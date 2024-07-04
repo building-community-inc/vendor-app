@@ -46,6 +46,8 @@ export const cancelMarket = async (
         const updatedUserCredits =
           Number(vendor.credits) +
           (paymentRecord.amount.paid);
+
+          
         // add payment value to credits
   
         await sanityWriteClient
