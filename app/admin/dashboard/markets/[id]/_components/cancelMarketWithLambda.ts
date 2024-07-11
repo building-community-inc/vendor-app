@@ -2,8 +2,16 @@
 
 import { getAllPaymentsForAMarket } from "@/sanity/queries/admin/payments";
 import { currentUser } from "@clerk/nextjs";
+import { revalidatePath } from "next/cache";
 
-export const connectToLambda = async (
+// const LAMBDA_URL = "http://127.0.0.1:3000/cancel-market";
+const LAMBDA_URL = "https://jjk7u6hh6rd67cfke6jjp4hdpy0ityrx.lambda-url.us-east-1.on.aws/cancel-market";
+
+
+
+const LAMBDA_CREDENTIAL = process.env.LAMBDA_CREDENTIAL;
+
+export const cancelMarketWithLambda = async (
   formState: { errors: string[] | null; success: boolean },
   formData: FormData
 ) => {
@@ -43,9 +51,10 @@ export const connectToLambda = async (
       paymentRecords,
       url,
       userId: clerkUser.id,
+      "Sprain1-Hunchback-Deserve": LAMBDA_CREDENTIAL
     });
     const response = await fetch(
-      "https://qzapxnzfyfi4okulacajyqiz6m0wyqyr.lambda-url.us-east-1.on.aws/",
+      LAMBDA_URL,
       {
         method: "POST",
         headers: myHeaders,
@@ -55,14 +64,14 @@ export const connectToLambda = async (
       }
     );
 
-    const result = await response.text();
+    const result = await response.json();
 
     console.log(result);
-
-    return {
-      success: false,
-      errors: null,
-    };
+    revalidatePath("/admin/dashboard/markets");
+    revalidatePath("/admin/dashboard/markets/[id]");
+    revalidatePath("/dashboard/markets");
+    revalidatePath("/dashboard/markets[id]");
+    return result;
   } catch (error) {
     console.error(error);
     return {

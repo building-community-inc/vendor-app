@@ -62,9 +62,9 @@ const Page = async ({
         daysWithTables={market.daysWithTables}
         cancelled={market.cancelled}
       />
-      {/* {!market.cancelled && (
+      {!market.cancelled && (
         <CancelMarketButton marketId={market._id} />
-      )} */}
+      )}
     </main>
   );
 };
