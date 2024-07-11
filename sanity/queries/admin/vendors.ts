@@ -25,7 +25,8 @@ const vendorQuery = `
     email,
     status,
     acceptedTerms,
-    role
+    role,
+    credits
   }
 `;
 
@@ -67,6 +68,7 @@ const zodVendorSchema = z.object({
     .optional()
     .nullable(),
   role: z.string(),
+  credits: z.number()
 });
 
 export type TVendor =  z.infer<typeof zodVendorSchema>;

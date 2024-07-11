@@ -19,8 +19,6 @@ const MarketCard = ({
 
   const priceToDisplay = tablePriceTodisplay(minPrice, maxPrice);
 
-  console.log({ market })
-
   return (
     <article className="min-h-[645px] flex flex-col gap-2 border rounded-[20px] overflow-hidden  border-[#292929] shadow-[0px_3px_6px_#00000029]">
       <header className="flex justify-between h-[60%] w-full">

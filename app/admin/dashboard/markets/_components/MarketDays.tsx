@@ -220,7 +220,7 @@ const MarketDays = ({
           </tbody>
         </table>
       )}
-      {!saveMarketFormState.success || cancelled && (
+      {selectedDay && !cancelled && (
         <section className="flex max-w-md mx-auto gap-4">
           {!editTables && (
 

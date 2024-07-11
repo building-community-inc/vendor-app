@@ -22,6 +22,7 @@ const zodPaymentSchema = z.object({
     email: z.string(),
     status: z.string(),
     acceptedTerms: z.boolean().optional().nullable(),
+    credits: z.number().nullable().default(0)
   }),
   items: z.array(
     z.object({
@@ -66,6 +67,7 @@ export const getAllPayments = async () => {
           email,
           status,
           "acceptedTerms": acceptedTerms.accepted,
+          credits
         },
         "items": items[] {
           date,
@@ -116,6 +118,7 @@ export const getAllPaymentsForAMarket = async (marketId: string) => {
           email,
           status,
           "acceptedTerms": acceptedTerms.accepted,
+          credits
         },
         "items": items[] {
           date,
