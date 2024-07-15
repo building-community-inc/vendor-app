@@ -18,7 +18,7 @@ const page = async () => {
   );
 
   const userMarkets = await getUserMarkets(sanityUser._id);
-  console.log(userMarkets)
+  // console.log(userMarkets)
 
   userMarkets.sort((a, b) => {
     // Convert the dates from strings to DateTime objects and find the earliest date
@@ -144,29 +144,26 @@ const page = async () => {
                   </tr>
                 </thead>
                 <tbody className="relative">
-                  {userMarkets.map((booking) => (
-                    <ul>
-                      {booking.items.map((item, index) => (
-                        <li key={`${booking._id}-${index}`}
-                        // className="flex"
-                        >
-                          <tr
-                            className={`${booking.paymentReturned ? 'line-through text-red-500' : ''}`}
-                          >
-                            <td className="text-left p-2">
-                              {formatDateWLuxon(booking.market.dates[0])}
-                            </td>
-                            <td className="text-left p-2">{booking.market.name}</td>
-                            <td className="text-left p-2">table: {item.tableId} date: {formatDateWLuxon(item.date)}</td>
-                            <td className="text-left p-2">paid: {booking.amount.paid} total: {booking.amount.total}</td>
-                          </tr>
-                          {booking.paymentReturned && (
-                            <span className="absolute left-full w-[20ch] -translate-y-8">Payment Returned</span>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  ))}
+                  {userMarkets.map((booking) =>
+                    booking.items.map((item, index) => (
+                      <tr key={`${booking._id}-${index}`}
+                        className={`${booking.paymentReturned ? 'text-red-500' : ''}`}
+                      >
+                        {/* <section className="line-through"> */}
+
+                        <td className="text-left p-2">
+                          {formatDateWLuxon(booking.market.dates[0])}
+                        </td>
+                        <td className="text-left p-2">{booking.market.name}</td>
+                        <td className="text-left p-2">table: {item.tableId} date: {formatDateWLuxon(item.date)}</td>
+                        <td className="text-left p-2">paid: {booking.amount.paid} total: {booking.amount.total}</td>
+                        {/* </section> */}
+                        {booking.paymentReturned && (
+                          <td className="w-[20ch]">Payment Returned</td>
+                        )}
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </section>
