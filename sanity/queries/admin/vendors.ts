@@ -68,7 +68,7 @@ const zodVendorSchema = z.object({
     .optional()
     .nullable(),
   role: z.string(),
-  credits: z.number()
+  credits: z.number().optional().nullable(),
 });
 
 export type TVendor =  z.infer<typeof zodVendorSchema>;

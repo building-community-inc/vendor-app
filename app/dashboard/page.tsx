@@ -145,9 +145,9 @@ const page = async () => {
                 </thead>
                 <tbody className="relative">
                   {userMarkets.map((booking) => (
-                    <>
+                    <ul>
                       {booking.items.map((item, index) => (
-                        <React.Fragment key={`${booking._id}-${index}`}
+                        <li key={`${booking._id}-${index}`}
                         // className="flex"
                         >
                           <tr
@@ -163,9 +163,9 @@ const page = async () => {
                           {booking.paymentReturned && (
                             <span className="absolute left-full w-[20ch] -translate-y-8">Payment Returned</span>
                           )}
-                        </React.Fragment>
+                        </li>
                       ))}
-                    </>
+                    </ul>
                   ))}
                 </tbody>
               </table>
