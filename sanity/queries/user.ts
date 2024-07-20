@@ -36,7 +36,8 @@ export const getSanityUserByEmail = async (email: string) => {
                 "_id": asset -> _id,
                 "size": asset -> size,
             },
-        }
+        },
+        credits
     }`);
   
   const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
@@ -59,7 +60,8 @@ const userMarketQueryString = `
         price,
         date,
         tableId
-    }
+    },
+    paymentReturned
 `;
 
 const zodUserMarket = z.object({
@@ -81,6 +83,7 @@ const zodUserMarket = z.object({
       tableId: z.string(),
     })
   ),
+  paymentReturned: z.boolean().optional().nullable()
 });
 
 const zodUserMarkets = z.array(zodUserMarket);

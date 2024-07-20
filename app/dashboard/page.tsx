@@ -7,6 +7,7 @@ import { formatDateWLuxon } from "@/utils/helpers";
 import { DateTime } from 'luxon';
 import UpdateProfileImage from "./_components/UpdateProfileImage";
 import Link from "next/link";
+import React from "react";
 
 const page = async () => {
   const user = await currentUser();
@@ -17,7 +18,7 @@ const page = async () => {
   );
 
   const userMarkets = await getUserMarkets(sanityUser._id);
-  console.log(userMarkets)
+  // console.log(userMarkets)
 
   userMarkets.sort((a, b) => {
     // Convert the dates from strings to DateTime objects and find the earliest date
@@ -39,7 +40,12 @@ const page = async () => {
   });
 
   return (
-    <main className="flex gap-2 min-h-screen w-full flex-wrap">
+    <main className="flex p-10 gap-2 min-h-screen w-full flex-wrap">
+      {sanityUser.credits && (
+        <section className="flex flex-col gap-2 items-center">
+          <p><strong>Available Credits: </strong> ${sanityUser.credits}</p>
+        </section>
+      )}
       {sanityUser.business ? (
         <section className="flex flex-col gap-5 xl:gap-10 items-center justify-center w-full px-10">
           <section className="flex flex-col lg:flex-row items-center gap-10">
@@ -137,21 +143,27 @@ const page = async () => {
                     <th className="text-left p-2">Amounts</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {userMarkets.map((booking) => (
-                    <>
-                      {booking.items.map((item, index) => (
-                        <tr key={`${booking._id}-${index}`}>
-                          <td className="text-left p-2">
-                            {formatDateWLuxon(booking.market.dates[0])}
-                          </td>
-                          <td className="text-left p-2">{booking.market.name}</td>
-                          <td className="text-left p-2">table: {item.tableId} date: {formatDateWLuxon(item.date)}</td>
-                          <td className="text-left p-2">paid: {booking.amount.paid} total: {booking.amount.total}</td>
-                        </tr>
-                      ))}
-                    </>
-                  ))}
+                <tbody className="relative">
+                  {userMarkets.map((booking) =>
+                    booking.items.map((item, index) => (
+                      <tr key={`${booking._id}-${index}`}
+                        className={`${booking.paymentReturned ? 'text-red-500' : ''}`}
+                      >
+                        {/* <section className="line-through"> */}
+
+                        <td className="text-left p-2">
+                          {formatDateWLuxon(booking.market.dates[0])}
+                        </td>
+                        <td className="text-left p-2">{booking.market.name}</td>
+                        <td className="text-left p-2">table: {item.tableId} date: {formatDateWLuxon(item.date)}</td>
+                        <td className="text-left p-2">paid: {booking.amount.paid} total: {booking.amount.total}</td>
+                        {/* </section> */}
+                        {booking.paymentReturned && (
+                          <td className="w-[20ch]">Payment Returned</td>
+                        )}
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </section>

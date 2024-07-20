@@ -1,5 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
-import {StarIcon} from '@sanity/icons'
+import { StarIcon } from "@sanity/icons";
 
 export const paymentRecordSchema = defineType({
   name: "paymentRecord",
@@ -43,7 +43,7 @@ export const paymentRecordSchema = defineType({
           title: "HST",
           type: "number",
         }),
-      ]
+      ],
     }),
     defineField({
       name: "payments",
@@ -63,7 +63,7 @@ export const paymentRecordSchema = defineType({
             defineField({
               name: "paymentType",
               title: "Payment Type",
-              type: "string"
+              type: "string",
             }),
             defineField({
               name: "amount",
@@ -126,12 +126,18 @@ export const paymentRecordSchema = defineType({
               return {
                 title,
                 subtitle,
-                media: StarIcon
+                media: StarIcon,
               };
             },
           },
         }),
       ],
+    }),
+    defineField({
+      name: "paymentReturned",
+      title: "Payment Returned",
+      type: "boolean",
+      initialValue: false,
     }),
   ],
 

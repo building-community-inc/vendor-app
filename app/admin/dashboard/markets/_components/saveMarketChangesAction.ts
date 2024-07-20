@@ -1,6 +1,9 @@
 "use server";
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
+import { zodVendorSchema } from "@/sanity/queries/admin/markets/zods";
+import { getAllPaymentsForAMarket } from "@/sanity/queries/admin/payments";
 import { areDatesSame } from "@/utils/helpers";
+import { DateTime } from "luxon";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -36,6 +39,18 @@ const rawDataParser = z.object({
   vendorIds: z.array(z.string()),
   tableSelections: z.array(z.string()),
   marketId: z.string(),
+  deletedVendors: z
+    .array(
+      z
+        .string()
+        .transform((str) => JSON.parse(str))
+        .refine(
+          (vendor) => zodVendorSchema.safeParse(vendor).success,
+          "Invalid vendor object"
+        )
+    )
+    .optional()
+    .nullable(),
 });
 
 export const saveMarketChanges = async (
@@ -52,6 +67,7 @@ export const saveMarketChanges = async (
     vendorIds: formData.getAll("vendorId"),
     tableSelections: formData.getAll("tableSelection"),
     marketId: formData.get("marketId"),
+    deletedVendors: formData.getAll("deletedVendors"),
   };
 
   if (rawData.reset) {
@@ -219,39 +235,6 @@ export const saveMarketChanges = async (
     }
   );
 
-  // console.log({tableSelections, vendors})
-
-  // const updatedVendors = parsedSanityMarket.data.vendors.map((vendor) => {
-  //   for (const newVendor of vendors) {
-  //     if (newVendor.vendorId === vendor.vendor._ref) {
-  //       const dateBooked = vendor.datesBooked.find((date) =>
-  //         areDatesSame(date.date, parsedData.data.date)
-  //       );
-  //       if (dateBooked?.tableId === newVendor.tableSelection) {
-  //         return vendor;
-  //       }
-
-  //       const newDateBooked = {
-  //         ...dateBooked,
-  //         tableId: newVendor.tableSelection,
-  //       };
-
-  //       return {
-  //         ...vendor,
-  //         datesBooked: vendor.datesBooked.map((date) => {
-  //           if (areDatesSame(date.date, parsedData.data.date)) {
-  //             return newDateBooked;
-  //           }
-  //           return date;
-  //         }),
-  //       };
-  //     }
-  //   }
-
-  //   return {
-  //     ...vendor,
-  //   };
-  // });
   const updatedVendors = vendors
     .map((newVendor) => {
       const vendor = parsedSanityMarket.data.vendors.find(
@@ -288,19 +271,82 @@ export const saveMarketChanges = async (
     })
     .filter(Boolean); // Remove null values
 
-  // console.log({
-  //   newDatesVendor: updatedVendors[3].datesBooked,
-  //   oldDatesVendor: parsedSanityMarket.data.vendors[3].datesBooked,
-  // });
+  // update the vendor payments to reflect the new values if a booking got deleted...
 
-  // console.log({newVendor: updatedVendors[1].datesBooked, oldVendor: parsedSanityMarket.data.vendors[1].datesBooked});
+  // get all payment records
 
-  // console.log({
-  //   areTablesDifferent,
-  //   updatedDaysWithTables,
-  //   newTables: updatedDaysWithTables[0].tables,
-  //   oldTables: dayToUpdate.tables,
-  // });
+  const paymentRecords = await getAllPaymentsForAMarket(
+    parsedData.data.marketId
+  );
+
+  if (!paymentRecords) {
+    return {
+      success: false,
+      error: "Error finding payment records",
+    };
+  }
+
+  // find the right payment record to update with the right market vendor and table information
+  const deletedVendorPayments = paymentRecords.filter((record) => {
+    // Check if the vendor is in the list of deleted vendors
+    const isDeletedVendor = parsedData.data.deletedVendors?.some(
+      (deletedVendor) => deletedVendor.vendor._ref === record.vendor._id
+    );
+
+    // Check if there's an item for the target date
+    const hasTargetDate = record.items.some(
+      (item) => item.date === parsedData.data.date
+    );
+
+    const isPaymentNotReturned = !record.paymentReturned;
+
+    return isDeletedVendor && hasTargetDate && isPaymentNotReturned;
+  });
+
+  // add anotation to payment record
+
+  for (const deletedPayment of deletedVendorPayments) {
+    try {
+      const vendor = await sanityWriteClient.fetch(
+        `*[_type == "user" && _id == $vendorId][0]`,
+        { vendorId: deletedPayment.vendor._id }
+      );
+
+      // Add the payment value to the vendor's credits
+
+      const updatedUserCredits =
+        Number(vendor.credits) +
+        (deletedPayment.amount.paid);
+      // add payment value to credits
+
+      await sanityWriteClient
+        .patch(vendor._id)
+        .set({ credits: updatedUserCredits })
+        .commit();
+
+      await sanityWriteClient
+        .patch(deletedPayment._id)
+        .set({ paymentReturned: true })
+        .commit();
+
+      // add the transaction to the credit transactions array
+      await sanityWriteClient
+        .create({
+          _type: "creditTransaction",
+          date: DateTime.now().toISO(), // Use the current date or the date of the transaction
+          market: { _ref: parsedSanityMarket.data._id, _type: "reference" }, // Reference to the market
+          vendor: { _ref: vendor._id, _type: "reference" }, // Reference to the vendor
+          amount: updatedUserCredits, // The amount of the transaction
+          reason: "Payment returned by admin", // The reason for the transaction
+        })
+        .catch((err) => console.error(err));
+    } catch (err) {
+      return {
+        success: false,
+        error: "Error updating payment record",
+      };
+    }
+  }
 
   const sanityResp = await sanityWriteClient
     .patch(parsedSanityMarket.data._id)
@@ -322,7 +368,7 @@ export const saveMarketChanges = async (
 
   return {
     success: false,
-    error: "q paso rick",
+    error: "something went wrong",
   };
 };
 

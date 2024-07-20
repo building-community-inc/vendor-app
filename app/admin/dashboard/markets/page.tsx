@@ -1,11 +1,12 @@
 // import { getAllVenues } from "@/sanity/queries/venues";
-import { TSanityMarket, getAllMarkets } from "@/sanity/queries/admin/markets";
+import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 import FormTitleDivider from "../_components/FormTitleDivider";
 import Link from "next/link";
 import MarketCard from "./_components/MarketCard";
 import { dateArrayToDisplayableText } from "@/utils/helpers";
 import { unstable_noStore as noStore } from 'next/cache';
 import Search from "@/app/dashboard/explore/_components/Search";
+import { getAllMarkets } from "@/sanity/queries/admin/markets/markets";
 // import VenueList from "./_components/VenueList";
 
 // export const dynamic = "force-dynamic";

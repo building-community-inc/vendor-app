@@ -25,7 +25,8 @@ const vendorQuery = `
     email,
     status,
     acceptedTerms,
-    role
+    role,
+    credits
   }
 `;
 
@@ -67,6 +68,7 @@ const zodVendorSchema = z.object({
     .optional()
     .nullable(),
   role: z.string(),
+  credits: z.number().optional().nullable(),
 });
 
 export type TVendor =  z.infer<typeof zodVendorSchema>;
@@ -102,8 +104,5 @@ export const getVendorById = async (id: string) => {
     const parsedVendor = zodVendorSchema.safeParse(result);
 
     return parsedVendor;
-  // } catch (error) {
-  //   console.error(error);
-  //   return { error };
-  // }
+
 };

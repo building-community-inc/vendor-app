@@ -1,8 +1,10 @@
 "use server";
 
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
-import { TVendor } from "@/sanity/queries/admin/markets";
-import { zodLatePaymentWithMarketSchema } from "@/sanity/queries/payments";
+import {
+  zodLatePaymentWithMarketSchema,
+  zodPaymentItem,
+} from "@/sanity/queries/payments";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -58,7 +60,7 @@ export const createBooking = async (
 
   // console.log({parsedData})
 
-  // TODO GENERATE PAYMENT RECORD uncomment the sanity query ....
+  // GENERATE PAYMENT RECORD uncomment the sanity query ....
 
   const newPaymentRecord: TPaymentRecord = {
     _type: "paymentRecord",
@@ -111,9 +113,6 @@ export const createBooking = async (
     };
   }
 
-  // TODO UPDATE MARKET DAY WITH TABLES
-
-  // TODO UPDATE VENDORS ARRAY IN MARKET
   const sanityPaymentResponse = await sanityWriteClient.create(
     parsedPaymentRecord.data
   );
@@ -231,7 +230,6 @@ export const createBooking = async (
   }
   revalidatePath("/admin/dashboard/markets/[id]", "page");
   revalidatePath("/dashboard/markets/[id]", "page");
-  
 
   return {
     errors: null,
@@ -307,6 +305,7 @@ const zodPaymentRecordSchemaSanityReady = zodLatePaymentWithMarketSchema.merge(
     _type: z.literal("paymentRecord"),
     _id: z.string().optional().nullable(),
     user: zodSanityReferenceSchema,
+    items: z.array(zodPaymentItem.merge(z.object({ _key: z.string() }))),
   })
 );
 

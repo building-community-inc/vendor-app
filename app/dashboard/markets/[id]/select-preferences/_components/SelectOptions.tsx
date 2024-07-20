@@ -3,7 +3,7 @@ import {
   TDayWithTable,
   TSanityMarket,
   TTableInDay,
-} from "@/sanity/queries/admin/markets";
+} from "@/sanity/queries/admin/markets/zods";
 import SelectDates from "./SelectDates";
 import ContinueButton from "../../_components/ContinueButton";
 import { useState } from "react";

@@ -3,7 +3,7 @@ import {
   TDayWithTable,
   TSanityMarket,
   TTableInDay,
-} from "@/sanity/queries/admin/markets";
+} from "@/sanity/queries/admin/markets/zods";
 import { TDateType } from "./SelectOptions";
 import { DateTime } from "luxon";
 import { formatDateWLuxon } from "@/utils/helpers";
