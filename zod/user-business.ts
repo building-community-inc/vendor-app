@@ -18,6 +18,7 @@ export const zodUserBase = z.object({
     })
     .optional()
     .nullable(),
+    credits: z.number().optional().nullable()
 });
 
 export type TUserBase = z.infer<typeof zodUserBase>;

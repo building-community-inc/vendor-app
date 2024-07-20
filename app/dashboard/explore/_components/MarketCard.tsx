@@ -1,4 +1,4 @@
-import type { TSanityMarket } from "@/sanity/queries/admin/markets";
+import type { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 import { dateArrayToDisplayableText, tablePriceTodisplay } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";

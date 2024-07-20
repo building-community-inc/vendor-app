@@ -1,4 +1,4 @@
-import { TSanityMarket } from "@/sanity/queries/admin/markets";
+import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 import TableView from "../../venues/_components/TableView";
 import Image from "next/image";
 import { formatMarketDate, tablePriceTodisplay } from "@/utils/helpers";
@@ -30,6 +30,9 @@ const MarketCard = ({
           className="w-full max-h-full object-cover aspect-video"
         />
       </header>
+      {market.cancelled && (
+        <p className="m-2 text-red-600">Market has been cancelled</p>
+      )}
       <section className="px-2 my-2 flex justify-between">
         <article>
           <h4 className="font-bold font-roboto text-sm">{dateToDisplay}</h4>

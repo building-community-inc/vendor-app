@@ -1,37 +1,33 @@
 "use client";
-import {
-  TDayWithTable,
-  TSanityMarket,
-  TTableInDay,
-} from "@/sanity/queries/admin/markets/zods";
-import { TDateType } from "./SelectOptions";
-import { DateTime } from "luxon";
-import { formatDateWLuxon } from "@/utils/helpers";
+
+import { areDatesSame, formatDateWLuxon } from "@/utils/helpers";
+import { TDateType } from "@/app/dashboard/markets/[id]/select-preferences/_components/SelectOptions";
+import { TDayWithTable, TSanityMarket, TTableInDay } from "@/sanity/queries/admin/markets/zods";
 
 const SelectDates = ({
   market,
   handleDateSelect,
   selectedDates,
-  totalToPay,
   handleOnTableChange,
-  dueNow,
-  businessCategory
+  businessCategory,
+
 }: {
   market: TSanityMarket;
   handleDateSelect: (date: TDayWithTable) => void;
   handleOnTableChange: (table: TTableInDay, date: TDateType) => void;
   selectedDates: TDayWithTable[];
-  totalToPay: number | null;
-  dueNow: number;
   businessCategory: string;
-}) => {
 
+}) => {
   // Filter out the days that already have a business with the same category
   const availableDays = market.daysWithTables?.filter(day => {
     // Check if there is a vendor with the same category that has booked this day
-    const isBooked = market.vendors?.some(vendor =>
-      vendor.vendor.businessCategory === businessCategory &&
-      vendor.datesBooked.some(bookedDate => bookedDate.date === day.date)
+    const isBooked = market.vendors?.some(vendor => {
+      return (
+        vendor.vendor.businessCategory === businessCategory &&
+        vendor.datesBooked.some(bookedDate => areDatesSame(bookedDate.date, day.date))
+      )
+    }
     );
 
     // Return true if the day is not booked, false otherwise
@@ -41,7 +37,7 @@ const SelectDates = ({
   if (availableDays?.length === 0) {
     return (
       <section className="flex flex-col gap-4 w-full">
-        <p className="text-red-500">No available dates for this market</p>
+        <p className="text-red-700">No available dates for this vendor</p>
       </section>
     )
   }
@@ -50,21 +46,21 @@ const SelectDates = ({
       <h2 className="font-bold">Select Dates</h2>
       <ul className="flex flex-col gap-3 w-full">
         {availableDays?.map((dayObj, index) => {
-   
+
 
           return (
             <li key={dayObj.date}>
               <label
-                htmlFor={`date-[${index}]`}
+                htmlFor={dayObj.date}
                 className="flex items-center justify-between min-h-[2rem]"
               >
                 <div
                   className="flex items-center gap-2 h-full relative z-10"
-                  onClick={() => handleDateSelect(dayObj)}
+                // onClick={() => handleDateSelect(dayObj)}
                 >
                   <input
                     type="checkbox"
-                    name={`date-[${index}]`}
+                    name={`date-${dayObj.date}`}
                     id={dayObj.date}
                     className="pointer-events-none relative z-[2]"
                     onChange={() => handleDateSelect(dayObj)}
@@ -78,7 +74,7 @@ const SelectDates = ({
                 </div>
                 {!!selectedDates.find((d) => d.date === dayObj.date) && (
                   <select
-                    name="table"
+                    name={`table-${dayObj.date}`}
                     required={
                       !!selectedDates.find((d) => d && d.date === dayObj.date)
                     }
@@ -86,7 +82,7 @@ const SelectDates = ({
                     className="text-black w-fit"
                     onChange={(e) => {
                       const newTable = dayObj.tables.find(
-                        (t) => t.table.id === e.target.value
+                        (t) => t.table.id === e.target.value.split("-")[0]
                       );
 
                       if (newTable === undefined) return;
@@ -99,7 +95,7 @@ const SelectDates = ({
                       .map((table, index) => (
                         <option
                           key={`${table.table}-${index}`}
-                          value={table.table.id}
+                          value={`${table.table.id}-${table.table.price}`}
                         >
                           Table: {table.table.id} Price: ${table.table.price}
                         </option>

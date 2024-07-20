@@ -36,10 +36,10 @@ export const getSanityUserByEmail = async (email: string) => {
                 "_id": asset -> _id,
                 "size": asset -> size,
             },
-        }
+        },
+        credits
     }`);
   
-    console.log({ pdfs: user.business.pdfs });
   const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
   if (!validatedUser.success) {
     throw new Error(validatedUser.error.message);
@@ -58,10 +58,10 @@ const userMarketQueryString = `
     _id,
     "items": items[] {
         price,
-        name,
         date,
         tableId
-    }
+    },
+    paymentReturned
 `;
 
 const zodUserMarket = z.object({
@@ -79,11 +79,11 @@ const zodUserMarket = z.object({
   items: z.array(
     z.object({
       price: z.number(),
-      name: z.string(),
       date: z.string(),
       tableId: z.string(),
     })
   ),
+  paymentReturned: z.boolean().optional().nullable()
 });
 
 const zodUserMarkets = z.array(zodUserMarket);

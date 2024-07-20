@@ -1,16 +1,21 @@
-import { getMarketById } from "@/sanity/queries/admin/markets";
+import { getMarketById } from "@/sanity/queries/admin/markets/markets";
 import MarketCard from "../_components/MarketCard";
-import { dateArrayToDisplayableText } from "@/utils/helpers";
+import { areDatesSame, dateArrayToDisplayableText } from "@/utils/helpers";
 import Image from "next/image";
 import MarketDays from "../_components/MarketDays";
 import { unstable_noStore as noStore } from 'next/cache';
+import CancelMarketButton from "./_components/CancelMarketButton";
 
 
 const Page = async ({
   params,
+  searchParams
 }: {
   params: {
     id: string;
+  };
+  searchParams: {
+    [key: string]: string | undefined;
   };
 }) => {
   noStore();
@@ -18,7 +23,22 @@ const Page = async ({
 
   if (!market) return <div>loading...</div>;
 
+  const selectedDay = searchParams.selectedDay || null;
   const dateToDisplay = dateArrayToDisplayableText(market.dates);
+
+  const vendorsForSelectedDay = market.vendors?.filter((vendor) => {
+    return vendor.datesBooked.some((bookedDate) => {
+      if (selectedDay) {
+        return areDatesSame(bookedDate.date, selectedDay)
+      }
+      return false;
+    });
+  });
+
+  const dayInfo = market.daysWithTables?.find(day => areDatesSame(day.date, selectedDay || ""));
+
+  const availableTablesForDay = dayInfo?.tables.filter((table) => table.booked === null) || null;
+
 
   return (
     <main className="pt-14 px-5 w-full flex flex-col gap-8 max-w-3xl mx-auto">
@@ -33,7 +53,18 @@ const Page = async ({
           className="w-full mx-auto"
         />
       )}
-      <MarketDays dates={market.dates} vendors={market.vendors || []} />
+      <MarketDays
+        availableTablesForDay={availableTablesForDay}
+        dates={market.dates}
+        vendorsForSelectedDay={vendorsForSelectedDay || []}
+        marketId={market._id}
+        selectedDay={selectedDay}
+        daysWithTables={market.daysWithTables}
+        cancelled={market.cancelled}
+      />
+      {/* {!market.cancelled && (
+        <CancelMarketButton marketId={market._id} />
+      )} */}
     </main>
   );
 };

@@ -1,7 +1,6 @@
 import {
-  TSanityMarket,
   getCurrentMarkets,
-} from "@/sanity/queries/admin/markets";
+} from "@/sanity/queries/admin/markets/markets";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
@@ -11,6 +10,7 @@ import SortBy from "./_components/SortBy";
 import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
 import { EMAIL } from "@/app/_components/constants";
+import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 
 
 const exploreSorts: { [key: string]: (markets: TSanityMarket[]) => void } = {
