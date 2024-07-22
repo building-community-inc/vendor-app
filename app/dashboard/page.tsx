@@ -8,6 +8,9 @@ import { DateTime } from 'luxon';
 import UpdateProfileImage from "./_components/UpdateProfileImage";
 import Link from "next/link";
 import React from "react";
+import { TBusiness, TUserWithOptionalBusinessRef } from "@/zod/user-business";
+import { cn } from "@/utils";
+import Button from "../_components/Button";
 
 const page = async () => {
   const user = await currentUser();
@@ -41,139 +44,106 @@ const page = async () => {
 
   return (
     <main className="flex p-10 gap-2 min-h-screen w-full flex-wrap">
-      {sanityUser.credits && (
-        <section className="flex flex-col gap-2 items-center">
-          <p><strong>Available Credits: </strong> ${sanityUser.credits}</p>
-        </section>
-      )}
       {sanityUser.business ? (
-        <section className="flex flex-col gap-5 xl:gap-10 items-center justify-center w-full px-10">
-          <section className="flex flex-col lg:flex-row items-center gap-10">
-            {sanityUser.business.logoUrl ? (
-              <section className="flex flex-col items-center">
-                <Image
-                  src={sanityUser.business.logoUrl}
-                  alt={sanityUser.business.businessName}
-                  width={228}
-                  height={228}
-                  className="rounded-2xl"
-                />
-                {/* <UpdateProfileImage businessName={sanityUser.business.businessName} logoUrl={sanityUser.business.logoUrl} currentLogoId={sanityUser.business.logo?.asset._ref} /> */}
-              </section>
-            ) : (
-              <div className="w-[228px] h-[228px] bg-white flex items-center justify-center text-black rounded-2xl">
-                <p className="font-bold text-center rotate-45 max-w-[6ch] text-xl">
-                  Vendor Logo
-                </p>
-              </div>
-            )}
-            <section className="w-fit flex flex-col gap-2">
-              <h2 className="rounded-full bg-white text-black font-bold px-4 py-1">
-                {sanityUser.business.businessName}
-              </h2>
-              <p className="flex gap-2">
-                <strong>Product Category:</strong>
-                {sanityUser.business.industry}
-              </p>
-              <p className="flex gap-2">
-                <strong>Owner Name:</strong>
-                {`${sanityUser.firstName} ${sanityUser.lastName}`}
-              </p>
-              <p className="flex gap-2">
-                <strong>Address:</strong>
-                {`${sanityUser.business.address1} ${sanityUser.business.address2}`}
-              </p>
-              <p className="flex gap-2">
-                <strong>City:</strong>
-                {sanityUser.business.city}
-              </p>
-              <p className="flex gap-2">
-                <strong>Province:</strong>
-                {sanityUser.business.province}
-              </p>
-              <p className="flex gap-2">
-                <strong>Postal Code:</strong>
-                {sanityUser.business.postalCode}
-              </p>
-              <p className="flex gap-2">
-                <strong>Country:</strong>
-                {sanityUser.business.country}
-              </p>
-              <p className="flex gap-2">
-                <strong>Email:</strong>
-                {sanityUser.email}
-              </p>
-              <p className="flex gap-2">
-                <strong>Phone:</strong>
-                {sanityUser.business.phone}
-              </p>
-              <p className="flex gap-2">
-                <strong>Instagram Handle:</strong>
-                <span className="text-[#0A6FA2]">
-                  @{sanityUser.business.instagramHandle ?? ""}
-                </span>
-              </p>
-              {sanityUser.business.pdfs && sanityUser.business.pdfs.length >= 1 && (
-                <ul className="flex gap-2 flex-col">
-                  <strong>Supporting Documents:</strong>
-                  {sanityUser.business.pdfs.map((pdf) => (
-                    <li key={pdf.url} className="">{pdf.originalFileName}</li>
-                  ))}
-                </ul>
-              )}
-              <Link href="/dashboard/edit-profile">
-                <span className="text-blue-500">Edit Business Profile</span>
-              </Link>
-            </section>
-          </section>
-          {userMarkets.length > 0 && (
-            <section>
-              <div className="flex items-center gap-5">
-                <h3 className="whitespace-nowrap flex-shrink-0 font-bold text-lg">
-                  My Markets
-                </h3>
-                <div className="h-[1px] w-full flex-grow bg-[#707070] " />
-              </div>
-              <table className="table-auto w-full border-collapse">
-                <thead>
-                  <tr>
-                    <th className="text-left p-2">Market Date</th>
-                    <th className="text-left p-2">Market</th>
-                    <th className="text-left p-2">Table Info</th>
-                    <th className="text-left p-2">Amounts</th>
-                  </tr>
-                </thead>
-                <tbody className="relative">
-                  {userMarkets.map((booking) =>
-                    booking.items.map((item, index) => (
-                      <tr key={`${booking._id}-${index}`}
-                        className={`${booking.paymentReturned ? 'text-red-500' : ''}`}
-                      >
-                        {/* <section className="line-through"> */}
-
-                        <td className="text-left p-2">
-                          {formatDateWLuxon(booking.market.dates[0])}
-                        </td>
-                        <td className="text-left p-2">{booking.market.name}</td>
-                        <td className="text-left p-2">table: {item.tableId} date: {formatDateWLuxon(item.date)}</td>
-                        <td className="text-left p-2">paid: {booking.amount.paid} total: {booking.amount.total}</td>
-                        {/* </section> */}
-                        {booking.paymentReturned && (
-                          <td className="w-[20ch]">Payment Returned</td>
-                        )}
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </section>
-          )}
-        </section>
+        <>
+          <BusinessCard credits={sanityUser.credits || 0} business={sanityUser.business} ownerName={`${sanityUser.firstName} ${sanityUser.lastName}`} />
+          <ContactCard email={sanityUser.email} phone={sanityUser.business?.phone} address={`${sanityUser.business?.address1} ${sanityUser.business?.address2}`} />
+        </>
       ) : (
         <NoBz />
       )}
+      <Button className="h-fit font-bold font-darker-grotesque">
+        <Link href="/dashboard/edit-profile">Edit Profile</Link>
+      </Button>
+
     </main>
   );
 };
 
 export default page;
+
+const ContactCard = ({ email, phone, address }: {
+  email: string;
+  phone: string;
+  address: string;
+}) => {
+  return (
+    <DashboardSection className="py-5 px-3 flex flex-col gap-5">
+      <div>
+        <p className="text-xl font-segoe font-bold text-black">Email:</p>
+        <p className="font-segoe text-2xl">{email}</p>
+      </div>
+      <div>
+        <p className="text-xl font-segoe font-bold text-black">Phone:</p>
+        <p className="font-segoe text-2xl">{phone}</p>
+      </div>
+      <div>
+        <p className="text-xl font-segoe font-bold text-black">Dddress:</p>
+        <p className="font-segoe text-2xl">{address}</p>
+      </div>
+    </DashboardSection>
+  )
+}
+
+
+const BusinessCard = ({ business, ownerName, credits }: {
+  business: TUserWithOptionalBusinessRef["business"];
+  ownerName: string;
+  credits: number;
+}) => {
+  return (
+    <DashboardSection>
+      {business?.logoUrl && (
+        <BusinessSection className="flex justify-center">
+          <Image src={business.logoUrl} alt={business.businessName} width={100} height={100} />
+        </BusinessSection>
+      )}
+
+      <BusinessSection>
+        <h1 className="text-3xl font-darker-grotesque text-title-color">{business?.businessName}</h1>
+        <span className="font-segoe text-xl">{business?.industry}</span>
+      </BusinessSection>
+      <BusinessSection className="text-black flex flex-col gap-5">
+        <div>
+          <p className="text-xl font-segoe font-bold text-black">Owner Name:</p>
+          <p className="font-segoe text-2xl">{ownerName}</p>
+        </div>
+        <div>
+          <p className="text-xl font-segoe font-bold text-black">Instagram Handle:</p>
+          <p className="font-segoe text-2xl">{business?.instagramHandle}</p>
+        </div>
+      </BusinessSection>
+      <BusinessSection className="text-black border-none">
+        <div>
+          <p className="text-xl  font-segoe font-bold text-black">Credit Balance:</p>
+          <p className="font-segoe text-2xl">${credits}</p>
+        </div>
+
+      </BusinessSection>
+    </DashboardSection >
+  )
+
+}
+
+
+const DashboardSection = ({ children, className }: React.ComponentPropsWithoutRef<"section"> & {
+  children: React.ReactNode;
+}) => {
+  return (
+    <section className={cn("max-w-[433px] w-full h-fit border rounded-3xl border-button-border-color shadow-md shadow-button-border-color", className)}>
+      {children}
+    </section>
+  )
+}
+
+
+const BusinessSection = ({ children, className }: React.ComponentPropsWithoutRef<"section"> & {
+  children: React.ReactNode;
+}) => {
+  return (
+    <section className={cn("w-full border-b py-5 px-3 border-button-border-color", className)}>
+
+      {children}
+    </section>
+  )
+}
