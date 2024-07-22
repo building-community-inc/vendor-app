@@ -21,7 +21,6 @@ const Button = ({ children, className = "", ...rest }: ButtonProps) => {
         "text-base",
         'shadow-lg',
         className,
-        { 'disabled:bg-slate-400': rest.disabled }
       )}
       {...rest}
     >

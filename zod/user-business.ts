@@ -92,13 +92,13 @@ export const zodSanityBusiness = zodBusiness.merge(
 
 export const zodSanityUpdateBusiness = zodSanityBusiness.merge(z.object({
   _id: z.string(),
-  logo: z
-      .object({
-        _type: z.literal("image"),
-        asset: z.object({
-          _ref: z.string(),
-        }),
-      })
+  // logo: z
+  //     .object({
+  //       _type: z.literal("image"),
+  //       asset: z.object({
+  //         _ref: z.string(),
+  //       }),
+  //     })
 }))
 
 // export type TSanityBusiness = z.infer<typeof zodSanityBusiness>;
