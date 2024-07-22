@@ -1,12 +1,10 @@
 
 "use client";
 import { TBusiness, TUserWithOptionalBusinessRef, zodBusiness } from "@/zod/user-business";
-import UpdateProfileImage from "../../_components/UpdateProfileImage";
 import { redirect } from "next/navigation";
 import { camelCaseToTitleCase } from "@/utils/helpers";
 import { useEffect, useRef, useState } from "react";
 import { TErrorType, saveNewBusinessInfo } from "./actions";
-import PdfUpload from "@/app/_components/PdfUpload";
 import { usePdfFileStore, useUpdateProfileImageStore } from "@/app/_components/store/fileStore";
 import { useFormState, useFormStatus } from "react-dom";
 import Button from "@/app/_components/Button";
@@ -197,26 +195,3 @@ const SubmitButton = ({formChanged}: {
   )
 }
 
-const PdfSection = ({ pdfFileIds }: {
-  pdfFileIds: string[];
-  // sanityUser: TUserWithOptionalBusinessRef;
-}) => {
-  return (
-    <section className="mx-auto my-5 flex flex-col items-start w-full px-12 gap-5">
-      <label htmlFor="pdfs" className="font-semibold">
-        Certificates or Supporting Documents (Optional) PDF Only
-      </label>
-      <PdfUpload
-        useStore={usePdfFileStore}
-      />
-
-      {/* {sanityUser.business.pdf?.map((pdf) => (<p>{pdf.asset._ref}</p>)} */}
-      {pdfFileIds.length > 0 && pdfFileIds.map(fileId => (
-
-        <input key={fileId} type="hidden" name="pdfs" value={fileId} readOnly />
-      )
-
-      )}
-    </section>
-  )
-}

@@ -21,8 +21,8 @@ const UpdateProfileImage = ({ currentLogoId, businessName, logoUrl }: {
 
   return (
     <section className="mx-auto mt-5 px-12 flex flex-col items-center gap-5">
+      <span className="text-2xl font-darker-grotesque">Logo (PNG Only) </span>
       <FileInput useStore={useUpdateProfileImageStore} currentImage={{ name: businessName, size: 228, url: logoUrl, fileId: currentLogoId }} title="update your logo" />
-      <span className="text-sm">* only upload .png </span>
     </section>
   );
 }

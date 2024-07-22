@@ -43,19 +43,28 @@ const page = async () => {
   });
 
   return (
-    <main className="flex p-10 gap-2 min-h-screen w-full flex-wrap">
-      {sanityUser.business ? (
-        <>
-          <BusinessCard credits={sanityUser.credits || 0} business={sanityUser.business} ownerName={`${sanityUser.firstName} ${sanityUser.lastName}`} />
-          <ContactCard email={sanityUser.email} phone={sanityUser.business?.phone} address={`${sanityUser.business?.address1} ${sanityUser.business?.address2}`} />
-        </>
-      ) : (
-        <NoBz />
-      )}
-      <Button className="h-fit font-bold font-darker-grotesque">
-        <Link href="/dashboard/edit-profile">Edit Profile</Link>
-      </Button>
+    <main className="flex p-10 gap-2 min-h-screen w-full flex-col justify-center">
+      <section className=" flex flex-col gap-10">
 
+        {sanityUser.business ? (
+          <section className="flex flex-wrap justify-evenly gap-10 ">
+            <BusinessCard credits={sanityUser.credits || 0} business={sanityUser.business} ownerName={`${sanityUser.firstName} ${sanityUser.lastName}`} />
+            <ContactCard email={sanityUser.email} phone={sanityUser.business?.phone} address={`${sanityUser.business?.address1} ${sanityUser.business?.address2}`} />
+          </section>
+        ) : (
+          <NoBz />
+        )}
+        <section className="flex w-full justify-evenly">
+
+          <Button className="h-fit font-bold font-darker-grotesque">
+            <Link href="/dashboard/edit-profile">Edit Profile</Link>
+          </Button>
+          <Button className="h-fit font-bold font-darker-grotesque">
+            <Link href="/dashboard/upload-files">Upload Files</Link>
+          </Button>
+
+        </section>
+      </section>
     </main>
   );
 };
