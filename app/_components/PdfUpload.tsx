@@ -176,10 +176,10 @@ const PdfUpload = ({
     <>
       <button
         type="button"
-        className="rounded-2xl w-fit mx-auto mt-2 bg-white text-black px-5 py-1 text-lg"
+        className="rounded-2xl w-fit mx-auto mt-2 bg-button-primary border border-button-border-color shadow-lg text-black px-5 py-1 text-lg"
         onClick={() => fileInputRef.current?.click()}
       >
-        {input.length > 0 ? "Add more" : "Browse"}
+        {input.length > 0 ? "Add more" : "Browse Files"}
       </button>
       <input
         // {...props}

@@ -9,15 +9,17 @@ const Button = ({ children, className = "", ...rest }: ButtonProps) => {
   return (
     <button
       className={cn(
-        'px-3',
+        'px-10',
+        'py-3',
         'flex',
         'items-center',
         'border',
-        'rounded-md',
-        'bg-secondary',
+        'rounded-[18px]',
+        'bg-button-primary',
+        "border-button-border-color",
         'text-black',
-        'capitalize',
-        "text-sm",
+        "text-base",
+        'shadow-lg',
         className,
         { 'disabled:bg-slate-400': rest.disabled }
       )}

@@ -52,16 +52,17 @@ const NavBar = ({ user, areThereNewMessages }: { user: TUserWithOptionalBusiness
         <Burger
           isNavOpen={isNavOpen}
           onClickHandler={() => setIsNavOpen(!isNavOpen)}
-          barColor={pathname.includes("explore") ? "bg-black" : isNavOpen ? "bg-black" : "bg-nav-bg"}
+          barColor={'bg-black'}
         />
       </div>
       <div className={`${isNavOpen ? "" : "hidden"} md:block`}>
-        <Link href="/">
+        <Link href="/" className="bg-red-500">
           <Image
             src={"/logo-on-white-bg.png"}
             alt="logo"
             width={468}
             height={468}
+            className="w-[468px] object-cover mx-auto"
           />
         </Link>
         <ul className="flex flex-col gap-4">

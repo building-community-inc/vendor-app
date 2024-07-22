@@ -1,13 +1,13 @@
 import './globals.css'
-import { Inter, Roboto } from 'next/font/google'
+import { Inter, Roboto, Darker_Grotesque } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 import { dark } from '@clerk/themes'
 import localFont from 'next/font/local'
-import PlausibleProvider from 'next-plausible'
 
 
 const inter = Inter({ subsets: ['latin'] })
 const roboto = Roboto({ subsets: ['latin'], weight: "400" })
+const darkerGrotesque = Darker_Grotesque({ subsets: ['latin'], weight: "variable" })
 const segoe = localFont({ src: "./segoe-ui.ttf" })
 
 export const metadata = {
@@ -23,12 +23,11 @@ export default function RootLayout({
   return (
     <ClerkProvider appearance={{ baseTheme: dark }}>
       <html lang="en">
-      <head>
-        {/* <PlausibleProvider domain={"vendorapp.buildingcommunityinc.com"} /> */}
-        {/* <script defer data-domain={url} src="https://plausible.io/js/script.js"></script> */}
-        <script defer data-domain="vendorapp.buildingcommunityinc.com" src="https://plausible.io/js/script.js"></script>
-      </head>
-        <body className={`bg-background text-secondary ${inter.className} ${roboto.className} ${segoe}`}>{children}</body>
+        <head>
+          <script defer data-domain={"vendorapp.buildingcommunityinc.com"} src="https://plausible.io/js/script.js"></script>
+          <script defer data-domain="vendorapp.buildingcommunityinc.com" src="https://plausible.io/js/script.js"></script>
+        </head>
+        <body className={`bg-background text-primary ${inter.className} ${roboto.className} ${segoe.className} ${darkerGrotesque.className}`}>{children}</body>
       </html>
     </ClerkProvider>
   )

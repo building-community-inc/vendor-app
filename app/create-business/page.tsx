@@ -17,7 +17,7 @@ const Page = async () => {
   return (
     <main className="min-h-screen flex flex-col pt-14">
       <header>
-        <h1 className="uppercase text-center">Create Business Profile</h1>
+        <h1 className="uppercase text-center font-darker-grotesque text-title-color text-3xl ">Create Business Profile</h1>
       </header>
       <BusinessInfoForm user={user} vendorCategories={vendorCategories}/>
     </main>
