@@ -6,9 +6,11 @@ import NoBz from "./_components/NoBz";
 import { DateTime } from 'luxon';
 import Link from "next/link";
 import React from "react";
-import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
+import { TPdf, TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { cn } from "@/utils";
 import Button from "../_components/Button";
+import { DocumentPdfIcon, DownloadIcon } from '@sanity/icons'
+
 
 const page = async () => {
   const user = await currentUser();
@@ -42,7 +44,7 @@ const page = async () => {
 
   return (
     <main className="flex p-10 gap-2 min-h-screen w-full flex-col justify-center">
-      <section className=" flex flex-col gap-10">
+      <section className=" flex flex-col gap-10 items-center">
 
         {sanityUser.business ? (
           <section className="flex flex-wrap justify-evenly gap-10 ">
@@ -52,22 +54,50 @@ const page = async () => {
         ) : (
           <NoBz />
         )}
-        <section className="flex w-full justify-evenly">
+        {sanityUser.business && sanityUser.business.pdfs && sanityUser.business.pdfs.length > 0 && (
+          <SupportingDocsCard pdfs={sanityUser.business.pdfs} />
+        )}
+        <footer className="flex w-full justify-evenly">
 
           <Button className="h-fit font-bold font-darker-grotesque">
             <Link href="/dashboard/edit-profile">Edit Profile</Link>
           </Button>
           <Button className="h-fit font-bold font-darker-grotesque">
-            <Link href="/dashboard/upload-files">Upload Files</Link>
+            <Link href="/dashboard/upload-files">Upload or Edit Files</Link>
           </Button>
 
-        </section>
+        </footer>
       </section>
     </main>
   );
 };
 
 export default page;
+
+const SupportingDocsCard = ({
+  pdfs
+}: {
+  pdfs: TPdf[];
+}) => {
+
+  return (
+    <DashboardSection className="py-5 px-3 flex flex-col gap-5">
+      <h3 className="text-xl font-segoe font-bold text-black">Supporting Documents:</h3>
+      <ul>
+        {pdfs.map((pdf) => (
+          <li key={pdf._id} className="flex items-center justify-between">
+            <a href={pdf.url} target="_blank" rel="noreferrer" className="font-segoe text-2xl flex items-center">
+              <DocumentPdfIcon className="text-2xl" />
+              <span>
+                {pdf.originalFileName}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </DashboardSection>
+  )
+}
 
 const ContactCard = ({ email, phone, address }: {
   email: string;

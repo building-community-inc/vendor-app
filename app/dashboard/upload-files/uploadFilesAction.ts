@@ -3,7 +3,6 @@
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import {
   safeParse,
   object,

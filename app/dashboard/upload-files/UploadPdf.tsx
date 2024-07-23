@@ -55,9 +55,7 @@ const UploadPdf = ({ files, setFiles, onChange }: {
               onClick={() => {
                 const newFiles = files.filter((_, i) => i !== index);
                 setFiles(newFiles);
-                if (newFiles.length === 0) {
-                  onChange(false);
-                }
+                onChange(true);
               }}
               className="cursor-pointer w-5 h-fit"
             />

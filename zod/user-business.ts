@@ -102,18 +102,23 @@ export const zodSanityUpdateBusiness = zodSanityBusiness.merge(z.object({
 }))
 
 // export type TSanityBusiness = z.infer<typeof zodSanityBusiness>;
+
+const pdfSchema = z.object({
+  url: z.string(),
+  originalFileName: z.string(),
+  _id: z.string(),
+  size: z.number(),
+});
+
+export type TPdf = z.infer<typeof pdfSchema>;
+
 export const zodBusinessQuery = zodBusinessForm.merge(
   z.object({
     _id: z.string(),
     logoUrl: z.string().optional().nullable(),
     pdfs: z
       .array(
-        z.object({
-          url: z.string(),
-          originalFileName: z.string(),
-          _id: z.string(),
-          size: z.number(),
-        })
+        pdfSchema
       )
       .optional()
       .nullable(),

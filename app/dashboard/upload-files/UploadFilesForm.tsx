@@ -8,16 +8,24 @@ import UploadPdf from "./UploadPdf";
 import { uploadFiles } from "./uploadFilesAction";
 import ChangeLogo from "./ChangeLogo";
 import { redirect } from "next/navigation";
+import { TPdf } from "@/zod/user-business";
+
+const urlToFile = async (url: string, filename: string, mimeType: string) => {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new File([blob], filename, { type: mimeType });
+};
 
 const UploadFilesForm = ({
   businessName,
   logoUrl,
   businessId,
+  pdfs
 }: {
   businessId: string;
   businessName: string;
   logoUrl?: string | null;
-  assetRef?: string;
+  pdfs?: TPdf[] | null;
 }) => {
   const [formState, formAction] = useFormState(uploadFiles, { errors: [], success: false })
 
@@ -27,6 +35,17 @@ const UploadFilesForm = ({
   const [pendingForm, setPendingForm] = useState(false);
 
   const [formChanged, setFormChanged] = useState(false);
+
+  useEffect(() => {
+    // Convert pdfs to File objects
+    if (pdfs) {
+      Promise.all(pdfs.map((pdf, index) => urlToFile(pdf.url, `pdf${index}.pdf`, 'application/pdf')))
+        .then(setPdfFiles);
+    }
+
+  }, []);
+
+  console.log({pdfs, pdfFiles})
 
   useEffect(() => {
     setPendingForm(false);
