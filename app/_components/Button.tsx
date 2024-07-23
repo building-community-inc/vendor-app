@@ -20,6 +20,8 @@ const Button = ({ children, className = "", ...rest }: ButtonProps) => {
         'text-black',
         "text-base",
         'shadow-lg',
+        'font-darker-grotesque' ,
+        'font-semibold',
         className,
       )}
       {...rest}

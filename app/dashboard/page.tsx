@@ -10,6 +10,7 @@ import { TPdf, TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { cn } from "@/utils";
 import Button from "../_components/Button";
 import { DocumentPdfIcon, DownloadIcon } from '@sanity/icons'
+import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 
 
 const page = async () => {
@@ -68,11 +69,78 @@ const page = async () => {
 
         </footer>
       </section>
+
+      <section className="flex flex-col gap-2">
+        <header className="border-2 border-b-black">
+
+          <h2 className="text-2xl font-bold font-darker-grotesque text-black">My Market Bookings</h2>
+        </header>
+        <ul className="flex flex-col gap-5">
+          {userMarkets.map(({ market }) => (
+            <MarketCard key={market._id} market={market} />
+          ))}
+        </ul>
+
+
+      </section>
     </main>
   );
 };
 
 export default page;
+
+const MarketCard = ({ market }: {
+  market: {
+    _id: string;
+    name: string;
+    dates: string[];
+  }
+}) => {
+
+  return (
+    <li key={market._id} className="px-5 py-5 flex flex-wrap gap-8 border rounded-2xl justify-between border-button-border-color shadow-md shadow-button-border-color">
+
+      <MarketSection title="Date">
+        <ul className="flex flex-col gap-2">
+          {market.dates.map(date => (
+            <li key={date} className="flex items-center gap-2">
+              <span>{date}</span>
+            </li>
+          ))}
+        </ul>
+      </MarketSection>
+      <MarketSection title="Market Name">
+        <span>{market.name}</span>
+      </MarketSection>
+      {/* <MarketSection title  */}
+      <MarketSection title="Table">
+        2
+      </MarketSection>
+      <MarketSection title="Amount Owing">
+        $0
+      </MarketSection>
+      <MarketSection title="Booking Status">
+        Reserved
+      </MarketSection>
+      <Button className="h-fit">
+        <Link href={`#`}>Review Booking</Link>
+      </Button>
+    </li>
+  )
+}
+
+const MarketSection = ({ title, children }: {
+  title?: string;
+  children: React.ReactNode;
+}) => {
+  return (
+    <section className="flex flex-col gap-2">
+      {title && <h3 className="font-darker-grotesque font-bold">{title}</h3>}
+      {children}
+    </section>
+  )
+
+}
 
 const SupportingDocsCard = ({
   pdfs
