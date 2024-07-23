@@ -35,17 +35,6 @@ const UploadFilesForm = ({
     }
   }, [formState]);
 
-  // const [startTime, setStartTime] = useState<number | null>(null);
-
-  // useEffect(() => {
-  //   if (formState.success && startTime) {
-  //     const endTime = performance.now();
-  //     const duration = endTime - startTime;
-  //     console.log(`Form submission took ${duration} milliseconds`);
-  //     setStartTime(null); // Reset startTime for the next submission
-  //   }
-  // }, [formState.success, startTime]);
-
   return (
     <form
       action={formAction}
