@@ -13,19 +13,32 @@ import {
   literal,
   union,
   nullable,
+  pipe,
+  maxLength,
+  maxValue,
 } from "valibot";
 
 const CustomFileSchema = object({
   name: string(),
-  size: number(),
+  size: pipe(number(), maxValue(2 * 1024 * 1024, "Max File size is 2MB")),
   type: union([literal("image/png"), literal("application/pdf")]),
   lastModified: number(),
 });
 
+// type TFileWithMetadata = File & {
+//   name: string; // Extend with any additional metadata as needed
+// }
+
 const dataValidator = object({
   logo: nullable(optional(CustomFileSchema)),
-  pdfFiles: optional(array(CustomFileSchema)),
+  pdfFiles: optional(
+    pipe(
+      array(CustomFileSchema),
+      maxLength(5, "You cannot upload more than 5 files") // Max 5 files
+    )
+  ),
   businessId: string(),
+  removedSanityIds: nullable(optional(array(string()))),
 });
 
 export const uploadFiles = async (
@@ -39,16 +52,32 @@ export const uploadFiles = async (
     pdfFiles,
     logo,
     businessId: formData.get("businessId"),
+    removedSanityIds: formData.getAll("removedSanityIds"),
   };
 
   const validatedData = safeParse(dataValidator, rawData);
-  console.log({ validatedData, rawData });
+
   if (!validatedData.success) {
     const errors = validatedData.issues.map((error) => {
-      return `${error.message} at ${error.path?.join(".")}`;
-    });
+      let fileName = "";
 
-    console.log({ issues: validatedData.issues });
+      // Assuming the second element in the error path array contains the index of the file in the array
+      const fileIndex = error.path?.[1]?.key;
+      if (typeof fileIndex === "number") {
+        // Assuming 'firstValue' is an array of files and contains the file object at the index specified by the error
+        const file = error.path && (error.path[0].value as File[])[fileIndex];
+
+        fileName = file ? file.name : "Unknown File";
+      }
+
+      if (error.path?.[0]?.key === "logo") {  
+        fileName = "Logo";
+      }
+      // console.log({errorPath: error.path, firstValue: error.path[0].value});
+
+      // console.log({ issues: validatedData.issues, pathValue: error.path, firstValue: error.path[0].value, fileName });
+      return `${error.message} for file ${fileName}`;
+    });
 
     return {
       errors,
@@ -105,6 +134,12 @@ export const uploadFiles = async (
             _ref: pdfResp._id,
           },
         });
+      }
+    }
+
+    if (validatedData.output.removedSanityIds) {
+      for (const id of validatedData.output.removedSanityIds) {
+        await sanityWriteClient.delete(id);
       }
     }
 

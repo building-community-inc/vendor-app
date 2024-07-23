@@ -3,12 +3,15 @@ import Button from "@/app/_components/Button";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-const ChangeLogo = ({ defaultLogoUrl, defaultFileName, logoFile, setLogoFile, onChange }: {
+const ChangeLogo = ({ defaultLogoUrl, defaultFileName, logoFile, setLogoFile, onChange, setRemovedSanityIds, defaultLogoId, removedSanityIds }: {
   defaultLogoUrl?: string | null;
   defaultFileName?: string | null;
+  defaultLogoId?: string | null;
   logoFile: File | null;
   setLogoFile: (file: File | null) => void;
   onChange?: (value: boolean) => void;
+  removedSanityIds?: string[];
+  setRemovedSanityIds: (ids: string[]) => void;
 }) => {
 
   const [currentLogo, setCurrentLogo] = useState<{
@@ -69,7 +72,9 @@ const ChangeLogo = ({ defaultLogoUrl, defaultFileName, logoFile, setLogoFile, on
               url: URL.createObjectURL(e.target.files[0]),
               fileName: e.target.files[0].name
             })
-
+            if (removedSanityIds && defaultLogoId) {
+              setRemovedSanityIds([...removedSanityIds, defaultLogoId]);
+            }
           }}
         />
       </footer>

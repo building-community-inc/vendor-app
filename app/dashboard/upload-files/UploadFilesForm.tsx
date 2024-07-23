@@ -9,28 +9,44 @@ import { uploadFiles } from "./uploadFilesAction";
 import ChangeLogo from "./ChangeLogo";
 import { redirect } from "next/navigation";
 import { TPdf } from "@/zod/user-business";
-
-const urlToFile = async (url: string, filename: string, mimeType: string) => {
+const urlToFile = async (url: string, filename: string, mimeType: string, sanityId: string) => {
   const response = await fetch(url);
   const blob = await response.blob();
-  return new File([blob], filename, { type: mimeType });
+  const file = new File([blob], filename, { type: mimeType });
+
+  // if (sanityId) {
+  // Option 1: Using Object.defineProperty to add a non-enumerable property
+  Object.defineProperty(file, 'sanityId', {
+    value: sanityId,
+    enumerable: false // This makes sure the property does not show up in a for...in loop
+  });
+
+  // Option 2: Alternatively, return an object that includes both the file and the sanityId
+  // return { file, sanityId };
+  // }
+
+  return file;
 };
 
 const UploadFilesForm = ({
   businessName,
   logoUrl,
   businessId,
-  pdfs
+  pdfs,
+  logoId
 }: {
   businessId: string;
   businessName: string;
   logoUrl?: string | null;
   pdfs?: TPdf[] | null;
+  logoId?: string | null;
 }) => {
   const [formState, formAction] = useFormState(uploadFiles, { errors: [], success: false })
 
   const [pdfFiles, setPdfFiles] = useState<File[]>([]);
   const [logoFile, setLogoFile] = useState<File | null>(null);
+
+  const [removedFileSanityIds, setRemovedFileSanityIds] = useState<string[]>([]);
 
   const [pendingForm, setPendingForm] = useState(false);
 
@@ -39,13 +55,10 @@ const UploadFilesForm = ({
   useEffect(() => {
     // Convert pdfs to File objects
     if (pdfs) {
-      Promise.all(pdfs.map((pdf, index) => urlToFile(pdf.url, `pdf${index}.pdf`, 'application/pdf')))
+      Promise.all(pdfs.map((pdf) => urlToFile(pdf.url, `${pdf.originalFileName}`, 'application/pdf', pdf._id)))
         .then(setPdfFiles);
     }
-
   }, []);
-
-  console.log({pdfs, pdfFiles})
 
   useEffect(() => {
     setPendingForm(false);
@@ -60,22 +73,40 @@ const UploadFilesForm = ({
       onSubmit={e => {
         e.preventDefault()
         const formData = new FormData();
+
         pdfFiles.forEach(file => {
           formData.append("pdfFiles", file)
         })
+
         if (logoFile) {
           formData.append("logo", logoFile)
         }
 
         formData.append("businessId", businessId);
 
+        removedFileSanityIds.forEach(id => formData.append("removedFileSanityIds", id));
+
         formAction(formData);
         setPendingForm(true);
       }}
       className="flex flex-col gap-5 max-w-[400px] mx-auto mt-10"
     >
-      <ChangeLogo onChange={(value) => setFormChanged(value)} logoFile={logoFile} setLogoFile={setLogoFile} defaultLogoUrl={logoUrl} defaultFileName={businessName} />
-      <UploadPdf files={pdfFiles} setFiles={setPdfFiles} onChange={(value) => setFormChanged(value)} />
+      <ChangeLogo
+        onChange={(value) => setFormChanged(value)}
+        logoFile={logoFile}
+        setLogoFile={setLogoFile}
+        defaultLogoUrl={logoUrl}
+        defaultFileName={businessName}
+        setRemovedSanityIds={setRemovedFileSanityIds}
+        removedSanityIds={removedFileSanityIds}
+        defaultLogoId={logoId}
+      />
+      <UploadPdf
+        removedIds={removedFileSanityIds}
+        setRemovedFileSanityIds={setRemovedFileSanityIds}
+        files={pdfFiles} setFiles={setPdfFiles}
+        onChange={(value) => setFormChanged(value)}
+      />
 
       {formState.errors && formState.errors.map((error) => (
         <p className="text-red-500 self-center" key={error}>{JSON.stringify(error)}</p>

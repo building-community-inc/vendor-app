@@ -26,6 +26,7 @@ const Page = async () => {
         businessId={sanityUser.business._id}
         logoUrl={sanityUser.business.logoUrl}
         pdfs={sanityUser.business.pdfs}
+        logoId={sanityUser.business.logo?.asset._ref}
       />
     </main>
   );

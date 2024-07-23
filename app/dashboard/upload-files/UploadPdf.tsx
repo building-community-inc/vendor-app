@@ -2,10 +2,16 @@ import Button from "@/app/_components/Button";
 import { TrashIcon } from "@sanity/icons";
 import { ChangeEvent, useRef } from "react";
 
-const UploadPdf = ({ files, setFiles, onChange }: {
-  files: File[];
+type TFileWithOptionalSanityId = File & {
+  sanityId?: string;
+};
+
+const UploadPdf = ({ files, setFiles, onChange, setRemovedFileSanityIds, removedIds }: {
+  files: TFileWithOptionalSanityId[];
   setFiles: (files: File[]) => void;
   onChange: (value: boolean) => void;
+  setRemovedFileSanityIds: (value: string[]) => void;
+  removedIds: string[];
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -15,8 +21,7 @@ const UploadPdf = ({ files, setFiles, onChange }: {
     if (e.target.files && e.target.files.length > 0) {
 
       const newFiles: File[] = [...files];
-      for (let i = 0; i < e.target.files.length; i++) {
-        const file = e.target.files[i];
+      for (const file of e.target.files) {
         newFiles.push(file);
       }
       setFiles([...newFiles]);
@@ -24,6 +29,8 @@ const UploadPdf = ({ files, setFiles, onChange }: {
       if (newFiles.length > 0) {
         onChange(true);
       }
+
+
     }
 
   }
@@ -44,20 +51,26 @@ const UploadPdf = ({ files, setFiles, onChange }: {
         type="file"
         className="hidden"
       />
-      <ul className="w-full">
+      <ul className="w-full flex flex-col gap-5 my-5">
         {files.map((file, index) => (
           <li key={index} className="flex justify-between items-center">
-            <span>
-
-              File Name: {file.name}
+            <span className="max-w-[90%]">
+              <strong>
+                {"File Name: "}
+              </strong>
+              {file.name}
             </span>
             <TrashIcon
               onClick={() => {
                 const newFiles = files.filter((_, i) => i !== index);
                 setFiles(newFiles);
                 onChange(true);
+                console.log({ file })
+                if (file.sanityId) {
+                  setRemovedFileSanityIds([...removedIds, file.sanityId]);
+                }
               }}
-              className="cursor-pointer w-5 h-fit"
+              className="cursor-pointer w-5 h-5"
             />
           </li>
         ))}
