@@ -1,3 +1,4 @@
+import Button from "@/app/_components/Button";
 import { TrashIcon } from "@sanity/icons";
 import { ChangeEvent, useRef } from "react";
 
@@ -63,13 +64,13 @@ const UploadPdf = ({ files, setFiles, onChange }: {
           </li>
         ))}
       </ul>
-      <button
+      <Button
         type="button"
-        className="rounded-2xl w-fit mx-auto mt-2 bg-button-primary border border-button-border-color shadow-lg text-black px-5 py-1 text-lg"
+        className="font-darker-grotesque font-semibold self-center"
         onClick={() => fileInputRef.current?.click()}
       >
         {files.length > 0 ? "Add more" : "Browse Files"}
-      </button>
+      </Button>
     </section>
   );
 }

@@ -22,7 +22,8 @@ const Page = async () => {
 
       <UploadFilesForm
         businessName={sanityUser.business.businessName}
-        assetRef={sanityUser.business.logo?.asset._ref}
+        // assetRef={sanityUser.business.logo?.asset._ref}
+        businessId={sanityUser.business._id}
         logoUrl={sanityUser.business.logoUrl}
       />
     </main>

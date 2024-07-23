@@ -38,16 +38,20 @@ const ChangeLogo = ({ defaultLogoUrl, defaultFileName, logoFile, setLogoFile, on
       )}
       <footer className="flex justify-evenly gap-5 ">
         <Button type="button" onClick={() => {
-          console.log("clicked")
           inputRef.current?.click();
-        }}>
+        }}
+          className="font-darker-grotesque font-semibold"
+
+        >
           Change your Logo
         </Button>
         {currentLogo?.fileName !== defaultFileName && (
           <Button type="button" onClick={() => {
             setCurrentLogo({ url: defaultLogoUrl, fileName: defaultFileName })
             setLogoFile(null);
-          }} >
+          }}
+            className="font-darker-grotesque font-semibold"
+          >
             Reset
           </Button>
 
