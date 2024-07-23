@@ -3,12 +3,10 @@ import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import NoBz from "./_components/NoBz";
-import { formatDateWLuxon } from "@/utils/helpers";
 import { DateTime } from 'luxon';
-import UpdateProfileImage from "./_components/UpdateProfileImage";
 import Link from "next/link";
 import React from "react";
-import { TBusiness, TUserWithOptionalBusinessRef } from "@/zod/user-business";
+import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { cn } from "@/utils";
 import Button from "../_components/Button";
 

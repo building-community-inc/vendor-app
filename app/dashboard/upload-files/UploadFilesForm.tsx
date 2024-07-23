@@ -1,12 +1,12 @@
 "use client"
 
-import PdfUpload from "@/app/_components/PdfUpload";
-import { usePdfFileStore } from "@/app/_components/store/fileStore";
-import UpdateProfileImage from "../_components/UpdateProfileImage";
 import Button from "@/app/_components/Button";
 import Link from "next/link";
-import { useFormStatus } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { useState } from "react";
+import UploadPdf from "./UploadPdf";
+import { uploadFiles } from "./uploadFilesAction";
+import ChangeLogo from "./ChangeLogo";
 
 const UploadFilesForm = ({
   businessName,
@@ -17,14 +17,36 @@ const UploadFilesForm = ({
   logoUrl?: string | null;
   assetRef?: string;
 }) => {
-  const { fileIds: pdfFileIds, setFileIds: setPdfFileIds } = usePdfFileStore();
+  const [formState, formAction] = useFormState(uploadFiles, { errors: [], success: false })
+
+  const [pdfFiles, setPdfFiles] = useState<File[]>([]);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+
   const [formChanged, setFormChanged] = useState(false);
   return (
-    <form>
-      <UpdateProfileImage businessName={businessName} logoUrl={logoUrl || ""} currentLogoId={assetRef} />
+    <form
+      action={formAction}
+      onSubmit={e => {
+        e.preventDefault()
+        const formData = new FormData();
+        pdfFiles.forEach(file => {
+          formData.append("pdfFiles", file)
+        })
+        if (logoFile) {
+          formData.append("logo", logoFile)
+        }
 
-      <PdfSection pdfFileIds={pdfFileIds} onChange={(value) => setFormChanged(value)} />
-
+        formAction(formData);
+      }}
+      className="flex flex-col gap-5 max-w-[400px] mx-auto mt-10"
+    >
+      {/* <UpdateProfileImage businessName={businessName} logoUrl={logoUrl || ""} currentLogoId={assetRef} /> */}
+      <ChangeLogo onChange={(value) => setFormChanged(value)} logoFile={logoFile} setLogoFile={setLogoFile} defaultLogoUrl={logoUrl} defaultFileName={businessName} />
+      {/* <PdfSection pdfFileIds={pdfFileIds} onChange={(value) => setFormChanged(value)} /> */}
+      <UploadPdf files={pdfFiles} setFiles={setPdfFiles} onChange={(value) => setFormChanged(value)} />
+      {formState.errors && formState.errors.map((error) => (
+        <p className="text-red-500 self-center" key={error}>{JSON.stringify(error)}</p>
+      ))}
       <footer className="flex w-full justify-evenly">
 
         <Button type="button" className="w-fit font-bold font-darker-grotesque">
@@ -39,32 +61,6 @@ const UploadFilesForm = ({
 }
 
 export default UploadFilesForm;
-
-const PdfSection = ({ pdfFileIds, onChange }: {
-  pdfFileIds: string[];
-  // sanityUser: TUserWithOptionalBusinessRef;
-  onChange: (value: boolean) => void;
-}) => {
-  return (
-    <section className="mx-auto my-24 flex flex-col items-start w-full px-12 gap-5">
-      <label htmlFor="pdfs" className="font-semibold font-darker-grotesque self-center">
-        Certificates or Supporting Documents (Optional) PDF Only
-      </label>
-      <PdfUpload
-        onChange={onChange}
-        useStore={usePdfFileStore}
-      />
-
-      {/* {sanityUser.business.pdf?.map((pdf) => (<p>{pdf.asset._ref}</p>)} */}
-      {pdfFileIds.length > 0 && pdfFileIds.map(fileId => (
-
-        <input key={fileId} type="hidden" name="pdfs" value={fileId} readOnly />
-      )
-
-      )}
-    </section>
-  )
-}
 
 const SubmitButton = ({ formChanged }: {
   formChanged: boolean;
