@@ -21,7 +21,7 @@ const Date = ({ dates }: {
 
 
   return (
-    <div className="border relative border-[#707070] rounded-b-lg">
+    <div className="border relative border-[#707070] rounded-b-md">
       <div className="absolute left-2 top-[1px]">
         <CalendarRing />
       </div>
