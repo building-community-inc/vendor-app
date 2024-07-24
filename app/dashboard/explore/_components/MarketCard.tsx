@@ -1,9 +1,13 @@
+"use client";
 import type { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 import { dateArrayToDisplayableText } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
 import Date from "./Date";
 import Button from "@/app/_components/Button";
+import { ChevronDownIcon, ChevronUpIcon } from '@sanity/icons'
+import { useState } from "react";
+
 
 const MarketCard = ({ market }: { market: TSanityMarket }) => {
   const dateToDisplay = dateArrayToDisplayableText(market.dates);
@@ -16,7 +20,7 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
 
   // const priceToDisplay = tablePriceTodisplay(minPrice, maxPrice);
   return (
-    <li key={market._id} className="flex flex-col gap-3 shadow-md shadow-title-color rounded-b-none rounded-2xl">
+    <li key={market._id} className="flex flex-col shadow-md shadow-title-color gap-3 border-b-none rounded-2xl overflow-hidden">
       <header className="relative h-fit">
 
         <Image
@@ -31,13 +35,7 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
           <PriceTag price={minPrice} />
         </div>
       </header>
-      {/* <span className="">
-          <strong>{priceToDisplay}</strong> /day
-        </span>
-        <h3 className="text-2xl font-bold font-inter">{market.name}</h3>
-        {/* <p className="font-roboto">{market.description}</p> */}
-      {/* <p className="font-roboto">{dateToDisplay}</p> */}
-      {/* </Link> */}
+
       <footer className="flex items-center justify-evenly flex-wrap py-10 gap-5 text-center">
         <Date dates={market.dates} />
         <div className="flex flex-col">
@@ -54,6 +52,7 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
         </Button>
       </footer>
       {/* {priceToDisplay} */}
+      <DetailsSection datesToDisplay={dateToDisplay} hours={market.venue.hours} loadInInstructions={market.venue.loadInInstructions} phone={market.venue.phone} />
     </li>
   );
 };
@@ -68,5 +67,57 @@ const PriceTag = ({ price }: { price: number }) => {
         ${price} /day
       </span>
     </div>
+  )
+}
+
+const DetailsSection = ({ datesToDisplay, hours, loadInInstructions, phone }: {
+  datesToDisplay: string;
+  hours?: string;
+  loadInInstructions?: string | null;
+  phone?: string
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <section className="border-t-2 border-[#C5B5A4] transition-all ">
+      {isOpen && (
+        <div className={`w-full flex p-10 flex-col border-b-2 border-[#C5B5A4] transition-all 
+      `}>
+          <div className="flex flex-col">
+            <strong>Dates</strong>
+            <span>{datesToDisplay}</span>
+          </div>
+          {hours && (
+            <div className="flex flex-col">
+              <strong>Hours</strong>
+              <span>{hours}</span>
+            </div>
+          )}
+          {phone && (
+            <div className="flex flex-col">
+              <strong>Phone</strong>
+              <span>{phone}</span>
+            </div>
+          )}
+          {loadInInstructions && (
+
+            <div className="flex flex-col">
+              <strong>Load In Instructions:</strong>
+              <span>{loadInInstructions}</span>
+            </div>
+          )}
+        </div>
+      )}
+      <button className="w-full flex flex-col items-center" onClick={() => setIsOpen(!isOpen)}>
+        <span>
+          {isOpen ? "Hide" : "See"} Details
+        </span>
+        {isOpen ? (
+          <ChevronUpIcon className="text-xl" />
+        ) : (
+          <ChevronDownIcon className="text-xl" />
+        )}
+      </button>
+    </section>
   )
 }

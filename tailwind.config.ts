@@ -11,6 +11,9 @@ const config: Config = {
       superTight: "-0.8px",
     },
     extend: {
+      transitionProperty: {
+        'height': 'height',
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
