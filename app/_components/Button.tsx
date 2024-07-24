@@ -22,6 +22,10 @@ const Button = ({ children, className = "", ...rest }: ButtonProps) => {
         'shadow-lg',
         'font-darker-grotesque' ,
         'font-semibold',
+        'hover:bg-[#e7e0da]',
+        'transition-all',
+        // 'hover:shadow-lg',
+        // 'hover:shadow-[#e6cbb3]',
         className,
       )}
       {...rest}

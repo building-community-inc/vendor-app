@@ -44,28 +44,33 @@ const page = async () => {
 
   return (
     <main className="flex px-10 py-24 gap-24 min-h-screen w-full flex-col justify-center">
-      <section className=" flex flex-col gap-10 items-center">
+      <section className=" flex flex-wrap gap-10 justify-center">
 
         {sanityUser.business ? (
-          <section className="flex flex-wrap justify-evenly gap-10 ">
+          // <section className="flex flex-wrap justify-evenly gap-10 ">
             <BusinessCard credits={sanityUser.credits || 0} business={sanityUser.business} ownerName={`${sanityUser.firstName} ${sanityUser.lastName}`} />
-            <ContactCard email={sanityUser.email} phone={sanityUser.business?.phone} address={`${sanityUser.business?.address1} ${sanityUser.business?.address2}`} />
-          </section>
+          // </section>
         ) : (
           <NoBz />
         )}
-        {sanityUser.business && sanityUser.business.pdfs && sanityUser.business.pdfs.length > 0 && (
-          <SupportingDocsCard pdfs={sanityUser.business.pdfs} />
-        )}
-        <footer className="flex w-full max-w-[433px] justify-evenly">
+        <footer className="flex flex-col gap-10 items-center">
+          {sanityUser.business && (
+            <ContactCard email={sanityUser.email} phone={sanityUser.business?.phone} address={`${sanityUser.business?.address1} ${sanityUser.business?.address2}`} />
+          )}
 
-          <Button className="h-fit font-bold font-darker-grotesque">
-            <Link href="/dashboard/edit-profile">Edit Profile</Link>
-          </Button>
-          <Button className="h-fit font-bold font-darker-grotesque">
-            <Link href="/dashboard/upload-files">Upload or Edit Files</Link>
-          </Button>
+          {sanityUser.business && sanityUser.business.pdfs && sanityUser.business.pdfs.length > 0 && (
+            <SupportingDocsCard pdfs={sanityUser.business.pdfs} />
+          )}
+          <div className="flex gap-8 w-full max-w-[433px] justify-evenly">
 
+            <Button className="h-fit font-bold font-darker-grotesque">
+              <Link href="/dashboard/edit-profile">Edit Profile</Link>
+            </Button>
+            <Button className="h-fit font-bold font-darker-grotesque">
+              <Link href="/dashboard/upload-files">Upload or Edit Files</Link>
+            </Button>
+
+          </div>
         </footer>
       </section>
 
@@ -196,7 +201,7 @@ const BusinessCard = ({ business, ownerName, credits }: {
   credits: number;
 }) => {
   return (
-    <DashboardSection>
+    <DashboardSection className="h-[514px]">
       {business?.logoUrl && (
         <BusinessSection className="flex justify-center">
           <Image src={business.logoUrl} alt={business.businessName} width={100} height={100} />
