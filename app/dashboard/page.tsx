@@ -9,8 +9,7 @@ import React from "react";
 import { TPdf, TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { cn } from "@/utils";
 import Button from "../_components/Button";
-import { DocumentPdfIcon, DownloadIcon } from '@sanity/icons'
-import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
+import { DocumentPdfIcon } from '@sanity/icons'
 
 
 const page = async () => {
@@ -44,7 +43,7 @@ const page = async () => {
   });
 
   return (
-    <main className="flex p-10 gap-2 min-h-screen w-full flex-col justify-center">
+    <main className="flex px-10 py-24 gap-24 min-h-screen w-full flex-col justify-center">
       <section className=" flex flex-col gap-10 items-center">
 
         {sanityUser.business ? (
@@ -58,7 +57,7 @@ const page = async () => {
         {sanityUser.business && sanityUser.business.pdfs && sanityUser.business.pdfs.length > 0 && (
           <SupportingDocsCard pdfs={sanityUser.business.pdfs} />
         )}
-        <footer className="flex w-full justify-evenly">
+        <footer className="flex w-full max-w-[433px] justify-evenly">
 
           <Button className="h-fit font-bold font-darker-grotesque">
             <Link href="/dashboard/edit-profile">Edit Profile</Link>
