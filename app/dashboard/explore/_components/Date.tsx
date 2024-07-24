@@ -48,8 +48,7 @@ export default Date;
 const CalendarRing = () => {
   return (
     <div className="w-[7px] h-[7px] bg-black rounded-full relative">
-
-      <div className="w-[5px] h-[12px] bg-[#5E5E5E] rounded-t-[4px] absolute bottom-[1px] left-1/2 -translate-x-1/2 rounded-b -[4px]">
+      <div className="w-[5px] h-[12px] bg-[#5E5E5E] rounded-t-[4px] absolute bottom-[1px] left-[1px] rounded-b -[4px]">
       </div>
     </div>
   )
