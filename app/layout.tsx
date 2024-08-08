@@ -24,7 +24,6 @@ export default function RootLayout({
     <ClerkProvider appearance={{ baseTheme: dark }}>
       <html lang="en">
         <head>
-          <script defer data-domain={"vendorapp.buildingcommunityinc.com"} src="https://plausible.io/js/script.js"></script>
           <script defer data-domain="vendorapp.buildingcommunityinc.com" src="https://plausible.io/js/script.js"></script>
         </head>
         <body className={`bg-background text-primary ${inter.className} ${roboto.className} ${segoe.className} ${darkerGrotesque.className}`}>{children}</body>

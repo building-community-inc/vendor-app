@@ -3,9 +3,14 @@ import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import SelectOptions from "./_components/SelectOptions";
-import VenueMap from "./_components/VenueMap";
+// import VenueMap from "./_components/VenueMap";
 import Link from "next/link";
 import { EMAIL } from "@/app/_components/constants";
+import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
+import Image from "next/image";
+import { ComponentPropsWithoutRef } from "react";
+import { cn } from "@/utils";
+import Box from "./_components/Box";
 
 const Page = async ({
   params,
@@ -68,10 +73,7 @@ const Page = async ({
       {market.venue.venueMap && (
         <article className="flex flex-col gap-5 items-center">
           <VenueMap
-            src={market.venue.venueMap.url}
-            alt={market.name}
-            width={market.venue.venueMap.dimensions.width}
-            height={market.venue.venueMap.dimensions.height}
+            market={market}
           />
           <SelectOptions market={market} user={sanityUser} />
         </article>
@@ -81,3 +83,24 @@ const Page = async ({
 };
 
 export default Page;
+
+
+const VenueMap = ({ market }: {
+  market: TSanityMarket
+}) => {
+  if (!market.venue.venueMap) return null;
+
+  return (
+    <Box>
+      <h2 className="font-darker-grotesque font-bold text-black text-lg">{"Venue Table Map"}</h2>
+      <Image
+        src={market.venue.venueMap?.url}
+        alt={market.name}
+        width={424}
+        height={409}
+        className="object-cover max-h-[409px] max-w-[424px]"
+      />
+    </Box>
+  )
+}
+

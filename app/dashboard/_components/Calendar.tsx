@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-const Date = ({ dates }: {
+const Calendar = ({ dates }: {
   dates: string[];
 }) => {
   if (dates.length === 0) return null;
@@ -21,7 +21,7 @@ const Date = ({ dates }: {
 
 
   return (
-    <div className="border relative border-[#707070] rounded-b-md">
+    <div className="border relative border-[#707070] h-fit rounded-b-md">
       <div className="absolute left-2 top-[1px]">
         <CalendarRing />
       </div>
@@ -43,7 +43,7 @@ const Date = ({ dates }: {
   );
 }
 
-export default Date;
+export default Calendar;
 
 const CalendarRing = () => {
   return (

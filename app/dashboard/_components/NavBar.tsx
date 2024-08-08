@@ -44,9 +44,9 @@ const NavBar = ({ user, areThereNewMessages }: { user: TUserWithOptionalBusiness
   return (
     <aside
       className={`absolute z-10 md:relative md:bg-nav-bg text-nav-text px-10 flex flex-col py-[10px] gap-2 h-screen overflow-y-scroll hide-scrollbar pb-10 ${isNavOpen
-        ? "w-full shadow-[10px_3px_6px_#00000029] bg-nav-bg"
+        ? "w-full shadow-md shadow-title-color bg-nav-bg"
         : "w-0 h-12"
-        } transition-all duration-200 ease-in-out md:w-[360px] md:shadow-[10px_3px_6px_#00000029]`}
+        } transition-all duration-200 ease-in-out md:w-[360px] md:shadow-md md:shadow-title-color`}
     >
       <div className="absolute top-4 left-5 md:hidden">
         <Burger

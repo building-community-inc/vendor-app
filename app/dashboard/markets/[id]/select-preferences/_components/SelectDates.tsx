@@ -5,8 +5,8 @@ import {
   TTableInDay,
 } from "@/sanity/queries/admin/markets/zods";
 import { TDateType } from "./SelectOptions";
-import { DateTime } from "luxon";
 import { formatDateWLuxon } from "@/utils/helpers";
+import Box from "./Box";
 
 const SelectDates = ({
   market,
@@ -46,11 +46,12 @@ const SelectDates = ({
     )
   }
   return (
-    <section className="flex mt-5 flex-col gap-4 w-full">
-      <h2 className="font-bold">Select Dates</h2>
+    <Box className="mt-5">
+      <h2 className="text-xl font-bold font-darker-grotesque text-black self-start">Select Dates and Table Location</h2>
+      <span className="font-darker-grotesque text-base text-black self-start">Only available tables will be displayed</span>
       <ul className="flex flex-col gap-3 w-full">
         {availableDays?.map((dayObj, index) => {
-   
+
 
           return (
             <li key={dayObj.date}>
@@ -66,30 +67,33 @@ const SelectDates = ({
                     type="checkbox"
                     name={`date-[${index}]`}
                     id={dayObj.date}
-                    className="pointer-events-none relative z-[2]"
+                    className="pointer-events-none accent-title-color relative z-[2] checked:bg-purple-500"
                     onChange={() => handleDateSelect(dayObj)}
                     checked={
                       !!selectedDates.find((d) => d && d.date === dayObj.date)
                     }
                   />
-                  <span className="whitespace-nowrap">
+
+         
+
+                  <span className="whitespace-nowrap text-lg text-black font-semibold font-darker-grotesque">
                     {formatDateWLuxon(dayObj.date)}
                   </span>
                 </div>
                 {!!selectedDates.find((d) => d.date === dayObj.date) && (
-                  <select
+                  <select 
                     name="table"
                     required={
                       !!selectedDates.find((d) => d && d.date === dayObj.date)
                     }
                     id="table"
-                    className="text-black w-fit"
+                    className="text-black w-fit border border-[#707070]        "
                     onChange={(e) => {
                       const newTable = dayObj.tables.find(
                         (t) => t.table.id === e.target.value
                       );
 
-                      if (newTable === undefined) return;
+                      if (newTable === undefined) return; 
                       handleOnTableChange(newTable, dayObj);
                     }}
                   >
@@ -111,8 +115,8 @@ const SelectDates = ({
           )
         })}
       </ul>
-
-    </section>
+      <span>Note: Table selection is subject to change at administrator's discretion.</span>
+    </Box>
   );
 };
 

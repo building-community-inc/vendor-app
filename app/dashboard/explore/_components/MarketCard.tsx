@@ -3,7 +3,7 @@ import type { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 import { dateArrayToDisplayableText } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
-import Date from "./Date";
+import Calendar from "../../_components/Calendar";
 import Button from "@/app/_components/Button";
 import { ChevronDownIcon, ChevronUpIcon } from '@sanity/icons'
 import { useState } from "react";
@@ -37,7 +37,7 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
       </header>
 
       <footer className="flex items-center justify-evenly flex-wrap py-10 gap-5 text-center">
-        <Date dates={market.dates} />
+        <Calendar dates={market.dates} />
         <div className="flex flex-col">
 
           <h3 className="text-2xl font-bold font-darker-grotesque">{market.name.split("-")[0]}</h3>
@@ -46,7 +46,7 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
           </span>
         </div>
         <Button type="button" className="bg-[#C5B5A4] uppercase font-semibold px-5">
-          <Link href={`/dashboard/markets/${market._id}`}>
+          <Link href={`/dashboard/markets/${market._id}/select-preferences`}>
             Book Now
           </Link>
         </Button>
