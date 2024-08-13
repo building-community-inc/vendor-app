@@ -124,7 +124,7 @@ export const formatDateWLuxon = function (dateString: string): string {
   const [year, month, day] = dateString.split('-').map(Number);
   const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
   const newDate = DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
-  return newDate.toFormat('EEEE, MMM d, yyyy');
+  return newDate.toFormat('EEE, MMM d, yyyy');
 }
 
 

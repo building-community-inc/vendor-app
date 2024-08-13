@@ -14,6 +14,7 @@ import { useCheckoutStore } from "@/app/dashboard/checkout/_components/checkoutS
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { DateTime } from "luxon";
 import Box from "./Box";
+import PaymentOptions from "./PaymentOptions";
 // import { useRouter } from "next/navigation";
 export type TSelectedTableType = {
   date: string;
@@ -37,13 +38,20 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
 
   const [newSelectedDates, setNewSelectedDates] = useState<TDayWithTable[]>([]);
 
+  const [useCredits, setUseCredits] = useState<boolean>(false);
+
+  const [creditsToUse, setCreditsToUse] = useState<number>(0);
+
   const { setAllCheckoutData, } = useCheckoutStore();
+
   const totalToPay = selectedTables.reduce(
     (total, table) => total + table.table.table.price,
     0
   );
 
   const dueNow = isPayNowSelected ? totalToPay : selectedTables.length * 50;
+
+  const totalWithHst = (dueNow + dueNow * 0.13) - (useCredits ? creditsToUse : 0);
 
   const options = {
     selectedTables,
@@ -82,15 +90,20 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
     event.preventDefault();
 
 
-    const checkboxesElems = document.querySelectorAll<HTMLInputElement>(
+    const allCheckboxesElems = document.querySelectorAll<HTMLInputElement>(
       'input[type="checkbox"]'
     );
+
+    const payWithCreditsCheckbox = document.getElementById('pay-with-credits') as HTMLInputElement;
+
+    const checkboxesWithoutCredits = Array.from(allCheckboxesElems).filter(checkbox => checkbox !== payWithCreditsCheckbox);
+
     const selects = document.querySelectorAll<HTMLSelectElement>('select');
 
     let uncheckedTableDate = '';
 
     const isAnyCheckboxCheckedWithoutSelect = function () {
-      const checkboxes = Array.from(checkboxesElems);
+      const checkboxes = Array.from(checkboxesWithoutCredits);
 
       const checkedBoxes = checkboxes.filter(checkbox => checkbox.checked);
 
@@ -120,6 +133,10 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
       return;
     }
 
+    if (useCredits && creditsToUse <= 0) {
+      alert("Please enter a valid credit amount to use.");
+      return;
+    }
     try {
       const parsedOptions = zodBookMarketOptionsSchema.safeParse(options);
 
@@ -144,24 +161,29 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
       }
 
       const parsedCheckoutState = zodCheckoutStateSchemaRequired.safeParse({
-        market: parsedMarket.data,
         items,
-        specialRequest,
-        dueNow,
-        totalToPay,
         paymentType: isPayNowSelected ? 'full' : 'partial',
+        market: parsedMarket.data,
+        price: totalToPay,
+        creditsApplied: useCredits ? creditsToUse : 0,
+        depositAmount: dueNow,
         hst: +(dueNow * 0.13).toFixed(2),
+        totalToPay: totalWithHst,
+        specialRequest,
         dueNowWithHst: dueNow + dueNow * 0.13,
       })
 
+      console.log({ parsedCheckoutState });
+
       if (!parsedCheckoutState.success) {
+        alert("Something went wrong. Please try again.");
         console.error(parsedCheckoutState.error);
         return;
       }
 
       setAllCheckoutData(parsedCheckoutState.data)
-
-      push(`/dashboard/checkout`);
+      console.log({ parsedCheckoutState });
+      // push(`/dashboard/checkout`);
     } catch (error) {
       console.error(error);
     }
@@ -202,7 +224,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
   return (
     <form
       onSubmit={handleProceedToCheckout}
-      className="w-full items-center lg:w-[40%] min-w-[250px] flex flex-col gap-5 md:p-5 pb-10"
+      className="w-full items-center min-w-[250px] flex flex-col gap-5 pb-10"
     >
       <SelectDates
         market={market}
@@ -221,21 +243,22 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         isPayNowSelected={isPayNowSelected}
         setIsPayNowSelected={setIsPayNowSelected}
         credits={user?.credits}
+        areTablesSelected={selectedTables.length > 0}
+        useCredits={useCredits}
+        setUseCredits={setUseCredits}
+        creditsToUse={creditsToUse}
+        setCreditsToUse={setCreditsToUse}
+        totalWithHst={totalWithHst}
       />
       <textarea
         rows={2}
         placeholder="Special Requests"
-        className="rounded-3xl py-5 px-3 text-black"
+        className="rounded-lg py-5 px-3 text-black border border-black w-full max-w-[544px]"
         value={specialRequest}
         onChange={(e) => setSpecialRequest(e.target.value)}
       />
-      {/* <ContinueButton type="button" onClick={() => setIsPayNowSelected(!isPayNowSelected)}>
-        {isPayNowSelected ? "Pay Now" : "Pay Later"}
-      </ContinueButton> */}
 
-
-      <ContinueButton type="submit">Checkout</ContinueButton>
-      {/* {JSON.stringify(options)} */}
+      <ContinueButton type="submit" className="max-w-[544px]">Complete Booking</ContinueButton>
     </form>
   );
 };
@@ -243,84 +266,3 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
 export default SelectOptions;
 
 
-const PaymentOptions = ({ credits, dueNow, totalToPay, isEventInLessThan60Days, isPayNowSelected, setIsPayNowSelected }: {
-  isEventInLessThan60Days: boolean | null | 0;
-  isPayNowSelected: boolean;
-  setIsPayNowSelected: (value: boolean) => void;
-  totalToPay: number | null;
-  dueNow: number;
-  credits: number | null | undefined;
-}) => {
-  const [useCredits, setUseCredits] = useState<boolean>(false);
-
-  return (
-    <Box className="items-start font-darker-grotesque text-black">
-      <h2 className="text-black font-bold">Payment Options</h2>
-      <label htmlFor="pay-now" className="flex text-[19px] items-center gap-2 relative z-10">
-        <input type="radio" name="pay-now" className="accent-title-color pointer-events-none relative z-[2]" id="pay-now" checked={isPayNowSelected} onChange={() => setIsPayNowSelected(true)} />
-        <span className="text-black">Pay in Full</span>
-      </label>
-      {!isEventInLessThan60Days && (
-        <>
-          <label htmlFor="pay-later" className="flex text-[19px] items-center gap-2 relative z-10" onClick={() => setIsPayNowSelected(false)}>
-            <input
-              type="radio"
-              name="pay-later"
-              id="pay-later"
-              className="border-red-200 accent-title-color pointer-events-none relative z-[2]"
-              checked={!isPayNowSelected}
-              onChange={() => setIsPayNowSelected(false)}
-            />
-            <span>Deposit</span>
-          </label>
-          <p>Vendors can pay a $50/day non-refundable deposit to secure their table reservation. The remaining amount of the booking is due 60 days before the first day of the market</p>
-        </>
-      )}
-      {credits && credits > 0 && (
-        <label htmlFor="pay-with-credits" className="flex text-[19px] items-center gap-2 relative z-10">
-          <input
-            type="checkbox"
-            checked={useCredits}
-            onChange={(e) => {
-              setUseCredits(e.currentTarget.checked)
-            }}
-            name="pay-with-credits"
-            className="pointer-events-none relative z-[2] accent-title-color"
-            id="pay-with-credits"
-          />
-          <span>Use Credit (${credits})</span>
-        </label>
-      )}
-      {/* {!isPayNowSelected && ( */}
-      {/* )} */}
-      {typeof totalToPay === "number" ? (
-        totalToPay < 1 ? (
-
-          <span className="">* Please select at least one date and a table</span>
-        ) : (
-          <section className="flex flex-col gap-2">
-            <h2 className="font-bold">Price:</h2>
-            <span>${totalToPay}</span>
-            <div className="w-full">
-              <h2 className="font-bold">Deposit Amount:</h2>
-              <span>${dueNow}</span>
-            </div>
-            <div>
-              <h2 className="font-bold">HST:</h2>
-              <p>${(dueNow * .13).toFixed(2)}</p>
-            </div>
-            <div>
-              <h2 className="font-bold">Amount Owing:</h2>
-              <p>$
-                {totalToPay - dueNow}</p>
-            </div>
-
-          </section>
-        )
-      ) : (
-        <span className="text-red-400">Something went wrong</span>
-      )}
-
-    </Box>
-  )
-}

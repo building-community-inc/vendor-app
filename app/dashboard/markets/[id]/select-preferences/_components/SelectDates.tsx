@@ -12,9 +12,9 @@ const SelectDates = ({
   market,
   handleDateSelect,
   selectedDates,
-  totalToPay,
+  // totalToPay,
   handleOnTableChange,
-  dueNow,
+  // dueNow,
   businessCategory
 }: {
   market: TSanityMarket;
@@ -76,18 +76,18 @@ const SelectDates = ({
 
          
 
-                  <span className="whitespace-nowrap text-lg text-black font-semibold font-darker-grotesque">
+                  <span className="text-base text-black font-semibold font-darker-grotesque">
                     {formatDateWLuxon(dayObj.date)}
                   </span>
                 </div>
-                {!!selectedDates.find((d) => d.date === dayObj.date) && (
+                {!!selectedDates.find((d) => d.date === dayObj.date) ? (
                   <select 
                     name="table"
                     required={
                       !!selectedDates.find((d) => d && d.date === dayObj.date)
                     }
                     id="table"
-                    className="text-black w-fit border border-[#707070]        "
+                    className="text-black w-fit rounded-md border border-[#707070]        "
                     onChange={(e) => {
                       const newTable = dayObj.tables.find(
                         (t) => t.table.id === e.target.value
@@ -109,6 +109,8 @@ const SelectDates = ({
                         </option>
                       ))}
                   </select>
+                ) : (
+                  <div className="w-[178px] h-[10px]"></div>
                 )}
               </label>
             </li>

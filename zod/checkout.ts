@@ -62,13 +62,14 @@ export const zodCheckoutStateSchema = z.object({
     .optional()
     .nullable(),
   market: zodShortMarketSchema.optional().nullable(),
-  specialRequest: z.string().optional().nullable(),
-  totalToPay: z.number(),
-  dueNow: z.number(),
   paymentType: z.enum(["full", "partial"]).optional().nullable(),
+  price: z.number(),
+  creditsApplied: z.number().optional().nullable(),
+  depositAmount: z.number(),
+  hst: z.number(),
+  totalToPay: z.number(),
+  specialRequest: z.string().optional().nullable(),
   previousPayment: z.number().optional().nullable(),
-  hst: z.number().optional().nullable(),
-  dueNowWithHst: z.number().optional().nullable(),
 });
 
 export const zodCheckoutStateSchemaRequired = z
@@ -81,26 +82,41 @@ export const zodCheckoutStateSchemaRequired = z
         date: z.string(),
       })
     ),
-    market: zodShortMarketSchema,
-    hst: z.number(),
-    dueNowWithHst: z.number(),
-    specialRequest: z.string().optional().nullable(),
-    totalToPay: z.number(),
-    dueNow: z.number(),
     paymentType: z.enum(["full", "partial"]),
+    market: zodShortMarketSchema,
+    price: z.number(),
+    creditsApplied: z.number().optional().nullable(),
+    depositAmount: z.number(),
+    hst: z.number(),
+    totalToPay: z.number(),
+    specialRequest: z.string().optional().nullable(),
     previousPayment: z.number().optional().nullable(),
   })
   .refine(
     (data) => {
       const itemsTotal =
         data.items?.reduce((total, item) => total + item.price, 0) || 0;
+
+      const credits = data.creditsApplied || 0;
+      const hst = data.hst || 0;
+
+      console.log({ itemsTotal, credits, totalToPay: data.totalToPay });
+      const totalWithExtras = itemsTotal + credits + hst;
+
+      console.log({
+        itemsTotal,
+        credits,
+        hst,
+        totalToPay: data.totalToPay,
+      });
+
       if (data.paymentType === "full") {
-        return data.totalToPay === itemsTotal && data.dueNow === itemsTotal;
+        return data.totalToPay === totalWithExtras;
       } else if (data.paymentType === "partial") {
-        const dueNow = data.previousPayment
-          ? itemsTotal - data.previousPayment
-          : (data.items?.length || 0) * 50;
-        return data.totalToPay === itemsTotal && data.dueNow === dueNow;
+        const totalToPay = data.previousPayment
+          ? totalWithExtras - data.previousPayment
+          : (data.items?.length || 0) * 50 + credits + hst;
+        return data.totalToPay === totalToPay;
       }
       return true;
     },
