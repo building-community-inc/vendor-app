@@ -43,39 +43,43 @@ export const POST = async (req: Request) => {
     });
   }
 
+  console.log({ body: parsedBody.data });
   const paymentObj = {
-    amount: parsedBody.data.dueNowWithHst * 100,
+    amount: parsedBody.data.totalToPay * 100,
     currency: "cad",
     metadata: {
       items: JSON.stringify(parsedBody.data.items),
+      creditsApplied: parsedBody.data.creditsApplied,
       userEmail: user.email,
       business: user.business?.businessName,
       specialRequest: parsedBody.data.specialRequest,
       marketId: parsedBody.data.market._id,
-      amountOwing: parsedBody.data.totalToPay - parsedBody.data.dueNow,
+      amountOwing: parsedBody.data.paymentType === "full" ? 0 : parsedBody.data.price + parsedBody.data.hst - parsedBody.data.depositAmount - (parsedBody.data.creditsApplied || 0),                                             
       totalToPay: parsedBody.data.totalToPay,
-      paidNow: parsedBody.data.dueNow,
+      paidNow: parsedBody.data.depositAmount,
       paymentType: parsedBody.data.paymentType,
       hst: parsedBody.data.hst,
-      dueNowWithHst: parsedBody.data.dueNowWithHst,
+      dueNowWithHst: parsedBody.data.totalToPay,
     },
   };
 
-  const parsedPaymentObj = zodPaymentIntentSchema.safeParse(paymentObj);
+  console.log({ paymentObj });
 
-  if (!parsedPaymentObj.success) {
-    return Response.json({
-      status: 400,
-      body: { message: parsedPaymentObj.error },
-    });
-  }
+  // const parsedPaymentObj = zodPaymentIntentSchema.safeParse(paymentObj);
 
-  const paymentIntent = await stripe.paymentIntents.create(
-    parsedPaymentObj.data
-  );
+  // if (!parsedPaymentObj.success) {
+  //   return Response.json({
+  //     status: 400,
+  //     body: { message: parsedPaymentObj.error },
+  //   });
+  // }
+
+  // const paymentIntent = await stripe.paymentIntents.create(
+  //   parsedPaymentObj.data
+  // );
 
 
   return Response.json({
-    clientSecret: paymentIntent.client_secret,
+    clientSecret: "paymentIntent.client_secret",
   });
 };

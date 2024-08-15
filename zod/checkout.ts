@@ -101,13 +101,14 @@ export const zodCheckoutStateSchemaRequired = z
       const hst = data.hst || 0;
 
       console.log({ itemsTotal, credits, totalToPay: data.totalToPay });
-      const totalWithExtras = itemsTotal + credits + hst;
+      const totalWithExtras = itemsTotal - credits + hst;
 
       console.log({
         itemsTotal,
         credits,
         hst,
         totalToPay: data.totalToPay,
+        totalWithExtras,
       });
 
       if (data.paymentType === "full") {
@@ -115,7 +116,7 @@ export const zodCheckoutStateSchemaRequired = z
       } else if (data.paymentType === "partial") {
         const totalToPay = data.previousPayment
           ? totalWithExtras - data.previousPayment
-          : (data.items?.length || 0) * 50 + credits + hst;
+          : (data.items?.length || 0) * 50 - credits + hst;
         return data.totalToPay === totalToPay;
       }
       return true;
