@@ -91,7 +91,7 @@ export default function CheckoutForm() {
 
   return (
     <form id="payment-form" onSubmit={handleSubmit} className="flex flex-col px-10">
-      <PaymentElement id="payment-element" options={paymentElementOptions} className="max-h-[300px] lg:max-h-[260px] xl:max-h-[200px]" />
+      <PaymentElement id="payment-element" options={paymentElementOptions} className="" />
       <div className="mt-4 mx-auto relative z-10">
 
         <ContinueButton className="mt-10" disabled={isLoading || !stripe || !elements} id="submit">
