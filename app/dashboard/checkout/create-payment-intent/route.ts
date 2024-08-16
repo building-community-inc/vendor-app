@@ -43,7 +43,7 @@ export const POST = async (req: Request) => {
     });
   }
 
-  console.log({ body: parsedBody.data });
+  // console.log({ body: parsedBody.data });
   const paymentObj = {
     amount: parsedBody.data.totalToPay * 100,
     currency: "cad",
@@ -63,7 +63,7 @@ export const POST = async (req: Request) => {
     },
   };
 
-  console.log({ paymentObj });
+  // console.log({ paymentObj });
 
   // const parsedPaymentObj = zodPaymentIntentSchema.safeParse(paymentObj);
 
@@ -74,12 +74,12 @@ export const POST = async (req: Request) => {
   //   });
   // }
 
-  // const paymentIntent = await stripe.paymentIntents.create(
-  //   parsedPaymentObj.data
-  // );
+  const paymentIntent = await stripe.paymentIntents.create(
+    paymentObj
+  );
 
 
   return Response.json({
-    clientSecret: "paymentIntent.client_secret",
+    clientSecret: paymentIntent.client_secret,
   });
 };

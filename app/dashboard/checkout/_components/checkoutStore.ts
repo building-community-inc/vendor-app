@@ -71,6 +71,7 @@ export const useCheckoutStore = create<TCheckoutStore>((set, get) => ({
     set({ previousPayment }),
   setAllCheckoutData: (data: TCheckoutState) => {
     if (zodCheckoutStateSchema.safeParse(data).success) {
+      console.log({data})
       set(data);
     } else {
       console.error("Invalid data passed to setAllCheckoutData");

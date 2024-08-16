@@ -44,7 +44,7 @@ export default function Checkout() {
     appearance,
   };
   return (
-    <section className={`pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto ${clientSecret ? "" : "grid place-content-center"}`}>
+    <section className={`text-black pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto ${clientSecret ? "" : "grid place-content-center"}`}>
       {clientSecret ? (
         <section className="flex flex-col">
           <section className="px-10 py-5">

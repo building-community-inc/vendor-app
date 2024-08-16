@@ -86,7 +86,7 @@ export default function CheckoutForm() {
 
   const paymentElementOptions: StripePaymentElementOptions = {
     layout: "auto",
-
+    
   };
 
   return (
@@ -94,7 +94,7 @@ export default function CheckoutForm() {
       <PaymentElement id="payment-element" options={paymentElementOptions} className="max-h-[300px] lg:max-h-[260px] xl:max-h-[200px]" />
       <div className="mt-4 mx-auto relative z-10">
 
-        <ContinueButton disabled={isLoading || !stripe || !elements} id="submit">
+        <ContinueButton className="mt-10" disabled={isLoading || !stripe || !elements} id="submit">
           <span id="button-text">
             {isLoading ? <div className="spinner" id="spinner">paying...</div> : "Pay now"}
           </span>
