@@ -117,7 +117,7 @@ const SelectDates = ({
           )
         })}
       </ul>
-      <span>Note: Table selection is subject to change at administrator's discretion.</span>
+      <span>{"Note: Table selection is subject to change at administrator's discretion."}</span>
     </Box>
   );
 };
