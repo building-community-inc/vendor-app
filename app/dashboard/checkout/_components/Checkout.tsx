@@ -73,7 +73,7 @@ export default function Checkout() {
             </table>
             <section className="flex flex-col gap-2 font-darker-grotesque">
                 <h3 className="font-bold">Price:</h3>
-                <span>${totalToPay}</span>
+                <span>${price}</span>
                 {creditsApplied && creditsApplied > 0 && (
 
                   <div className="">
@@ -101,7 +101,7 @@ export default function Checkout() {
                 <div>
                   <h3 className="font-bold">Amount Owing:</h3>
                   <p>$
-                    {totalToPay - depositAmount}</p>
+                    {price - depositAmount}</p>
                 </div>
 
               </section>
