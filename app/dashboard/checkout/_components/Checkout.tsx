@@ -16,7 +16,7 @@ import Spinner from "@/app/_components/Spinner";
 // recreating the Stripe object on every render.
 // This is your test publishable API key.
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE || ""
 );
 
 export default function Checkout() {
