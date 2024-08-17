@@ -1,4 +1,4 @@
-import { getSanityUserByEmail, getUserMarkets } from "@/sanity/queries/user";
+import { getSanityUserByEmail, getUserPayments } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { redirect } from "next/navigation";
@@ -20,10 +20,10 @@ const page = async () => {
     user.emailAddresses[0].emailAddress
   );
 
-  const userMarkets = await getUserMarkets(sanityUser._id);
-  // console.log(userMarkets)
+  const userPayments = await getUserPayments(sanityUser._id);
+  // console.log(userPayments)
 
-  userMarkets.sort((a, b) => {
+  userPayments.sort((a, b) => {
     // Convert the dates from strings to DateTime objects and find the earliest date
     const datesA = a.market.dates.map(date => {
       const [year, month, day] = date.split('-').map(Number);
@@ -80,8 +80,8 @@ const page = async () => {
           <h2 className="text-2xl font-bold font-darker-grotesque text-black">My Market Bookings</h2>
         </header>
         <ul className="flex flex-col gap-5">
-          {userMarkets.map(({ market }) => (
-            <MarketCard key={market._id} market={market} />
+          {userPayments.map(payment => (
+            <PaymentCard paymentId={payment._id} key={payment._id} market={payment.market} />
           ))}
         </ul>
 
@@ -93,12 +93,13 @@ const page = async () => {
 
 export default page;
 
-const MarketCard = ({ market }: {
+const PaymentCard = ({ market, paymentId }: {
   market: {
     _id: string;
     name: string;
     dates: string[];
   }
+  paymentId: string;
 }) => {
 
   return (
@@ -127,7 +128,7 @@ const MarketCard = ({ market }: {
         Reserved
       </MarketSection>
       <Button className="h-fit">
-        <Link href={`#`}>Review Booking</Link>
+        <Link href={`/dashboard/bookings/${paymentId}`}>Review Booking</Link>
       </Button>
     </li>
   )

@@ -1,6 +1,7 @@
 import { zodImageSchema } from "@/zod/image";
 import { zodMarketFormSchema } from "@/zod/markets";
 import { z } from "zod";
+import { zodLatePaymentWithMarketSchema, zodPaymentItem } from "../../payments";
 
 export const zodTable = z.object({
   id: z.string(),
@@ -75,3 +76,79 @@ export const zodMarketQuery = zodMarketFormSchema.merge(
 export type TSanityMarket = z.infer<typeof zodMarketQuery>;
 
 export const zodMarketQueryArray = z.array(zodMarketQuery);
+
+
+const zodSanityReferenceSchema = z.object({
+  _type: z.literal("reference"),
+  _ref: z.string(),
+  _key: z.string().optional().nullable(),
+});
+
+export const zodPaymentRecordSchemaSanityReady = zodLatePaymentWithMarketSchema.merge(
+  z.object({
+    market: zodSanityReferenceSchema,
+    _type: z.literal("paymentRecord"),
+    _id: z.string().optional().nullable(),
+    user: zodSanityReferenceSchema,
+    items: z.array(zodPaymentItem.merge(z.object({ _key: z.string() }))),
+  })
+);
+
+export type TPaymentRecord = z.infer<typeof zodPaymentRecordSchemaSanityReady>;
+
+export const zodSanityMarket = z.object({
+  _id: z.string(),
+  daysWithTables: z.array(
+    z.object({
+      _key: z.string(),
+      date: z.string(),
+      tables: z.array(
+        z.object({
+          booked: zodSanityReferenceSchema.optional().nullable(),
+          _key: z.string(),
+          table: z.object({
+            price: z.number(),
+            id: z.string(),
+          }),
+        })
+      ),
+    })
+  ),
+  vendors: z.array(
+    z.object({
+      datesBooked: z.array(
+        z.object({
+          date: z.string(),
+          _type: z.literal("day"),
+          tableId: z.string(),
+          _key: z.string(),
+        })
+      ),
+      vendor: zodSanityReferenceSchema,
+      _key: z.string(),
+    })
+  ),
+});
+
+
+export const zodSanityMarketWithOptionalVendors = zodSanityMarket.merge(
+  z.object({
+    vendors: z
+      .array(
+        z.object({
+          datesBooked: z.array(
+            z.object({
+              date: z.string(),
+              _type: z.literal("day"),
+              tableId: z.string(),
+              _key: z.string(),
+            })
+          ),
+          vendor: zodSanityReferenceSchema,
+          _key: z.string(),
+        })
+      )
+      .optional()
+      .nullable(),
+  })
+);

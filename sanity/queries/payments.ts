@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { sanityClient } from "../lib/client";
+import { sanityClient, sanityWriteClient } from "../lib/client";
 
 export const getExistingPayment = async (paymentIntentId: string) => {
   const result = await sanityClient.fetch(
@@ -14,7 +14,7 @@ export const zodLatePaymentSchema = z.object({
   _id: z.string(),
   payments: z.array(
     z.object({
-      paymentType: z.union([z.literal("stripe"), z.literal("cash")]),
+      paymentType: z.string(),
       _key: z.string(),
       paymentDate: z.string(),
       stripePaymentIntentId: z.string().optional().nullable(),
@@ -53,7 +53,8 @@ const paymentQuery = `
     paymentDate,
     stripePaymentIntentId,
     amount,
-    _type
+    _type,
+    paymentType
   },
   "amount": amount {
     paid,
@@ -110,3 +111,6 @@ export const getAllExistingPayment = async () => {
 
   return result;
 };
+
+
+

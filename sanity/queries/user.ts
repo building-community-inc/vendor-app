@@ -88,7 +88,7 @@ const zodUserMarket = z.object({
 
 const zodUserMarkets = z.array(zodUserMarket);
 
-export const getUserMarkets = async (userId: string) => {
+export const getUserPayments = async (userId: string) => {
   try {
     // const user = await getSanityUserByEmail(email);
 

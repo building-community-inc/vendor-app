@@ -1,6 +1,7 @@
 "use server";
 
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
+import { TPaymentRecord, zodPaymentRecordSchemaSanityReady, zodSanityMarket, zodSanityMarketWithOptionalVendors } from "@/sanity/queries/admin/markets/zods";
 import {
   zodLatePaymentWithMarketSchema,
   zodPaymentItem,
@@ -26,7 +27,7 @@ export const createBooking = async (
       bookings.push({
         date,
         tableId: tableId === "null" ? null : tableId,
-        price: tablePrice,
+        tablePrice,
       });
     }
   }
@@ -51,6 +52,8 @@ export const createBooking = async (
       const message = error.message;
       return `${message}`;
     });
+
+    console.log({ errors });
 
     return {
       errors,
@@ -89,7 +92,7 @@ export const createBooking = async (
         _key: nanoid(),
         tableId: booking.tableId,
         date: booking.date,
-        price: 50,
+        price: booking.tablePrice,
       };
     }),
     market: {
@@ -106,6 +109,7 @@ export const createBooking = async (
       const message = error.message;
       return `${message}`;
     });
+    console.log({ errors });
 
     return {
       errors,
@@ -124,13 +128,15 @@ export const createBooking = async (
     vendors,
   }`);
 
-  const parsedSanityMarket = zodSanityMarket.safeParse(sanityMarket);
+  const parsedSanityMarket =
+    zodSanityMarketWithOptionalVendors.safeParse(sanityMarket);
 
   if (!parsedSanityMarket.success) {
     const errors = parsedSanityMarket.error.errors.map((error) => {
       const message = error.message;
       return `${message}`;
     });
+    console.log({ errors, parsedSanityMarket });
 
     return {
       errors,
@@ -165,7 +171,7 @@ export const createBooking = async (
       };
     }),
     vendors: [
-      ...parsedSanityMarket.data.vendors.map((vendor) => {
+      ...(parsedSanityMarket.data.vendors ?? []).map((vendor) => {
         if (vendor.vendor._ref === parsedData.data.vendorId) {
           return {
             ...vendor,
@@ -184,7 +190,7 @@ export const createBooking = async (
         }
         return vendor;
       }),
-      ...(!parsedSanityMarket.data.vendors.some(
+      ...(!(parsedSanityMarket.data.vendors ?? []).some(
         (vendor) => vendor.vendor._ref === parsedData.data.vendorId
       )
         ? [
@@ -243,6 +249,7 @@ const bookingSchema = z.object({
     invalid_type_error: "Please select a table for the selected date",
     required_error: "Please select a table for the selected date",
   }),
+  tablePrice: z.preprocess((val) => parseFloat(val as string), z.number()),
 });
 
 const zodRawDataSchema = z
@@ -293,56 +300,5 @@ const zodRawDataSchema = z
     }
   );
 
-const zodSanityReferenceSchema = z.object({
-  _type: z.literal("reference"),
-  _ref: z.string(),
-  _key: z.string().optional().nullable(),
-});
 
-const zodPaymentRecordSchemaSanityReady = zodLatePaymentWithMarketSchema.merge(
-  z.object({
-    market: zodSanityReferenceSchema,
-    _type: z.literal("paymentRecord"),
-    _id: z.string().optional().nullable(),
-    user: zodSanityReferenceSchema,
-    items: z.array(zodPaymentItem.merge(z.object({ _key: z.string() }))),
-  })
-);
-
-type TPaymentRecord = z.infer<typeof zodPaymentRecordSchemaSanityReady>;
-
-const zodSanityMarket = z.object({
-  _id: z.string(),
-  daysWithTables: z.array(
-    z.object({
-      _key: z.string(),
-      date: z.string(),
-      tables: z.array(
-        z.object({
-          booked: zodSanityReferenceSchema.optional().nullable(),
-          _key: z.string(),
-          table: z.object({
-            price: z.number(),
-            id: z.string(),
-          }),
-        })
-      ),
-    })
-  ),
-  vendors: z.array(
-    z.object({
-      datesBooked: z.array(
-        z.object({
-          date: z.string(),
-          _type: z.literal("day"),
-          tableId: z.string(),
-          _key: z.string(),
-        })
-      ),
-      vendor: zodSanityReferenceSchema,
-      _key: z.string(),
-    })
-  ),
-});
-
-type TSanityMarket = z.infer<typeof zodSanityMarket>;
+  type TSanityMarket = z.infer<typeof zodSanityMarket>;
