@@ -2,44 +2,47 @@ import { sanityClient } from "@/sanity/lib/client";
 import { zodUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { z } from "zod";
 
+export const userQueryString = `
+  _id,
+  _type,
+  email,
+  firstName,
+  lastName,
+  hasImage,
+  image,
+  role,
+  status,
+  acceptedTerms,
+  business->{
+      _id,
+      _type,
+      businessName,
+      address1,
+      address2,
+      city,
+      province,
+      postalCode,
+      country,
+      phone,
+      instagramHandle,
+      industry,
+      logo,
+      "logoUrl": logo.asset->url,
+      "pdfs": pdf[] {
+          "url": asset -> url,
+          "originalFileName": asset -> originalFilename,
+          "_id": asset -> _id,
+          "size": asset -> size,
+      },
+  },
+credits
+        `;
 export const getSanityUserByEmail = async (email: string) => {
   const user =
     await sanityClient.fetch(`*[_type == 'user' && email == '${email}'][0]{
-        _id,
-        _type,
-        email,
-        firstName,
-        lastName,
-        hasImage,
-        image,
-        role,
-        status,
-        acceptedTerms,
-        business->{
-            _id,
-            _type,
-            businessName,
-            address1,
-            address2,
-            city,
-            province,
-            postalCode,
-            country,
-            phone,
-            instagramHandle,
-            industry,
-            logo,
-            "logoUrl": logo.asset->url,
-            "pdfs": pdf[] {
-                "url": asset -> url,
-                "originalFileName": asset -> originalFilename,
-                "_id": asset -> _id,
-                "size": asset -> size,
-            },
-        },
-        credits
+     ${userQueryString}
     }`);
-  
+
   const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
   if (!validatedUser.success) {
     throw new Error(validatedUser.error.message);
@@ -83,7 +86,7 @@ const zodUserMarket = z.object({
       tableId: z.string(),
     })
   ),
-  paymentReturned: z.boolean().optional().nullable()
+  paymentReturned: z.boolean().optional().nullable(),
 });
 
 const zodUserMarkets = z.array(zodUserMarket);

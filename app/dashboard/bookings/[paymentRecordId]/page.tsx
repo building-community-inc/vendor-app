@@ -28,19 +28,22 @@ const Page = async ({ params }: {
 
         <section className="bg-blue-200 w-full">
           {/* <h2 className="font-bold">Date</h2> */}
+          <header className="flex justify-between w-full">
+            <h3 className="text-2xl font-bold font-darker-grotesque text-black flex-1">Date:</h3>
+            <h3 className="text-2xl font-bold font-darker-grotesque text-black flex-1">Table Id:</h3>
+            <h3 className="text-2xl font-bold font-darker-grotesque text-black flex-1">Price:</h3>
+
+          </header>
           <ul className="flex flex-col gap-2 w-full bg-yellow-300">
             {paymentRecordInfo.items.map(item => (
               <li key={item.tableId} className="flex justify-between gap-2 bg-red-200 w-full">
-                <div>
-                  <h3>Date:</h3>
+                <div className="flex-1">
                   <span>{formatDateWLuxon(item.date)}</span>
                 </div>
-                <div>
-                  <h3>Table Id:</h3>
+                <div className="flex-1">
                   <span>{item.tableId}</span>
                 </div>
-                <div>
-                  <h3>Price:</h3>
+                <div className="flex-1">
                   <span>${item.price}</span>
                 </div>
                 {/* <div>
@@ -50,6 +53,14 @@ const Page = async ({ params }: {
               </li>
             ))}
           </ul>
+          <div className="">
+            <h3>HST</h3>
+            <p>${paymentRecordInfo.amount.hst}</p>
+          </div>
+          <div className="">
+            <h3>Total</h3>
+            <p>${paymentRecordInfo.amount.total}</p>
+          </div>
         </section>
       </Box>
     </main>

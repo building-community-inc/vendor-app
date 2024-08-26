@@ -7,6 +7,7 @@ import Calendar from "../../_components/Calendar";
 import Button from "@/app/_components/Button";
 import { ChevronDownIcon, ChevronUpIcon } from '@sanity/icons'
 import { useState } from "react";
+import NewDetailsSection from "./DetailsSection";
 
 
 const MarketCard = ({ market }: { market: TSanityMarket }) => {
@@ -52,7 +53,8 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
         </Button>
       </footer>
       {/* {priceToDisplay} */}
-      <DetailsSection datesToDisplay={dateToDisplay} hours={market.venue.hours} loadInInstructions={market.venue.loadInInstructions} phone={market.venue.phone} />
+      <NewDetailsSection datesToDisplay={dateToDisplay} hours={market.venue.hours} loadInInstructions={market.venue.loadInInstructions} phone={market.venue.phone} />
+      {/* <DetailsSection datesToDisplay={dateToDisplay} hours={market.venue.hours} loadInInstructions={market.venue.loadInInstructions} phone={market.venue.phone} /> */}
     </li>
   );
 };
@@ -121,3 +123,4 @@ const DetailsSection = ({ datesToDisplay, hours, loadInInstructions, phone }: {
     </section>
   )
 }
+
