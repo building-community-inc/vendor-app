@@ -3,15 +3,15 @@ details {
     display 3s ease allow-discrete,
     opacity s ease; */
 
-  transition-property: display opacity;
+  transition-property: scale display;
   transition-duration: 3s;
   transition-behavior: allow-discrete;
-  transition-delay: 3s;
+  /* transition-delay: 3s; */
   &[open] {
-    opacity: 1;
-    display: block;
-    translate: 0px 25vh;
-    /* scale: 1; */
+    /* opacity: 1; */
+    /* display: block; */
+    translate: 0 0;
+    scale: 1;
     /* height: auto; */
     /* transform: 0px 0px; */
 
@@ -22,10 +22,10 @@ details {
 
     @starting-style {
       /* transform: 10px 10px; */
-      /* scale: 0; */
-      opacity: 0;
-      display: none;
-      translate: 0px 0px;
+      scale: 0;
+      /* opacity: 0; */
+      /* display: none; */
+      translate: 0px 10vh;
       /* height: 0; */
     }
   }

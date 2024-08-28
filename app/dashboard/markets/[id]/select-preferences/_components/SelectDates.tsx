@@ -41,7 +41,7 @@ const SelectDates = ({
   if (availableDays?.length === 0) {
     return (
       <section className="flex flex-col gap-4 w-full">
-        <p className="text-red-500">No available dates for this market</p>
+        <p className="text-red-500 text-center">No available dates for this market</p>
       </section>
     )
   }
@@ -74,41 +74,43 @@ const SelectDates = ({
                     }
                   />
 
-         
+
 
                   <span className="text-base text-black font-semibold font-darker-grotesque">
                     {formatDateWLuxon(dayObj.date)}
                   </span>
                 </div>
                 {!!selectedDates.find((d) => d.date === dayObj.date) ? (
-                  <select 
-                    name="table"
-                    required={
-                      !!selectedDates.find((d) => d && d.date === dayObj.date)
-                    }
-                    id="table"
-                    className="text-black w-fit rounded-md border border-[#707070]        "
-                    onChange={(e) => {
-                      const newTable = dayObj.tables.find(
-                        (t) => t.table.id === e.target.value
-                      );
+                  <div className="flex-1 max-w-[170px]">
+                    <select
+                      name="table"
+                      required={
+                        !!selectedDates.find((d) => d && d.date === dayObj.date)
+                      }
+                      id="table"
+                      className="text-black w-full rounded-md border border-[#707070]        "
+                      onChange={(e) => {
+                        const newTable = dayObj.tables.find(
+                          (t) => t.table.id === e.target.value
+                        );
 
-                      if (newTable === undefined) return; 
-                      handleOnTableChange(newTable, dayObj);
-                    }}
-                  >
-                    <option value="null">Table</option>
-                    {dayObj.tables
-                      .filter((table) => !table.booked)
-                      .map((table, index) => (
-                        <option
-                          key={`${table.table}-${index}`}
-                          value={table.table.id}
-                        >
-                          Table: {table.table.id} Price: ${table.table.price}
-                        </option>
-                      ))}
-                  </select>
+                        if (newTable === undefined) return;
+                        handleOnTableChange(newTable, dayObj);
+                      }}
+                    >
+                      <option value="null">Table</option>
+                      {dayObj.tables
+                        .filter((table) => !table.booked)
+                        .map((table, index) => (
+                          <option
+                            key={`${table.table}-${index}`}
+                            value={table.table.id}
+                          >
+                            Table: {table.table.id} Price: ${table.table.price}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
                 ) : (
                   <div className="w-[178px] h-[10px]"></div>
                 )}

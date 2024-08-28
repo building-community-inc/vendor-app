@@ -31,7 +31,7 @@ export const BusinessCard = ({ business, ownerName, credits }: {
         </div>
         <div>
           <p className="text-xl font-segoe font-bold text-black">Instagram Handle:</p>
-          <p className="font-segoe text-2xl">{business?.instagramHandle}</p>
+          <p className="font-segoe text-lg">{business?.instagramHandle}</p>
         </div>
       </BusinessSection>
       <BusinessSection className="text-black border-none">
@@ -84,7 +84,7 @@ export const ContactCard = ({ email, phone, address }: {
         <p className="font-segoe text-2xl">{phone}</p>
       </div>
       <div>
-        <p className="text-xl font-segoe font-bold text-black">Dddress:</p>
+        <p className="text-xl font-segoe font-bold text-black">Address:</p>
         <p className="font-segoe text-2xl">{address}</p>
       </div>
     </DashboardSection>

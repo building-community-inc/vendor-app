@@ -79,7 +79,7 @@ const PaymentOptions = ({
               }
             </label>
           )}
-      
+
           {typeof totalToPay === "number" ? (
             totalToPay < 1 ? (
 
@@ -99,24 +99,30 @@ const PaymentOptions = ({
                     </p>
                   </div>
                 )}
-                <div className="w-full">
-                  <h3 className="font-bold">Deposit Amount:</h3>
-                  <span>${dueNow}</span>
-                </div>
+
+                {!isPayNowSelected && (
+
+                  <div className="w-full">
+                    <h3 className="font-bold">Deposit Amount:</h3>
+                    <span>${dueNow}</span>
+                  </div>
+                )}
                 <div>
                   <h3 className="font-bold">HST:</h3>
                   <p>${(dueNow * .13).toFixed(2)}</p>
                 </div>
                 <div>
-                  <h3 className="font-bold">Total Deposit:</h3>
+                  <h3 className="font-bold">{isPayNowSelected ? "Total Booking Cost" : "Total Deposit"}:</h3>
                   <p>$
-                    {totalWithHst}</p>
+                    {totalWithHst.toFixed(2)}</p>
                 </div>
-                <div>
-                  <h3 className="font-bold">Amount Owing:</h3>
-                  <p>$
-                    {totalToPay - dueNow}</p>
-                </div>
+                {!isPayNowSelected && (
+                  <div>
+                    <h3 className="font-bold">Amount Owing:</h3>
+                    <p>$
+                      {totalToPay - dueNow}</p>
+                  </div>
+                )}
 
               </section>
             )

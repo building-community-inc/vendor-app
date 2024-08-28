@@ -29,7 +29,7 @@ export type TDateType = {
 const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWithOptionalBusinessRef }) => {
   const { push } = useRouter();
 
-  const [specialRequest, setSpecialRequest] = useState<string>("");
+  // const [specialRequest, setSpecialRequest] = useState<string>("");
   const [selectedTables, setSelectedTables] = useState<TSelectedTableType[]>(
     []
   );
@@ -56,7 +56,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
   const options = {
     selectedTables,
     totalToPay,
-    specialRequest,
+    // specialRequest,
     market,
     dueNow
   };
@@ -169,7 +169,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         depositAmount: dueNow,
         hst: +(dueNow * 0.13).toFixed(2),
         totalToPay: totalWithHst,
-        specialRequest,
+        // specialRequest,
         dueNowWithHst: dueNow + dueNow * 0.13,
       })
 
@@ -250,13 +250,13 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         setCreditsToUse={setCreditsToUse}
         totalWithHst={totalWithHst}
       />
-      <textarea
+      {/* <textarea
         rows={2}
         placeholder="Special Requests"
         className="rounded-lg py-5 px-3 text-black border border-black w-full max-w-[544px]"
         value={specialRequest}
         onChange={(e) => setSpecialRequest(e.target.value)}
-      />
+      /> */}
 
       <ContinueButton type="submit" className="max-w-[544px]">Complete Booking</ContinueButton>
     </form>

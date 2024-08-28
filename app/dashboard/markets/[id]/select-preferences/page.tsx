@@ -78,7 +78,7 @@ const Page = async ({
           </div>
           <div className=" w-fit flex-grow">
 
-            <h1>
+            <h1 className="font-bold">
               {/* {market.name.length > 20 ? `${market.name.substring(0, 20)}...` : market.name} */}
               {market.name}
             </h1>
