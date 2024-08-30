@@ -39,6 +39,7 @@ const page = async () => {
     return minDateA < minDateB ? -1 : minDateA > minDateB ? 1 : 0;
   });
 
+  console.log({items: userPayments[10].items})
   return (
     <main className="flex px-10 py-24 gap-24 min-h-screen w-full flex-col justify-center">
       <section className=" flex flex-wrap gap-10 justify-center">
@@ -78,7 +79,7 @@ const page = async () => {
         </header>
         <ul className="flex flex-col gap-5">
           {userPayments.map(payment => (
-            <PaymentCard paymentId={payment._id} key={payment._id} market={payment.market} />
+            <PaymentCard amount={payment.amount} paymentId={payment._id} key={payment._id} market={payment.market} items={payment.items} />
           ))}
         </ul>
 

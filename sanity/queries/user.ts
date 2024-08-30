@@ -52,7 +52,12 @@ export const getSanityUserByEmail = async (email: string) => {
 };
 
 const userMarketQueryString = `
-    amount,
+    "amount": amount {
+        total,
+        paid,
+        owed,
+        hst  
+    },
     "market": market -> {
       name, 
       _id,
@@ -66,26 +71,32 @@ const userMarketQueryString = `
     },
     paymentReturned
 `;
+const zodTableItem = z.object({
+  price: z.number(),
+  date: z.string(),
+  tableId: z.string(),
+});
+
+export type TTableItem = z.infer<typeof zodTableItem>;
+
+const zodAmount = z.object({
+  total: z.number(),
+  paid: z.number(),
+  owed: z.number(),
+  hst: z.number(),
+});
+
+export type TAmount = z.infer<typeof zodAmount>;
 
 const zodUserMarket = z.object({
-  amount: z.object({
-    total: z.number(),
-    paid: z.number(),
-    owed: z.number(),
-  }),
+  amount: zodAmount,
   market: z.object({
     name: z.string(),
     dates: z.array(z.string()),
     _id: z.string(),
   }),
   _id: z.string(),
-  items: z.array(
-    z.object({
-      price: z.number(),
-      date: z.string(),
-      tableId: z.string(),
-    })
-  ),
+  items: z.array(zodTableItem),
   paymentReturned: z.boolean().optional().nullable(),
 });
 

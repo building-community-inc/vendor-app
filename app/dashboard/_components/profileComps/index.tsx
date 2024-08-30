@@ -1,11 +1,12 @@
 import Button from "@/app/_components/Button";
 import Dialog from "@/app/_components/Dialog/Dialog";
+import { TAmount, TTableItem } from "@/sanity/queries/user";
 import { cn } from "@/utils";
 import { TPdf, TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { DocumentPdfIcon } from "@sanity/icons";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { ComponentPropsWithoutRef, useRef } from "react";
 
 export const BusinessCard = ({ business, ownerName, credits }: {
   business: TUserWithOptionalBusinessRef["business"];
@@ -118,13 +119,15 @@ export const SupportingDocsCard = ({
 
 
 
-export const PaymentCard = ({ market, paymentId }: {
+export const PaymentCard = ({ market, paymentId, items, amount }: {
   market: {
     _id: string;
     name: string;
     dates: string[];
   }
   paymentId: string;
+  items: TTableItem[];
+  amount: TAmount;
 }) => {
 
   return (
@@ -132,22 +135,28 @@ export const PaymentCard = ({ market, paymentId }: {
 
       <MarketSection title="Date">
         <ul className="flex flex-col gap-2">
-          {market.dates.map(date => (
-            <li key={date} className="flex items-center gap-2">
-              <span>{date}</span>
+          {items.map(date => (
+            <li key={date.date} className="flex items-center gap-2">
+              <span>{date.date}</span>
             </li>
           ))}
         </ul>
       </MarketSection>
-      <MarketSection title="Market Name">
+      <MarketSection title="Venue" className="flex-1">
         <span>{market.name}</span>
       </MarketSection>
       {/* <MarketSection title  */}
       <MarketSection title="Table">
-        2
+        {/* {market.} */}
+        {items.map(item => (
+          <TableItem key={item.tableId} item={item} />
+        ))}
       </MarketSection>
-      <MarketSection title="Amount Owing">
-        $0
+      <MarketSection title="Amounts">
+        <p>Owed: ${amount.owed} </p>
+        <p>Paid: ${amount.paid} </p>
+        <p>Hst: ${amount.hst} </p>
+        <p>Total: ${amount.total} </p>
       </MarketSection>
       <MarketSection title="Booking Status">
         Reserved
@@ -159,12 +168,29 @@ export const PaymentCard = ({ market, paymentId }: {
   )
 }
 
-const MarketSection = ({ title, children }: {
+const TableItem = ({ item }: {
+  item: TTableItem;
+}) => {
+  // const dialogRef = useRef<HTMLDivElement>(null);
+  return (
+    <div className="flex items-center gap-2">
+      {/* <span>{item.tableId}</span> */}
+      {/* <Button onClick={() => dialogRef.current?.click()}>View</Button> */}
+      <div className="flex" >
+        {/* <p>{item.date}</p> */}
+        <p>{item.tableId}</p>
+        {/* <p>Price: ${item.price}</p> */}
+      </div>
+    </div>
+  )
+}
+
+const MarketSection = ({ title, children, className = "", ...rest }: ComponentPropsWithoutRef<"section"> & {
   title?: string;
   children: React.ReactNode;
 }) => {
   return (
-    <section className="flex flex-col gap-2">
+    <section className={cn("flex flex-col gap-2", className)} {...rest}>
       {title && <h3 className="font-darker-grotesque font-bold">{title}</h3>}
       {children}
     </section>
