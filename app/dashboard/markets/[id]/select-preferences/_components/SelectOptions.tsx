@@ -173,7 +173,6 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         dueNowWithHst: dueNow + dueNow * 0.13,
       })
 
-      // console.log({ parsedCheckoutState });
 
       if (!parsedCheckoutState.success) {
         alert("Something went wrong. Please try again.");
@@ -182,7 +181,6 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
       }
 
       setAllCheckoutData(parsedCheckoutState.data)
-      // console.log({ parsedCheckoutState });
       push(`/dashboard/checkout`);
     } catch (error) {
       console.error(error);

@@ -153,17 +153,28 @@ export const PaymentCard = ({ market, paymentId, items, amount }: {
         ))}
       </MarketSection>
       <MarketSection title="Amounts">
-        <p>Owed: ${amount.owed} </p>
-        <p>Paid: ${amount.paid} </p>
+        {amount.owed > 0 && (
+          <>
+            <p>Owed: ${amount.owed} </p>
+            <p>Paid: ${amount.paid} </p>
+          </>
+        )}
         <p>Hst: ${amount.hst} </p>
         <p>Total: ${amount.total} </p>
       </MarketSection>
       <MarketSection title="Booking Status">
         Reserved
       </MarketSection>
-      <Button className="h-fit">
-        <Link href={`/dashboard/bookings/${paymentId}`}>Review Booking</Link>
-      </Button>
+      <section className="grid gap-5">
+        <Button className="h-fit ">
+          <Link className="text-center" href={`/dashboard/bookings/${paymentId}`}>Review Booking</Link>
+        </Button>
+        {amount.owed > 0 && (
+          <Button className="h-fit">
+            <Link href={`/dashboard/pay-remainder/${paymentId}`}>Pay Remainder</Link>
+          </Button>
+        )}
+      </section>
     </li>
   )
 }

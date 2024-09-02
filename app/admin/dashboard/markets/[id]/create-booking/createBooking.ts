@@ -61,8 +61,6 @@ export const createBooking = async (
     };
   }
 
-  // console.log({parsedData})
-
   // GENERATE PAYMENT RECORD uncomment the sanity query ....
 
   const newPaymentRecord: TPaymentRecord = {
@@ -213,15 +211,6 @@ export const createBooking = async (
         : []),
     ],
   };
-
-  // console.log({
-  //   oldVendors: parsedSanityMarket.data.vendors.find(
-  //     (vendor) => vendor.vendor._ref === parsedData.data.vendorId
-  //   )?.datesBooked,
-  //   newVendors: updatedMarket.vendors.find(
-  //     (vendor) => vendor.vendor._ref === parsedData.data.vendorId
-  //   )?.datesBooked,
-  // });
 
   const sanityMarketResponse = await sanityWriteClient
     .patch(parsedSanityMarket.data._id)

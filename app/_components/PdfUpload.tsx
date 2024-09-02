@@ -49,8 +49,6 @@ const fetchFileInfo = async (fileId: string) => {
   }[0]`;
 
   const fileInfo = await sanityClient.fetch(query);
-  console.log({ fileInfo });
-
   
   return fileInfo || { _id: "", originalFilename: "", url: "", size: 0 };
 };
@@ -159,7 +157,6 @@ const PdfUpload = ({
         // dispatch the "ADD_FILES_TO_INPUT" action
         dispatch({ type: "ADD_FILES_TO_INPUT", payload: newFiles });
 
-        console.log({newFiles, input})
         if (onChange) {
           onChange(true);
         }
@@ -213,7 +210,6 @@ const PdfUpload = ({
               <TrashIcon
                 className="cursor-pointer w-5 h-fit"
                 onClick={() => {
-                  console.log("files left", input);
                   handleRemove(file._id)
                   if (input.length === 1 && onChange) {
                     onChange(false);

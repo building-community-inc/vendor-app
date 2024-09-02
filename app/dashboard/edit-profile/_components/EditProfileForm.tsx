@@ -119,10 +119,8 @@ const SelectIndustry = ({ vendorCategories, sanityUser, onChange }: {
         onChange={(e) => {
           setSelectValue(e.target.value)
           if (sanityUser.business?.industry !== e.target.value) {
-            console.log("change")
             onChange && onChange(true)
           } else {
-            console.log("no change")
             onChange && onChange(false)
           }
         }}
@@ -170,10 +168,8 @@ const BusinessFormInputComp = ({
         onChange={(e) => {
           setValueState(e.target.value)
           if (value !== e.target.value) {
-            console.log("change")
             onChange && onChange(true)
           } else {
-            console.log("no change")
             onChange && onChange(false)
           }
         }}

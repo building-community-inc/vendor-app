@@ -156,12 +156,12 @@ const Page = async ({ params }: {
 
             <form action={approveVendor}>
               <input type="hidden" name="vendorId" value={vendor._id} />
-              <Button>approve</Button>
+              <Button>Approve</Button>
             </form>
           ) : (
             <form action={disapproveVendor}>
               <input type="hidden" name="vendorId" value={vendor._id} />
-              <Button>disaprove</Button>
+              <Button>Disaprove</Button>
             </form>
           )}
 
@@ -175,7 +175,7 @@ const Page = async ({ params }: {
         </header>
         <ul className="flex flex-col gap-5">
           {vendorPayments.map(payment => (
-            <PaymentCard paymentId={payment._id} key={payment._id} market={payment.market} />
+            <PaymentCard amount={payment.amount} paymentId={payment._id} key={payment._id} market={payment.market} items={payment.items} />
           ))}
         </ul>
 

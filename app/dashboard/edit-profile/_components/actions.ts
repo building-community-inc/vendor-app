@@ -62,7 +62,6 @@ export const saveNewBusinessInfo = async (
     };
   }
 
-  // console.log({ business, data: business.data });
 
   // const sanityBusiness = await getSanityBusinessById(business.data._id);
 
@@ -71,7 +70,6 @@ export const saveNewBusinessInfo = async (
     .set(business.data)
     .commit();
 
-  // console.log({ sanityResp });
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/edit-profile");

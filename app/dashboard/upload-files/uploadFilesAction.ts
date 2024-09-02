@@ -73,9 +73,6 @@ export const uploadFiles = async (
       if (error.path?.[0]?.key === "logo") {  
         fileName = "Logo";
       }
-      // console.log({errorPath: error.path, firstValue: error.path[0].value});
-
-      // console.log({ issues: validatedData.issues, pathValue: error.path, firstValue: error.path[0].value, fileName });
       return `${error.message} for file ${fileName}`;
     });
 

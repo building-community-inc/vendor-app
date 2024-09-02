@@ -100,16 +100,8 @@ export const zodCheckoutStateSchemaRequired = z
       const credits = data.creditsApplied || 0;
       const hst = data.hst || 0;
 
-      console.log({ itemsTotal, credits, totalToPay: data.totalToPay });
       const totalWithExtras = itemsTotal - credits + hst;
 
-      console.log({
-        itemsTotal,
-        credits,
-        hst,
-        totalToPay: data.totalToPay,
-        totalWithExtras,
-      });
 
       if (data.paymentType === "full") {
         return data.totalToPay === totalWithExtras;

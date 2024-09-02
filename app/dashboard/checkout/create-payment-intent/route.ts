@@ -43,7 +43,6 @@ export const POST = async (req: Request) => {
     });
   }
 
-  // console.log({ body: parsedBody.data });
   const paymentObj = {
     amount: parsedBody.data.totalToPay * 100,
     currency: "cad",
@@ -63,7 +62,6 @@ export const POST = async (req: Request) => {
     },
   };
 
-  // console.log({ paymentObj });
 
   // const parsedPaymentObj = zodPaymentIntentSchema.safeParse(paymentObj);
 

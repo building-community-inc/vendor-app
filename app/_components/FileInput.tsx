@@ -110,7 +110,6 @@ const FileInput = ({
       setFileId(newLastImage.fileId);
     }
   };
-  // console.log("here", input)
   return (
     <section className="my-4 flex flex-col">
       {input.length > 0 && (

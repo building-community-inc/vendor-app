@@ -30,8 +30,6 @@ export const AdminBusinessCard = ({ business, ownerName, credits, vendorId }: {
       : dialogRef.current.showModal();
   };
 
-  // console.log({ formState })
-
   useEffect(() => {
     if (formState.success) {
       dialogRef.current?.close()
@@ -88,9 +86,14 @@ export const AdminBusinessCard = ({ business, ownerName, credits, vendorId }: {
           ) : (
 
             <section className="flex flex-col gap-2">
-              <section className="flex justify-between items-center">
-                <span className="font-semibold text-lg">Credits: </span>
-                <input type="number" name="newCredits" value={creditsValue} className="border border-black rounded-lg px-2 py-1" onChange={(e) => setCreditsValue(+e.currentTarget.value)} />
+              <section className="flex flex-col gap-2">
+                <p><strong>Current Credit Balance:</strong></p>
+                <p>${credits.toFixed(2)}</p>
+                <span className="font-semibold text-lg"> New Credit Balance: </span>
+                <div>
+                  <span>$ </span>
+                  <input type="number" name="newCredits" value={creditsValue.toFixed(2)} className="border border-black rounded-lg px-2 py-1" onChange={(e) => setCreditsValue(+e.currentTarget.value)} />
+                </div>
               </section>
               <footer className="flex justify-center gap-5">
                 <Button type="button" onClick={() => {

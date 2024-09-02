@@ -65,7 +65,6 @@ const UploadPdf = ({ files, setFiles, onChange, setRemovedFileSanityIds, removed
                 const newFiles = files.filter((_, i) => i !== index);
                 setFiles(newFiles);
                 onChange(true);
-                console.log({ file })
                 if (file.sanityId) {
                   setRemovedFileSanityIds([...removedIds, file.sanityId]);
                 }

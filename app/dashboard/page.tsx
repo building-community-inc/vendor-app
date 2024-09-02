@@ -18,7 +18,6 @@ const page = async () => {
   );
 
   const userPayments = await getUserPayments(sanityUser._id);
-  // console.log(userPayments)
 
   userPayments.sort((a, b) => {
     // Convert the dates from strings to DateTime objects and find the earliest date
@@ -39,7 +38,6 @@ const page = async () => {
     return minDateA < minDateB ? -1 : minDateA > minDateB ? 1 : 0;
   });
 
-  console.log({items: userPayments[10].items})
   return (
     <main className="flex px-10 py-24 gap-24 min-h-screen w-full flex-col justify-center">
       <section className=" flex flex-wrap gap-10 justify-center">
