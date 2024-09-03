@@ -11,7 +11,7 @@ import {
 import { z } from "zod";
 import { TUserInTerms } from "../page";
 import { useRouter } from "next/navigation";
-import { ArrowRightIcon } from "@sanity/icons";
+import { FaArrowRight } from "react-icons/fa";
 const zodTermsSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   acceptance: z.literal(true, {
@@ -101,7 +101,7 @@ const Form = ({ user }: TFormProps) => {
       <Button type="submit" disabled={isSubmitting}
         className="disabled:bg-slate-200 disabled:text-slate-300 w-fit mx-auto border text-6xl px-3 rounded-3xl"
       >
-        <ArrowRightIcon />
+        <FaArrowRight />
       </Button>
     </form>
   );

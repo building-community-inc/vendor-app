@@ -21,7 +21,7 @@ import {
 } from "@/app/_components/store/fileStore";
 import PdfUpload from "@/app/_components/PdfUpload";
 import Button from "@/app/_components/Button";
-import { ArrowRightIcon } from '@sanity/icons'
+import { FaArrowRight } from "react-icons/fa";
 
 type TVendorCategory = {
   name: string;
@@ -154,7 +154,7 @@ const BusinessInfoForm = ({ vendorCategories }: TBIFProps) => {
         className="disabled:bg-slate-200 disabled:text-slate-300 w-fit mx-auto border text-6xl px-3 rounded-3xl"
         type="submit"
       >
-        <ArrowRightIcon />
+        <FaArrowRight />
       </Button>
     </form>
   );

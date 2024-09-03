@@ -5,9 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Calendar from "../../_components/Calendar";
 import Button from "@/app/_components/Button";
-import { ChevronDownIcon, ChevronUpIcon } from '@sanity/icons'
 import { useState } from "react";
 import NewDetailsSection from "./DetailsSection";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 
 const MarketCard = ({ market }: { market: TSanityMarket }) => {
@@ -115,9 +115,9 @@ const DetailsSection = ({ datesToDisplay, hours, loadInInstructions, phone }: {
           {isOpen ? "Hide" : "See"} Details
         </span>
         {isOpen ? (
-          <ChevronUpIcon className="text-xl" />
+          <FaChevronUp className="text-xl" />
         ) : (
-          <ChevronDownIcon className="text-xl" />
+          <FaChevronDown className="text-xl" />
         )}
       </button>
     </section>

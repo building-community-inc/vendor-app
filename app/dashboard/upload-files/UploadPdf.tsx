@@ -1,6 +1,6 @@
 import Button from "@/app/_components/Button";
-import { TrashIcon } from "@sanity/icons";
 import { ChangeEvent, useRef } from "react";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 type TFileWithOptionalSanityId = File & {
   sanityId?: string;
@@ -60,7 +60,7 @@ const UploadPdf = ({ files, setFiles, onChange, setRemovedFileSanityIds, removed
               </strong>
               {file.name}
             </span>
-            <TrashIcon
+            <FaRegTrashAlt
               onClick={() => {
                 const newFiles = files.filter((_, i) => i !== index);
                 setFiles(newFiles);

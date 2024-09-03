@@ -1,5 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
-import { StarIcon } from "@sanity/icons";
+import { FaRegStar } from "react-icons/fa";
 
 export const paymentRecordSchema = defineType({
   name: "paymentRecord",
@@ -94,7 +94,7 @@ export const paymentRecordSchema = defineType({
       name: "items",
       title: "Items",
       type: "array",
-      icon: StarIcon,
+      icon: FaRegStar,
       of: [
         defineArrayMember({
           name: "item",
@@ -126,7 +126,7 @@ export const paymentRecordSchema = defineType({
               return {
                 title,
                 subtitle,
-                media: StarIcon,
+                media: FaRegStar,
               };
             },
           },

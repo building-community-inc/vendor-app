@@ -2,7 +2,6 @@ import { getVendorById } from "@/sanity/queries/admin/vendors";
 import FormTitleDivider from "../../_components/FormTitleDivider";
 import Image from "next/image";
 import Link from "next/link";
-import { DocumentPdfIcon } from '@sanity/icons'
 import { approveVendor, disapproveVendor } from "../actions";
 import Button from "@/app/_components/Button";
 import { ContactCard, PaymentCard, SupportingDocsCard } from "@/app/dashboard/_components/profileComps";

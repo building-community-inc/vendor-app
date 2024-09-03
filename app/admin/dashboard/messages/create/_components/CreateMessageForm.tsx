@@ -3,14 +3,13 @@ import { ComponentPropsWithoutRef, useEffect } from "react";
 import { createMessage } from "../action";
 import To from "./To";
 import Button from "@/app/_components/Button";
-import { TVendor } from "@/sanity/queries/admin/vendors";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { useFormState } from "react-dom";
 import { redirect } from "next/navigation";
 
 const CreateMessageForm = ({ sanityUser, allVendors }: {
   sanityUser: TUserWithOptionalBusinessRef;
-  allVendors: TVendor[];
+  allVendors: TUserWithOptionalBusinessRef[];
 }) => {
 
   const [formState, formAction] = useFormState(createMessage, {

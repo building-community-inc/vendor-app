@@ -1,15 +1,15 @@
 "use client";
-import { TVendor } from "@/sanity/queries/admin/vendors";
 import { useRef, useState } from "react";
-import { CloseCircleIcon } from '@sanity/icons'
+import { IoIosCloseCircleOutline } from "react-icons/io";
 import { useClickOutside, useEscapeKey } from "@/app/_components/hooks";
 import { useRouter } from "next/navigation";
+import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 
 const SelectVendor = ({ allVendors }: {
-  allVendors: TVendor[];
+  allVendors: TUserWithOptionalBusinessRef[];
 }) => {
   const [inputText, setInputText] = useState("")
-  const [selectedVendor, setSelectedVendor] = useState<TVendor | null>(null)
+  const [selectedVendor, setSelectedVendor] = useState<TUserWithOptionalBusinessRef | null>(null)
   const [isInputFocused, setInputFocused] = useState(false);
   const inputRef = useRef(null);
   const router = useRouter()
@@ -20,7 +20,7 @@ const SelectVendor = ({ allVendors }: {
     }
 
     return (
-      vendor.business?.name.toLowerCase().includes(inputText.toLowerCase()) ||
+      vendor.business?.businessName.toLowerCase().includes(inputText.toLowerCase()) ||
       vendor.email.toLowerCase().includes(inputText.toLowerCase()) ||
       vendor.firstName.toLowerCase().includes(inputText.toLowerCase()) ||
       vendor.lastName.toLowerCase().includes(inputText.toLowerCase())
@@ -49,10 +49,10 @@ const SelectVendor = ({ allVendors }: {
           className="border border-black rounded-xl p-5 w-full flex items-center justify-between"
         >
           <p>
-            Selected Vendor: {selectedVendor.business?.name || selectedVendor.email}
+            Selected Vendor: {selectedVendor.business?.businessName || selectedVendor.email}
           </p>
           <input type="hidden" name="vendorId" value={selectedVendor._id} readOnly />
-          <CloseCircleIcon 
+          <IoIosCloseCircleOutline 
           className="w-10 h-10 cursor-pointer" 
           onClick={() => {
             setInputText('')
@@ -95,16 +95,16 @@ const SelectVendor = ({ allVendors }: {
                 <li key={vendor.email} className="flex justify-between hover:bg-slate-200 w-full px-5"
                   onMouseDown={() => {
                     setSelectedVendor(vendor);
-                    setInputText(vendor.business?.name || vendor.email); // Update the input text
+                    setInputText(vendor.business?.businessName || vendor.email); // Update the input text
                     setInputFocused(false);
-                    router.push(`?businessCategory=${vendor.business?.category}`)
+                    router.push(`?businessCategory=${vendor.business?.industry}`)
                   }}
                 >
                   <span>
-                    {vendor.business?.name || vendor.email}
+                    {vendor.business?.businessName || vendor.email}
                   </span>
                   <span>
-                    Category: {vendor.business?.category}
+                    Category: {vendor.business?.industry}
                   </span>
                 </li>
               ))}

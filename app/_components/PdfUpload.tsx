@@ -5,7 +5,7 @@ import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 // import Image from "next/image";
 import { useReducer, type ChangeEvent, useEffect, useRef } from "react";
 // import { FaTrashAlt } from "react-icons/fa";
-import { TrashIcon } from "@sanity/icons";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const ALLOWED_FILE_TYPES = ["application/pdf"];
 
@@ -207,7 +207,7 @@ const PdfUpload = ({
           {input.filter(file => file.originalFilename !== "").map((file, index) => (
             <li key={`${file._id}-${index}`} className="flex w-full justify-between items-center">
               {file.originalFilename ? file.originalFilename : ""}
-              <TrashIcon
+              <FaRegTrashAlt
                 className="cursor-pointer w-5 h-fit"
                 onClick={() => {
                   handleRemove(file._id)

@@ -3,10 +3,10 @@ import Dialog from "@/app/_components/Dialog/Dialog";
 import { TAmount, TTableItem } from "@/sanity/queries/user";
 import { cn } from "@/utils";
 import { TPdf, TUserWithOptionalBusinessRef } from "@/zod/user-business";
-import { DocumentPdfIcon } from "@sanity/icons";
 import Image from "next/image";
 import Link from "next/link";
 import { ComponentPropsWithoutRef, useRef } from "react";
+import { FaRegFilePdf } from "react-icons/fa";
 
 export const BusinessCard = ({ business, ownerName, credits }: {
   business: TUserWithOptionalBusinessRef["business"];
@@ -105,7 +105,7 @@ export const SupportingDocsCard = ({
         {pdfs.map((pdf) => (
           <li key={pdf._id} className="flex items-center justify-between">
             <a href={pdf.url} target="_blank" rel="noreferrer" className="font-segoe text-2xl flex items-center">
-              <DocumentPdfIcon className="text-2xl" />
+              <FaRegFilePdf className="text-2xl" />
               <span>
                 {pdf.originalFileName}
               </span>
