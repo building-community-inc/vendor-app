@@ -30,8 +30,6 @@ const CancelMarketButton = ({ marketId }: {
       : dialogRef.current.showModal();
   }
 
-  // console.log({formState})
-
   useEffect(() => {
     if (formState.success) {
       toggleDialog()

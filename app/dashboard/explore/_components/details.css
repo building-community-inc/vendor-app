@@ -1,0 +1,32 @@
+details {
+  /* transition: scale 3s ease, 
+    display 3s ease allow-discrete,
+    opacity s ease; */
+
+  transition-property: scale display;
+  transition-duration: 3s;
+  transition-behavior: allow-discrete;
+  /* transition-delay: 3s; */
+  &[open] {
+    /* opacity: 1; */
+    /* display: block; */
+    translate: 0 0;
+    scale: 1;
+    /* height: auto; */
+    /* transform: 0px 0px; */
+
+    /* transition: scale 03s ease-in-out, 
+      opacity 5s ease 1s, 
+      height 0.5s ease, 
+      transform 5s ease; */
+
+    @starting-style {
+      /* transform: 10px 10px; */
+      scale: 0;
+      /* opacity: 0; */
+      /* display: none; */
+      translate: 0px 10vh;
+      /* height: 0; */
+    }
+  }
+}

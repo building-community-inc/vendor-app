@@ -1,0 +1,45 @@
+/* Default state (not checked) */
+input[type="radio"]#pay-now + label[for="pay-now"],
+input[type="radio"]#pay-later + label[for="pay-later"] {
+  color: black;
+}
+
+/* Checked state */
+input[type="radio"]#pay-now:checked + label[for="pay-now"],
+input[type="radio"]#pay-later:checked + label[for="pay-later"] {
+  color: transparent;
+}
+
+/* Radio button styles */
+input[type="radio"]#pay-now,
+input[type="radio"]#pay-later {
+  appearance: none;
+  background-color: white;
+  margin: 0;
+  font: inherit;
+  color: #C5B5A4;
+  width: .85em;
+  height: .85em;
+  border: 0.15em solid #C5B5A4;
+  border-radius: 50%;
+  transform: translateY(-0.075em);
+  display: grid;
+  place-content: center;
+}
+
+input[type="radio"]#pay-now::before,
+input[type="radio"]#pay-later::before {
+  content: "";
+  width: 0.85em;
+  height: 0.85em;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em #c5b5a4;
+}
+
+input[type="radio"]#pay-now:checked::before,
+input[type="radio"]#pay-later:checked::before {
+  transform: scale(0.9);
+}
+

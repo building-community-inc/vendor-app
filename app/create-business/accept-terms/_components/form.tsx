@@ -11,6 +11,7 @@ import {
 import { z } from "zod";
 import { TUserInTerms } from "../page";
 import { useRouter } from "next/navigation";
+import { FaArrowRight } from "react-icons/fa";
 const zodTermsSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   acceptance: z.literal(true, {
@@ -71,19 +72,18 @@ const Form = ({ user }: TFormProps) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mt-10 flex flex-col items-center pb-10"
+      className="mt-10 flex flex-col items-center pb-10 gap-5"
     >
       <label
         htmlFor="acceptance"
-        className={`flex items-center gap-2 py-1 ml-2 mb-2 text-sm font-bold ${
-          errors.acceptance ? "text-red-500" : "text-gray-700"
-        }`}
+        className={`flex items-center gap-2 py-1 ml-2 mb-2 text-2xl font-bold font-darker-grotesque ${errors.acceptance ? "text-red-500" : "text-gray-700"
+          }`}
       >
         <input type="checkbox" id="terms" {...register("acceptance")} />
-        Accept Terms & Conditions
+        I agree to the terms of service of the Vendor App
       </label>
       {errors.acceptance && (
-        <p className="text-xs text-red-500 mb-2">
+        <p className="text-base text-red-500 mb-2">
           {errors.acceptance?.message}
         </p>
       )}
@@ -93,13 +93,15 @@ const Form = ({ user }: TFormProps) => {
         type={"text"}
         name={"name"}
         placeholder="name"
-        className="text-black rounded-md px-2 py-1 mb-2 max-w-md mx-auto"
+        className="text-black border border-button-border-color rounded-md px-2 py-1 mb-2 max-w-md mx-auto"
       />
       {errors.name && (
-        <p className="text-xs text-red-500 mb-2">{errors.name?.message}</p>
+        <p className="text-base text-red-500 mb-2">{errors.name?.message}</p>
       )}
-      <Button type="submit" disabled={isSubmitting}>
-        Submit
+      <Button type="submit" disabled={isSubmitting}
+        className="disabled:bg-slate-200 disabled:text-slate-300 w-fit mx-auto border text-6xl px-3 rounded-3xl"
+      >
+        <FaArrowRight />
       </Button>
     </form>
   );

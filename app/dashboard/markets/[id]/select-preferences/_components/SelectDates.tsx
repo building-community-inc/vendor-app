@@ -5,16 +5,16 @@ import {
   TTableInDay,
 } from "@/sanity/queries/admin/markets/zods";
 import { TDateType } from "./SelectOptions";
-import { DateTime } from "luxon";
 import { formatDateWLuxon } from "@/utils/helpers";
+import Box from "./Box";
 
 const SelectDates = ({
   market,
   handleDateSelect,
   selectedDates,
-  totalToPay,
+  // totalToPay,
   handleOnTableChange,
-  dueNow,
+  // dueNow,
   businessCategory
 }: {
   market: TSanityMarket;
@@ -41,16 +41,17 @@ const SelectDates = ({
   if (availableDays?.length === 0) {
     return (
       <section className="flex flex-col gap-4 w-full">
-        <p className="text-red-500">No available dates for this market</p>
+        <p className="text-red-500 text-center">No available dates for this market</p>
       </section>
     )
   }
   return (
-    <section className="flex mt-5 flex-col gap-4 w-full">
-      <h2 className="font-bold">Select Dates</h2>
+    <Box className="mt-5">
+      <h2 className="text-xl font-bold font-darker-grotesque text-black self-start">Select Dates and Table Location</h2>
+      <span className="font-darker-grotesque text-base text-black self-start">Only available tables will be displayed</span>
       <ul className="flex flex-col gap-3 w-full">
         {availableDays?.map((dayObj, index) => {
-   
+
 
           return (
             <li key={dayObj.date}>
@@ -66,53 +67,60 @@ const SelectDates = ({
                     type="checkbox"
                     name={`date-[${index}]`}
                     id={dayObj.date}
-                    className="pointer-events-none relative z-[2]"
+                    className="pointer-events-none accent-title-color relative z-[2] checked:bg-purple-500"
                     onChange={() => handleDateSelect(dayObj)}
                     checked={
                       !!selectedDates.find((d) => d && d.date === dayObj.date)
                     }
                   />
-                  <span className="whitespace-nowrap">
+
+
+
+                  <span className="text-base text-black font-semibold font-darker-grotesque">
                     {formatDateWLuxon(dayObj.date)}
                   </span>
                 </div>
-                {!!selectedDates.find((d) => d.date === dayObj.date) && (
-                  <select
-                    name="table"
-                    required={
-                      !!selectedDates.find((d) => d && d.date === dayObj.date)
-                    }
-                    id="table"
-                    className="text-black w-fit"
-                    onChange={(e) => {
-                      const newTable = dayObj.tables.find(
-                        (t) => t.table.id === e.target.value
-                      );
+                {!!selectedDates.find((d) => d.date === dayObj.date) ? (
+                  <div className="flex-1 max-w-[170px]">
+                    <select
+                      name="table"
+                      required={
+                        !!selectedDates.find((d) => d && d.date === dayObj.date)
+                      }
+                      id="table"
+                      className="text-black w-full rounded-md border border-[#707070]        "
+                      onChange={(e) => {
+                        const newTable = dayObj.tables.find(
+                          (t) => t.table.id === e.target.value
+                        );
 
-                      if (newTable === undefined) return;
-                      handleOnTableChange(newTable, dayObj);
-                    }}
-                  >
-                    <option value="null">Table</option>
-                    {dayObj.tables
-                      .filter((table) => !table.booked)
-                      .map((table, index) => (
-                        <option
-                          key={`${table.table}-${index}`}
-                          value={table.table.id}
-                        >
-                          Table: {table.table.id} Price: ${table.table.price}
-                        </option>
-                      ))}
-                  </select>
+                        if (newTable === undefined) return;
+                        handleOnTableChange(newTable, dayObj);
+                      }}
+                    >
+                      <option value="null">Table</option>
+                      {dayObj.tables
+                        .filter((table) => !table.booked)
+                        .map((table, index) => (
+                          <option
+                            key={`${table.table}-${index}`}
+                            value={table.table.id}
+                          >
+                            Table: {table.table.id} Price: ${table.table.price}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                ) : (
+                  <div className="w-[178px] h-[10px]"></div>
                 )}
               </label>
             </li>
           )
         })}
       </ul>
-
-    </section>
+      <span>{"Note: Table selection is subject to change at administrator's discretion."}</span>
+    </Box>
   );
 };
 

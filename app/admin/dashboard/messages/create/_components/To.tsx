@@ -1,13 +1,13 @@
 "use client";
-import { TVendor } from "@/sanity/queries/admin/vendors";
 import { useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useClickOutside, useEscapeKey } from "@/app/_components/hooks";
 import { debounce } from "@/utils/helpers";
 import { Input } from "./CreateMessageForm";
+import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 
 const To = ({ vendorList }: {
-  vendorList: TVendor[];
+  vendorList: TUserWithOptionalBusinessRef[];
 }) => {
   const [focused, setFocused] = useState(false);
   const search = useSearchParams().get("search");
@@ -15,7 +15,7 @@ const To = ({ vendorList }: {
   const { push } = useRouter();
   const vendorListRef = useRef(null);
 
-  const [selectedVendors, setSelectedVendors] = useState<TVendor[]>([]);
+  const [selectedVendors, setSelectedVendors] = useState<TUserWithOptionalBusinessRef[]>([]);
 
   const debouncedPush = debounce((value: string) => {
     push(`?search=${value}`);
@@ -29,12 +29,12 @@ const To = ({ vendorList }: {
   };
 
 
-  const filterVendors = (arrayVendors: TVendor[]) => arrayVendors.filter((vendor) => {
+  const filterVendors = (arrayVendors: TUserWithOptionalBusinessRef[]) => arrayVendors.filter((vendor) => {
     if (!search) {
       return true;
     }
 
-    const vendorBusinessName = vendor.business?.name.toLowerCase() || "No Business";
+    const vendorBusinessName = vendor.business?.businessName.toLowerCase() || "No Business";
 
     return vendorBusinessName.toLowerCase().includes(search) || vendor.email.toLowerCase().includes(search) || vendor.firstName.toLowerCase().includes(search) || vendor.lastName.toLowerCase().includes(search)
   });
@@ -50,7 +50,7 @@ const To = ({ vendorList }: {
 
   const toId = vendorList.find(vendor => vendor.email === value)?._id || "";
 
-  const handleCheckboxChange = (vendor: TVendor) => (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCheckboxChange = (vendor: TUserWithOptionalBusinessRef) => (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setSelectedVendors(prevVendors => {
         // Check if the vendor is already in the selectedVendors array
@@ -115,7 +115,7 @@ const To = ({ vendorList }: {
                     <strong>
                       Business Name:
                     </strong>
-                    {vendor.business?.name}
+                    {vendor.business?.businessName}
                   </span>
                 ) : (
                   <span>

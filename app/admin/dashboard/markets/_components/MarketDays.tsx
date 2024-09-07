@@ -6,9 +6,9 @@ import { saveMarketChanges } from "./saveMarketChangesAction";
 import { useFormState } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 import { nanoid } from "nanoid";
-import { TrashIcon } from '@sanity/icons'
 import Dialog from "@/app/_components/Dialog/Dialog";
 import { TTable, TVendor } from "@/sanity/queries/admin/markets/zods";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 
 export type TDayWithTable = {
@@ -209,7 +209,7 @@ const MarketDays = ({
                           }}
                           className=" flex items-center"
                         >
-                          <TrashIcon className="text-2xl" />
+                          <FaRegTrashAlt className="text-2xl" />
 
                         </button>
                       </td>

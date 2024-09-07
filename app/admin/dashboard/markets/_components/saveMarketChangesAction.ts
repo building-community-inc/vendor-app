@@ -60,7 +60,6 @@ export const saveMarketChanges = async (
   },
   formData: FormData
 ) => {
-  // console.log(formData);
   const rawData = {
     reset: formData.get("reset"),
     date: formData.get("date"),
@@ -394,12 +393,10 @@ function areTableArraysDifferent(
     const oldTable = oldTables.find((t) => t.table.id === newTable.table.id);
 
     if (!oldTable) {
-      // console.log("newTable is not in oldTable");
       return true; // newTable is not in oldTable
     }
 
     if (oldTable.booked?._ref !== newTable.booked?._ref) {
-      // console.log("booked refs are not the same");
       return true;
     }
   }

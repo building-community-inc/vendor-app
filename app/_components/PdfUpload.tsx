@@ -5,7 +5,7 @@ import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 // import Image from "next/image";
 import { useReducer, type ChangeEvent, useEffect, useRef } from "react";
 // import { FaTrashAlt } from "react-icons/fa";
-import { TrashIcon } from "@sanity/icons";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const ALLOWED_FILE_TYPES = ["application/pdf"];
 
@@ -49,8 +49,8 @@ const fetchFileInfo = async (fileId: string) => {
   }[0]`;
 
   const fileInfo = await sanityClient.fetch(query);
-
-  return fileInfo;
+  
+  return fileInfo || { _id: "", originalFilename: "", url: "", size: 0 };
 };
 
 const deleteFileFromSanity = async (fileId: string) => {
@@ -64,9 +64,11 @@ const deleteFileFromSanity = async (fileId: string) => {
 };
 
 const PdfUpload = ({
-  useStore
+  useStore,
+  onChange,
 }: {
   useStore: () => TPdfFileStore;
+  onChange?: (value: boolean) => void;
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addFileId, removeFileId, fileIds } = useStore();
@@ -154,9 +156,15 @@ const PdfUpload = ({
 
         // dispatch the "ADD_FILES_TO_INPUT" action
         dispatch({ type: "ADD_FILES_TO_INPUT", payload: newFiles });
+
+        if (onChange) {
+          onChange(true);
+        }
       }
     } catch (error) {
       // handle error
+      console.error(error);
+      throw error;
     }
   };
 
@@ -166,6 +174,8 @@ const PdfUpload = ({
     // remove the file ID from the store
     removeFileId(fileId);
     await deleteFileFromSanity(fileId);
+
+
   };
 
   const addFilesToState = (files: TFileWithUrl[]) => {
@@ -176,10 +186,10 @@ const PdfUpload = ({
     <>
       <button
         type="button"
-        className="rounded-2xl w-fit mx-auto mt-2 bg-white text-black px-5 py-1 text-lg"
+        className="rounded-2xl w-fit mx-auto mt-2 bg-button-primary border border-button-border-color shadow-lg text-black px-5 py-1 text-lg"
         onClick={() => fileInputRef.current?.click()}
       >
-        {input.length > 0 ? "Add more" : "Browse"}
+        {input.length > 0 ? "Add more" : "Browse Files"}
       </button>
       <input
         // {...props}
@@ -194,12 +204,17 @@ const PdfUpload = ({
       {input.length > 0 && (
 
         <ul className="w-full mt-2 gap-2 flex flex-col">
-          {input.map((file) => (
-            <li key={file._id} className="flex w-full justify-between items-center">
+          {input.filter(file => file.originalFilename !== "").map((file, index) => (
+            <li key={`${file._id}-${index}`} className="flex w-full justify-between items-center">
               {file.originalFilename ? file.originalFilename : ""}
-              <TrashIcon
+              <FaRegTrashAlt
                 className="cursor-pointer w-5 h-fit"
-                onClick={() => handleRemove(file._id)}
+                onClick={() => {
+                  handleRemove(file._id)
+                  if (input.length === 1 && onChange) {
+                    onChange(false);
+                  }
+                }}
               />
             </li>
           ))}

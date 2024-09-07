@@ -16,21 +16,21 @@ import Spinner from "@/app/_components/Spinner";
 // recreating the Stripe object on every render.
 // This is your test publishable API key.
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE || ""
 );
 
 export default function Checkout() {
   const [clientSecret, setClientSecret] = useState("");
 
 
-  const { items, market, specialRequest, totalToPay, dueNow, paymentType, hst, dueNowWithHst } = useCheckoutStore();
+  const { items, market, specialRequest, totalToPay, paymentType, hst, depositAmount, price, creditsApplied } = useCheckoutStore();
 
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     fetch("/dashboard/checkout/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items, market, specialRequest, totalToPay, dueNow, paymentType, hst, dueNowWithHst }),
+      body: JSON.stringify({ items, market, specialRequest, totalToPay, depositAmount, paymentType, hst, price, creditsApplied }),
     })
       .then((res) => res.json())
       .then((data) => setClientSecret(data.clientSecret));
@@ -44,7 +44,7 @@ export default function Checkout() {
     appearance,
   };
   return (
-    <section className={`pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto ${clientSecret ? "" : "grid place-content-center"}`}>
+    <section className={`text-black pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto ${clientSecret ? "" : "grid place-content-center"}`}>
       {clientSecret ? (
         <section className="flex flex-col">
           <section className="px-10 py-5">
@@ -71,26 +71,40 @@ export default function Checkout() {
                 ))}
               </tbody>
             </table>
-            <p>
-              <strong className="mr-[1ch]">Amount Being Paid Now:</strong>
-              ${dueNow}
-            </p>
-            <p>
-              <strong className="mr-[1ch]">HST:</strong>
-              ${hst}
-            </p>
-            <p>
-              <strong className="mr-[1ch]">Total Due Now WIth HST:</strong>
-              ${dueNowWithHst}
-            </p>
-            <p>
-              <strong className="mr-[1ch]">Amount Owed:</strong>
-              ${totalToPay - dueNow}
-            </p>
-            <p>
-              <strong className="mr-[1ch]">Total:</strong>
-              ${totalToPay}
-            </p>
+            <section className="flex flex-col gap-2 font-darker-grotesque">
+                <h3 className="font-bold">Price:</h3>
+                <span>${price}</span>
+                {creditsApplied && creditsApplied > 0 && (
+
+                  <div className="">
+                    <h3 className="font-bold">
+                      Credits Applied
+                    </h3>
+                    <p>
+                      ${creditsApplied}
+                    </p>
+                  </div>
+                )}
+                <div className="w-full">
+                  <h3 className="font-bold">Deposit Amount:</h3>
+                  <span>${depositAmount}</span>
+                </div>
+                <div>
+                  <h3 className="font-bold">HST:</h3>
+                  <p>${hst}</p>
+                </div>
+                <div>
+                  <h3 className="font-bold">Total Deposit:</h3>
+                  <p>$
+                    {totalToPay}</p>
+                </div>
+                <div>
+                  <h3 className="font-bold">Amount Owing:</h3>
+                  <p>$
+                    {price - depositAmount}</p>
+                </div>
+
+              </section>
 
             {specialRequest && (
               <p>

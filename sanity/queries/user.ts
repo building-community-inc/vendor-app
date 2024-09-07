@@ -2,44 +2,47 @@ import { sanityClient } from "@/sanity/lib/client";
 import { zodUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { z } from "zod";
 
+export const userQueryString = `
+  _id,
+  _type,
+  email,
+  firstName,
+  lastName,
+  hasImage,
+  image,
+  role,
+  status,
+  acceptedTerms,
+  business->{
+      _id,
+      _type,
+      businessName,
+      address1,
+      address2,
+      city,
+      province,
+      postalCode,
+      country,
+      phone,
+      instagramHandle,
+      industry,
+      logo,
+      "logoUrl": logo.asset->url,
+      "pdfs": pdf[] {
+          "url": asset -> url,
+          "originalFileName": asset -> originalFilename,
+          "_id": asset -> _id,
+          "size": asset -> size,
+      },
+  },
+credits
+        `;
 export const getSanityUserByEmail = async (email: string) => {
   const user =
     await sanityClient.fetch(`*[_type == 'user' && email == '${email}'][0]{
-        _id,
-        _type,
-        email,
-        firstName,
-        lastName,
-        hasImage,
-        image,
-        role,
-        status,
-        acceptedTerms,
-        business->{
-            _id,
-            _type,
-            businessName,
-            address1,
-            address2,
-            city,
-            province,
-            postalCode,
-            country,
-            phone,
-            instagramHandle,
-            industry,
-            logo,
-            "logoUrl": logo.asset->url,
-            "pdfs": pdf[] {
-                "url": asset -> url,
-                "originalFileName": asset -> originalFilename,
-                "_id": asset -> _id,
-                "size": asset -> size,
-            },
-        },
-        credits
+     ${userQueryString}
     }`);
-  
+
   const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
   if (!validatedUser.success) {
     throw new Error(validatedUser.error.message);
@@ -49,7 +52,12 @@ export const getSanityUserByEmail = async (email: string) => {
 };
 
 const userMarketQueryString = `
-    amount,
+    "amount": amount {
+        total,
+        paid,
+        owed,
+        hst  
+    },
     "market": market -> {
       name, 
       _id,
@@ -63,32 +71,38 @@ const userMarketQueryString = `
     },
     paymentReturned
 `;
+const zodTableItem = z.object({
+  price: z.number(),
+  date: z.string(),
+  tableId: z.string(),
+});
+
+export type TTableItem = z.infer<typeof zodTableItem>;
+
+const zodAmount = z.object({
+  total: z.number(),
+  paid: z.number(),
+  owed: z.number(),
+  hst: z.number(),
+});
+
+export type TAmount = z.infer<typeof zodAmount>;
 
 const zodUserMarket = z.object({
-  amount: z.object({
-    total: z.number(),
-    paid: z.number(),
-    owed: z.number(),
-  }),
+  amount: zodAmount,
   market: z.object({
     name: z.string(),
     dates: z.array(z.string()),
     _id: z.string(),
   }),
   _id: z.string(),
-  items: z.array(
-    z.object({
-      price: z.number(),
-      date: z.string(),
-      tableId: z.string(),
-    })
-  ),
-  paymentReturned: z.boolean().optional().nullable()
+  items: z.array(zodTableItem),
+  paymentReturned: z.boolean().optional().nullable(),
 });
 
 const zodUserMarkets = z.array(zodUserMarket);
 
-export const getUserMarkets = async (userId: string) => {
+export const getUserPayments = async (userId: string) => {
   try {
     // const user = await getSanityUserByEmail(email);
 

@@ -4,8 +4,8 @@ import FormTitleDivider from "../_components/FormTitleDivider";
 import Button from "@/app/_components/Button";
 import { setUserStatus } from "./actions";
 import Link from "next/link";
-import { TVendor } from "@/sanity/queries/admin/vendors";
 import Search from "@/app/dashboard/explore/_components/Search";
+import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 
 
 
@@ -27,35 +27,38 @@ const Page = async ({
 
   const search = searchParams.search?.toLowerCase();
 
-  const filterVendors = (arrayVendors: TVendor[]) => arrayVendors.filter((vendor) => {
+  const filterVendors = (arrayVendors: TUserWithOptionalBusinessRef[]) => arrayVendors.filter((vendor) => {
     if (!search) {
       return true;
     }
 
-    const vendorBusinessName = vendor.business?.name.toLowerCase() || "No Business";
+    const vendorBusinessName = vendor.business?.businessName.toLowerCase() || "No Business";
 
     return vendorBusinessName.toLowerCase().includes(search) || vendor.email.toLowerCase().includes(search) || vendor.firstName.toLowerCase().includes(search) || vendor.lastName.toLowerCase().includes(search) || vendor.status.toLowerCase().includes(search);
   });
 
   return (
-    <main className="pt-14 px-5 w-full min-h-screen mx-auto">
-      <header className="flex w-full justify-between">
+    <main className="pt-0 w-full min-h-screen mx-auto relative">
+      <header className="flex w-full justify- p-5 gap-5 sticky top-0 left-0 bg-white z-1">
         <h1 className="font-segoe font-bold text-3xl">Vendors</h1>
         <Search urlForSearch="/admin/dashboard/vendors" theme="light" placeholder="Find a Vendor" />
       </header>
-      <FormTitleDivider title="Pending Vendors" />
+      <section className="px-5 pt-5">
 
-      <ul className="flex gap-2 flex-col mb-10 mt-2">
-        {filterVendors(pendingVendors)?.map((vendor) => (
-          <VendorCard key={vendor._id} vendor={vendor} />
-        ))}
-      </ul>
-      <FormTitleDivider title="Vendors" />
-      <ul className="flex gap-2 flex-wrap mt-2">
-        {filterVendors(otherVendors)?.map((vendor) => (
-          <VendorCard key={vendor._id} vendor={vendor} />
-        ))}
-      </ul>
+        <FormTitleDivider title="Pending Vendors" />
+
+        <ul className="flex gap-5 flex-col mb-10 mt-2">
+          {filterVendors(pendingVendors)?.map((vendor) => (
+            <VendorCard key={vendor._id} vendor={vendor} />
+          ))}
+        </ul>
+        <FormTitleDivider title="Vendors" />
+        <ul className="flex gap-5 flex-wrap mt-2">
+          {filterVendors(otherVendors)?.map((vendor) => (
+            <VendorCard key={vendor._id} vendor={vendor} />
+          ))}
+        </ul>
+      </section>
     </main>
   );
 }
@@ -65,10 +68,10 @@ export default Page;
 
 
 const VendorCard = ({ vendor }: {
-  vendor: TVendor
+  vendor: TUserWithOptionalBusinessRef
 }) => {
   return (
-    <li className="border-b border-black pb-1 w-content flex-grow flex items-center justify-between gap-10">
+    <li className="border-b border-black pb-5 w-content flex-grow flex items-center justify-between gap-10">
       <section className="flex items-center justify-between gap-2 flex-grow">
         <div className="flex-grow gap-5 flex items-center justify-between">
           <div className="flex-grow flex justify-between">
@@ -76,7 +79,10 @@ const VendorCard = ({ vendor }: {
             <div className="w-fit flex gap-2 flex-wrap">
 
               {vendor.business ? (
-                <h2><strong>Business:</strong> {vendor.business.name}</h2>
+                <>
+                  <strong>Business</strong>
+                  <h2> {vendor.business.businessName}</h2>
+                </>
               ) : (
                 <h2 className="text-red-700">No Business</h2>
               )}
@@ -91,7 +97,7 @@ const VendorCard = ({ vendor }: {
         </div>
       </section>
 
-      <section className="flex flex-wrap justify-center gap-2 items-center">
+      <section className="flex flex-col justify-center gap-2 items-center">
 
         {vendor.status === "pending" ? (
 

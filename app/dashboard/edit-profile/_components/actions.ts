@@ -28,19 +28,19 @@ export const saveNewBusinessInfo = async (
     postalCode: formData.get("postalCode"),
     country: formData.get("country"),
     instagramHandle: formData.get("instagramHandle"),
-    pdf: formData.getAll("pdfs").map((fileId) => ({
-      _key: nanoid(),
-      _type: "file",
-      asset: {
-        _ref: fileId,
-      },
-    })),
-    logo: {
-      _type: "image",
-      asset: {
-        _ref: formData.get("logo"),
-      },
-    },
+    // pdf: formData.getAll("pdfs").map((fileId) => ({
+    //   _key: nanoid(),
+    //   _type: "file",
+    //   asset: {
+    //     _ref: fileId,
+    //   },
+    // })),
+    // logo: {
+    //   _type: "image",
+    //   asset: {
+    //     _ref: formData.get("logo"),
+    //   },
+    // },
   };
 
   const business = zodSanityUpdateBusiness.safeParse(data);
@@ -62,7 +62,6 @@ export const saveNewBusinessInfo = async (
     };
   }
 
-  // console.log({ business, data: business.data });
 
   // const sanityBusiness = await getSanityBusinessById(business.data._id);
 
@@ -71,7 +70,6 @@ export const saveNewBusinessInfo = async (
     .set(business.data)
     .commit();
 
-  // console.log({ sanityResp });
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/edit-profile");

@@ -19,7 +19,10 @@ export const marketQueryString = `
     address,  
     city,
     tableInfo,
-    hours
+    hours,
+    phone, 
+    securityPhone,
+    loadInInstructions,
   },
   "daysWithTables": daysWithTables[] {
     date,

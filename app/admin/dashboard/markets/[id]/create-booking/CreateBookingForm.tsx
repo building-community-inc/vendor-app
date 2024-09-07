@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useFormState } from "react-dom";
 import SelectVendor from "./SelectVendor";
 import SelectDetails from "./SelectDetails";
-import { TVendor } from "@/sanity/queries/admin/vendors";
 import { createBooking } from "./createBooking";
 import Button from "@/app/_components/Button";
 import Link from "next/link";
@@ -13,7 +12,7 @@ import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 
 const CreateBookingForm = ({ market, allVendors, sanityUser }: {
   market: TSanityMarket;
-  allVendors: TVendor[];
+  allVendors: TUserWithOptionalBusinessRef[];
   sanityUser: TUserWithOptionalBusinessRef;
 }) => {
 

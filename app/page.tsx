@@ -13,14 +13,14 @@ export default async function Home() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen">
       <header>
-        <Image src="/logo-on-black-bg-low-res.jpg" width={468} height={468} alt="logo" />
+        <Image src="/logo-on-white-bg.png" width={468} height={468} alt="logo" />
       </header>
       <section className="flex flex-col items-center gap-6">
         <Link href="/sign-in">
-          <Button>Login</Button>
+          <Button className="border font-darker-grotesque font-[900] text-xl">LOGIN</Button>
         </Link>
         <Link href="/sign-up">
-          <Button>Create Account</Button>
+          <Button className="border font-darker-grotesque font-[900] text-xl">CREATE ACCOUNT</Button>
         </Link>
       </section>
     </main>

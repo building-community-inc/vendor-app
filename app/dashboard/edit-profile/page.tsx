@@ -21,8 +21,10 @@ const Page = async () => {
   
   return (
     <main className="pt-10">
-      <h1 className="text-center font-semibold text-lg">Edit Your Profile Info</h1>
+      <h1 className="text-center text-3xl text-title-color uppercase font-darker-grotesque">Edit Profile</h1>
       <EditProfileForm sanityUser={sanityUser} vendorCategories={vendorCategories} />
+    
+      {/* <NewProfileForm /> */}
     </main>
   );
 }

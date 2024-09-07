@@ -1,13 +1,13 @@
-import { getSanityUserByEmail, getUserMarkets } from "@/sanity/queries/user";
+import { getSanityUserByEmail, getUserPayments } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
-import Image from "next/image";
 import { redirect } from "next/navigation";
 import NoBz from "./_components/NoBz";
-import { formatDateWLuxon } from "@/utils/helpers";
 import { DateTime } from 'luxon';
-import UpdateProfileImage from "./_components/UpdateProfileImage";
 import Link from "next/link";
 import React from "react";
+import Button from "../_components/Button";
+import { BusinessCard, ContactCard, DashboardSection, PaymentCard, SupportingDocsCard } from "./_components/profileComps";
+
 
 const page = async () => {
   const user = await currentUser();
@@ -17,10 +17,9 @@ const page = async () => {
     user.emailAddresses[0].emailAddress
   );
 
-  const userMarkets = await getUserMarkets(sanityUser._id);
-  // console.log(userMarkets)
+  const userPayments = await getUserPayments(sanityUser._id);
 
-  userMarkets.sort((a, b) => {
+  userPayments.sort((a, b) => {
     // Convert the dates from strings to DateTime objects and find the earliest date
     const datesA = a.market.dates.map(date => {
       const [year, month, day] = date.split('-').map(Number);
@@ -40,140 +39,53 @@ const page = async () => {
   });
 
   return (
-    <main className="flex p-10 gap-2 min-h-screen w-full flex-wrap">
-      {sanityUser.credits && (
-        <section className="flex flex-col gap-2 items-center">
-          <p><strong>Available Credits: </strong> ${sanityUser.credits}</p>
-        </section>
-      )}
-      {sanityUser.business ? (
-        <section className="flex flex-col gap-5 xl:gap-10 items-center justify-center w-full px-10">
-          <section className="flex flex-col lg:flex-row items-center gap-10">
-            {sanityUser.business.logoUrl ? (
-              <section className="flex flex-col items-center">
-                <Image
-                  src={sanityUser.business.logoUrl}
-                  alt={sanityUser.business.businessName}
-                  width={228}
-                  height={228}
-                  className="rounded-2xl"
-                />
-                {/* <UpdateProfileImage businessName={sanityUser.business.businessName} logoUrl={sanityUser.business.logoUrl} currentLogoId={sanityUser.business.logo?.asset._ref} /> */}
-              </section>
-            ) : (
-              <div className="w-[228px] h-[228px] bg-white flex items-center justify-center text-black rounded-2xl">
-                <p className="font-bold text-center rotate-45 max-w-[6ch] text-xl">
-                  Vendor Logo
-                </p>
-              </div>
-            )}
-            <section className="w-fit flex flex-col gap-2">
-              <h2 className="rounded-full bg-white text-black font-bold px-4 py-1">
-                {sanityUser.business.businessName}
-              </h2>
-              <p className="flex gap-2">
-                <strong>Product Category:</strong>
-                {sanityUser.business.industry}
-              </p>
-              <p className="flex gap-2">
-                <strong>Owner Name:</strong>
-                {`${sanityUser.firstName} ${sanityUser.lastName}`}
-              </p>
-              <p className="flex gap-2">
-                <strong>Address:</strong>
-                {`${sanityUser.business.address1} ${sanityUser.business.address2}`}
-              </p>
-              <p className="flex gap-2">
-                <strong>City:</strong>
-                {sanityUser.business.city}
-              </p>
-              <p className="flex gap-2">
-                <strong>Province:</strong>
-                {sanityUser.business.province}
-              </p>
-              <p className="flex gap-2">
-                <strong>Postal Code:</strong>
-                {sanityUser.business.postalCode}
-              </p>
-              <p className="flex gap-2">
-                <strong>Country:</strong>
-                {sanityUser.business.country}
-              </p>
-              <p className="flex gap-2">
-                <strong>Email:</strong>
-                {sanityUser.email}
-              </p>
-              <p className="flex gap-2">
-                <strong>Phone:</strong>
-                {sanityUser.business.phone}
-              </p>
-              <p className="flex gap-2">
-                <strong>Instagram Handle:</strong>
-                <span className="text-[#0A6FA2]">
-                  @{sanityUser.business.instagramHandle ?? ""}
-                </span>
-              </p>
-              {sanityUser.business.pdfs && sanityUser.business.pdfs.length >= 1 && (
-                <ul className="flex gap-2 flex-col">
-                  <strong>Supporting Documents:</strong>
-                  {sanityUser.business.pdfs.map((pdf) => (
-                    <li key={pdf.url} className="">{pdf.originalFileName}</li>
-                  ))}
-                </ul>
-              )}
-              <Link href="/dashboard/edit-profile">
-                <span className="text-blue-500">Edit Business Profile</span>
-              </Link>
-            </section>
-          </section>
-          {userMarkets.length > 0 && (
-            <section>
-              <div className="flex items-center gap-5">
-                <h3 className="whitespace-nowrap flex-shrink-0 font-bold text-lg">
-                  My Markets
-                </h3>
-                <div className="h-[1px] w-full flex-grow bg-[#707070] " />
-              </div>
-              <table className="table-auto w-full border-collapse">
-                <thead>
-                  <tr>
-                    <th className="text-left p-2">Market Date</th>
-                    <th className="text-left p-2">Market</th>
-                    <th className="text-left p-2">Table Info</th>
-                    <th className="text-left p-2">Amounts</th>
-                  </tr>
-                </thead>
-                <tbody className="relative">
-                  {userMarkets.map((booking) =>
-                    booking.items.map((item, index) => (
-                      <tr key={`${booking._id}-${index}`}
-                        className={`${booking.paymentReturned ? 'text-red-500' : ''}`}
-                      >
-                        {/* <section className="line-through"> */}
+    <main className="flex px-10 py-24 gap-24 min-h-screen w-full flex-col justify-center">
+      <section className=" flex flex-wrap gap-10 justify-center">
 
-                        <td className="text-left p-2">
-                          {formatDateWLuxon(booking.market.dates[0])}
-                        </td>
-                        <td className="text-left p-2">{booking.market.name}</td>
-                        <td className="text-left p-2">table: {item.tableId} date: {formatDateWLuxon(item.date)}</td>
-                        <td className="text-left p-2">paid: {booking.amount.paid} total: {booking.amount.total}</td>
-                        {/* </section> */}
-                        {booking.paymentReturned && (
-                          <td className="w-[20ch]">Payment Returned</td>
-                        )}
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </section>
+        {sanityUser.business ? (
+          // <section className="flex flex-wrap justify-evenly gap-10 ">
+            <BusinessCard credits={sanityUser.credits || 0} business={sanityUser.business} ownerName={`${sanityUser.firstName} ${sanityUser.lastName}`} />
+          // </section>
+        ) : (
+          <NoBz />
+        )}
+        <footer className="flex flex-col gap-10 items-center">
+          {sanityUser.business && (
+            <ContactCard email={sanityUser.email} phone={sanityUser.business?.phone} address={`${sanityUser.business?.address1} ${sanityUser.business?.address2}`} />
           )}
-        </section>
-      ) : (
-        <NoBz />
-      )}
+
+          {sanityUser.business && sanityUser.business.pdfs && sanityUser.business.pdfs.length > 0 && (
+            <SupportingDocsCard pdfs={sanityUser.business.pdfs} />
+          )}
+          <div className="flex gap-8 w-full max-w-[433px] justify-evenly">
+
+            <Button className="h-fit font-bold font-darker-grotesque">
+              <Link href="/dashboard/edit-profile">Edit Profile</Link>
+            </Button>
+            <Button className="h-fit font-bold font-darker-grotesque">
+              <Link href="/dashboard/upload-files">Upload or Edit Files</Link>
+            </Button>
+
+          </div>
+        </footer>
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <header className="border-2 border-b-black">
+
+          <h2 className="text-2xl font-bold font-darker-grotesque text-black">My Market Bookings</h2>
+        </header>
+        <ul className="flex flex-col gap-5">
+          {userPayments.map(payment => (
+            <PaymentCard amount={payment.amount} paymentId={payment._id} key={payment._id} market={payment.market} items={payment.items} />
+          ))}
+        </ul>
+
+
+      </section>
     </main>
   );
 };
 
 export default page;
+

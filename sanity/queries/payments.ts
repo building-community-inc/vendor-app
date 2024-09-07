@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { sanityClient } from "../lib/client";
+import { sanityClient, sanityWriteClient } from "../lib/client";
+import { groq } from "next-sanity";
 
 export const getExistingPayment = async (paymentIntentId: string) => {
   const result = await sanityClient.fetch(
@@ -14,7 +15,7 @@ export const zodLatePaymentSchema = z.object({
   _id: z.string(),
   payments: z.array(
     z.object({
-      paymentType: z.union([z.literal("stripe"), z.literal("cash")]),
+      paymentType: z.string(),
       _key: z.string(),
       paymentDate: z.string(),
       stripePaymentIntentId: z.string().optional().nullable(),
@@ -41,6 +42,14 @@ export const zodLatePaymentWithMarketSchema = zodLatePaymentSchema.merge(
     market: z.object({
       name: z.string(),
       _id: z.string(),
+      venue: z.object({
+        city: z.string(),
+        phone: z.string(),
+        hours: z.string(),
+        address: z.string(),
+        title: z.string(),
+        loadInInstructions: z.string(),
+      }),
     }),
     items: z.array(zodPaymentItem),
   })
@@ -53,7 +62,8 @@ const paymentQuery = `
     paymentDate,
     stripePaymentIntentId,
     amount,
-    _type
+    _type,
+    paymentType
   },
   "amount": amount {
     paid,
@@ -63,11 +73,19 @@ const paymentQuery = `
   },
 `;
 
-const paymentQueryWithMarket = `
+const paymentQueryWithMarket = groq`
   ${paymentQuery}
   "market": market->{
     name,
-    _id
+    _id,
+    "venue": venue->{
+      city,
+      phone,
+      hours,
+      address,
+      title,
+      loadInInstructions
+    },
   },
   "items": items[] {
     tableId,
@@ -96,6 +114,7 @@ export const getPaymentByIdWithMarket = async (paymentId: string) => {
     `*[_type == "paymentRecord" && _id match $paymentId][0] {${paymentQueryWithMarket}}`,
     { paymentId }
   );
+
   const parsedResult = zodLatePaymentWithMarketSchema.safeParse(result);
 
   if (!parsedResult.success) {

@@ -6,9 +6,9 @@ import { formatMarketDate } from "@/utils/helpers";
 import { sanityClient } from "@/sanity/lib/client";
 import { nanoid } from "nanoid";
 // import { Resend } from "resend";
-import { CheckmarkIcon } from '@sanity/icons'
 import ContinueButton from "../../markets/[id]/_components/ContinueButton";
 import Link from "next/link";
+import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
 const Page = async ({
   searchParams,
@@ -57,7 +57,7 @@ const Page = async ({
       {!existingPayment && (
         <AddBookingToDb paymentIntent={JSON.stringify({ paymentIntent, idForPaymentRecord })} paymentIntentId={paymentIntent.id} />
       )}
-      <CheckmarkIcon className="text-[#35d124] border-2 w-24 h-24 border-secondary rounded-full" />
+      <IoMdCheckmarkCircleOutline className="text-[#35d124] border-2 w-24 h-24 border-secondary rounded-full" />
       <h1 className="text-xl font-semibold">Payment Success!</h1>
       <p className="">Vendor Table has been reserved for:</p>
       <h2 className="text-lg font-semibold">{market?.name}</h2>

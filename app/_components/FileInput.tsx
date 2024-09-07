@@ -110,18 +110,23 @@ const FileInput = ({
       setFileId(newLastImage.fileId);
     }
   };
-  // console.log("here", input)
   return (
-    <div className="my-4">
+    <section className="my-4 flex flex-col">
       {input.length > 0 && (
-        <Image
-          key={input[input.length - 1].url}
-          src={input[input.length - 1].url}
-          alt={input[input.length - 1].name}
-          width={500}
-          height={500}
-          className="object-cover w-[500px] h-full mx-auto mt-2"
-        />
+        <>
+          <Image
+            key={input[input.length - 1].url}
+            src={input[input.length - 1].url}
+            alt={input[input.length - 1].name}
+            width={200}
+            height={200}
+            className="object-cover w-[200px] h-full mx-auto mt-2"
+          />
+          <span className="self-center text-black">
+
+            {input[input.length - 1].name}
+          </span>
+        </>
       )}
       <div className={cn("flex gap-4",
         { "mt-5": input.length > 0 },
@@ -133,7 +138,7 @@ const FileInput = ({
             classNames
               ? classNames
               : cn(
-                "group relative p-2 w-fit flex flex-col mx-auto items-center justify-center border-2 border-slate-300 border-dashed rounded-lg dark:border-gray-600 transition",
+                "group relative p-2 w-fit flex flex-col mx-auto items-center text-black justify-center border bg-button-primary border-button-border-color rounded-lg transition",
                 { "h-fit aspect-auto": !noInput },
                 { "items-start justify-start": !noInput },
                 {
@@ -160,7 +165,7 @@ const FileInput = ({
               classNames
                 ? classNames
                 : cn(
-                  "group relative p-2 w-fit flex flex-col mx-auto items-center justify-center border-2 border-slate-300 border-dashed rounded-lg dark:border-gray-600 transition",
+                  "group relative p-2 w-fit flex flex-col mx-auto items-center text-black justify-center border bg-button-primary border-button-border-color rounded-lg transition",
                   { "h-fit aspect-auto": !noInput },
                   { "items-start justify-start": !noInput },
                   {
@@ -175,7 +180,7 @@ const FileInput = ({
           </button>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 

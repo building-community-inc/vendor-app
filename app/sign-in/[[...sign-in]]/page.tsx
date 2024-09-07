@@ -5,8 +5,8 @@ import Image from "next/image";
 
 export default function Page() {
   return (
-    <main className="grid place-content-center min-h-screen">
-      <Image src={"/logo-on-black-bg-low-res.png"} alt="logo" width={468} height={468} />
+    <main className="grid place-content-center min-h-screen ">
+      <Image src="/logo-on-white-bg.png" width={468} height={468} alt="logo" />
       <SignIn
         appearance={clerkLoginAppearance}
         afterSignUpUrl={"/create-user"}
