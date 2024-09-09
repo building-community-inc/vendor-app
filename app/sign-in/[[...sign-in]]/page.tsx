@@ -9,7 +9,7 @@ export default function Page() {
       <Image src="/logo-on-white-bg.png" width={468} height={468} alt="logo" />
       <SignIn
         appearance={clerkLoginAppearance}
-        afterSignUpUrl={"/create-user"}
+        afterSignUpUrl={"/add-user-to-sanity"}
       />
     </main>
   );

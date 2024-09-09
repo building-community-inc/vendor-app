@@ -1,5 +1,6 @@
 import { sanityClient } from "@/sanity/lib/client";
 import { zodUserWithOptionalBusinessRef } from "@/zod/user-business";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 export const userQueryString = `
@@ -45,7 +46,8 @@ export const getSanityUserByEmail = async (email: string) => {
 
   const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
   if (!validatedUser.success) {
-    throw new Error(validatedUser.error.message);
+     console.log(new Error(validatedUser.error.message));
+    return redirect("/add-user-to-sanity")
   }
 
   return validatedUser.data;
