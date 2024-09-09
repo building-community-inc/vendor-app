@@ -5,7 +5,7 @@ const { createClient } = require("next-sanity");
 const client = createClient({
   projectId: "xomfbfrw",
   useCdn: false, // Set to true if you want to use the CDN
-  dataset: "production",
+  dataset: "development",
 });
 
 
@@ -36,16 +36,36 @@ const deleteAllDocumentsOfType = async () => {
   });
 
   await transaction.commit().then((res) => console.log(res));
+
 };
 
 
-deleteAllDocumentsOfType();
+// deleteAllDocumentsOfType();
+
+// const findBusinessReferences = async () => {
+//   const users = await client.fetch('*[_type == "user"]');
+//   const businessReferences = [];
+
+//   for (const user of users) {
+//     if (user.business && user.business._ref) {
+//       businessReferences.push(user.business._ref);
+//     }
+//   }
+
+//   if (businessReferences.length > 0) {
+//     console.log("Business documents referenced by user documents:", businessReferences);
+//   } else {
+//     console.log("No business documents are referenced by user documents.");
+//   }
+// };
+
+// findBusinessReferences();
 
 
-const findDocById = async (id) => {
-  const doc = await client.getDocument(id);
-  console.log(doc);
-};
+// const findDocById = async (id) => {
+//   const doc = await client.getDocument(id);
+//   console.log(doc);
+// };
 
-// findDocById("pi_3OcDzhL4t9b70V4n16bugzDL");
+// findDocById("trqx8S1HIiR8RLm64siThM");
 
