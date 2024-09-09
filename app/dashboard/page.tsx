@@ -44,7 +44,7 @@ const page = async () => {
 
         {sanityUser.business ? (
           // <section className="flex flex-wrap justify-evenly gap-10 ">
-            <BusinessCard credits={sanityUser.credits || 0} business={sanityUser.business} ownerName={`${sanityUser.firstName} ${sanityUser.lastName}`} />
+          <BusinessCard credits={sanityUser.credits || 0} business={sanityUser.business} ownerName={`${sanityUser.firstName} ${sanityUser.lastName}`} />
           // </section>
         ) : (
           <NoBz />
@@ -70,19 +70,18 @@ const page = async () => {
         </footer>
       </section>
 
-      <section className="flex flex-col gap-2">
-        <header className="border-2 border-b-black">
-
-          <h2 className="text-2xl font-bold font-darker-grotesque text-black">My Market Bookings</h2>
-        </header>
-        <ul className="flex flex-col gap-5">
-          {userPayments.map(payment => (
-            <PaymentCard amount={payment.amount} paymentId={payment._id} key={payment._id} market={payment.market} items={payment.items} />
-          ))}
-        </ul>
-
-
-      </section>
+      {userPayments.length > 0 && (
+        <section className="flex flex-col gap-2">
+          <header className="border-2 border-b-black">
+            <h2 className="text-2xl font-bold font-darker-grotesque text-black">My Market Bookings</h2>
+          </header>
+          <ul className="flex flex-col gap-5">
+            {userPayments.map(payment => (
+              <PaymentCard amount={payment.amount} paymentId={payment._id} key={payment._id} market={payment.market} items={payment.items} />
+            ))}
+          </ul>
+        </section>
+      )}
     </main>
   );
 };
