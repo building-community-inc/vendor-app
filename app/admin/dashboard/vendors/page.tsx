@@ -38,9 +38,9 @@ const Page = async ({
   });
 
   return (
-    <main className="pt-0 w-full min-h-screen mx-auto relative">
-      <header className="flex w-full justify- p-5 gap-5 sticky top-0 left-0 bg-white z-1">
-        <h1 className="font-segoe font-bold text-3xl">Vendors</h1>
+    <main className="pt-0 w-full min-h-screen mx-auto relative bg-background">
+      <header className="flex w-full justify- p-5 gap-5 sticky top-0 left-0 bg-background z-1 flex-col lg:flex-row">
+        <h1 className="font-segoe font-bold text-3xl text-center">Vendors</h1>
         <Search urlForSearch="/admin/dashboard/vendors" theme="light" placeholder="Find a Vendor" />
       </header>
       <section className="px-5 pt-5">
@@ -71,40 +71,27 @@ const VendorCard = ({ vendor }: {
   vendor: TUserWithOptionalBusinessRef
 }) => {
   return (
-    <li className="border-b border-black pb-5 w-content flex-grow flex items-center justify-between gap-10">
-      <section className="flex items-center justify-between gap-2 flex-grow">
-        <div className="flex-grow gap-5 flex items-center justify-between">
-          <div className="flex-grow flex justify-between">
+    <li className="border-b border-black pb-5 w-content flex-grow flex flex-col items-center justify-between gap-10">
+      <section className="flex items-center justify-between gap-2 flex-grow flex-col w-full lg:flex-row">
+        {vendor.business ? (
+          <CardItem title="Business:" value={vendor.business.businessName} />
+        ) : (
+          <CardItem value={"No Business"} />
+        )}
+        <CardItem title="Contact:" value={`${vendor.firstName} ${vendor.lastName}`} />
+        <CardItem title="Email:" value={vendor.email} />
 
-            <div className="w-fit flex gap-2 flex-wrap">
-
-              {vendor.business ? (
-                <>
-                  <strong>Business</strong>
-                  <h2> {vendor.business.businessName}</h2>
-                </>
-              ) : (
-                <h2 className="text-red-700">No Business</h2>
-              )}
-            </div>
-            <div className="w-fit justify-between flex gap-2 flex-wrap">
-              <h3><strong>Contact:</strong> {vendor.firstName} {vendor.lastName}</h3>
-
-              <p><strong>Email: </strong>{vendor.email}</p>
-            </div>
-          </div>
-          <p className="capitalize"><strong>status:</strong> {vendor.status}</p>
-        </div>
+        <CardItem title="Status:" value={vendor.status} />
       </section>
 
-      <section className="flex flex-col justify-center gap-2 items-center">
+      <section className="flex flex-wrap justify-center gap-2 items-center">
 
         {vendor.status === "pending" ? (
 
           <form action={setUserStatus}>
             <input type="hidden" name="vendorId" value={vendor._id} />
             <input type="hidden" name="status" value={"approved"} />
-            <Button className="bg-green-300 border border-green-400 transition-all">approve</Button>
+            <Button className="bg-green-300 border border-green-400 transition-all">Approve</Button>
           </form>
         ) : (
           <>
@@ -112,13 +99,13 @@ const VendorCard = ({ vendor }: {
               <form action={setUserStatus}>
                 <input type="hidden" name="vendorId" value={vendor._id} />
                 <input type="hidden" name="status" value={"approved"} />
-                <Button className="bg-green-300 border border-green-400 transition-all">reactivate</Button>
+                <Button className="bg-green-300 border border-green-400 transition-all">Reactivate</Button>
               </form>
             ) : (
               <form action={setUserStatus}>
                 <input type="hidden" name="vendorId" value={vendor._id} />
                 <input type="hidden" name="status" value={"suspended"} />
-                <Button className="bg-red-200">suspend</Button>
+                <Button className="bg-red-200">Suspend</Button>
               </form>
             )}
           </>
@@ -126,10 +113,22 @@ const VendorCard = ({ vendor }: {
 
         <Link href={`/admin/dashboard/vendors/${vendor._id}`}>
           <Button className="whitespace-nowrap bg-white border-none hover:text-blue-800 transition-all">
-            view vendor
+            View Vendor
           </Button>
         </Link>
       </section>
     </li>
+  )
+}
+
+const CardItem = ({ title, value }: {
+  title?: string;
+  value: string;
+}) => {
+  return (
+    <div className="flex gap-[1ch] self-start">
+      {title && <strong>{title}</strong>}
+      <p>{value}</p>
+    </div>
   )
 }

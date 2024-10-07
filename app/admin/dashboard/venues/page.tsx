@@ -13,7 +13,7 @@ const Page = async () => {
   const venues = await getAllVenues();
 
   return (
-    <main className="pt-14 px-5 w-[80%] min-h-screen max-w-3xl mx-auto">
+    <main className="pt-14 px-5 min-h-screen max-w-3xl mx-auto">
       <h1 className="font-bold text-xl">Venues</h1>
       <FormTitleDivider title="Live Venues" />
       {venues && venues?.length > 1 ? <VenueList venues={venues} /> : (
