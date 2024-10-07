@@ -35,7 +35,7 @@ const ExplorePage = async ({
 
   if (!sanityUser.acceptedTerms || !sanityUser.acceptedTerms.accepted) {
     return (
-      <div className="flex flex-col items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full px-10">
         <h2 className="text-3xl font-bold">Please accept the terms</h2>
         <p className="text-xl">
           You need to accept the terms before you can access the dashboard
@@ -48,7 +48,7 @@ const ExplorePage = async ({
   }
   if (sanityUser.status === "suspended") {
     return (
-      <div className="flex flex-col items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full px-10">
         <h2 className="text-3xl font-bold">Your account is suspended</h2>
         <p className="text-xl">
           Your vendor account has been suspended, please contact us at <a href={`mailto:${EMAIL}`}>{EMAIL}</a>         </p>
@@ -58,7 +58,7 @@ const ExplorePage = async ({
 
   if (sanityUser.status === "pending") {
     return (
-      <div className="flex flex-col items-center justify-center w-full h-full px-10 text-pretty">
+      <div className="flex flex-col items-center justify-center w-full h-full px-10">
         <h2 className="text-3xl font-bold">Your account is pending</h2>
         <p className="text-xl">
           Your application needs further review, please contact us at <a href={`mailto:${EMAIL}`}>{EMAIL}</a>            </p>
