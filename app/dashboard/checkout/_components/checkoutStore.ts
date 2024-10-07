@@ -52,18 +52,22 @@ export const useCheckoutStore = create<TCheckoutStore>((set, get) => ({
   setPrice: (price: TCheckoutState["price"]) => set({ price }),
   setCreditsApplied: (creditsApplied: TCheckoutState["creditsApplied"]) =>
     set({ creditsApplied }),
-  setDepositAmount: (depositAmount: TCheckoutState["depositAmount"]) =>
-    set({ depositAmount }),
+  setDepositAmount: (depositAmount: TCheckoutState["depositAmount"]) => {
+    console.log({ depositAmount });
+    return set({ depositAmount });
+  },
   setHst: () => {
     const totalAmount = get().price;
     const hst = totalAmount * HST; // 13% of the total amount
-    set({ hst });
+    console.log({ hst });
+    return set({ hst });
   },
   setTotalToPay: () => {
     const totalAmount = get().price;
     const hst = get().hst;
     const totalToPayWithHst = totalAmount + hst;
-    set({ totalToPay: totalToPayWithHst });
+    console.log({ totalToPayWithHst });
+    return set({ totalToPay: totalToPayWithHst });
   },
   setSpecialRequest: (specialRequest: TCheckoutState["specialRequest"]) =>
     set({ specialRequest }),
@@ -71,6 +75,7 @@ export const useCheckoutStore = create<TCheckoutStore>((set, get) => ({
     set({ previousPayment }),
   setAllCheckoutData: (data: TCheckoutState) => {
     if (zodCheckoutStateSchema.safeParse(data).success) {
+      console.log("Setting all checkout data", data, zodCheckoutStateSchema.safeParse(data));
       set(data);
     } else {
       console.error("Invalid data passed to setAllCheckoutData");

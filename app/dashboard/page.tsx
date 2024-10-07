@@ -57,14 +57,18 @@ const page = async () => {
           {sanityUser.business && sanityUser.business.pdfs && sanityUser.business.pdfs.length > 0 && (
             <SupportingDocsCard pdfs={sanityUser.business.pdfs} />
           )}
-          <div className="flex gap-8 w-full max-w-[433px] justify-evenly">
+          <div className="flex gap-8 w-full max-w-[433px] justify-evenly flex-wrap">
 
-            <Button className="h-fit font-bold font-darker-grotesque">
-              <Link href="/dashboard/edit-profile">Edit Profile</Link>
-            </Button>
-            <Button className="h-fit font-bold font-darker-grotesque">
-              <Link href="/dashboard/upload-files">Upload or Edit Files</Link>
-            </Button>
+            <Link href="/dashboard/edit-profile">
+              <Button className="h-fit font-bold font-darker-grotesque text-sm whitespace-nowrap">
+                Edit Profile
+              </Button>
+            </Link>
+            <Link href="/dashboard/upload-files">
+              <Button className="h-fit font-bold font-darker-grotesque text-sm whitespace-nowrap">
+                Upload or Edit Files
+              </Button>
+            </Link>
 
           </div>
         </footer>
