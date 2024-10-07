@@ -72,11 +72,11 @@ const Page = async ({
   return (
     <main className="pt-48 w-full flex flex-col gap-8 h-screen relative">
       <header className="flex items-center py-10 w-full bg-white shadow-md shadow-gray-400 border-b-2 border-title-color absolute top-0 left-0">
-        <div className="flex max-w-[540px] w-full mx-auto overflow-hidden  justify-between gap-2 md:gap-4 lg:gap-20">
+        <div className="flex max-w-[540px] w-full mx-auto overflow-hidden  justify-center gap-2 md:gap-4 lg:gap-20">
           <div className="min-w-[70px] flex">
             <Calendar dates={market.dates} />
           </div>
-          <div className=" w-fit flex-grow">
+          <div className="w-fit">
 
             <h1 className="font-bold">
               {/* {market.name.length > 20 ? `${market.name.substring(0, 20)}...` : market.name} */}
@@ -87,7 +87,7 @@ const Page = async ({
         </div>
       </header>
       {market.venue.venueMap && (
-        <article className="flex flex-col gap-5 items-center">
+        <article className="flex flex-col gap-5 items-center px-5">
           <VenueMap
             market={market}
           />
@@ -114,7 +114,7 @@ const VenueMap = ({ market }: {
         alt={market.name}
         width={424}
         height={409}
-        className="object-cover max-h-[409px] max-w-[424px]"
+        className="object-cover w-full max-h-[409px] max-w-[424px]"
       />
     </Box>
   )

@@ -60,60 +60,65 @@ const SelectDates = ({
                 className="flex items-center justify-between min-h-[2rem]"
               >
                 <div
-                  className="flex items-center gap-2 h-full relative z-10"
-                  onClick={() => handleDateSelect(dayObj)}
+                  className="flex items-center gap-2 h-full w-[160ch]"
                 >
                   <input
                     type="checkbox"
                     name={`date-[${index}]`}
                     id={dayObj.date}
-                    className="pointer-events-none accent-title-color relative z-[2] checked:bg-purple-500"
+                    className="accent-title-color"
                     onChange={() => handleDateSelect(dayObj)}
                     checked={
                       !!selectedDates.find((d) => d && d.date === dayObj.date)
                     }
                   />
 
+                  <div
+                    className="w-full justify-between items-center gap-2 flex"
+                  >
 
 
-                  <span className="text-base text-black font-semibold font-darker-grotesque">
-                    {formatDateWLuxon(dayObj.date)}
-                  </span>
-                </div>
-                {!!selectedDates.find((d) => d.date === dayObj.date) ? (
-                  <div className="flex-1 max-w-[170px]">
-                    <select
-                      name="table"
-                      required={
-                        !!selectedDates.find((d) => d && d.date === dayObj.date)
-                      }
-                      id="table"
-                      className="text-black w-full rounded-md border border-[#707070]        "
-                      onChange={(e) => {
-                        const newTable = dayObj.tables.find(
-                          (t) => t.table.id === e.target.value
-                        );
-
-                        if (newTable === undefined) return;
-                        handleOnTableChange(newTable, dayObj);
-                      }}
+                    <span
+                      className="text-base text-black  font-semibold font-darker-grotesque"
+                      onClick={() => handleDateSelect(dayObj)}
                     >
-                      <option value="null">Table</option>
-                      {dayObj.tables
-                        .filter((table) => !table.booked)
-                        .map((table, index) => (
-                          <option
-                            key={`${table.table}-${index}`}
-                            value={table.table.id}
-                          >
-                            Table: {table.table.id} Price: ${table.table.price}
-                          </option>
-                        ))}
-                    </select>
+                      {formatDateWLuxon(dayObj.date)}
+                    </span>
+                    {!!selectedDates.find((d) => d.date === dayObj.date) && (
+                      <div className="flex-1 max-w-[170px]">
+                        <select
+                          name="table"
+                          required={
+                            !!selectedDates.find((d) => d && d.date === dayObj.date)
+                          }
+                          id="table"
+                          className="text-black w-full rounded-md border border-[#707070]        "
+                          onChange={(e) => {
+                            const newTable = dayObj.tables.find(
+                              (t) => t.table.id === e.target.value
+                            );
+
+                            if (newTable === undefined) return;
+                            handleOnTableChange(newTable, dayObj);
+                          }}
+                        >
+                          <option value="null">Table</option>
+                          {dayObj.tables
+                            .filter((table) => !table.booked)
+                            .map((table, index) => (
+                              <option
+                                key={`${table.table}-${index}`}
+                                value={table.table.id}
+                              >
+                                Table: {table.table.id} Price: ${table.table.price}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+
+                    )}
                   </div>
-                ) : (
-                  <div className="w-[178px] h-[10px]"></div>
-                )}
+                </div>
               </label>
             </li>
           )
