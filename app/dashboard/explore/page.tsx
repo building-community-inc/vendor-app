@@ -58,7 +58,7 @@ const ExplorePage = async ({
 
   if (sanityUser.status === "pending") {
     return (
-      <div className="flex flex-col items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full px-10 text-pretty">
         <h2 className="text-3xl font-bold">Your account is pending</h2>
         <p className="text-xl">
           Your application needs further review, please contact us at <a href={`mailto:${EMAIL}`}>{EMAIL}</a>            </p>
