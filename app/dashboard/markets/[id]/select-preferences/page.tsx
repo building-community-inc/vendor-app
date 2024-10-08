@@ -68,7 +68,6 @@ const Page = async ({
   if (!market) return <div>market not found</div>;
 
 
-  // const dateToDisplay = dateArrayToDisplayableText(market.dates);
   return (
     <main className="pt-48 w-full flex flex-col gap-8 h-screen relative">
       <header className="flex items-center py-10 w-full bg-white shadow-md shadow-gray-400 border-b-2 border-title-color absolute top-0 left-0">
@@ -79,7 +78,6 @@ const Page = async ({
           <div className="w-fit">
 
             <h1 className="font-bold">
-              {/* {market.name.length > 20 ? `${market.name.substring(0, 20)}...` : market.name} */}
               {market.name}
             </h1>
             <p>{`${market.venue.address}, ${market.venue.city}`}</p>
