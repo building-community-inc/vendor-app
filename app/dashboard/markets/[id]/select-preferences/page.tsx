@@ -8,8 +8,6 @@ import Link from "next/link";
 import { EMAIL } from "@/app/_components/constants";
 import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 import Image from "next/image";
-import { ComponentPropsWithoutRef } from "react";
-import { cn } from "@/utils";
 import Box from "./_components/Box";
 import Calendar from "@/app/dashboard/_components/Calendar";
 
