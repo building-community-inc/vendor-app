@@ -3,7 +3,6 @@ import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import SelectOptions from "./_components/SelectOptions";
-// import VenueMap from "./_components/VenueMap";
 import Link from "next/link";
 import { EMAIL } from "@/app/_components/constants";
 import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
