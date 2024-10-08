@@ -22,7 +22,7 @@ type TVenueCardProps = {
 };
 export const VenueCard = ({ venue, withAvailableTables }: TVenueCardProps) => {
   return (
-    <article className="h-[645px]">
+    <article className="lg:h-[645px]">
       <header className="h-[60%]">
         <Image
           src={venue.venueMap.url}
@@ -32,7 +32,7 @@ export const VenueCard = ({ venue, withAvailableTables }: TVenueCardProps) => {
           className="w-full h-full object-cover"
         />
       </header>
-      <section className="px-2 py-7 flex flex-col gap-2 justify-between h-[40%] overflow-y-scroll">
+      <section className="px-2 py-7 flex flex-col gap-2 justify-between h-[40%]">
         <h2 className="font-semibold text-center capitalize">{venue.title}</h2>
         <div className="flex items-center">
           <section className="w-1/2 text-left">

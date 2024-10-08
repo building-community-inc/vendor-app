@@ -14,7 +14,7 @@ export const BusinessCard = ({ business, ownerName, credits }: {
   credits: number;
 }) => {
   return (
-    <DashboardSection className="h-[514px]">
+    <DashboardSection className="h-fit">
       {business?.logoUrl && (
         <BusinessSection className="flex justify-center">
           <Image src={business.logoUrl} alt={business.businessName} width={100} height={100} />
@@ -22,26 +22,24 @@ export const BusinessCard = ({ business, ownerName, credits }: {
       )}
 
       <BusinessSection>
-        <h1 className="text-3xl font-darker-grotesque text-title-color">{business?.businessName}</h1>
-        <span className="font-segoe text-xl">{business?.industry}</span>
+        <h1 className="text-3xl font-darker-grotesque text-title-color md:text-4xl">{business?.businessName}</h1>
+        <span className="font-segoe text-xl md:text-2xl">{business?.industry}</span>
       </BusinessSection>
       <BusinessSection className="text-black flex flex-col gap-5">
         <div>
-          <p className="text-xl font-segoe font-bold text-black">Owner Name:</p>
-          <p className="font-segoe text-2xl">{ownerName}</p>
+          <p className="text-xl font-segoe font-bold text-black md:text-2xl">Owner Name:</p>
+          <p className="font-segoe text-2xl md:text-3xl">{ownerName}</p>
         </div>
         <div>
-          <p className="text-xl font-segoe font-bold text-black">Instagram Handle:</p>
-          <p className="font-segoe text-lg">{business?.instagramHandle}</p>
+          <p className="text-xl font-segoe font-bold text-black md:text-2xl">Instagram Handle:</p>
+          <p className="font-segoe text-base">{business?.instagramHandle}</p>
         </div>
       </BusinessSection>
       <BusinessSection className="text-black border-none">
         <div>
-          <p className="text-xl  font-segoe font-bold text-black">Credit Balance:</p>
-          <p className="font-segoe text-2xl">${credits}</p>
+          <p className="text-xl  font-segoe font-bold text-black md:text-2xl">Credit Balance:</p>
+          <p className="font-segoe text-xl">${credits}</p>
         </div>
-
-        {/* <div className=""></div> */}
       </BusinessSection>
     </DashboardSection >
   )
@@ -51,7 +49,7 @@ export const DashboardSection = ({ children, className }: React.ComponentPropsWi
   children: React.ReactNode;
 }) => {
   return (
-    <section className={cn("max-w-[433px] w-full h-fit border rounded-3xl border-button-border-color shadow-md shadow-button-border-color", className)}>
+    <section className={cn("max-w-[433px] w-full h-fit border rounded-3xl bg-white border-button-border-color shadow-md shadow-button-border-color", className)}>
       {children}
     </section>
   )
@@ -78,15 +76,15 @@ export const ContactCard = ({ email, phone, address }: {
     <DashboardSection className="py-5 px-3 flex flex-col gap-5">
       <div>
         <p className="text-xl font-segoe font-bold text-black">Email:</p>
-        <p className="font-segoe text-2xl">{email}</p>
+        <p className="font-segoe text-base">{email}</p>
       </div>
       <div>
         <p className="text-xl font-segoe font-bold text-black">Phone:</p>
-        <p className="font-segoe text-2xl">{phone}</p>
+        <p className="font-segoe text-base">{phone}</p>
       </div>
       <div>
         <p className="text-xl font-segoe font-bold text-black">Address:</p>
-        <p className="font-segoe text-2xl">{address}</p>
+        <p className="font-segoe text-base">{address}</p>
       </div>
     </DashboardSection>
   )

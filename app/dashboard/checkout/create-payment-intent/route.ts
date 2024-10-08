@@ -35,7 +35,7 @@ export const POST = async (req: Request) => {
   }
 
   const parsedBody = zodCheckoutStateSchemaRequired.safeParse(body);
-  
+
   if (!parsedBody.success) {
     return Response.json({
       status: 400,
@@ -53,7 +53,13 @@ export const POST = async (req: Request) => {
       business: user.business?.businessName,
       specialRequest: parsedBody.data.specialRequest,
       marketId: parsedBody.data.market._id,
-      amountOwing: parsedBody.data.paymentType === "full" ? 0 : parsedBody.data.price + parsedBody.data.hst - parsedBody.data.depositAmount - (parsedBody.data.creditsApplied || 0),                                             
+      amountOwing:
+        parsedBody.data.paymentType === "full"
+          ? 0
+          : parsedBody.data.price +
+            parsedBody.data.hst -
+            parsedBody.data.depositAmount -
+            (parsedBody.data.creditsApplied || 0),
       totalToPay: parsedBody.data.totalToPay,
       paidNow: parsedBody.data.depositAmount,
       paymentType: parsedBody.data.paymentType,
@@ -61,7 +67,6 @@ export const POST = async (req: Request) => {
       dueNowWithHst: parsedBody.data.totalToPay,
     },
   };
-
 
   // const parsedPaymentObj = zodPaymentIntentSchema.safeParse(paymentObj);
 
@@ -72,12 +77,16 @@ export const POST = async (req: Request) => {
   //   });
   // }
 
-  const paymentIntent = await stripe.paymentIntents.create(
-    paymentObj
-  );
+  try {
+    const paymentIntent = await stripe.paymentIntents.create(paymentObj);
 
-
-  return Response.json({
-    clientSecret: paymentIntent.client_secret,
-  });
+    return Response.json({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    return Response.json({
+      status: 400,
+      body: { message: error },
+    });
+  }
 };

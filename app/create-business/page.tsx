@@ -12,6 +12,10 @@ const Page = async () => {
 
   const user = await getSanityUserByEmail(clerkUser.emailAddresses[0].emailAddress);
 
+  if (user?.business) {
+    return redirect("/dashboard");
+  }
+
   const vendorCategories = await getAllVendorCategories();
 
   return (
