@@ -32,10 +32,6 @@
       {
         "title": "Message Vendors",
         "href": "/admin/dashboard/messages/create"
-      },
-      {
-        "title": "Notifications",
-        "href": "/admin/dashboard/messages/notifications"
       }
     ]
   },
