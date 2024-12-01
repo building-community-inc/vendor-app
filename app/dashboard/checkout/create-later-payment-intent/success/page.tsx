@@ -1,6 +1,6 @@
 import ContinueButton from "@/app/dashboard/markets/[id]/_components/ContinueButton";
 import { getPaymentByIdWithMarket } from "@/sanity/queries/payments";
-import { formatMarketDate } from "@/utils/helpers";
+import { formatDateWLuxon } from "@/utils/helpers";
 import Link from "next/link";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
@@ -40,7 +40,7 @@ const Page = async ({
             <span>{index + 1}.</span>
             <div>
 
-              <p><strong>Date:</strong>{formatMarketDate(payment.paymentDate)}</p>
+              <p><strong>Date:</strong>{formatDateWLuxon(payment.paymentDate)}</p>
               <p><strong>Amount:</strong>${payment.amount}</p>
             </div>
           </li>
@@ -53,7 +53,7 @@ const Page = async ({
             <span>{index + 1}.</span>
             <div>
 
-              <p><strong>Date:</strong>{formatMarketDate(item.date)}</p>
+              <p><strong>Date:</strong>{formatDateWLuxon(item.date)}</p>
               <p><strong>Table Id:</strong>{item.tableId}</p>
             </div>
           </li>

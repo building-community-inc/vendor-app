@@ -2,7 +2,7 @@ import { stripe } from "@/stripe";
 import AddBookingToDb from "./_components/AddBookingToDb";
 import { getMarketById } from "@/sanity/queries/admin/markets/markets";
 import { TPaymentItem } from "./api/route";
-import { formatMarketDate } from "@/utils/helpers";
+import { formatDateWLuxon } from "@/utils/helpers";
 import { sanityClient } from "@/sanity/lib/client";
 import { nanoid } from "nanoid";
 // import { Resend } from "resend";
@@ -74,7 +74,7 @@ const Page = async ({
           <tbody>
             {items.map((item, index) => (
               <tr key={index} className="w-full">
-                <td className="">{formatMarketDate(item.date)}</td>
+                <td className="">{formatDateWLuxon(item.date)}</td>
                 <td className="">{item.tableId}</td>
                 <td className="">${item.price}</td>
               </tr>

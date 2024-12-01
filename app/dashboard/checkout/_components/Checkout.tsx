@@ -8,7 +8,7 @@ import {
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm";
 import { TPaymentItem } from "../success/api/route";
-import { formatMarketDate } from "@/utils/helpers";
+import { formatDateWLuxon } from "@/utils/helpers";
 import { useCheckoutStore } from "./checkoutStore";
 import Spinner from "@/app/_components/Spinner";
 
@@ -97,7 +97,7 @@ export default function Checkout() {
               <tbody>
                 {items?.map((item: TPaymentItem, index: number) => (
                   <tr key={index} className="w-full">
-                    <td className="">{formatMarketDate(item.date)}</td>
+                    <td className="">{formatDateWLuxon(item.date)}</td>
                     <td className="">{item.tableId}</td>
                     <td className="">${item.price}</td>
                   </tr>

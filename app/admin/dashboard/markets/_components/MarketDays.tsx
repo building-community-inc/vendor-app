@@ -1,6 +1,6 @@
 "use client"
 import Button from "@/app/_components/Button";
-import { areDatesSame, formatMarketDate } from "@/utils/helpers";
+import { areDatesSame, formatDateWLuxon } from "@/utils/helpers";
 import Link from "next/link";
 import { saveMarketChanges } from "./saveMarketChangesAction";
 import { useFormState } from "react-dom";
@@ -147,7 +147,7 @@ const MarketDays = ({
               scroll={false}
             >
               <h2 className="font-bold text-xl max-w-[8ch] text-center">
-                {formatMarketDate(date).replace(",", "")}
+                {formatDateWLuxon(date)}
               </h2>
             </Link>
           );

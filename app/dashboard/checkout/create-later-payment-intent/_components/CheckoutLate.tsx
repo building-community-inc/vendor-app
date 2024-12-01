@@ -9,7 +9,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { usePayLaterStore } from "./store";
 import CheckoutLateForm from "./CheckoutLateForm";
 import { TPaymentItem } from "../../success/api/route";
-import { formatMarketDate } from "@/utils/helpers";
+import { formatDateWLuxon } from "@/utils/helpers";
 import Spinner from "@/app/_components/Spinner";
 import { HST } from "../../_components/checkoutStore";
 // import CheckoutForm from "./CheckoutForm";
@@ -78,7 +78,7 @@ export default function CheckoutLate() {
               <tbody>
                 {items?.map((item: TPaymentItem, index: number) => (
                   <tr key={index} className="w-full">
-                    <td className="">{formatMarketDate(item.date)}</td>
+                    <td className="">{formatDateWLuxon(item.date)}</td>
                     <td className="">{item.tableId}</td>
                     <td className="">${item.price}</td>
                   </tr>

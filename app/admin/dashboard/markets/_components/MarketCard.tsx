@@ -1,7 +1,7 @@
 import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 import TableView from "../../venues/_components/TableView";
 import Image from "next/image";
-import { formatMarketDate, tablePriceTodisplay } from "@/utils/helpers";
+import { formatDateWLuxon, tablePriceTodisplay } from "@/utils/helpers";
 
 const MarketCard = ({
   market,
@@ -52,7 +52,7 @@ const MarketCard = ({
               className="flex gap-2 items-center justify-between w-full px-5"
             >
               <h4 className="font-bold font-roboto text-sm">
-                {formatMarketDate(day.date)}
+                {formatDateWLuxon(day.date)}
               </h4>
               <div className="flex gap-2">
                 <TableView

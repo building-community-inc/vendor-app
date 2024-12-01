@@ -3,7 +3,7 @@ import {
   getAllUserPaymentsById,
   getSanityUserByEmail,
 } from "@/sanity/queries/user";
-import { buildOrderUrl, formatMarketDate } from "@/utils/helpers";
+import { formatDateWLuxon } from "@/utils/helpers";
 import { currentUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { TPaymentItem } from "../checkout/success/api/route";
@@ -11,6 +11,7 @@ import PaymentNotification from "./_components/PaymentNotification";
 import PayNow from "./_components/PayNow";
 import { unstable_noStore as noStore } from "next/cache";
 import ContinueButton from "../markets/[id]/_components/ContinueButton";
+import { DateTime } from "luxon";
 
 const DAYS_FOR_PAYMENT = 60;
 const PaymentsPage = async () => {
@@ -63,9 +64,7 @@ const PaymentsPage = async () => {
 
   const paidPayments = userPayments.filter((order) => order.amount.owed === 0);
   const calculateDueDate = (date: string, days: number) => {
-    const dueDate = new Date(date);
-    dueDate.setDate(dueDate.getDate() - days);
-    return dueDate;
+    return DateTime.fromISO(date).minus({ days });
   }
   const calculateDaysUntil = (dueDate: Date) => {
     const now = new Date();
@@ -77,17 +76,14 @@ const PaymentsPage = async () => {
     <main className="overflow-x-auto flex flex-col pt-20 px-10 gap-10 min-h-screen w-full text-xs sm:text-sm md:text-base">
       <h1 className="font-bold text-xl">Payments</h1>
       {owedPayments.length > 0 && (
-        <PaymentNotification days={calculateDaysUntil(calculateDueDate(sortedBookedItems(owedPayments[0].items)[0].date, DAYS_FOR_PAYMENT))} />
+        <PaymentNotification days={calculateDaysUntil(calculateDueDate(sortedBookedItems(owedPayments[0].items)[0].date, DAYS_FOR_PAYMENT).toJSDate())} />
       )}
       <section className="w-full">
         <FormTitleDivider title="Balances Owing" />
         {owedPayments?.map((order) => {
 
 
-          const dueDate = order.amount.owed > 0 ? new Date(sortedBookedItems(order.items)[0].date) : null;
-          if (dueDate) {
-            dueDate.setDate(dueDate.getDate() - DAYS_FOR_PAYMENT);
-          }
+          const dueDate = order.amount.owed > 0 ? calculateDueDate(sortedBookedItems(order.items)[0].date, DAYS_FOR_PAYMENT).toFormat('EEE, MMM d, yyyy') : null;
 
           return (
             <ul key={order._id} className="border-b border-secondary-admin-border py-2 flex">
@@ -95,13 +91,13 @@ const PaymentsPage = async () => {
                 <section className="flex-grow flex flex-wrap gap-4">
                   <PaymentItem title="Id" paragraph={order._id} />
 
-                  <PaymentItem title="Date" paragraph={formatMarketDate(order.createdAt)} />
+                  <PaymentItem title="Date" paragraph={formatDateWLuxon(order.createdAt)} />
 
                   <PaymentItem title="Market Name" paragraph={order.market.name} link={`markets/${order.market._id}`} />
                   
-                  <PaymentItem title="Dates Booked" paragraphs={sortedBookedItems(order.items).map((item, index) => `${formatMarketDate(item.date)} - Table: ${item.tableId} ${index < order.items.length - 1 ? ',' : ''}`)} />
+                  <PaymentItem title="Dates Booked" paragraphs={sortedBookedItems(order.items).map((item, index) => `${formatDateWLuxon(item.date)} - Table: ${item.tableId} ${index < order.items.length - 1 ? ',' : ''}`)} />
 
-                  <PaymentItem title="Payments" paragraphs={order.payments.map((payment, index) => `$${payment.amount} on ${formatMarketDate(payment.paymentDate)} ${index < order.payments.length - 1 ? ',' : ''}`)} />
+                  <PaymentItem title="Payments" paragraphs={order.payments.map((payment, index) => `$${payment.amount} on ${formatDateWLuxon(payment.paymentDate)} ${index < order.payments.length - 1 ? ',' : ''}`)} />
 
                   <PaymentItem title="Amounts" paragraphs={[
                     `Amount Owing: $${order.amount.owed}`,
@@ -111,7 +107,7 @@ const PaymentsPage = async () => {
                   ]} />
 
                   {dueDate && (
-                    <PaymentItem title="Due Date" paragraph={formatMarketDate(dueDate)} />
+                    <PaymentItem title="Due Date" paragraph={formatDateWLuxon(dueDate)} />
                   )}
 
                 </section>
@@ -135,23 +131,20 @@ const PaymentsPage = async () => {
         {paidPayments?.map((order) => {
 
 
-          const dueDate = order.amount.owed > 0 ? new Date(sortedBookedItems(order.items)[0].date) : null;
-          if (dueDate) {
-            dueDate.setDate(dueDate.getDate() - 30);
-          }
+          const dueDate = order.amount.owed > 0 ? calculateDueDate(sortedBookedItems(order.items)[0].date, 30).toFormat('EEE, MMM d, yyyy') : null;
 
           return (
             <ul key={order._id} className="border-b border-secondary-admin-border py-2 flex">
               <li className="flex w-full">
                 <section className="flex-grow flex flex-wrap gap-4">
                   <PaymentItem title="Id" paragraph={order._id} />
-                  <PaymentItem title="Date" paragraph={formatMarketDate(order.createdAt)} />
+                  <PaymentItem title="Date" paragraph={formatDateWLuxon(order.createdAt)} />
                   {/*  */}
                   <PaymentItem title="Market Name" paragraph={order.market.name} link={`markets/${order.market._id}`} />
 
-                  <PaymentItem title="Dates Booked" paragraphs={sortedBookedItems(order.items).map((item, index) => `${formatMarketDate(item.date)} - Table: ${item.tableId} ${index < order.items.length - 1 ? ',' : ''}`)} />
+                  <PaymentItem title="Dates Booked" paragraphs={sortedBookedItems(order.items).map((item, index) => `${formatDateWLuxon(item.date)} - Table: ${item.tableId} ${index < order.items.length - 1 ? ',' : ''}`)} />
 
-                  <PaymentItem title="Payments" paragraphs={order.payments.map((payment, index) => `$${payment.amount} on ${formatMarketDate(payment.paymentDate)} ${index < order.payments.length - 1 ? ',' : ''}`)} />
+                  <PaymentItem title="Payments" paragraphs={order.payments.map((payment, index) => `$${payment.amount} on ${formatDateWLuxon(payment.paymentDate)} ${index < order.payments.length - 1 ? ',' : ''}`)} />
 
                   <PaymentItem title="Amounts" paragraphs={[
                     `Amount Owing: $${order.amount.owed}`,
@@ -161,7 +154,7 @@ const PaymentsPage = async () => {
                   ]} />
 
                   {dueDate && (
-                    <PaymentItem title="Due Date" paragraph={formatMarketDate(dueDate)} />
+                    <PaymentItem title="Due Date" paragraph={formatDateWLuxon(dueDate)} />
                   )}
 
                 </section>

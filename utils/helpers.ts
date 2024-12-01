@@ -62,20 +62,6 @@ export const dateArrayToDisplayableText = function (dates: string[]): string {
   return `${formattedStartDate} - ${formattedEndDate}`;
 };
 
-export const formatMarketDate = function (date: string | Date): string {
-  const options: Intl.DateTimeFormatOptions = {
-    weekday: "long",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "America/Toronto"
-  };
-
-  const dateObject = new Date(date);
-  const formattedDate = dateObject.toLocaleString("en-US", options);
-
-  return formattedDate;
-};
 
 export const createDateString = (date: Date): string => {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
