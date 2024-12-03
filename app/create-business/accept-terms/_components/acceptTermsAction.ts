@@ -45,7 +45,7 @@ export const acceptTerms = async (
   };
 
   await sanityWriteClient.patch(sanityUser._id).set({
-    acceptTerms: {
+    acceptedTerms: {
       accepted: true,
       dateAccepted: new Date().toISOString(),
     }
