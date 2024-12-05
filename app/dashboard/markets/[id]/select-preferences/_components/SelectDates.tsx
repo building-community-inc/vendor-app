@@ -8,6 +8,8 @@ import { TDateType } from "./SelectOptions";
 import { formatDateWLuxon } from "@/utils/helpers";
 import Box from "./Box";
 
+const MAX_VENDORS_PER_CATEGORY = 3;
+
 const SelectDates = ({
   market,
   handleDateSelect,
@@ -26,16 +28,16 @@ const SelectDates = ({
   businessCategory: string;
 }) => {
 
-  // Filter out the days that already have a business with the same category
+  // Filter out the days that already have more than MAX_VENDORS_PER_CATEGORY vendors with the same category
   const availableDays = market.daysWithTables?.filter(day => {
-    // Check if there is a vendor with the same category that has booked this day
-    const isBooked = market.vendors?.some(vendor =>
+    // Count the number of vendors with the same category that have booked this day
+    const categoryCount = market.vendors?.filter(vendor =>
       vendor.vendor.businessCategory === businessCategory &&
       vendor.datesBooked.some(bookedDate => bookedDate.date === day.date)
-    );
+    ).length ?? 0;
 
-    // Return true if the day is not booked, false otherwise
-    return !isBooked;
+    // Return true if the count is less than MAX_VENDORS_PER_CATEGORY, false otherwise
+    return categoryCount < MAX_VENDORS_PER_CATEGORY;
   });
 
   if (availableDays?.length === 0) {
