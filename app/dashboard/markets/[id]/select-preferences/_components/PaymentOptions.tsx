@@ -5,7 +5,7 @@ const PaymentOptions = ({
   credits,
   dueNow,
   totalToPay,
-  isEventInLessThan60Days,
+  // isEventInLessThan60Days,
   isPayNowSelected,
   setIsPayNowSelected,
   useCredits,
@@ -33,11 +33,12 @@ const PaymentOptions = ({
       <h2 className="text-black font-bold">Payment Options</h2>
       {areTablesSelected ? (
         <>
-          <label htmlFor="pay-now" className="flex text-[19px] items-center gap-2 relative z-10">
+          {/* Commenting out the deposit option */}
+          {/* <label htmlFor="pay-now" className="flex text-[19px] items-center gap-2 relative z-10">
             <input type="radio" name="pay-now" className="accent-title-color pointer-events-none relative z-[2]" id="pay-now" checked={isPayNowSelected} onChange={() => setIsPayNowSelected(true)} />
             <span className="text-black">Pay in Full</span>
           </label>
-          {!isEventInLessThan60Days && (
+         {!isEventInLessThan60Days && (
             <>
               <label htmlFor="pay-later" className="flex text-[19px] items-center gap-2 relative z-10" onClick={() => setIsPayNowSelected(false)}>
                 <input
@@ -52,7 +53,7 @@ const PaymentOptions = ({
               </label>
               <p>Vendors can pay a $50/day non-refundable deposit to secure their table reservation. The remaining amount of the booking is due 60 days before the first day of the market</p>
             </>
-          )}
+          )} */}
           {credits && credits > 0 && (
             <label htmlFor="pay-with-credits" className="flex text-[19px] items-center gap-2 relative z-10">
               <input
@@ -100,13 +101,13 @@ const PaymentOptions = ({
                   </div>
                 )}
 
-                {!isPayNowSelected && (
-
+                {/* Commenting out the deposit amount section */}
+                {/* {!isPayNowSelected && (
                   <div className="w-full">
                     <h3 className="font-bold">Deposit Amount:</h3>
                     <span>${dueNow}</span>
                   </div>
-                )}
+                )} */}
                 <div>
                   <h3 className="font-bold">HST:</h3>
                   <p>${(dueNow * .13).toFixed(2)}</p>
@@ -116,13 +117,14 @@ const PaymentOptions = ({
                   <p>$
                     {totalWithHst.toFixed(2)}</p>
                 </div>
-                {!isPayNowSelected && (
+                {/* Commenting out the amount owing section */}
+                {/* {!isPayNowSelected && (
                   <div>
                     <h3 className="font-bold">Amount Owing:</h3>
                     <p>$
                       {totalToPay - dueNow}</p>
                   </div>
-                )}
+                )} */}
 
               </section>
             )
