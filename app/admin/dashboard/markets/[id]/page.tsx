@@ -43,7 +43,7 @@ const Page = async ({
   return (
     <main className="pt-14 px-5 w-full flex flex-col gap-8 max-w-3xl mx-auto">
       <h1 className="font-bold text-xl">{market?.name}</h1>
-      <MarketCard market={market} dateToDisplay={dateToDisplay} />
+      <MarketCard market={market} dateToDisplay={dateToDisplay} withOptions />
       {market.venue.venueMap && (
         <Image
           src={market.venue.venueMap.url}

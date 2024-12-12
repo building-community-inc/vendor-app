@@ -2,13 +2,18 @@ import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 import TableView from "../../venues/_components/TableView";
 import Image from "next/image";
 import { formatDateWLuxon, tablePriceTodisplay } from "@/utils/helpers";
+import Button from "@/app/_components/Button";
+import DeleteMarket from "./DeleteMarket";
+import Link from "next/link";
 
 const MarketCard = ({
   market,
   dateToDisplay,
+  withOptions
 }: {
   market: TSanityMarket;
   dateToDisplay: string;
+  withOptions?: boolean;
 }) => {
   const prices =
     market.daysWithTables?.flatMap((day) =>
@@ -18,6 +23,11 @@ const MarketCard = ({
   const maxPrice = Math.max(...prices);
 
   const priceToDisplay = tablePriceTodisplay(minPrice, maxPrice);
+
+  const totalBookedTables = market.daysWithTables?.reduce(
+    (total, day) => total + day.tables.filter((table) => table.booked).length,
+    0
+  ) || 0;
 
   return (
     <article className="min-h-[645px] flex flex-col gap-2 border rounded-[20px] overflow-hidden  border-[#292929] shadow-[0px_3px_6px_#00000029]">
@@ -44,7 +54,7 @@ const MarketCard = ({
           <strong> {priceToDisplay}</strong> per table
         </p>
       </section>
-      <footer className="flex gap-4 justify-evenly pb-5">
+      <section className="flex flex-col items-center gap-4 justify-evenly pb-5">
         <ul className="flex flex-col gap-4 w-full">
           {market.daysWithTables?.map((day, index) => (
             <li
@@ -52,7 +62,7 @@ const MarketCard = ({
               className="flex gap-2 items-center justify-between w-full px-5"
             >
               <h4 className="font-bold font-roboto text-sm">
-                {formatDateWLuxon(day.date)}
+                {formatDateWLuxon(day.date)} {totalBookedTables}
               </h4>
               <div className="flex gap-2">
                 <TableView
@@ -68,7 +78,20 @@ const MarketCard = ({
             </li>
           ))}
         </ul>
-      </footer>
+      </section>
+
+      {withOptions && (
+        <footer className="flex justify-center gap-5 py-5">
+          {totalBookedTables === 0 && (
+            <DeleteMarket marketId={market._id} />
+          )}
+          <Link href={`/admin/dashboard/markets/${market._id}/edit`}>
+            <Button>
+              Edit Market
+            </Button>
+          </Link>
+        </footer>
+      )}
     </article>
   );
 };
