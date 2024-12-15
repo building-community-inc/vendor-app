@@ -2,7 +2,6 @@
 
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { zodSanityUpdateBusiness } from "@/zod/user-business";
-import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 export type TErrorType = {
   message: string;

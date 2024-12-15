@@ -20,12 +20,12 @@ const Button = ({ children, className = "", ...rest }: ButtonProps) => {
         'text-black',
         "text-base",
         'shadow-lg',
-        'font-darker-grotesque' ,
+        'font-darker-grotesque',
         'font-semibold',
         'hover:bg-[#e7e0da]',
         'transition-all',
-        // 'hover:shadow-lg',
-        // 'hover:shadow-[#e6cbb3]',
+        'disabled:bg-gray-300',
+        'disabled:text-gray-500',
         className,
       )}
       {...rest}

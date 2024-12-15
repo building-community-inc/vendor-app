@@ -1,4 +1,5 @@
 export const imageQueryString = `{
+  "_id": asset -> _id,
   "url": asset -> url,
   "dimensions": asset -> metadata.dimensions {
     height,
