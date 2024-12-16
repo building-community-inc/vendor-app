@@ -40,9 +40,11 @@ export const editMarketNameAction = async (
   const sanityResp = await sanityWriteClient.patch(marketId as string).set({ name: marketName as string }).commit()
 
   if (sanityResp) {
+    
     revalidatePath("/dashboard/explore", "page");
     revalidatePath("/admin/dashboard/markets", "page");
     revalidatePath("/admin/dashboard/markets/[id]", "page");
+    revalidatePath("/admin/dashboard/markets/[id]/edit", "page");
     revalidatePath("/dashboard/markets/[id]", "page");
     return {
       errors: null,
