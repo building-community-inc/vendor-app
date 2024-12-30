@@ -1,5 +1,4 @@
 import { stripe } from "@/stripe";
-import AddBookingToDb from "./_components/AddBookingToDb";
 import { getMarketById } from "@/sanity/queries/admin/markets/markets";
 import { TPaymentItem } from "./api/route";
 import { formatDateWLuxon } from "@/utils/helpers";
@@ -46,8 +45,6 @@ const Page = async ({
   );
 
   if (partialCreditPayment && partialCreditPayment.amount.owed > 0) {
-    console.log("updating payment record");
-
     const updatedPaymentRecord = {
       _id: partialCreditPayment._id,
       amount: {
@@ -99,9 +96,7 @@ const Page = async ({
 
   return (
     <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto flex flex-col items-center gap-6">
-      {/* {!existingPayment && (
-        <AddBookingToDb paymentIntent={JSON.stringify({ paymentIntent, idForPaymentRecord })} paymentIntentId={paymentIntent.id} />
-      )} */}
+
       <IoMdCheckmarkCircleOutline className="text-[#35d124] border-2 w-24 h-24 border-secondary rounded-full" />
       <h1 className="text-xl font-semibold">Payment Success!</h1>
       <p className="">Vendor Table has been reserved for:</p>

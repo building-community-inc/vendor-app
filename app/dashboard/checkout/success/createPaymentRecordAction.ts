@@ -10,7 +10,6 @@ import { type TPaymentItem } from "./api/route";
 export const createPaymentRecord = async (
   paymentIntent: Stripe.Response<Stripe.PaymentIntent>
 ) => {
-  console.log(`Creating payment record`);
 
   const clerkUser = await currentUser();
 

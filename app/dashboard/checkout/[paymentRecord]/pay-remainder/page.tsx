@@ -31,7 +31,6 @@ const Page = async ({ params }: {
 
   return (
     <div>
-      {params.paymentRecord}
       <RemainderCheckout
         owed={paymentRecord.amount.owed}
         items={paymentRecord.items.map(item => ({

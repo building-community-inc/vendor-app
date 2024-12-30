@@ -199,8 +199,6 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
           try {
             const resp = await createPaymentWithCredits(formData);
 
-            console.log({ resp });
-
             if (resp.errors) {
               console.log(resp.errors);
               alert("Something went wrong. Please try again.");
