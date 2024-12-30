@@ -47,7 +47,11 @@ export const POST = async (req: Request) => {
     amount: parsedBody.data.totalToPay * 100,
     currency: "cad",
     metadata: {
-      items: JSON.stringify(parsedBody.data.items),
+      items: JSON.stringify(parsedBody.data.items.map((item) => ({
+        date: item.date,
+        tableId: item.tableId,
+        price: item.price,
+      }))),
       creditsApplied: parsedBody.data.creditsApplied,
       userEmail: user.email,
       business: user.business?.businessName,
@@ -68,6 +72,8 @@ export const POST = async (req: Request) => {
     },
   };
 
+
+
   // const parsedPaymentObj = zodPaymentIntentSchema.safeParse(paymentObj);
 
   // if (!parsedPaymentObj.success) {
@@ -84,6 +90,7 @@ export const POST = async (req: Request) => {
       clientSecret: paymentIntent.client_secret,
     });
   } catch (error) {
+    console.log({error})
     return Response.json({
       status: 400,
       body: { message: error },

@@ -67,7 +67,8 @@ export const GET = async (req: Request) => {
       });
     } else {
       const paymentDate = new Date(stripePayment.created * 1000).toISOString();
-      const newSanityDocument: TLatePaymentSchema = {
+      const newSanityDocument: TLatePaymentNoItems = {
+        marketId: sanityPayment.marketId,
         _id: sanityPayment._id,
         payments: [
           ...sanityPayment.payments,
@@ -122,3 +123,6 @@ export const GET = async (req: Request) => {
     body: { message: "Payment not successful" },
   });
 };
+
+
+type TLatePaymentNoItems = Omit<TLatePaymentSchema, "items">;

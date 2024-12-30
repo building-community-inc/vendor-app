@@ -9,31 +9,79 @@ import { nanoid } from "nanoid";
 import ContinueButton from "../../markets/[id]/_components/ContinueButton";
 import Link from "next/link";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { getPaymentById } from "@/sanity/queries/payments";
+import { unstable_noStore } from "next/cache";
+import { updatePaymentRecord } from "./updatePaymentRecordAction";
+import { createPaymentRecord } from "./createPaymentRecordAction";
 
 const Page = async ({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) => {
+  unstable_noStore();
   const paymentIntentId =
     typeof searchParams.payment_intent === "string"
       ? searchParams.payment_intent
       : "";
 
+  const paymentRecordId = searchParams.paymentRecordId as string;
+
   const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
-  if (!paymentIntent || paymentIntent.status !== "succeeded") {
+  if (paymentIntent.status !== "succeeded") {
     return (
       <main>
         <h1>Payment Failed</h1>
       </main>
     );
-  }
+  };
 
-  const existingPayment = await sanityClient.fetch(
+
+  const partialCreditPayment = paymentRecordId && await getPaymentById(paymentRecordId);
+
+  const existingStripePayment = await sanityClient.fetch(
     '*[_type == "paymentRecord" && payments[].stripePaymentIntentId match $paymentId][0]',
     { paymentId: paymentIntent.id }
   );
+
+  if (partialCreditPayment && partialCreditPayment.amount.owed > 0) {
+    console.log("updating payment record");
+
+    const updatedPaymentRecord = {
+      _id: partialCreditPayment._id,
+      amount: {
+        ...partialCreditPayment.amount,
+        paid: partialCreditPayment.amount.paid + paymentIntent.amount / 100,
+        owed: partialCreditPayment.amount.owed - (paymentIntent.amount / 100),
+      },
+      payments: [
+        ...partialCreditPayment.payments,
+        {
+          _key: nanoid(),
+          _type: "payment",
+          paymentType: "stripe",
+          stripePaymentIntentId: paymentIntent.id,
+          amount: paymentIntent.amount / 100,
+          paymentDate: new Date().toISOString(),
+        },
+      ],
+    };
+
+    try {
+      await updatePaymentRecord(updatedPaymentRecord);
+    } catch (error) {
+      console.error(`Failed to update payment record: ${error}`);
+    }
+  };
+
+  if (!existingStripePayment && !partialCreditPayment && paymentIntent) {
+    try {
+      await createPaymentRecord(paymentIntent)
+    } catch (error) {
+      console.error(`Failed to create payment record: ${error}`);
+    }
+  };
 
   // const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -49,14 +97,11 @@ const Page = async ({
 
   const items = JSON.parse(paymentIntent.metadata.items) as TPaymentItem[];
 
-
-  const idForPaymentRecord = nanoid()
-
   return (
     <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto flex flex-col items-center gap-6">
-      {!existingPayment && (
+      {/* {!existingPayment && (
         <AddBookingToDb paymentIntent={JSON.stringify({ paymentIntent, idForPaymentRecord })} paymentIntentId={paymentIntent.id} />
-      )}
+      )} */}
       <IoMdCheckmarkCircleOutline className="text-[#35d124] border-2 w-24 h-24 border-secondary rounded-full" />
       <h1 className="text-xl font-semibold">Payment Success!</h1>
       <p className="">Vendor Table has been reserved for:</p>

@@ -9,6 +9,7 @@ import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 import Image from "next/image";
 import Box from "./_components/Box";
 import Calendar from "@/app/dashboard/_components/Calendar";
+import { unstable_noStore } from "next/cache";
 
 const Page = async ({
   params,
@@ -17,6 +18,7 @@ const Page = async ({
     id: string;
   };
 }) => {
+  unstable_noStore();
   const user = await currentUser();
 
   if (!user) redirect("/");

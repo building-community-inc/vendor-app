@@ -29,6 +29,14 @@ export const zodLatePaymentSchema = z.object({
     owed: z.number(),
     hst: z.number(),
   }),
+  marketId: z.string(),
+  items: z.array(
+    z.object({
+      tableId: z.string(),
+      date: z.string(),
+      price: z.number(),
+    })
+  ),
 });
 
 export const zodPaymentItem = z.object({
@@ -71,6 +79,13 @@ const paymentQuery = `
     owed,
     hst
   },
+  "marketId": market->_id,
+  "items": items[] {
+    tableId,
+    date,
+    price
+  }
+
 `;
 
 const paymentQueryWithMarket = groq`

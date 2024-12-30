@@ -65,6 +65,7 @@ export const createBooking = async (
 
   const newPaymentRecord: TPaymentRecord = {
     _type: "paymentRecord",
+    marketId: parsedData.data.marketId,
     user: {
       _type: "reference",
       _ref: parsedData.data.vendorId,

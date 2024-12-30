@@ -15,6 +15,7 @@ import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { DateTime } from "luxon";
 import Box from "./Box";
 import PaymentOptions from "./PaymentOptions";
+import { createPaymentWithCredits } from "@/app/dashboard/checkout/_components/createPaymentWithCreditsAction";
 // import { useRouter } from "next/navigation";
 export type TSelectedTableType = {
   date: string;
@@ -162,7 +163,9 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
 
       const parsedCheckoutState = zodCheckoutStateSchemaRequired.safeParse({
         items,
-        paymentType: isPayNowSelected ? 'full' : 'partial',
+        paymentType: useCredits ?
+          creditsToUse === dueNow + dueNow * 0.13 ? "full" : "partial"
+          : isPayNowSelected ? 'full' : 'partial',
         market: parsedMarket.data,
         price: totalToPay,
         creditsApplied: useCredits ? creditsToUse : 0,
@@ -179,8 +182,49 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         return;
       }
 
-      setAllCheckoutData(parsedCheckoutState.data)
-      push(`/dashboard/checkout`);
+
+      if (parsedCheckoutState.data.creditsApplied && parsedCheckoutState.data.creditsApplied > 0) {
+        const payWithCredits = async () => {
+          const formData = new FormData();
+          formData.append("items", JSON.stringify(parsedCheckoutState.data.items));
+          formData.append("marketId", JSON.stringify(market._id));
+          formData.append("specialRequest", parsedCheckoutState.data.specialRequest || "");
+          formData.append("totalToPay", `${totalToPay}`);
+          formData.append("depositAmount", `${parsedCheckoutState.data.depositAmount}`);
+          formData.append("paymentType", parsedCheckoutState.data.paymentType || "");
+          formData.append("hst", `${parsedCheckoutState.data.hst}`);
+          formData.append("price", `${parsedCheckoutState.data.price}`);
+          formData.append("creditsApplied", `${parsedCheckoutState.data.creditsApplied}`);
+
+          try {
+            const resp = await createPaymentWithCredits(formData);
+
+            console.log({ resp });
+
+            if (resp.errors) {
+              console.log(resp.errors);
+              alert("Something went wrong. Please try again.");
+              return;
+            }
+
+            if (resp.success) {
+              setAllCheckoutData(parsedCheckoutState.data);
+              push(`/dashboard/checkout/credit-successfully-applied?paymentRecordId=${resp.paymentRecordId}`);
+            }
+
+            // redirect(`/dashboard/checkout/success?paymentRecordId${resp.paymentRecordId}`);
+
+          } catch (error) {
+            console.log({ error });
+          }
+        }
+
+        payWithCredits();
+      } else {
+
+        setAllCheckoutData(parsedCheckoutState.data)
+        push(`/dashboard/checkout`);
+      }
     } catch (error) {
       console.error(error);
     }

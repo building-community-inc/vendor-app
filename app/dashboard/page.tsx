@@ -7,9 +7,11 @@ import Link from "next/link";
 import React from "react";
 import Button from "../_components/Button";
 import { BusinessCard, ContactCard, DashboardSection, PaymentCard, SupportingDocsCard } from "./_components/profileComps";
+import { unstable_noStore } from "next/cache";
 
 
 const page = async () => {
+  unstable_noStore();
   const user = await currentUser();
   if (!user) redirect("/");
 

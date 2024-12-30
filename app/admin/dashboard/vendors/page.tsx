@@ -53,7 +53,7 @@ const Page = async ({
           ))}
         </ul>
         <FormTitleDivider title="Vendors" />
-        <ul className="flex gap-5 flex-wrap mt-2">
+        <ul className="flex gap-5 flex-col mt-2">
           {filterVendors(otherVendors)?.map((vendor) => (
             <VendorCard key={vendor._id} vendor={vendor} />
           ))}

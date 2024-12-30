@@ -7,7 +7,13 @@ import {
 import { StripePaymentElementOptions } from "@stripe/stripe-js";
 import ContinueButton from "../../markets/[id]/_components/ContinueButton";
 
-export default function CheckoutForm() {
+export default function CheckoutForm({
+  paymentRecordId,
+  userEmail,
+}: {  
+  paymentRecordId?: string
+  userEmail: string
+}) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -64,8 +70,8 @@ export default function CheckoutForm() {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: `${localUrl}/dashboard/checkout/success`,
-        receipt_email: "julian.m.bustos@gmail.com",
+        return_url: `${localUrl}/dashboard/checkout/success${paymentRecordId ? `?paymentRecordId=${paymentRecordId}` : ""}`,
+        receipt_email: userEmail,
         // save_payment_method: true,
       },
     });

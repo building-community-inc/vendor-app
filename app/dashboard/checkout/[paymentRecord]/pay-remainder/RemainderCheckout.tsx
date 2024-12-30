@@ -1,31 +1,63 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import {
-  Appearance,
-  StripeElementsOptions,
-  loadStripe,
-} from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
-import CheckoutForm from "./CheckoutForm";
-import { TPaymentItem } from "../success/api/route";
+
+import { zodCheckoutStateSchemaRequired } from "@/zod/checkout";
+import { Appearance, loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
+import { useEffect, useState } from "react";
+import { TPaymentItem } from "../../success/api/route";
 import { formatDateWLuxon } from "@/utils/helpers";
-import { useCheckoutStore } from "./checkoutStore";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckoutForm from "../../_components/CheckoutForm";
 import Spinner from "@/app/_components/Spinner";
 
-// Make sure to call loadStripe outside of a component’s render to avoid
-// recreating the Stripe object on every render.
-// This is your test publishable API key.
+const appearance: Appearance = {
+  theme: "stripe",
+};
+
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE || ""
 );
-
-export default function Checkout({userEmail}: {
+const RemainderCheckout = ({ userEmail, items, market, price, owed, totalWithHst, paymentRecordId }: {
+  items: {
+    price: number;
+    tableId: string;
+    date: string;
+    name: string;
+  }[];
+  market: {
+    name: string;
+    _id: string;
+    venue: {
+      title: string;
+      address: string;
+      city: string;
+      phone?: string | null | undefined;
+    };
+  };
+  price: number;
+  owed: number;
+  totalWithHst: number;
+  // specialRequest: string;
+  paymentRecordId: string;
   userEmail: string;
-}) {
+}) => {
   const [clientSecret, setClientSecret] = useState("");
 
+  // const { setAllCheckoutData, creditsApplied } = useCheckoutStore();
 
-  const { items, market, specialRequest, totalToPay, paymentType, hst, depositAmount, price, creditsApplied } = useCheckoutStore();
+  const parsedCheckoutState = zodCheckoutStateSchemaRequired.safeParse({
+    items,
+    paymentType: 'partial',
+    market: market,
+    price,
+    creditsApplied: 0,
+    depositAmount: owed,
+    hst: +(owed * 0.13).toFixed(2),
+    totalToPay: owed,
+    // specialRequest,
+    dueNowWithHst: owed + owed * 0.13,
+  })
+
+
 
   const createPaymentIntent = async (body: string) => {
     try {
@@ -44,7 +76,7 @@ export default function Checkout({userEmail}: {
       if (data.clientSecret) {
         setClientSecret(data.clientSecret);
       } else {
-        console.log({data})
+        console.log({ data })
         throw new Error("Client secret not found in response");
       }
     } catch (error) {
@@ -53,31 +85,39 @@ export default function Checkout({userEmail}: {
     }
   };
 
+
   useEffect(() => {
-    // Create PaymentIntent as soon as the page loads\
-    const body = JSON.stringify({ items, market, specialRequest, totalToPay, depositAmount, paymentType, hst, price, creditsApplied });
-
-    console.log({ body });
-
+    // setAllCheckoutData(parsedCheckoutState.data)
+    if (!parsedCheckoutState.success) {
+      return;
+    }
+  
+    const body = JSON.stringify({
+      items,
+      market,
+      specialRequest: "",
+      totalToPay: owed,
+      depositAmount: owed,
+      paymentType: "full",
+      hst: parsedCheckoutState.data.hst,
+      price: parsedCheckoutState.data.price,
+      creditsApplied: 0
+    });
 
     createPaymentIntent(body);
 
-    // fetch("/dashboard/checkout/create-payment-intent", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body,
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => setClientSecret(data.clientSecret));
-  }, []);
-
-  const appearance: Appearance = {
-    theme: "stripe",
-  };
+  }, [])
   const options: StripeElementsOptions = {
     clientSecret,
     appearance,
   };
+  if (!parsedCheckoutState.success) {
+    alert("Something went wrong. Please try again.");
+    console.error(parsedCheckoutState.error);
+    return;
+  }
+
+
   return (
     <section className={`text-black pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto ${clientSecret ? "" : "grid place-content-center"}`}>
       {clientSecret ? (
@@ -109,48 +149,31 @@ export default function Checkout({userEmail}: {
             <section className="flex flex-col gap-2 font-darker-grotesque">
               <h3 className="font-bold">Price:</h3>
               <span>${price}</span>
-              {creditsApplied && creditsApplied > 0 && (
-
-                <div className="">
-                  <h3 className="font-bold">
-                    Credits Applied
-                  </h3>
-                  <p>
-                    ${creditsApplied}
-                  </p>
-                </div>
-              )}
+         
               <div className="w-full">
                 <h3 className="font-bold">Deposit Amount:</h3>
-                <span>${depositAmount}</span>
+                <span>${parsedCheckoutState.data.depositAmount}</span>
               </div>
               <div>
                 <h3 className="font-bold">HST:</h3>
-                <p>${hst}</p>
+                <p>${parsedCheckoutState.data.hst}</p>
               </div>
               <div>
                 <h3 className="font-bold">Total Deposit:</h3>
                 <p>$
-                  {totalToPay}</p>
+                  {parsedCheckoutState.data.totalToPay}</p>
               </div>
               <div>
                 <h3 className="font-bold">Amount Owing:</h3>
                 <p>$
-                  {price - depositAmount}</p>
+                  {parsedCheckoutState.data.depositAmount}</p>
               </div>
 
             </section>
-
-            {specialRequest && (
-              <p>
-                <strong className="mr-[1ch]">Special Request:</strong>
-                {specialRequest}
-              </p>
-            )}
           </section>
 
           <Elements options={options} stripe={stripePromise}>
-            <CheckoutForm userEmail={userEmail} />
+            <CheckoutForm userEmail={userEmail} paymentRecordId={paymentRecordId} />
           </Elements>
         </section>
       ) : (
@@ -162,3 +185,5 @@ export default function Checkout({userEmail}: {
     </section>
   );
 }
+
+export default RemainderCheckout;
