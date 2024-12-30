@@ -6,12 +6,10 @@ import { zodUserWithOptionalBusinessRef } from "@/zod/user-business";
 
 const zodVendorsSchema = z.array(zodUserWithOptionalBusinessRef);
 
-const isDev = process.env.NODE_ENV === "development";
-
 export const getAllVendors = async () => {
   try {
     const result = await sanityClient.fetch(
-      `*[_type == "user" ${isDev ? "" : "&& role == 'vendor'"}] {
+      `*[_type == "user"] {
         ${userQueryString}
       }`
     );

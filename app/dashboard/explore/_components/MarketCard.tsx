@@ -46,11 +46,11 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
             {market.venue.address}, {market.venue.city}
           </span>
         </div>
-        <Button type="button" className="bg-[#C5B5A4] uppercase font-semibold px-5">
-          <Link href={`/dashboard/markets/${market._id}/select-preferences`}>
+        <Link href={`/dashboard/markets/${market._id}/select-preferences`}>
+          <Button type="button" className="bg-[#C5B5A4] uppercase font-semibold px-5">
             Book Now
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </footer>
       {/* {priceToDisplay} */}
       <NewDetailsSection datesToDisplay={dateToDisplay} hours={market.venue.hours} loadInInstructions={market.venue.loadInInstructions} phone={market.venue.phone} />

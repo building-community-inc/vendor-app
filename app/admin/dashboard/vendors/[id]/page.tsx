@@ -1,6 +1,4 @@
 import { getVendorById } from "@/sanity/queries/admin/vendors";
-import FormTitleDivider from "../../_components/FormTitleDivider";
-import Image from "next/image";
 import Link from "next/link";
 import { approveVendor, disapproveVendor } from "../actions";
 import Button from "@/app/_components/Button";
@@ -8,6 +6,7 @@ import { ContactCard, PaymentCard, SupportingDocsCard } from "@/app/dashboard/_c
 import NoBz from "@/app/dashboard/_components/NoBz";
 import { getUserPayments } from "@/sanity/queries/user";
 import { AdminBusinessCard } from "./AdminBusinessCard";
+import { unstable_noStore } from "next/cache";
 
 const Page = async ({ params }: {
   params: {
@@ -15,6 +14,7 @@ const Page = async ({ params }: {
   }
 }) => {
 
+  unstable_noStore();
   const vendorData = await getVendorById(params.id);
 
   if (!vendorData) {
@@ -170,7 +170,7 @@ const Page = async ({ params }: {
       <section className="flex flex-col gap-2">
         <header className="border-2 border-b-black">
 
-          <h2 className="text-2xl font-bold font-darker-grotesque text-black">My Market Bookings</h2>
+          <h2 className="text-2xl font-bold font-darker-grotesque text-black">Market Bookings</h2>
         </header>
         <ul className="flex flex-col gap-5">
           {vendorPayments.map(payment => (

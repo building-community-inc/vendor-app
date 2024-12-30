@@ -57,7 +57,7 @@ export const AdminBusinessCard = ({ business, ownerName, credits, vendorId }: {
         </div>
         <div>
           <p className="text-xl font-segoe font-bold text-black">Instagram Handle:</p>
-          <p className="font-segoe text-2xl">{business?.instagramHandle}</p>
+          <p className="font-segoe">{business?.instagramHandle}</p>
         </div>
       </BusinessSection>
       <BusinessSection className="text-black border-none flex justify-between items-center py-5">

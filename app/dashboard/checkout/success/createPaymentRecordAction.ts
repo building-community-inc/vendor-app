@@ -1,32 +1,23 @@
-import { sanityWriteClient } from "@/sanity/lib/client";
+"use server";
+
+import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
-import { Stripe } from "stripe";
 import { nanoid } from "nanoid";
-import { getExistingPayment } from "@/sanity/queries/payments";
+import Stripe from "stripe";
+import { type TPaymentItem } from "./api/route";
 
-export type TPaymentItem = {
-  price: number;
-  name: string;
-  date: string;
-  tableId: string;
-};
-
-export const POST = async (req: Request) => {
-  if (req.method !== "POST") {
-    return Response.json({
-      status: 405,
-      body: { message: "Method not allowed" },
-    });
-  }
+export const createPaymentRecord = async (
+  paymentIntent: Stripe.Response<Stripe.PaymentIntent>
+) => {
 
   const clerkUser = await currentUser();
 
   if (!clerkUser) {
-    return Response.json({
-      status: 401,
-      body: { message: "Unauthorized" },
-    });
+    return {
+      errors: ["User not found"],
+      success: false,
+    };
   }
 
   const user = await getSanityUserByEmail(
@@ -34,77 +25,52 @@ export const POST = async (req: Request) => {
   );
 
   if (!user) {
-    return Response.json({
-      status: 401,
-      body: { message: "Unauthorized" },
-    });
+    return {
+      errors: ["User not found"],
+      success: false,
+    };
   }
 
-  const rawBody = await req.text();
+  const marketDoc = await sanityClient.getDocument(
+    paymentIntent.metadata.marketId
+  );
 
-  const { paymentIntent, specialRequest, idForPaymentRecord } = JSON.parse(
-    rawBody
-  ) as {
-    paymentIntent: Stripe.PaymentIntent;
-    specialRequest: string;
-    idForPaymentRecord: string;
-  };
-
-  if (!paymentIntent) {
-    return Response.json({
-      status: 400,
-      body: { message: "No payment intent" },
-    });
-  }
-
-  const existingPayment = await getExistingPayment(paymentIntent.id);
-
-  if (existingPayment) {
-    return Response.json({
-      status: 400,
-      body: { message: "Payment already exists" },
-    });
+  if (!marketDoc) {
+    return {
+      errors: ["Market not found"],
+      success: false,
+    };
   }
 
   const items = JSON.parse(paymentIntent.metadata.items) as TPaymentItem[];
-  const marketId = paymentIntent.metadata.marketId as string;
 
-  const marketDocument = await sanityWriteClient.fetch(
-    "*[_id == $id][0]{...}",
-    { id: marketId }
-  );
-
-  // Find the day and table to update
   const datesBooked = items.map((item) => ({
     date: item.date,
     tableId: item.tableId,
     _key: nanoid(),
   }));
-
-
+  
   const vendorDetails = {
     vendor: {
       _type: "reference",
       _ref: user._id, // The ID of the vendor
     },
-    specialRequests: specialRequest, // Any special requests
+    specialRequests: paymentIntent.metadata.specialRequest, // Any special requests
     datesBooked: datesBooked,
     _key: nanoid(),
   };
-
-  // Find the day and table to update
   for (const item of items) {
     // Find the day with the correct date
-    const day = marketDocument.daysWithTables.find(
+    const day = marketDoc.daysWithTables.find(
       (day: { date: string }) => day.date === item.date
     );
-
+    
     if (day) {
       // Find the table with the correct ID
       const table = day.tables.find(
         (table: { table: { id: string } }) => table.table.id === item.tableId
       );
-
+      
       if (table) {
         // Update the booked field
         table.booked = {
@@ -114,18 +80,16 @@ export const POST = async (req: Request) => {
       }
     }
   }
-
-  
   const paymentRecord = {
     _type: "paymentRecord",
-    _id: idForPaymentRecord, // generate a unique ID
+    // _id: idForPaymentRecord, // generate a unique ID
     user: {
       _type: "reference",
       _ref: user._id,
     },
     market: {
       _type: "reference",
-      _ref: marketId,
+      _ref: marketDoc._id,
     },
     amount: {
       _type: "object",
@@ -151,24 +115,40 @@ export const POST = async (req: Request) => {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-
-  if (!existingPayment) {
-    const vendors = new Set(...(marketDocument.vendors || []), vendorDetails);
   
-    const updatedMarket = {
-      ...marketDocument,
-      vendors: [...vendors],
-    };
+  const vendors = [
+    ...(marketDoc.vendors || []).filter(
+      (vendor: { vendor: { _ref: string } }) => vendor.vendor._ref !== user._id
+    ),
+    vendorDetails,
+  ];
 
+  const updatedMarket = {
+    ...marketDoc,
+    vendors,
+  };
+
+  // console.log({ paymentRecord, updatedMarket });
+  try {
     const createdPaymentRecord = await sanityWriteClient.create(paymentRecord);
     // Update the market document in the database
 
     const sanityUpdatedMarketResp = await sanityWriteClient
-      .patch(marketId)
+      .patch(marketDoc._id)
       .set(updatedMarket)
       .commit();
-    return Response.json({
-      message: "success",
-    });
+
+    // console.log({ sanityUpdatedMarketResp, createdPaymentRecord });
+  } catch (error) {
+    return {
+      errors: ["something went wrong"],
+      success: false,
+    };
   }
+  // try {
+  //   await sanityWriteClient.create(paymentRecord);
+  // } catch (error) {
+  //   console.error(`Failed to create payment record: ${error}`);
+  //   throw new Error(`Failed to create payment record: ${error}`);
+  // }
 };

@@ -76,6 +76,19 @@ export const paymentRecordSchema = defineType({
               type: "datetime",
             }),
           ],
+          preview: {
+            select: {
+              title: "paymentType",
+              subtitle: "amount",
+            },
+            prepare({ title, subtitle }) {
+              return {
+                title,
+                subtitle: `$${subtitle}`,
+                media: FaRegStar,
+              };
+            },
+          }
         }),
       ],
     }),

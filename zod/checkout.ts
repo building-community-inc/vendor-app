@@ -92,32 +92,32 @@ export const zodCheckoutStateSchemaRequired = z
     specialRequest: z.string().optional().nullable(),
     previousPayment: z.number().optional().nullable(),
   })
-  .refine(
-    (data) => {
-      const itemsTotal =
-        data.items?.reduce((total, item) => total + item.price, 0) || 0;
+  // .refine(
+  //   (data) => {
+  //     const itemsTotal =
+  //       data.items?.reduce((total, item) => total + item.price, 0) || 0;
 
-      const credits = data.creditsApplied || 0;
-      const hst = data.hst || 0;
+  //     const credits = data.creditsApplied || 0;
+  //     const hst = data.hst || 0;
 
-      const totalWithExtras = itemsTotal - credits + hst;
+  //     const totalWithExtras = itemsTotal - credits + hst;
 
 
-      if (data.paymentType === "full") {
-        return data.totalToPay === totalWithExtras;
-      } else if (data.paymentType === "partial") {
-        const totalToPay = data.previousPayment
-          ? totalWithExtras - data.previousPayment
-          : (data.items?.length || 0) * 50 - credits + hst;
-        return data.totalToPay === totalToPay;
-      }
-      return true;
-    },
-    {
-      message: "Total to pay or due now does not match the expected amount",
-      path: ["totalToPay", "dueNow"],
-    }
-  );
+  //     if (data.paymentType === "full") {
+  //       return data.totalToPay === totalWithExtras;
+  //     // } else if (data.paymentType === "partial") {
+  //     //   const totalToPay = data.previousPayment
+  //     //     ? totalWithExtras - data.previousPayment
+  //     //     : (data.items?.length || 0) * 50 - credits + hst;
+  //     //   return data.totalToPay === totalToPay;
+  //     }
+  //     return true;
+  //   },
+  //   {
+  //     message: "Total to pay or due now does not match the expected amount",
+  //     path: ["totalToPay", "dueNow"],
+  //   }
+  // );
 
 export const zodPaymentIntentSchema = z.object({
   amount: z.number(),
