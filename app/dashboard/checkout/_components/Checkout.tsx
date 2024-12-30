@@ -57,9 +57,6 @@ export default function Checkout({userEmail}: {
     // Create PaymentIntent as soon as the page loads\
     const body = JSON.stringify({ items, market, specialRequest, totalToPay, depositAmount, paymentType, hst, price, creditsApplied });
 
-    console.log({ body });
-
-
     createPaymentIntent(body);
 
     // fetch("/dashboard/checkout/create-payment-intent", {

@@ -153,7 +153,7 @@ export const PaymentCard = ({ market, paymentId, items, amount }: {
       <MarketSection title="Amounts">
         {amount.owed > 0 && (
           <>
-            <p>Owed: ${amount.owed} </p>
+          <p>Owed: ${amount.owed} </p>
             <p>Paid: ${amount.paid} </p>
           </>
         )}
@@ -169,7 +169,7 @@ export const PaymentCard = ({ market, paymentId, items, amount }: {
         </Button>
         {amount.owed > 0 && (
           <Button className="h-fit">
-            <Link href={`/dashboard/pay-remainder/${paymentId}`}>Pay Remainder</Link>
+            <Link href={`/dashboard/checkout/${paymentId}/pay-remainder/`}>Pay Remainder</Link>
           </Button>
         )}
       </section>

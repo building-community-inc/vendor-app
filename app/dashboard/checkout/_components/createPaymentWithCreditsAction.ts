@@ -50,8 +50,6 @@ export const createPaymentWithCredits = async (formData: FormData) => {
     };
   }
 
-  console.log({ marketDocument, rawData });
-
   const datesBooked = rawData.items.map((item: TPaymentItem) => ({
     date: item.date,
     tableId: item.tableId,

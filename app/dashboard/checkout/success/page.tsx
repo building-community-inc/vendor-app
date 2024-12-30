@@ -57,7 +57,7 @@ const Page = async ({
         {
           _key: nanoid(),
           _type: "payment",
-          paymentType: "stripe",
+          paymentType: "stripe" as string,
           stripePaymentIntentId: paymentIntent.id,
           amount: paymentIntent.amount / 100,
           paymentDate: new Date().toISOString(),
@@ -137,16 +137,16 @@ const Page = async ({
         </section>
         <footer className="flex gap-10 flex-wrap">
 
-          <ContinueButton>
-            <Link href="/dashboard/">
+          <Link href="/dashboard/">
+            <ContinueButton>
               Back to Profile
-            </Link>
-          </ContinueButton>
-          <ContinueButton>
-            <Link href="/dashboard/explore">
+            </ContinueButton>
+          </Link>
+          <Link href="/dashboard/explore">
+            <ContinueButton>
               Book Another Market
-            </Link>
-          </ContinueButton>
+            </ContinueButton>
+          </Link>
         </footer>
       </section>
     </main>

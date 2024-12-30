@@ -15,7 +15,7 @@ export const zodLatePaymentSchema = z.object({
   _id: z.string(),
   payments: z.array(
     z.object({
-      paymentType: z.string(),
+      paymentType: z.string().optional().nullable(),
       _key: z.string(),
       paymentDate: z.string(),
       stripePaymentIntentId: z.string().optional().nullable(),
@@ -89,7 +89,7 @@ const paymentQuery = `
 `;
 
 const paymentQueryWithMarket = groq`
-  ${paymentQuery}
+  ${paymentQuery},
   "market": market->{
     name,
     _id,
@@ -112,7 +112,9 @@ const paymentQueryWithMarket = groq`
 export type TLatePaymentSchema = z.infer<typeof zodLatePaymentSchema>;
 export const getPaymentById = async (paymentId: string) => {
   const result = await sanityClient.fetch(
-    `*[_type == "paymentRecord" && _id match $paymentId][0] {${paymentQuery}}`,
+    `*[_type == "paymentRecord" && _id match $paymentId][0] {
+    ${paymentQuery}
+    }`,
     { paymentId }
   );
 
@@ -126,7 +128,10 @@ export const getPaymentById = async (paymentId: string) => {
 };
 export const getPaymentByIdWithMarket = async (paymentId: string) => {
   const result = await sanityClient.fetch(
-    `*[_type == "paymentRecord" && _id match $paymentId][0] {${paymentQueryWithMarket}}`,
+    `*[_type == "paymentRecord" && _id match $paymentId][0] {
+      ${paymentQueryWithMarket}
+    }
+    `,
     { paymentId }
   );
 

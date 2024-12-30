@@ -5,7 +5,7 @@ import { sanityWriteClient } from "@/sanity/lib/client";
 type PaymentRecordToUpdate = {
   _id: string;
   payments: {
-      paymentType: string;
+      paymentType?: string | null | undefined;
       _key: string;
       paymentDate: string;
       amount: number;
@@ -21,7 +21,7 @@ type PaymentRecordToUpdate = {
 };
 
 export const updatePaymentRecord = async (updatedPaymentRecord: PaymentRecordToUpdate) => {
-  console.log(`Updating payment record}`);
+  // console.log(`Updating payment record}`);
   try {
     await sanityWriteClient.patch(updatedPaymentRecord._id).set(updatedPaymentRecord).commit();
   } catch (error) {

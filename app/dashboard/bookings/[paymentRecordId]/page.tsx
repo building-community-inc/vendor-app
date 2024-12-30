@@ -11,7 +11,6 @@ const Page = async ({ params }: {
   };
 }) => {
   unstable_noStore();
-
   const paymentRecordInfo = await getPaymentByIdWithMarket(params.paymentRecordId);
 
   return (
@@ -79,6 +78,11 @@ const Page = async ({ params }: {
               <h3 className="font-bold">Total</h3>
               <p>${paymentRecordInfo.amount.total}</p>
             </div>
+            {paymentRecordInfo.amount.owed > 0 && (
+              <Button className="h-fit">
+                <Link href={`/dashboard/checkout/${paymentRecordInfo._id}/pay-remainder/`}>Pay Remainder</Link>
+              </Button>
+            )}
           </footer>
         </section>
       </Box>
@@ -118,9 +122,11 @@ const Page = async ({ params }: {
         </section>
       </Box>
 
-      <Button className="h-fit">
-        <Link href={`/dashboard/`}>Back to Profile</Link>
-      </Button>
+      <Link href={`/dashboard/`}>
+        <Button className="h-fit">
+          Back to Profile
+        </Button>
+      </Link>
     </main>
   );
 }
