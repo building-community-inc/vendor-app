@@ -91,6 +91,7 @@ export const zodPaymentRecordSchemaSanityReady = zodLatePaymentWithMarketSchema.
     _id: z.string().optional().nullable(),
     user: zodSanityReferenceSchema,
     items: z.array(zodPaymentItem.merge(z.object({ _key: z.string() }))),
+    marketId: z.undefined(),
   })
 );
 
@@ -119,7 +120,7 @@ export const zodSanityMarket = z.object({
       datesBooked: z.array(
         z.object({
           date: z.string(),
-          _type: z.literal("day"),
+          _type: z.string(),
           tableId: z.string(),
           _key: z.string(),
         })
@@ -139,7 +140,7 @@ export const zodSanityMarketWithOptionalVendors = zodSanityMarket.merge(
           datesBooked: z.array(
             z.object({
               date: z.string(),
-              _type: z.literal("day"),
+              _type: z.string(),
               tableId: z.string(),
               _key: z.string(),
             })

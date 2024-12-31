@@ -2,10 +2,6 @@
 
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { TPaymentRecord, zodPaymentRecordSchemaSanityReady, zodSanityMarket, zodSanityMarketWithOptionalVendors } from "@/sanity/queries/admin/markets/zods";
-import {
-  zodLatePaymentWithMarketSchema,
-  zodPaymentItem,
-} from "@/sanity/queries/payments";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -63,9 +59,8 @@ export const createBooking = async (
 
   // GENERATE PAYMENT RECORD uncomment the sanity query ....
 
-  const newPaymentRecord: TPaymentRecord = {
+  const newPaymentRecord: TPaymentRecordWithouMarketId = {
     _type: "paymentRecord",
-    marketId: parsedData.data.marketId,
     user: {
       _type: "reference",
       _ref: parsedData.data.vendorId,
@@ -100,10 +95,11 @@ export const createBooking = async (
     },
   };
 
+
   const parsedPaymentRecord =
     zodPaymentRecordSchemaSanityReady.safeParse(newPaymentRecord);
+    if (!parsedPaymentRecord.success) {
 
-  if (!parsedPaymentRecord.success) {
     const errors = parsedPaymentRecord.error.errors.map((error) => {
       const message = error.message;
       return `${message}`;
@@ -124,7 +120,16 @@ export const createBooking = async (
   *[_type == 'market' && _id == "${parsedData.data.marketId}"][0]{
     _id,
     daysWithTables,
-    vendors,
+    "vendors": vendors[] {
+     ...,
+      _key,
+      datesBooked[] {
+        _key,
+        date,
+        tableId,
+        "_type": "day"
+      }
+    }
   }`);
 
   const parsedSanityMarket =
@@ -217,7 +222,7 @@ export const createBooking = async (
     .patch(parsedSanityMarket.data._id)
     .set(updatedMarket)
     .commit();
-
+  // console.log({parsedPaymentRecord: parsedPaymentRecord.data, updatedMarket})
   if (!sanityPaymentResponse || !sanityMarketResponse) {
     return {
       errors: ["Error creating booking"],
@@ -292,3 +297,6 @@ const zodRawDataSchema = z
 
 
   type TSanityMarket = z.infer<typeof zodSanityMarket>;
+
+
+  type TPaymentRecordWithouMarketId = Omit<TPaymentRecord, "marketId">;

@@ -130,7 +130,7 @@ export const saveMarketChanges = async (
           _key,
           date,
           tableId,
-          _type
+          "_type": "day"
         }
         
       }
