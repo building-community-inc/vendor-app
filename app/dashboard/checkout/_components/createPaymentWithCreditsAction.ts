@@ -54,6 +54,7 @@ export const createPaymentWithCredits = async (formData: FormData) => {
     date: item.date,
     tableId: item.tableId,
     _key: nanoid(),
+    _type: "day"
   }));
 
   const vendorDetails = {

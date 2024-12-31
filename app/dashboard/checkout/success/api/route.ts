@@ -79,6 +79,7 @@ export const POST = async (req: Request) => {
     date: item.date,
     tableId: item.tableId,
     _key: nanoid(),
+    _type: "day"
   }));
 
 
