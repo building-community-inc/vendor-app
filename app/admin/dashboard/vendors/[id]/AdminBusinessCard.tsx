@@ -14,10 +14,27 @@ export const AdminBusinessCard = ({ business, ownerName, credits, vendorId }: {
   credits: number;
   vendorId: string;
 }) => {
+  const [creditValueError, setCreditValueError] = useState<string | null>(null);
   const [creditsValue, setCreditsValue] = useState<number>(credits);
+  const [creditsToShow, setCreditsToShow] = useState<string>(credits.toFixed(2));
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [showAreYouSureMessage, setShowAreYouSureMessage] = useState<boolean>(false);
   const [formState, formAction] = useFormState(updateCredits, { errors: [], success: false });
+
+  const onCreditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = parseFloat(e.currentTarget.value)
+    if (e.currentTarget.value === "") {
+      setCreditsToShow("0")
+      return setCreditsValue(0)
+    }
+    if (isNaN(newValue)) return setCreditValueError("Please enter a valid number")
+    setCreditsValue(newValue)
+    if (e.currentTarget.value.startsWith("0") && e.currentTarget.value.length > 1) {
+      setCreditsToShow(e.currentTarget.value.slice(1))
+    } else {
+      setCreditsToShow(e.currentTarget.value)
+    }
+  }
 
 
   function toggleDialog() {
@@ -69,22 +86,7 @@ export const AdminBusinessCard = ({ business, ownerName, credits, vendorId }: {
           Edit Credits
         </Button>
         <Dialog toggleDialog={toggleDialog} ref={dialogRef}>
-          {showAreYouSureMessage ? (
-            <form action={formAction} className="flex flex-col gap-2">
-              <p>Are you sure you want to update the credits from <strong>${credits}</strong> to <strong>${creditsValue}</strong> </p>
-              <input hidden name="oldCredits" type="number" value={credits} />
-              <input hidden name="newCredits" type="number" value={creditsValue} />
-              <input hidden name="userId" type="text" value={vendorId} />
-              <footer className="flex justify-center gap-5">
-                <Button type="button" onClick={() => setShowAreYouSureMessage(false)} className="px-5 py-2 bg-red-300 ">No</Button>
-                <SubmitButton />
-              </footer>
-              {formState.errors && formState.errors.length > 0 && formState.errors.map((error) => (
-                <p key={error} className="text-red-500 text-center">{error}</p>
-              ))}
-            </form>
-          ) : (
-
+          {!showAreYouSureMessage ? (
             <section className="flex flex-col gap-2">
               <section className="flex flex-col gap-2">
                 <p><strong>Current Credit Balance:</strong></p>
@@ -92,7 +94,8 @@ export const AdminBusinessCard = ({ business, ownerName, credits, vendorId }: {
                 <span className="font-semibold text-lg"> New Credit Balance: </span>
                 <div>
                   <span>$ </span>
-                  <input type="number" name="newCredits" value={creditsValue.toFixed(2)} className="border border-black rounded-lg px-2 py-1" onChange={(e) => setCreditsValue(+e.currentTarget.value)} />
+                  <input type="text" name="newCredits" value={creditsToShow} className="border border-black rounded-lg px-2 py-1" onChange={onCreditChange} />
+                  {creditValueError && <p className="text-red-500">{creditValueError}</p>}
                 </div>
               </section>
               <footer className="flex justify-center gap-5">
@@ -103,6 +106,21 @@ export const AdminBusinessCard = ({ business, ownerName, credits, vendorId }: {
                 <Button type="button" onClick={() => setShowAreYouSureMessage(true)} className="px-5 py-2 ">Update Credits</Button>
               </footer>
             </section>
+          ) : (
+
+            <form action={formAction} className="flex flex-col gap-2">
+              <p>Are you sure you want to update the credits from <strong>${credits}</strong> to <strong>${creditsValue}</strong> </p>
+              <input hidden name="oldCredits" type="number" value={credits} readOnly />
+              <input hidden name="newCredits" type="number" value={creditsValue} readOnly />
+              <input hidden name="userId" type="text" value={vendorId} readOnly />
+              <footer className="flex justify-center gap-5">
+                <Button type="button" onClick={() => setShowAreYouSureMessage(false)} className="px-5 py-2 bg-red-300 ">No</Button>
+                <SubmitButton />
+              </footer>
+              {formState.errors && formState.errors.length > 0 && formState.errors.map((error) => (
+                <p key={error} className="text-red-500 text-center">{error}</p>
+              ))}
+            </form>
           )}
 
         </Dialog>

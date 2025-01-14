@@ -52,9 +52,9 @@ const Page = async ({
             <p>
               <strong>Paid:</strong> ${paymentRecord.amount.paid}
             </p>
-            <p>
+            {/* <p>
               <strong>Still Owing:</strong> ${paymentRecord.amount.owed}
-            </p>
+            </p> */}
             <p>
               <strong>Price before tax:</strong> ${paymentRecord.amount.total}
             </p>

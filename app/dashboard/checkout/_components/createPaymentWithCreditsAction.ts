@@ -133,7 +133,7 @@ export const createPaymentWithCredits = async (formData: FormData) => {
   const vendors = [...(marketDocument.vendors || [])];
   vendors.push(vendorDetails);
 
-  const vendorsSet = new Set(vendors);
+  // const vendorsSet = new Set(vendors);
 
   const updatedMarket = {
     ...marketDocument,
@@ -149,10 +149,9 @@ export const createPaymentWithCredits = async (formData: FormData) => {
     const createdPaymentRecord = await sanityWriteClient.create(paymentRecord);
 
     const creditsLeft = user.credits && user.credits - +rawData.creditsApplied;
-
     await sanityWriteClient
       .patch(user._id)
-      .set({ credits: creditsLeft })
+      .set({ credits: creditsLeft?.toFixed(2) })
       .commit();
 
 

@@ -33,8 +33,6 @@ export const updateCredits = async (
     return {
       success: false,
       errors: ["You are not authorized to perform this action"],
-
-      
     };
   }
 
@@ -83,6 +81,17 @@ export const updateCredits = async (
       .patch(userId)
       .set({ credits: result.output.newCredits })
       .commit();
+
+    await sanityWriteClient.create({
+      _type: "creditTransaction",
+      date: new Date().toISOString(),
+      vendor: {
+        _type: "reference",
+        _ref: userId,
+      },
+      amount: result.output.newCredits,
+      reason: "Admin added credits",
+    });
 
     revalidatePath(`/admin/dashboard/vendors/${userId}/`);
     revalidatePath(`/admin/dashboard/vendors/`);
