@@ -2,12 +2,9 @@ import Box from "./Box";
 
 const PaymentOptions = ({
   areTablesSelected,
-  credits,
+  availableCredits,
   dueNow,
   totalToPay,
-  // isEventInLessThan60Days,
-  isPayNowSelected,
-  setIsPayNowSelected,
   useCredits,
   setUseCredits,
   creditsToUse,
@@ -15,11 +12,9 @@ const PaymentOptions = ({
   totalWithHst
 }: {
   isEventInLessThan60Days: boolean | null | 0;
-  isPayNowSelected: boolean;
-  setIsPayNowSelected: (value: boolean) => void;
   totalToPay: number | null;
   dueNow: number;
-  credits: number | null | undefined;
+  availableCredits: number | null | undefined;
   areTablesSelected: boolean;
   useCredits: boolean;
   setUseCredits: (value: boolean) => void;
@@ -27,13 +22,13 @@ const PaymentOptions = ({
   setCreditsToUse: (value: number) => void;
   totalWithHst: number;
 }) => {
+  const hst = +(dueNow * .13).toFixed(2);
+  const total = dueNow + hst;
+  const newCreditsToUse = availableCredits ? total > availableCredits ? availableCredits : total : 0;
 
-  const maximizeCredits = () => {
-    if (!credits || credits <= 0) return;
-    const hst = +(dueNow * .13).toFixed(2);
-    const total = dueNow + hst;
-    const maxCreditsToUse = total > credits ? credits : total;
-    setCreditsToUse(maxCreditsToUse);
+
+  const onCreditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCreditsToUse(newCreditsToUse);
   }
 
   return (
@@ -41,28 +36,7 @@ const PaymentOptions = ({
       <h2 className="text-black font-bold">Payment Options</h2>
       {areTablesSelected ? (
         <>
-          {/* Commenting out the deposit option */}
-          {/* <label htmlFor="pay-now" className="flex text-[19px] items-center gap-2 relative z-10">
-            <input type="radio" name="pay-now" className="accent-title-color pointer-events-none relative z-[2]" id="pay-now" checked={isPayNowSelected} onChange={() => setIsPayNowSelected(true)} />
-            <span className="text-black">Pay in Full</span>
-          </label>
-         {!isEventInLessThan60Days && (
-            <>
-              <label htmlFor="pay-later" className="flex text-[19px] items-center gap-2 relative z-10" onClick={() => setIsPayNowSelected(false)}>
-                <input
-                  type="radio"
-                  name="pay-later"
-                  id="pay-later"
-                  className="border-red-200 accent-title-color pointer-events-none relative z-[2]"
-                  checked={!isPayNowSelected}
-                  onChange={() => setIsPayNowSelected(false)}
-                />
-                <span>Deposit</span>
-              </label>
-              <p>Vendors can pay a $50/day non-refundable deposit to secure their table reservation. The remaining amount of the booking is due 60 days before the first day of the market</p>
-            </>
-          )} */}
-          {credits && credits > 0 ? (
+          {availableCredits && availableCredits > 0 ? (
             <div className="flex gap-2">
               <label htmlFor="pay-with-credits" className="flex text-[19px] items-center gap-2 relative z-10">
                 <input
@@ -70,33 +44,16 @@ const PaymentOptions = ({
                   checked={useCredits}
                   onChange={(e) => {
                     setUseCredits(e.currentTarget.checked)
+                    onCreditChange(e)
                   }}
                   value={creditsToUse}
                   name="pay-with-credits"
                   className="pointer-events-none relative z-[2] accent-title-color"
                   id="pay-with-credits"
                 />
-                <span>Use Credit (available credit: ${credits})</span>
+                <span>Use Credit (available credit: ${availableCredits})</span>
               </label>
-              {useCredits && (
-                <div className="flex gap-2">
-
-                  <input
-                    value={creditsToUse}
-                    onChange={(e) => setCreditsToUse(parseFloat(e.target.value))}
-                    type="text"
-                    pattern="\d+(\.\d{1,2})?"
-                    max={totalToPay + (dueNow * .13).toFixed(2) || 0}
-                    placeholder={`${totalToPay + (dueNow * .13).toFixed(2)}` || ""}
-                    min={0}
-                    name="credits-applied"
-                    className="border border-[#777571] font-darker-grotesque outline-[#777571] rounded-md px-1 w-[8ch] "
-                  />
-                  <button type="button" onClick={maximizeCredits}>
-                    use max
-                  </button>
-                </div>
-              )}
+              
             </div>
           ) : null}
 
@@ -138,7 +95,7 @@ const PaymentOptions = ({
                 )} */}
 
                 <div>
-                  <h3 className="font-bold">{isPayNowSelected ? "Total Booking Cost" : "Total Deposit"}:</h3>
+                  <h3 className="font-bold">{"Due Now"}:</h3>
                   <p>$
                     {totalWithHst.toFixed(2)}</p>
                 </div>

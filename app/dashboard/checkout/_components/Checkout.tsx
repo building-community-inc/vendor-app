@@ -113,28 +113,28 @@ export default function Checkout({userEmail}: {
                     Credits Applied
                   </h3>
                   <p>
-                    ${creditsApplied}
+                    ${creditsApplied.toFixed(2)}
                   </p>
                 </div>
               )}
-              <div className="w-full">
+              {/* <div className="w-full">
                 <h3 className="font-bold">Deposit Amount:</h3>
                 <span>${depositAmount}</span>
-              </div>
+              </div> */}
               <div>
                 <h3 className="font-bold">HST:</h3>
                 <p>${hst}</p>
               </div>
               <div>
-                <h3 className="font-bold">Total Deposit:</h3>
+                <h3 className="font-bold">Total Payment:</h3>
                 <p>$
-                  {totalToPay}</p>
+                  {totalToPay.toFixed(2)}</p>
               </div>
-              <div>
+              {/* <div>
                 <h3 className="font-bold">Amount Owing:</h3>
                 <p>$
                   {price - depositAmount}</p>
-              </div>
+              </div> */}
 
             </section>
 

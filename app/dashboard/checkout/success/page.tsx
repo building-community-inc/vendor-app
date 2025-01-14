@@ -12,6 +12,9 @@ import { getPaymentById } from "@/sanity/queries/payments";
 import { unstable_noStore } from "next/cache";
 import { updatePaymentRecord } from "./updatePaymentRecordAction";
 import { createPaymentRecord } from "./createPaymentRecordAction";
+import { updateUserCredits } from "./updateUserCreditsAction";
+import { currentUser } from "@clerk/nextjs";
+import { getSanityUserByEmail } from "@/sanity/queries/user";
 
 const Page = async ({
   searchParams,
@@ -19,6 +22,20 @@ const Page = async ({
   searchParams: { [key: string]: string | string[] | undefined };
 }) => {
   unstable_noStore();
+
+  const clerkUser = await currentUser();
+
+  if (!clerkUser) {
+    return <div>Not authorized</div>;
+  }
+
+  const user = await getSanityUserByEmail(clerkUser.emailAddresses[0].emailAddress);
+
+  if (!user) {
+    return <div>Not authorized</div>;
+  }
+
+  
   const paymentIntentId =
     typeof searchParams.payment_intent === "string"
       ? searchParams.payment_intent
@@ -67,6 +84,11 @@ const Page = async ({
 
     try {
       await updatePaymentRecord(updatedPaymentRecord);
+      const creditsLeft = +paymentIntent.metadata.creditsLeft;
+      if (creditsLeft) {
+        // await updateUserCredits(creditsLeft, user._id);
+      }
+      // await updateUserCredits(paymentIntent.metadata.creditsLeft, user._id);
     } catch (error) {
       console.error(`Failed to update payment record: ${error}`);
     }
@@ -74,7 +96,11 @@ const Page = async ({
 
   if (!existingStripePayment && !partialCreditPayment && paymentIntent) {
     try {
-      await createPaymentRecord(paymentIntent)
+      await createPaymentRecord(paymentIntent);
+      if (user.credits !== +paymentIntent.metadata.creditsLeft) {
+        await updateUserCredits(+paymentIntent.metadata.creditsLeft, user._id);
+      }
+
     } catch (error) {
       console.error(`Failed to create payment record: ${error}`);
     }
@@ -93,6 +119,7 @@ const Page = async ({
   const market = await getMarketById(paymentIntent.metadata.marketId);
 
   const items = JSON.parse(paymentIntent.metadata.items) as TPaymentItem[];
+
 
   return (
     <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto flex flex-col items-center gap-6">
@@ -128,12 +155,12 @@ const Page = async ({
           <p>
             <strong>Paid:</strong> ${paymentIntent.amount / 100}
           </p>
-          <p>
+          {/* <p>
             <strong>Still Owing:</strong> ${paymentIntent.metadata.amountOwing}
-          </p>
-          <p>
+          </p> */}
+          {/* <p>
             <strong>Price before tax:</strong> ${paymentIntent.metadata.totalToPay}
-          </p>
+          </p> */}
         </section>
         <footer className="flex gap-10 flex-wrap">
 

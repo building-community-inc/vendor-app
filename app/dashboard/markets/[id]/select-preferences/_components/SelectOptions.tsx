@@ -13,7 +13,6 @@ import { zodBookMarketOptionsSchema, zodCheckoutStateSchemaRequired, zodShortMar
 import { useCheckoutStore } from "@/app/dashboard/checkout/_components/checkoutStore";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { DateTime } from "luxon";
-import Box from "./Box";
 import PaymentOptions from "./PaymentOptions";
 import { createPaymentWithCredits } from "@/app/dashboard/checkout/_components/createPaymentWithCreditsAction";
 // import { useRouter } from "next/navigation";
@@ -35,7 +34,8 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
     []
   );
 
-  const [isPayNowSelected, setIsPayNowSelected] = useState<boolean>(true);
+  const [payingWithCredits, setPayingWithCredits] = useState<boolean>(false);
+  // const [isPayNowSelected, setIsPayNowSelected] = useState<boolean>(true);
 
   const [newSelectedDates, setNewSelectedDates] = useState<TDayWithTable[]>([]);
 
@@ -50,7 +50,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
     0
   );
 
-  const dueNow = isPayNowSelected ? totalToPay : selectedTables.length * 50;
+  const dueNow = totalToPay
 
   const totalWithHst = (dueNow + dueNow * 0.13) - (useCredits ? creditsToUse : 0);
 
@@ -69,6 +69,8 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
     } else {
       setNewSelectedDates((prev) => [...prev, date]);
     }
+    setCreditsToUse(0);
+    setUseCredits(false);
   };
 
   const handleOnTableChange = (table: TTableInDay, date: TDateType) => {
@@ -85,6 +87,8 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         return [...prevTables, { date: date.date, table }];
       }
     });
+    setCreditsToUse(0);
+    setUseCredits(false);
   };
 
   const handleProceedToCheckout = async (event: React.FormEvent) => {
@@ -163,9 +167,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
 
       const parsedCheckoutState = zodCheckoutStateSchemaRequired.safeParse({
         items,
-        paymentType: useCredits ?
-          creditsToUse === dueNow + dueNow * 0.13 ? "full" : "partial"
-          : isPayNowSelected ? 'full' : 'partial',
+        paymentType: "full",
         market: parsedMarket.data,
         price: totalToPay,
         creditsApplied: useCredits ? creditsToUse : 0,
@@ -181,9 +183,14 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         console.error(parsedCheckoutState.error);
         return;
       }
+      setAllCheckoutData(parsedCheckoutState.data)
 
-
-      if (parsedCheckoutState.data.creditsApplied && parsedCheckoutState.data.creditsApplied > 0) {
+      if (parsedCheckoutState.data.totalToPay > 0) {
+        // console.log("pushing to checkout", { parsedCheckoutState });
+        push(`/dashboard/checkout`);
+      } else {
+        // console.log("creating payment with credits", { parsedCheckoutState });
+        setPayingWithCredits(true);
         const payWithCredits = async () => {
           const formData = new FormData();
           formData.append("items", JSON.stringify(parsedCheckoutState.data.items));
@@ -207,22 +214,22 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
 
             if (resp.success) {
               setAllCheckoutData(parsedCheckoutState.data);
+              // setPayingWithCredits(false);
               push(`/dashboard/checkout/credit-successfully-applied?paymentRecordId=${resp.paymentRecordId}`);
             }
 
             // redirect(`/dashboard/checkout/success?paymentRecordId${resp.paymentRecordId}`);
 
           } catch (error) {
+            setPayingWithCredits(false);
             console.log({ error });
           }
         }
 
         payWithCredits();
-      } else {
-
-        setAllCheckoutData(parsedCheckoutState.data)
-        push(`/dashboard/checkout`);
       }
+      // push(`/dashboard/checkout`);
+      // }
     } catch (error) {
       console.error(error);
     }
@@ -279,9 +286,8 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         dueNow={dueNow}
         totalToPay={totalToPay}
         isEventInLessThan60Days={isEventInLessThan60Days}
-        isPayNowSelected={isPayNowSelected}
-        setIsPayNowSelected={setIsPayNowSelected}
-        credits={user?.credits}
+        // isPayNowSelected={true}
+        availableCredits={user?.credits}
         areTablesSelected={selectedTables.length > 0}
         useCredits={useCredits}
         setUseCredits={setUseCredits}
@@ -297,7 +303,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         onChange={(e) => setSpecialRequest(e.target.value)}
       /> */}
 
-      <ContinueButton type="submit" className="max-w-[544px]">Complete Booking</ContinueButton>
+      <ContinueButton type="submit" className="max-w-[544px]">{payingWithCredits ? "Completing Payment..." : "Complete Booking"}</ContinueButton>
     </form>
   );
 };
