@@ -148,10 +148,10 @@ export const createPaymentWithCredits = async (formData: FormData) => {
 
     const createdPaymentRecord = await sanityWriteClient.create(paymentRecord);
 
-    const creditsLeft = user.credits && user.credits - +rawData.creditsApplied;
+    const creditsLeft = user.credits && (user.credits - +rawData.creditsApplied).toFixed(2);
     await sanityWriteClient
       .patch(user._id)
-      .set({ credits: creditsLeft?.toFixed(2) })
+      .set({ credits: parseFloat(creditsLeft || "0") })
       .commit();
 
 

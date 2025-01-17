@@ -157,15 +157,14 @@ export const paymentRecordSchema = defineType({
   preview: {
     select: {
       title: "market.name",
-      firstName: "user.firstName",
-      lastName: "user.lastName",
       items: "items",
       media: "market.marketCover",
+      business: "user.business.businessName",
     },
-    prepare({ title, firstName, lastName, items, media }) {
+    prepare({ title, items, media, business }) {
       return {
         title,
-        subtitle: `${firstName} ${lastName} - ${items.length} days`,
+        subtitle: `${business} - ${items.length} days`,
         media,
       };
     },
