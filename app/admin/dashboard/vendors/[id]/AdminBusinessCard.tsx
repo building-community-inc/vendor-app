@@ -56,7 +56,7 @@ export const AdminBusinessCard = ({ business, ownerName, credits, vendorId }: {
 
 
   return (
-    <DashboardSection className="h-[514px]">
+    <DashboardSection className="min-h-[514px] h-fit">
       {business?.logoUrl && (
         <BusinessSection className="flex justify-center">
           <Image src={business.logoUrl} alt={business.businessName} width={100} height={100} />

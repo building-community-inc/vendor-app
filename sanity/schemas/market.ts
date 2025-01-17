@@ -190,4 +190,19 @@ export const marketSchema = defineType({
       initialValue: false
     })
   ],
+
+  preview: {
+    select: {
+      title: "name",
+      media: "marketCover",
+      dates: "dates",
+    },
+    prepare({ title, media, dates }) {
+      return {
+        title,
+        subtitle: dates.join(" - "),
+        media,
+      };
+    }
+  }
 });
