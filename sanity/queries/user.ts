@@ -84,7 +84,7 @@ export type TTableItem = z.infer<typeof zodTableItem>;
 const zodAmount = z.object({
   total: z.number(),
   paid: z.number(),
-  owed: z.number(),
+  owed: z.number().optional().nullable(),
   hst: z.number(),
 });
 
