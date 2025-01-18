@@ -2,9 +2,9 @@ import { getVendorById } from "@/sanity/queries/admin/vendors";
 import Link from "next/link";
 import { approveVendor, disapproveVendor } from "../actions";
 import Button from "@/app/_components/Button";
-import { ContactCard, PaymentCard, SupportingDocsCard } from "@/app/dashboard/_components/profileComps";
+import { ContactCard, PaymentRecordCard, SupportingDocsCard } from "@/app/dashboard/_components/profileComps";
 import NoBz from "@/app/dashboard/_components/NoBz";
-import { getUserPayments } from "@/sanity/queries/user";
+import { getUserPaymentRecords } from "@/sanity/queries/user";
 import { AdminBusinessCard } from "./AdminBusinessCard";
 import { unstable_noStore } from "next/cache";
 
@@ -32,7 +32,7 @@ const Page = async ({ params }: {
 
   const vendor = vendorData.data;
 
-  const vendorPayments = await getUserPayments(vendor._id);
+  const vendorPaymentRecords = await getUserPaymentRecords(vendor._id);
 
   return (
     <main className="flex px-10 py-24 gap-24 min-h-screen w-full flex-col justify-center">
@@ -90,8 +90,8 @@ const Page = async ({ params }: {
           <h2 className="text-2xl font-bold font-darker-grotesque text-black">Market Bookings</h2>
         </header>
         <ul className="flex flex-col gap-5">
-          {vendorPayments.map(payment => (
-            <PaymentCard amount={payment.amount} paymentId={payment._id} key={payment._id} market={payment.market} items={payment.items} />
+          {vendorPaymentRecords.map(paymentRecord => (
+            <PaymentRecordCard admin payments={paymentRecord.payments} amount={paymentRecord.amount} paymentId={paymentRecord._id} key={paymentRecord._id} market={paymentRecord.market} items={paymentRecord.items} />
           ))}
         </ul>
 

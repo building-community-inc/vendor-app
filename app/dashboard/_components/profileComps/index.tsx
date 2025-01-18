@@ -1,6 +1,6 @@
 import Button from "@/app/_components/Button";
 import Dialog from "@/app/_components/Dialog/Dialog";
-import { TAmount, TTableItem } from "@/sanity/queries/user";
+import { TAmount, TPayment, TTableItem } from "@/sanity/queries/user";
 import { cn } from "@/utils";
 import { TPdf, TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import Image from "next/image";
@@ -117,7 +117,7 @@ export const SupportingDocsCard = ({
 
 
 
-export const PaymentCard = ({ market, paymentId, items, amount }: {
+export const PaymentRecordCard = ({ market, paymentId, items, amount, admin }: {
   market: {
     _id: string;
     name: string;
@@ -126,6 +126,8 @@ export const PaymentCard = ({ market, paymentId, items, amount }: {
   paymentId: string;
   items: TTableItem[];
   amount: TAmount;
+  payments: TPayment[];
+  admin?: boolean;
 }) => {
 
   return (
@@ -141,7 +143,14 @@ export const PaymentCard = ({ market, paymentId, items, amount }: {
         </ul>
       </MarketSection>
       <MarketSection title="Venue" className="flex-1">
-        <span>{market.name}</span>
+        {admin ? (
+          <Link href={`/admin/dashboard/markets/${market._id}`} target="_blank" rel="noreferrer">
+            <span>{market.name}</span>
+          </Link>
+        ) : (
+          <span>{market.name}</span>
+        )}
+
       </MarketSection>
       {/* <MarketSection title  */}
       <MarketSection title="Table">
@@ -153,7 +162,7 @@ export const PaymentCard = ({ market, paymentId, items, amount }: {
       <MarketSection title="Amounts">
         {amount.owed && amount.owed > 0 && (
           <>
-          <p>Owed: ${amount.owed} </p>
+            <p>Owed: ${amount.owed} </p>
             <p>Paid: ${amount.paid} </p>
           </>
         )}
@@ -167,11 +176,23 @@ export const PaymentCard = ({ market, paymentId, items, amount }: {
         <Button className="h-fit ">
           <Link className="text-center" href={`/dashboard/bookings/${paymentId}`}>Review Booking</Link>
         </Button>
-        {amount.owed && amount.owed > 0 && (
+        {amount.owed ? amount.owed > 0 && (
           <Button className="h-fit">
             <Link href={`/dashboard/checkout/${paymentId}/pay-remainder/`}>Pay Remainder</Link>
           </Button>
+        ) : undefined}
+
+        {admin && (
+          <Link href={`/studio/structure/paymentRecord;${paymentId}`} target="_blank" rel="noreferrer">
+            <p>
+              <strong>
+                ID:
+              </strong>
+              {` ${paymentId}`}
+            </p>
+          </Link>
         )}
+
       </section>
     </li>
   )

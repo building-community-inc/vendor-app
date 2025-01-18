@@ -1,4 +1,4 @@
-import { getSanityUserByEmail, getUserPayments } from "@/sanity/queries/user";
+import { getSanityUserByEmail, getUserPaymentRecords } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import NoBz from "./_components/NoBz";
@@ -6,7 +6,7 @@ import { DateTime } from 'luxon';
 import Link from "next/link";
 import React from "react";
 import Button from "../_components/Button";
-import { BusinessCard, ContactCard, DashboardSection, PaymentCard, SupportingDocsCard } from "./_components/profileComps";
+import { BusinessCard, ContactCard, PaymentRecordCard, SupportingDocsCard } from "./_components/profileComps";
 import { unstable_noStore } from "next/cache";
 
 
@@ -19,9 +19,9 @@ const page = async () => {
     user.emailAddresses[0].emailAddress
   );
 
-  const userPayments = await getUserPayments(sanityUser._id);
+  const userPaymentRecords = await getUserPaymentRecords(sanityUser._id);
 
-  userPayments.sort((a, b) => {
+  userPaymentRecords.sort((a, b) => {
     // Convert the dates from strings to DateTime objects and find the earliest date
     const datesA = a.market.dates.map(date => {
       const [year, month, day] = date.split('-').map(Number);
@@ -76,14 +76,14 @@ const page = async () => {
         </footer>
       </section>
 
-      {userPayments.length > 0 && (
+      {userPaymentRecords.length > 0 && (
         <section className="flex flex-col gap-2">
           <header className="border-2 border-b-black">
             <h2 className="text-2xl font-bold font-darker-grotesque text-black">My Market Bookings</h2>
           </header>
           <ul className="flex flex-col gap-5">
-            {userPayments.map(payment => (
-              <PaymentCard amount={payment.amount} paymentId={payment._id} key={payment._id} market={payment.market} items={payment.items} />
+            {userPaymentRecords.map(paymentRecord => (
+              <PaymentRecordCard payments={paymentRecord.payments} amount={paymentRecord.amount} paymentId={paymentRecord._id} key={paymentRecord._id} market={paymentRecord.market} items={paymentRecord.items} />
             ))}
           </ul>
         </section>

@@ -224,9 +224,13 @@ export const saveMarketChanges = async (
     };
   }
 
+  const daysThatChanged: TDaySchema[] = [];
+  const oldDays: TDaySchema[] = [];
   const updatedDaysWithTables = parsedSanityMarket.data.daysWithTables.map(
     (day) => {
       if (areDatesSame(day.date, dayWithTables.date)) {
+        daysThatChanged.push(dayWithTables);
+        oldDays.push(day);
         return dayWithTables;
       } else {
         return day;
@@ -355,9 +359,79 @@ export const saveMarketChanges = async (
     })
     .commit();
 
+
+    // TODO update payment record with new table when table has changed
+
+    // find the tables that changed between the daysThatChanged and the oldDays
+    const changedTables = daysThatChanged.flatMap((newDay, index) => {
+      const oldDay = oldDays[index];
+      return newDay.tables.filter((newTable) => {
+        const oldTable = oldDay.tables.find((t) => t.table.id === newTable.table.id);
+        return oldTable && oldTable.booked?._ref !== newTable.booked?._ref;
+      });
+    });
+    
+    
+    for (const newTable of changedTables) {
+      if (newTable.booked && newTable.booked._ref) {
+        // find the users payments for the table
+        const userPayments = paymentRecords.filter((record) => {
+            return record.vendor._id === newTable.booked?._ref;
+        });
+
+        const paymentToUpdate = userPayments.find((record) => record.market._id === parsedData.data.marketId);
+
+        if (paymentToUpdate) {
+
+          // const itemToUpdate = paymentToUpdate.items.find((item) => {
+          //   console.log({itemTableId: item.tableId, newTable: newTable.table.id})
+          //   return item.tableId === newTable.table.id;
+          // });
+
+         for (const day of daysThatChanged) {
+          const itemToChange = paymentToUpdate.items.find((item) => item.date === day.date);
+          
+
+          const newItem ={
+            ...itemToChange,
+            tableId: newTable.table.id
+          }
+
+          const newPaymentRecord = {
+            ...paymentToUpdate,
+            items: paymentToUpdate.items.map((item) => {
+              if (item.date === day.date) {
+                return newItem;
+              }
+
+              return item;
+            }),
+          }
+
+          try {
+            await sanityWriteClient.patch(paymentToUpdate._id).set({
+              items: newPaymentRecord.items,
+            }).commit();
+
+            
+          } catch (error) {
+            return {
+              success: false,
+              error: "Error updating payment record",
+            }
+          }
+          
+         }
+        }
+
+      };
+    }
+
   if (sanityResp) {
     revalidatePath("/admin/dashboard/markets/[id]", "page");
     revalidatePath("/dashboard/markets/[id]", "page");
+    revalidatePath("/dashboard/vendors/[id]", "page");
+    revalidatePath("/admin/dashboard/vendors/[id]", "page");
 
     return {
       success: true,

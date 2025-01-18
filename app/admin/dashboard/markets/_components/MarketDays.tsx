@@ -120,7 +120,16 @@ const MarketDays = ({
   useEffect(() => {
     if (saveMarketFormState.success) {
       setEditTables(false);
+      const timeout = setTimeout(() => {
+        const formData = new FormData();
+        formData.append("reset", "reset");
+        saveMarketFormAction(formData);
+        // formRef.current?.reset();
+      }, 4000);
+      return () => clearTimeout(timeout);
     }
+
+
   }, [saveMarketFormState.success])
 
 
@@ -155,7 +164,7 @@ const MarketDays = ({
       </div>
 
       {selectedDay && vendorsForSelectedDay && vendorsForSelectedDay.length > 0 && (
-        <table className="my-10">
+        <table className="my-10 mx-auto">
           <thead>
             <tr>
               <th>Vendor</th>
@@ -173,7 +182,11 @@ const MarketDays = ({
 
                 return (
                   <tr key={`${nanoid()}`} className="text-center capitalize py-2">
-                    <td>{vendor.vendor.businessName}</td>
+                    <td>
+                      <Link href={`/admin/dashboard/vendors/${vendor.vendor._ref}`} target="_blank" rel="noreferrer">
+                        {vendor.vendor.businessName}
+                      </Link>
+                    </td>
                     <td>
                       {vendor.vendor.businessCategory}
                       <input readOnly type="text" hidden name="vendorId" value={vendor.vendor._ref} />
@@ -225,7 +238,7 @@ const MarketDays = ({
           {!editTables && (
 
             <Button
-              className="my-5 py-2 px-8 bg-black opacity-[1] text-white rounded-none mx-auto"
+              className="my-5 py-2 px-8 capitalize bg-black opacity-[1] text-white rounded-none mx-auto"
               onClick={() => setEditTables(true)}
               type="button"
             >
@@ -249,7 +262,7 @@ const MarketDays = ({
               <input type="text" hidden name="date" readOnly value={selectedDay} />
               <input type="text" hidden name="marketId" readOnly value={marketId} />
               <Button
-                className="my-5 py-2 px-8 bg-black opacity-[1] text-white rounded-none mx-auto"
+                className="my-5 capitalize py-2 px-8 bg-black opacity-[1] text-white rounded-none mx-auto"
                 type="button"
                 onClick={() => toggleDialog()}
               >

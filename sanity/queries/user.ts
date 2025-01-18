@@ -71,7 +71,13 @@ const userMarketQueryString = `
         date,
         tableId
     },
-    paymentReturned
+    paymentReturned,
+    "payments": payments[] {
+      stripePaymentIntentId,
+      paymentType,
+      amount,
+      paymentDate
+    }
 `;
 const zodTableItem = z.object({
   price: z.number(),
@@ -90,6 +96,14 @@ const zodAmount = z.object({
 
 export type TAmount = z.infer<typeof zodAmount>;
 
+const zodPaymentSchema =  z.object({
+  amount: z.number(),
+  paymentDate: z.string(),
+  stripePaymentIntentId: z.string().optional().nullable(),
+})
+
+export type TPayment = z.infer<typeof zodPaymentSchema>;
+
 const zodUserMarket = z.object({
   amount: zodAmount,
   market: z.object({
@@ -100,11 +114,16 @@ const zodUserMarket = z.object({
   _id: z.string(),
   items: z.array(zodTableItem),
   paymentReturned: z.boolean().optional().nullable(),
+  payments: z.array(
+    zodPaymentSchema
+  ),
 });
+
+
 
 const zodUserMarkets = z.array(zodUserMarket);
 
-export const getUserPayments = async (userId: string) => {
+export const getUserPaymentRecords = async (userId: string) => {
   try {
     // const user = await getSanityUserByEmail(email);
 
