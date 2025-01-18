@@ -394,7 +394,8 @@ export const saveMarketChanges = async (
 
           const newItem ={
             ...itemToChange,
-            tableId: newTable.table.id
+            tableId: newTable.table.id,
+            _key: nanoid(),
           }
 
           const newPaymentRecord = {
