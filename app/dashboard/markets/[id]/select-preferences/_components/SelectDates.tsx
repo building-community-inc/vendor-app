@@ -7,16 +7,26 @@ import {
 import { TDateType } from "./SelectOptions";
 import { formatDateWLuxon } from "@/utils/helpers";
 import Box from "./Box";
+import { getAvailableDays } from "@/app/admin/dashboard/markets/[id]/create-booking/SelectDates";
 
-const MAX_VENDORS_PER_CATEGORY = 3;
+
+// Reusable function to filter available days
+// const getAvailableDays = (market: TSanityMarket, businessCategory: string, maxVendorsPerCategory: number) => {
+//   return market.daysWithTables?.filter(day => {
+//     const categoryCount = market.vendors?.filter(vendor =>
+//       vendor.vendor.businessCategory === businessCategory &&
+//       vendor.datesBooked.some(bookedDate => bookedDate.date === day.date)
+//     ).length ?? 0;
+
+//     return categoryCount < maxVendorsPerCategory;
+//   });
+// };
 
 const SelectDates = ({
   market,
   handleDateSelect,
   selectedDates,
-  // totalToPay,
   handleOnTableChange,
-  // dueNow,
   businessCategory
 }: {
   market: TSanityMarket;
@@ -28,17 +38,7 @@ const SelectDates = ({
   businessCategory: string;
 }) => {
 
-  // Filter out the days that already have more than MAX_VENDORS_PER_CATEGORY vendors with the same category
-  const availableDays = market.daysWithTables?.filter(day => {
-    // Count the number of vendors with the same category that have booked this day
-    const categoryCount = market.vendors?.filter(vendor =>
-      vendor.vendor.businessCategory === businessCategory &&
-      vendor.datesBooked.some(bookedDate => bookedDate.date === day.date)
-    ).length ?? 0;
-
-    // Return true if the count is less than MAX_VENDORS_PER_CATEGORY, false otherwise
-    return categoryCount < MAX_VENDORS_PER_CATEGORY;
-  });
+  const availableDays = getAvailableDays(market, businessCategory);
 
   if (availableDays?.length === 0) {
     return (
@@ -53,8 +53,6 @@ const SelectDates = ({
       <span className="font-darker-grotesque text-base text-black self-start">Only available tables will be displayed</span>
       <ul className="flex flex-col gap-3 w-full">
         {availableDays?.map((dayObj, index) => {
-
-
           return (
             <li key={dayObj.date}>
               <label

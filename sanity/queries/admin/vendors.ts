@@ -27,7 +27,7 @@ export const getAllVendors = async () => {
 };
 
 export const getVendorById = async (id: string) => {
-  // try {
+  try {
     const result = await sanityClient.fetch(
       `*[_type == "user" && _id == $id][0] {
         ${userQueryString}
@@ -37,6 +37,13 @@ export const getVendorById = async (id: string) => {
 
     const parsedVendor = zodUserWithOptionalBusinessRef.safeParse(result);
 
-    return parsedVendor;
+    if (!parsedVendor.success) {
+      throw new Error(parsedVendor.error.message);
+    }
 
+    return parsedVendor.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };

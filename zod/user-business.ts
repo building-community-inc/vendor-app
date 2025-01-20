@@ -18,7 +18,7 @@ export const zodUserBase = z.object({
     })
     .optional()
     .nullable(),
-    credits: z.number().optional().nullable()
+  credits: z.number().optional().nullable(),
 });
 
 export type TUserBase = z.infer<typeof zodUserBase>;
@@ -90,16 +90,18 @@ export const zodSanityBusiness = zodBusiness.merge(
   })
 );
 
-export const zodSanityUpdateBusiness = zodSanityBusiness.merge(z.object({
-  _id: z.string(),
-  // logo: z
-  //     .object({
-  //       _type: z.literal("image"),
-  //       asset: z.object({
-  //         _ref: z.string(),
-  //       }),
-  //     })
-}))
+export const zodSanityUpdateBusiness = zodSanityBusiness.merge(
+  z.object({
+    _id: z.string(),
+    // logo: z
+    //     .object({
+    //       _type: z.literal("image"),
+    //       asset: z.object({
+    //         _ref: z.string(),
+    //       }),
+    //     })
+  })
+);
 
 // export type TSanityBusiness = z.infer<typeof zodSanityBusiness>;
 
@@ -116,12 +118,7 @@ export const zodBusinessQuery = zodBusinessForm.merge(
   z.object({
     _id: z.string(),
     logoUrl: z.string().optional().nullable(),
-    pdfs: z
-      .array(
-        pdfSchema
-      )
-      .optional()
-      .nullable(),
+    pdfs: z.array(pdfSchema).optional().nullable(),
     logo: z
       .object({
         _type: z.literal("image"),
@@ -131,7 +128,6 @@ export const zodBusinessQuery = zodBusinessForm.merge(
       })
       .optional()
       .nullable(),
-      
   })
 );
 // export const zodBusinessForm = zodBusiness.merge(

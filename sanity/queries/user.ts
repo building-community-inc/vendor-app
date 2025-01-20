@@ -36,7 +36,7 @@ export const userQueryString = `
           "size": asset -> size,
       },
   },
-credits
+  credits
         `;
 export const getSanityUserByEmail = async (email: string) => {
   const user =

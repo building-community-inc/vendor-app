@@ -48,7 +48,6 @@ const CreateBookingForm = ({ market, allVendors, sanityUser }: {
       <SelectDetails market={market} user={sanityUser} />
 
 
-      <Button className="rounded-none bg-black text-white py-4 px-6 text-lg mx-auto my-10" type="submit">Complete Booking</Button>
       <Button className="rounded-none bg-black text-white py-4 px-6 text-lg mx-auto my-10" type="button">
         <Link href={`/admin/dashboard/markets/${market._id}`}>
           Back to Market

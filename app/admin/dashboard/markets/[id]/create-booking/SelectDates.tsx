@@ -4,36 +4,33 @@ import { areDatesSame, formatDateWLuxon } from "@/utils/helpers";
 import { TDateType } from "@/app/dashboard/markets/[id]/select-preferences/_components/SelectOptions";
 import { TDayWithTable, TSanityMarket, TTableInDay } from "@/sanity/queries/admin/markets/zods";
 
+const MAX_VENDORS_PER_CATEGORY = 3;
+
+export const getAvailableDays = (market: TSanityMarket, businessCategory: string) => {
+  return market.daysWithTables?.filter(day => {
+    const categoryCount = market.vendors?.filter(vendor =>
+      vendor.vendor.businessCategory === businessCategory &&
+      vendor.datesBooked.some(bookedDate => bookedDate.date === day.date)
+    ).length ?? 0;
+
+    return categoryCount < MAX_VENDORS_PER_CATEGORY;
+  });
+};
+
 const SelectDates = ({
   market,
   handleDateSelect,
   selectedDates,
   handleOnTableChange,
   businessCategory,
-
 }: {
   market: TSanityMarket;
   handleDateSelect: (date: TDayWithTable) => void;
   handleOnTableChange: (table: TTableInDay, date: TDateType) => void;
   selectedDates: TDayWithTable[];
   businessCategory: string;
-
 }) => {
-  // Filter out the days that already have more than the allowed number of vendors with the same category
-  const maxVendorsPerCategory = 3; // Set the maximum number of vendors allowed per category
-
-  const availableDays = market.daysWithTables?.filter(day => {
-    // Count the number of vendors with the same category
-    const vendorCount = (market.vendors?.reduce((count, vendor) => {
-      if (vendor.vendor.businessCategory === businessCategory) {
-        return count + 1;
-      }
-      return count;
-    }, 0)) ?? 0;
-
-    // Return true if the number of vendors is less than the allowed maximum, false otherwise
-    return vendorCount < maxVendorsPerCategory;
-  });
+  const availableDays = getAvailableDays(market, businessCategory);
 
   if (availableDays?.length === 0) {
     return (
@@ -47,8 +44,6 @@ const SelectDates = ({
       <h2 className="font-bold">Select Dates</h2>
       <ul className="flex flex-col gap-3 w-full">
         {availableDays?.map((dayObj, index) => {
-
-
           return (
             <li key={dayObj.date}>
               <label
@@ -57,7 +52,6 @@ const SelectDates = ({
               >
                 <div
                   className="flex items-center gap-2 h-full relative z-10"
-                // onClick={() => handleDateSelect(dayObj)}
                 >
                   <input
                     type="checkbox"
@@ -108,7 +102,6 @@ const SelectDates = ({
           )
         })}
       </ul>
-
     </section>
   );
 };

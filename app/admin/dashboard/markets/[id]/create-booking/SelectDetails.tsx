@@ -7,6 +7,7 @@ import { TDateType, TSelectedTableType } from "@/app/dashboard/markets/[id]/sele
 import SelectPaymentOptions from "./SelectPaymentOptions";
 import SelectDates from "./SelectDates";
 import { useSearchParams } from 'next/navigation'
+import Button from "@/app/_components/Button";
 
 const SelectDetails = ({ market, user }: { market: TSanityMarket, user: TUserWithOptionalBusinessRef }) => {
   const [newSelectedDates, setNewSelectedDates] = useState<TDayWithTable[]>([]);
@@ -17,6 +18,7 @@ const SelectDetails = ({ market, user }: { market: TSanityMarket, user: TUserWit
   const searchParams = useSearchParams();
 
   const selectedBusinessCategory = searchParams.get('businessCategory')
+  const selectedVendor = searchParams.get('selectedVendor')
 
 
   const handleNewDateSelect = (date: TDayWithTable) => {
@@ -48,6 +50,9 @@ const SelectDetails = ({ market, user }: { market: TSanityMarket, user: TUserWit
   };
   const dueNow = isPayNowSelected ? totalToPay : selectedTables.length * 50;
 
+  if (!selectedVendor) return;
+
+
   return (
     <>
       <SelectDates
@@ -58,7 +63,9 @@ const SelectDetails = ({ market, user }: { market: TSanityMarket, user: TUserWit
         businessCategory={selectedBusinessCategory ?? ''}
       />
 
-      <SelectPaymentOptions setIsPayNowSelected={setIsPayNowSelected} />
+      <SelectPaymentOptions
+        setIsPayNowSelected={setIsPayNowSelected}
+      />
 
       <h2 className="font-bold">Total Booking Cost:</h2>
       <span>${totalToPay}</span>
@@ -70,13 +77,14 @@ const SelectDetails = ({ market, user }: { market: TSanityMarket, user: TUserWit
       <h2 className="font-bold">HST:</h2>
       <span>${(dueNow * .13).toFixed(2)}</span>
       <input hidden type="text" value={(dueNow * .13).toFixed(2)} name="hst" readOnly />
-      
+
       <p>Amount Owing:</p>
       <span>${totalToPay - dueNow}</span>
       <input hidden type="text" value={totalToPay - dueNow} name="owed" readOnly />
       <input hidden type="text" value={market._id} name="marketId" readOnly />
 
-      
+      <Button className="rounded-none bg-black text-white py-4 px-6 text-lg mx-auto my-10" type="submit">Complete Booking</Button>
+
     </>
   );
 }

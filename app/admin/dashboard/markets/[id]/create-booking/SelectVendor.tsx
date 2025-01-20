@@ -99,7 +99,7 @@ const SelectVendor = ({ allVendors }: {
                     setSelectedVendor(vendor);
                     setInputText(vendor.business?.businessName || vendor.email); // Update the input text
                     setInputFocused(false);
-                    router.push(`?businessCategory=${vendor.business?.industry}`, {
+                    router.push(`?businessCategory=${vendor.business?.industry}&selectedVendor=${vendor._id}`, {
                       scroll: false,
                     })
                   }}
