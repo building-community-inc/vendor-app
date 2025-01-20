@@ -1,18 +1,37 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { useClickOutside, useEscapeKey } from "@/app/_components/hooks";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
+import Link from "next/link";
+import { getVendorById } from "@/sanity/queries/admin/vendors";
 
 const SelectVendor = ({ allVendors }: {
   allVendors: TUserWithOptionalBusinessRef[];
 }) => {
+
+  const searchParams = useSearchParams();
+
+  const selectedVendorId = searchParams.get('selectedVendor');
   const [inputText, setInputText] = useState("")
   const [selectedVendor, setSelectedVendor] = useState<TUserWithOptionalBusinessRef | null>(null)
   const [isInputFocused, setInputFocused] = useState(false);
   const inputRef = useRef(null);
-  const router = useRouter()
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchVendor = async () => {
+      if (selectedVendorId) {
+
+        const vendorData = await getVendorById(selectedVendorId);
+        if (vendorData.success) {
+          setSelectedVendor(vendorData.data);
+        }
+      }
+    };
+    fetchVendor();
+  }, [selectedVendorId]);
 
   const filteredVendors = allVendors.filter(vendor => {
     if (inputText.trim() === '') {
@@ -52,18 +71,18 @@ const SelectVendor = ({ allVendors }: {
             Selected Vendor: {selectedVendor.business?.businessName || selectedVendor.email}
           </p>
           <input type="hidden" name="vendorId" value={selectedVendor._id} readOnly />
-          <IoIosCloseCircleOutline 
-          className="w-10 h-10 cursor-pointer" 
-          onClick={() => {
-            setInputText('')
-            router.push(`?businessCategory=`, {
-              scroll: false,
-            })
-            setSelectedVendor(null)
-          }
+          <IoIosCloseCircleOutline
+            className="w-10 h-10 cursor-pointer"
+            onClick={() => {
+              setInputText('')
+              router.push(`?businessCategory=`, {
+                scroll: false,
+              })
+              setSelectedVendor(null)
+            }
 
 
-          } />
+            } />
         </div>
       ) : (
         <label htmlFor="" className="relative">
@@ -117,6 +136,14 @@ const SelectVendor = ({ allVendors }: {
         </label>
       )
       }
+
+      {selectedVendor && (
+        <Link href={`/admin/dashboard/vendors/${selectedVendor._id}`} target="_blank">
+          <span className="text-blue-600 underline">
+            View Vendor Profile
+          </span>
+        </Link>
+      )}
     </section >
   );
 }
