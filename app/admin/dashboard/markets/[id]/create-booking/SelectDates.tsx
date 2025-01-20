@@ -19,19 +19,20 @@ const SelectDates = ({
   businessCategory: string;
 
 }) => {
-  // Filter out the days that already have a business with the same category
-  const availableDays = market.daysWithTables?.filter(day => {
-    // Check if there is a vendor with the same category that has booked this day
-    const isBooked = market.vendors?.some(vendor => {
-      return (
-        vendor.vendor.businessCategory === businessCategory &&
-        vendor.datesBooked.some(bookedDate => areDatesSame(bookedDate.date, day.date))
-      )
-    }
-    );
+  // Filter out the days that already have more than the allowed number of vendors with the same category
+  const maxVendorsPerCategory = 3; // Set the maximum number of vendors allowed per category
 
-    // Return true if the day is not booked, false otherwise
-    return !isBooked;
+  const availableDays = market.daysWithTables?.filter(day => {
+    // Count the number of vendors with the same category
+    const vendorCount = (market.vendors?.reduce((count, vendor) => {
+      if (vendor.vendor.businessCategory === businessCategory) {
+        return count + 1;
+      }
+      return count;
+    }, 0)) ?? 0;
+
+    // Return true if the number of vendors is less than the allowed maximum, false otherwise
+    return vendorCount < maxVendorsPerCategory;
   });
 
   if (availableDays?.length === 0) {

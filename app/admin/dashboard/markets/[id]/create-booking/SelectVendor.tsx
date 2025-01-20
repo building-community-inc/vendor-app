@@ -56,7 +56,9 @@ const SelectVendor = ({ allVendors }: {
           className="w-10 h-10 cursor-pointer" 
           onClick={() => {
             setInputText('')
-            router.push(`?businessCategory=`)
+            router.push(`?businessCategory=`, {
+              scroll: false,
+            })
             setSelectedVendor(null)
           }
 
@@ -97,7 +99,9 @@ const SelectVendor = ({ allVendors }: {
                     setSelectedVendor(vendor);
                     setInputText(vendor.business?.businessName || vendor.email); // Update the input text
                     setInputFocused(false);
-                    router.push(`?businessCategory=${vendor.business?.industry}`)
+                    router.push(`?businessCategory=${vendor.business?.industry}`, {
+                      scroll: false,
+                    })
                   }}
                 >
                   <span>
