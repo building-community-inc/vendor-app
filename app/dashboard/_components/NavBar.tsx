@@ -8,6 +8,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import RedDot from "./RedDot";
+import { UserButton } from "@clerk/nextjs";
+
+import "./Navbar.css"
 
 const navOptions = [
   {
@@ -35,11 +38,15 @@ const navOptions = [
 const NavBar = ({ user, areThereNewMessages }: { user: TUserWithOptionalBusinessRef, areThereNewMessages: boolean }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const pathname = usePathname();
+  const [localUrl, setLocalUrl] = useState<string>();
 
   useEffect(() => {
     setIsNavOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    setLocalUrl(window.location.href);
+  }, []);
   return (
     <aside
       className={`absolute z-10 md:relative md:bg-nav-bg text-nav-text px-10 flex flex-col py-[10px] gap-2 h-screen overflow-y-scroll hide-scrollbar pb-10 ${isNavOpen
@@ -54,8 +61,8 @@ const NavBar = ({ user, areThereNewMessages }: { user: TUserWithOptionalBusiness
           barColor={'bg-black'}
         />
       </div>
-      <div className={`${isNavOpen ? "" : "hidden"} md:block`}>
-        <Link href="/" className="bg-red-500">
+      <div className={`${isNavOpen ? "" : "hidden"} md:block `}>
+        <Link href="/" className="">
           <Image
             src={"/logo-on-white-bg.png"}
             alt="logo"
@@ -64,6 +71,11 @@ const NavBar = ({ user, areThereNewMessages }: { user: TUserWithOptionalBusiness
             className="w-[468px] object-cover mx-auto"
           />
         </Link>
+        <div className="mx-auto w-fit mb-6">
+          <UserButton
+            afterSignOutUrl={localUrl}
+          />
+        </div>
         <ul className="flex flex-col gap-4">
           {navOptions.map((option) => (
             <li key={option.title} className="w-fit mx-auto hover:scale-105 transition-all">
