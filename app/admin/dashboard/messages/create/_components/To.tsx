@@ -5,6 +5,7 @@ import { useClickOutside, useEscapeKey } from "@/app/_components/hooks";
 import { debounce } from "@/utils/helpers";
 import { Input } from "./CreateMessageForm";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
+import { FaTrash } from "react-icons/fa";
 
 const To = ({ vendorList }: {
   vendorList: TUserWithOptionalBusinessRef[];
@@ -81,9 +82,12 @@ const To = ({ vendorList }: {
         <ul>
           <strong>Sending Message To:</strong>
           {selectedVendors.map(vendor => (
-            <li key={vendor._id}>
+            <li key={vendor._id} className="flex items-center gap-2">
               {vendor.email}
               <input type="text" hidden readOnly name="vendorId" value={vendor._id} />
+              <FaTrash className="cursor-pointer" onClick={() => {
+                setSelectedVendors(prevVendors => prevVendors.filter(v => v._id !== vendor._id))
+              }} />
             </li>
           ))}
         </ul>
@@ -93,13 +97,12 @@ const To = ({ vendorList }: {
         <ul ref={vendorListRef} className="absolute top-full bg-white border rounded-lg overflow-scroll max-h-[500px] border-[#707070] mt-1 w-full">
           {filterVendors(vendorList).map((vendor) => (
             <li key={vendor._id} onClick={() => {
-              // setValue(vendor.email);
-              // setFocused(false)
-              handleCheckboxChange(vendor)({ target: { checked: true } } as any)
+              const isChecked = selectedVendors.some(selectedVendor => selectedVendor._id === vendor._id);
+              handleCheckboxChange(vendor)({ target: { checked: !isChecked } } as any)
             }}
               className="py-2 px-2 hover:bg-[#F7F7F7] flex flex-col"
             >
-              <p>
+              <p className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   name="vendorSelected"

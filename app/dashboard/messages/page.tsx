@@ -51,7 +51,7 @@ const Page = async () => {
               </section>
             </div>
             <footer className="flex flex-col">
-              <OpenBody body={message.body} messageId={message._id} userId={sanityUser._id} />
+              <OpenBody isMessageRead={isRead ?? false} body={message.body} messageId={message._id} userId={sanityUser._id} />
             </footer>
 
           </li>
