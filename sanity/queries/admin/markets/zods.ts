@@ -39,7 +39,10 @@ export const zodVendorSchema = z.object({
     businessName: z.string(),
     businessCategory: z.string(),
     _ref: z.string(),
-    _type: z.string()
+    _type: z.string(),
+    email: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
   }),
   datesBooked: z.array(
     z.object({

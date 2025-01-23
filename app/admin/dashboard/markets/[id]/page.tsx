@@ -5,6 +5,7 @@ import Image from "next/image";
 import MarketDays from "../_components/MarketDays";
 import { unstable_noStore as noStore } from 'next/cache';
 import CancelMarketButton from "./_components/CancelMarketButton";
+import AllVendors from "./_components/AllVendors";
 
 
 const Page = async ({
@@ -39,7 +40,6 @@ const Page = async ({
 
   const availableTablesForDay = dayInfo?.tables.filter((table) => table.booked === null) || null;
 
-
   return (
     <main className="pt-14 px-5 w-full flex flex-col gap-8 max-w-3xl mx-auto">
       <h1 className="font-bold text-xl">{market?.name}</h1>
@@ -65,6 +65,8 @@ const Page = async ({
       {/* {!market.cancelled && (
         <CancelMarketButton marketId={market._id} />
       )} */}
+
+      <AllVendors vendors={market.vendors} />
     </main>
   );
 };

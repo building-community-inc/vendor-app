@@ -63,6 +63,9 @@ export const individualMarketQueryString = `
       "_ref": _id,
       "businessName": business -> businessName,
       "businessCategory": business -> industry, 
+      email,
+      firstName,
+      lastName
     },
     "datesBooked": datesBooked[] {
       date, 
