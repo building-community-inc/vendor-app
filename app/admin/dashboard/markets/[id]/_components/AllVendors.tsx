@@ -10,14 +10,12 @@ const AllVendors = ({
 
   const [copySuccess, setCopySuccess] = useState<string | null>(null);
 
-  if (!vendors) return null;
+  if (!vendors || vendors.length < 1) return null;
 
   const handleCopyEmails = () => {
     const emails = vendors.map(vendor => vendor.vendor.email).join(", ");
     navigator.clipboard.writeText(emails).then(() => {
       setCopySuccess("Emails copied to clipboard!");
-
-      console.log({ emails })
       setTimeout(() => setCopySuccess(null), 2000);
     }).catch(err => {
       setCopySuccess("Failed to copy emails.");

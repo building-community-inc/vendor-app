@@ -12,10 +12,10 @@ import Link from "next/link";
 type TVendorCategory = {
   name: string;
 };
-const EditProfileForm = ({ sanityUser, vendorCategories }: {
+const EditProfileForm = ({ sanityUser, vendorCategories, redirectPath }: {
   sanityUser: TUserWithOptionalBusinessRef;
   vendorCategories: TVendorCategory[];
-
+  redirectPath?: string;
 }) => {
 
   const [formState, formAction] = useFormState(saveNewBusinessInfo, {
@@ -49,7 +49,13 @@ const EditProfileForm = ({ sanityUser, vendorCategories }: {
 
   useEffect(() => {
     if (formState.success) {
-      redirect("/dashboard")
+      if (redirectPath) {
+        redirect(redirectPath)
+      } else {
+        redirect("/dashboard")
+      }
+
+
     }
 
   }, [formState])
@@ -180,10 +186,10 @@ const BusinessFormInputComp = ({
 };
 
 
-const SubmitButton = ({formChanged}: {
+const SubmitButton = ({ formChanged }: {
   formChanged: boolean;
 }) => {
-  const {pending} = useFormStatus();
+  const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={!formChanged || pending} className="disabled:text-gray-400 disabled:bg-gray-300 w-fit font-bold font-darker-grotesque">
       {pending ? "Saving..." : "Save"}

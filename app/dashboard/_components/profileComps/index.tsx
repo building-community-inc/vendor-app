@@ -1,12 +1,11 @@
 import Button from "@/app/_components/Button";
-import Dialog from "@/app/_components/Dialog/Dialog";
 import { TAmount, TPayment, TTableItem } from "@/sanity/queries/user";
 import { cn } from "@/utils";
-import { TPdf, TUserWithOptionalBusinessRef } from "@/zod/user-business";
+import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import Image from "next/image";
 import Link from "next/link";
 import { ComponentPropsWithoutRef, useRef } from "react";
-import { FaRegFilePdf } from "react-icons/fa";
+import { DateTime } from "luxon";
 
 export const BusinessCard = ({ business, ownerName, credits }: {
   business: TUserWithOptionalBusinessRef["business"];
@@ -55,6 +54,22 @@ export const DashboardSection = ({ children, className }: React.ComponentPropsWi
   )
 }
 
+export const DateOfAcceptance = ({ date }: { date: string | null | undefined }) => {
+  if (!date) return (
+    <DashboardSection className="py-5 px-3 flex flex-col gap-5">
+      <span>Vendor has not accepted terms</span>
+    </DashboardSection>
+  );
+
+  const formattedDate = DateTime.fromISO(date).toLocaleString(DateTime.DATE_FULL);
+
+  return (
+    <DashboardSection className="py-5 px-3 flex flex-col gap-5">
+      <span className="font-semibold">Vendor accepted terms on:</span>
+      <span>{formattedDate}</span>
+    </DashboardSection>
+  )
+}
 
 export const BusinessSection = ({ children, className }: React.ComponentPropsWithoutRef<"section"> & {
   children: React.ReactNode;
@@ -89,32 +104,6 @@ export const ContactCard = ({ email, phone, address }: {
     </DashboardSection>
   )
 }
-
-export const SupportingDocsCard = ({
-  pdfs
-}: {
-  pdfs: TPdf[];
-}) => {
-
-  return (
-    <DashboardSection className="py-5 px-3 flex flex-col gap-5">
-      <h3 className="text-xl font-segoe font-bold text-black">Supporting Documents:</h3>
-      <ul>
-        {pdfs.map((pdf) => (
-          <li key={pdf._id} className="flex items-center justify-between">
-            <a href={pdf.url} target="_blank" rel="noreferrer" className="font-segoe text-2xl flex items-center">
-              <FaRegFilePdf className="text-2xl" />
-              <span>
-                {pdf.originalFileName}
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </DashboardSection>
-  )
-}
-
 
 
 export const PaymentRecordCard = ({ market, paymentId, items, amount, admin }: {

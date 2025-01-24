@@ -106,7 +106,7 @@ export const marketSchema = defineType({
                       }
                       return {
                         title: businessName,
-                        subtitle: `${firstName} ${lastName}`,
+                        subtitle: `${firstName} ${lastName} - table # ${tableId}`,
                         media,
                       };
                     }

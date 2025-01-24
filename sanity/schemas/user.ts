@@ -79,5 +79,17 @@ export const userSchema = defineType({
       title: "Credits",
       initialValue: 0
     })
-  ]
+  ],
+  preview: {
+    select: {
+      title: "firstName",
+      subtitle: "lastName",
+  },
+  prepare({title, subtitle}) {
+    return {
+      title,
+      subtitle
+    }
+  }
+}
 })

@@ -2,7 +2,7 @@
 
 import Button from "@/app/_components/Button";
 import Link from "next/link";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import { useEffect, useState } from "react";
 import UploadPdf from "./UploadPdf";
 import { uploadFiles } from "./uploadFilesAction";
@@ -33,13 +33,15 @@ const UploadFilesForm = ({
   logoUrl,
   businessId,
   pdfs,
-  logoId
+  logoId,
+  redirectPath
 }: {
   businessId: string;
   businessName: string;
   logoUrl?: string | null;
   pdfs?: TPdf[] | null;
   logoId?: string | null;
+  redirectPath?: string;
 }) => {
   const [formState, formAction] = useFormState(uploadFiles, { errors: [], success: false })
 
@@ -63,7 +65,11 @@ const UploadFilesForm = ({
   useEffect(() => {
     setPendingForm(false);
     if (formState.success) {
-      redirect("/dashboard");
+      if (redirectPath) {
+        redirect(redirectPath)
+      } else {
+        redirect("/dashboard");
+      }
     }
   }, [formState]);
 

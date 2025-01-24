@@ -2,11 +2,12 @@ import { getVendorById } from "@/sanity/queries/admin/vendors";
 import Link from "next/link";
 import { approveVendor, disapproveVendor } from "../actions";
 import Button from "@/app/_components/Button";
-import { ContactCard, PaymentRecordCard, SupportingDocsCard } from "@/app/dashboard/_components/profileComps";
+import { ContactCard, DateOfAcceptance, PaymentRecordCard } from "@/app/dashboard/_components/profileComps";
 import NoBz from "@/app/dashboard/_components/NoBz";
 import { getUserPaymentRecords } from "@/sanity/queries/user";
 import { AdminBusinessCard } from "./AdminBusinessCard";
 import { unstable_noStore } from "next/cache";
+import { SupportingDocsCard } from "@/app/dashboard/_components/profileComps/SupportingDocs";
 
 const Page = async ({ params }: {
   params: {
@@ -33,7 +34,7 @@ const Page = async ({ params }: {
   const vendor = vendorData.data;
 
   const vendorPaymentRecords = await getUserPaymentRecords(vendor._id);
-
+  
   return (
     <main className="flex px-10 py-24 gap-24 min-h-screen w-full flex-col justify-center">
       <section className=" flex flex-wrap gap-10 justify-center">
@@ -58,14 +59,20 @@ const Page = async ({ params }: {
           {vendorData.data.business && vendorData.data.business.pdfs && vendorData.data.business.pdfs.length > 0 && (
             <SupportingDocsCard pdfs={vendorData.data.business.pdfs} />
           )}
+
+          <DateOfAcceptance date={vendor.acceptedTerms?.dateAccepted}/>
           <div className="flex gap-8 w-full max-w-[433px] justify-evenly">
 
-            <Button className="h-fit font-bold font-darker-grotesque">
-              <Link href="/dashboard/edit-profile">Edit Profile</Link>
-            </Button>
-            <Button className="h-fit font-bold font-darker-grotesque">
-              <Link href="/dashboard/upload-files">Upload or Edit Files</Link>
-            </Button>
+            <Link href={`/admin/dashboard/vendors/${vendor.email.replace("@", "-at-").replaceAll(".", "-dot-")}/edit-profile`}>
+              <Button className="h-fit font-bold font-darker-grotesque">
+                Edit Profile
+              </Button>
+            </Link>
+            <Link href={`/admin/dashboard/vendors/${vendor.email.replace("@", "-at-").replaceAll(".", "-dot-")}/upload-files`}>
+              <Button className="h-fit font-bold font-darker-grotesque">
+                Upload or Edit Files
+              </Button>
+            </Link>
 
           </div>
           {vendor.status === "pending" ? (
