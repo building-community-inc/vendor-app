@@ -6,8 +6,9 @@ import { DateTime } from 'luxon';
 import Link from "next/link";
 import React from "react";
 import Button from "../_components/Button";
-import { BusinessCard, ContactCard, PaymentRecordCard, SupportingDocsCard } from "./_components/profileComps";
+import { BusinessCard, ContactCard, PaymentRecordCard } from "./_components/profileComps";
 import { unstable_noStore } from "next/cache";
+import { SupportingDocsCard } from "./_components/profileComps/SupportingDocs";
 
 
 const page = async () => {
