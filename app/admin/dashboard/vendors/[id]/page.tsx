@@ -98,7 +98,7 @@ const Page = async ({ params }: {
         </header>
         <ul className="flex flex-col gap-5">
           {vendorPaymentRecords.map(paymentRecord => (
-            <PaymentRecordCard admin payments={paymentRecord.payments} amount={paymentRecord.amount} paymentId={paymentRecord._id} key={paymentRecord._id} market={paymentRecord.market} items={paymentRecord.items} />
+            <PaymentRecordCard admin returned={paymentRecord.paymentReturned} payments={paymentRecord.payments} amount={paymentRecord.amount} paymentId={paymentRecord._id} key={paymentRecord._id} market={paymentRecord.market} items={paymentRecord.items} />
           ))}
         </ul>
 

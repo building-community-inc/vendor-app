@@ -142,7 +142,6 @@ const MarketDays = ({
       : dialogRef.current.showModal();
   }
 
-
   return (
     <form action={saveMarketFormAction} ref={formRef}>
       <div className="flex gap-4 w-fit mx-auto">

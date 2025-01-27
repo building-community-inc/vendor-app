@@ -106,7 +106,7 @@ export const ContactCard = ({ email, phone, address }: {
 }
 
 
-export const PaymentRecordCard = ({ market, paymentId, items, amount, admin }: {
+export const PaymentRecordCard = ({ market, paymentId, items, amount, admin, returned }: {
   market: {
     _id: string;
     name: string;
@@ -117,6 +117,7 @@ export const PaymentRecordCard = ({ market, paymentId, items, amount, admin }: {
   amount: TAmount;
   payments: TPayment[];
   admin?: boolean;
+  returned?: boolean | undefined | null;
 }) => {
 
   return (
@@ -159,7 +160,7 @@ export const PaymentRecordCard = ({ market, paymentId, items, amount, admin }: {
         <p>Total: ${amount.total} </p>
       </MarketSection>
       <MarketSection title="Booking Status">
-        Reserved
+        {returned ? "Cancelled" : "Reserved"}
       </MarketSection>
       <section className="grid gap-5">
         <Button className="h-fit ">
