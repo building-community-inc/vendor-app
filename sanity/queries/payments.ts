@@ -37,6 +37,7 @@ export const zodLatePaymentSchema = z.object({
       price: z.number(),
     })
   ),
+  paymentReturned: z.boolean().optional().nullable(),
 });
 
 export const zodPaymentItem = z.object({
@@ -84,7 +85,8 @@ const paymentQuery = `
     tableId,
     date,
     price
-  }
+  },
+  paymentReturned
 
 `;
 

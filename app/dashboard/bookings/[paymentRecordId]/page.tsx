@@ -20,7 +20,7 @@ const Page = async ({ params }: {
         <header className="text-center flex flex-col gap-1">
 
           <h1 className="text-[1.9rem] font-bold font-darker-grotesque text-black">Booking Details </h1>
-          <span className="text-[1.3rem]">Vendor Table for has been reserved for:</span>
+          <span className="text-[1.3rem]">Vendor Table for has been {paymentRecordInfo.paymentReturned ? "cancelled" : "reserved"} for:</span>
           <h2 className="font-bold text-blac text-[1rem] text-black">{paymentRecordInfo.market.name}</h2>
           <h3 className="text-black text-[1rem]"><strong>Order ID:</strong> {paymentRecordInfo._id}</h3>
         </header>
