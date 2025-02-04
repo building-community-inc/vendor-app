@@ -5,6 +5,7 @@ import { ComponentPropsWithoutRef, useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { editMarketNameAction } from "./editMarketNameAction";
 import { redirect } from "next/navigation";
+import { addZerosToDate } from "@/utils/helpers";
 
 const EditMarketForm = ({ market }: {
   market: TSanityMarket
@@ -13,9 +14,8 @@ const EditMarketForm = ({ market }: {
   const [marketNameFormState, marketNameFormAction] = useFormState(editMarketNameAction, { errors: [], success: false });
   const [marketName, setMarketName] = useState(market.name);
   const [showMarketNameSuccessMessage, setShowMarketNameSuccessMessage] = useState(false);
-  const [lastDayToBook, setLastDayToBook] = useState<string>(market.lastDayToBook || "");
+  const [lastDayToBook, setLastDayToBook] = useState<string>(addZerosToDate(market.lastDayToBook || ""));
   const [formChanged, setFormChanged] = useState(false);
-
   useEffect(() => {
     if (marketNameFormState.success) {
       setShowMarketNameSuccessMessage(true);
@@ -48,7 +48,6 @@ const EditMarketForm = ({ market }: {
     if (lastDayToBook !== (market.lastDayToBook || "")) {
       setFormChanged(true);
     } else {
-      console.log("lastDayToBook did not");
       setFormChanged(false);
     }
   }, [lastDayToBook]);
@@ -58,6 +57,7 @@ const EditMarketForm = ({ market }: {
         <div className="flex flex-col gap-5 w-full">
           <Input label="Market Name" inputName="marketName" value={marketName} onChange={(e) => setMarketName(e.target.value)} />
           <Input type="date" label="Last Day To Book" inputName="lastDayToBook" value={lastDayToBook} onChange={(e) => setLastDayToBook(e.target.value)} />
+          {lastDayToBook}
           <input type="hidden" name="marketId" defaultValue={market._id} />
           <SubmitButton formChanged={formChanged} />
         </div>

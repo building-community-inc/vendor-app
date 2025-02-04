@@ -156,3 +156,9 @@ export const lessThan7DaysToBook = (lastDayToBook: string | null | undefined): b
 
   return lastBookingDate ? lastBookingDate >= today && lastBookingDate <= sevenDaysFromNow : false;
 };
+
+export const addZerosToDate = (dateString: string): string => {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+  return formattedDate;
+};
