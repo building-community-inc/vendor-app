@@ -45,7 +45,7 @@ const EditMarketForm = ({ market }: {
   }, [marketName]);
 
   useEffect(() => {
-    if (lastDayToBook !== (market.lastDayToBook || "")) {
+    if (lastDayToBook !== (addZerosToDate(market.lastDayToBook || ""))) {
       setFormChanged(true);
     } else {
       setFormChanged(false);
@@ -98,7 +98,6 @@ const Input = ({ label, inputName, ...rest }: InputProps) => {
 const SubmitButton = ({ formChanged }: {
   formChanged: boolean;
 }) => {
-  console.log({ formChanged });
   const { pending } = useFormStatus()
   return (
     <Button type="submit" className="text-sm px-4 flex justify-center items-center mx-auto py-0 w-[120px] whitespace-nowrap h-10 disabled:text-gray-500" disabled={!formChanged || pending}>
