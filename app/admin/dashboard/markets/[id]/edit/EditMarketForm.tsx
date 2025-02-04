@@ -57,7 +57,6 @@ const EditMarketForm = ({ market }: {
         <div className="flex flex-col gap-5 w-full">
           <Input label="Market Name" inputName="marketName" value={marketName} onChange={(e) => setMarketName(e.target.value)} />
           <Input type="date" label="Last Day To Book" inputName="lastDayToBook" value={lastDayToBook} onChange={(e) => setLastDayToBook(e.target.value)} />
-          {lastDayToBook}
           <input type="hidden" name="marketId" defaultValue={market._id} />
           <SubmitButton formChanged={formChanged} />
         </div>
