@@ -15,6 +15,7 @@ import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import { DateTime } from "luxon";
 import PaymentOptions from "./PaymentOptions";
 import { createPaymentWithCredits } from "@/app/dashboard/checkout/_components/createPaymentWithCreditsAction";
+import { formatDateString, isMarketOpen, lessThan7DaysToBook } from "@/utils/helpers";
 // import { useRouter } from "next/navigation";
 export type TSelectedTableType = {
   date: string;
@@ -267,11 +268,24 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
     )
   }
 
+  const marketIsOpen = isMarketOpen(market.lastDayToBook);
+
+  if (!marketIsOpen) {
+    return (
+      <div>
+        <p>Sorry, bookings for this event closed{market.lastDayToBook ? ` on ${formatDateString(market.lastDayToBook)}` : ""}.</p>
+      </div>
+    )
+  }
+
   return (
     <form
       onSubmit={handleProceedToCheckout}
       className="w-full items-center min-w-[250px] flex flex-col gap-5 pb-10"
     >
+      {market.lastDayToBook && lessThan7DaysToBook(market.lastDayToBook) && (
+        <p className="text-red-500">Bookings close on: {formatDateString(market.lastDayToBook)}</p>
+      )}
       <SelectDates
         market={market}
         handleDateSelect={handleNewDateSelect}
@@ -301,8 +315,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         className="rounded-lg py-5 px-3 text-black border border-black w-full max-w-[544px]"
         value={specialRequest}
         onChange={(e) => setSpecialRequest(e.target.value)}
-      /> */}
-
+        /> */}
       <ContinueButton type="submit" className="max-w-[544px]">{payingWithCredits ? "Completing Payment..." : "Complete Booking"}</ContinueButton>
     </form>
   );

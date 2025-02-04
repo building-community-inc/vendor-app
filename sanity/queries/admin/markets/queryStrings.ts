@@ -25,6 +25,7 @@ export const marketQueryString = `
     securityPhone,
     loadInInstructions,
   },
+  lastDayToBook,
   "daysWithTables": daysWithTables[] {
     date,
 
@@ -57,15 +58,17 @@ export const individualMarketQueryString = `
     loadInInstructions,
     vendorInstructions
   },
+  lastDayToBook,
   "vendors": vendors[] {
     "vendor": vendor->{
       "_type": "reference",
       "_ref": _id,
       "businessName": business -> businessName,
-      "businessCategory": business -> industry, 
+      "businessCategory": business -> industry,
+      "instagram": business -> instagramHandle,  
       email,
       firstName,
-      lastName
+      lastName,
     },
     "datesBooked": datesBooked[] {
       date, 

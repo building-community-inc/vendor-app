@@ -1,6 +1,6 @@
 "use client";
 
-import { areDatesSame, formatDateWLuxon } from "@/utils/helpers";
+import { formatDateWLuxon } from "@/utils/helpers";
 import { TDateType } from "@/app/dashboard/markets/[id]/select-preferences/_components/SelectOptions";
 import { TDayWithTable, TSanityMarket, TTableInDay } from "@/sanity/queries/admin/markets/zods";
 

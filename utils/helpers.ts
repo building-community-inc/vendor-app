@@ -131,3 +131,28 @@ export function debounce<F extends (...args: any[]) => any>(func: F, wait: numbe
     timeout = setTimeout(() => func(...args), wait);
   }
 }
+
+
+export const isMarketOpen = (lastDayToBook: string | null | undefined): boolean => {
+  const today = DateTime.now().toISODate();
+  if (!lastDayToBook) return true;
+
+  const [year, month, day] = lastDayToBook.split('-').map(Number);
+  const formattedDate = year && month && day && `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+  const lastBookingDate = formattedDate && DateTime.fromISO(formattedDate).toISODate();
+
+  return lastBookingDate ? lastBookingDate >= today : true;
+};
+
+export const lessThan7DaysToBook = (lastDayToBook: string | null | undefined): boolean => {
+  
+  if (!lastDayToBook) return false;
+
+  const [year, month, day] = lastDayToBook.split('-').map(Number);
+  const formattedDate = year && month && day && `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+  const lastBookingDate = formattedDate && DateTime.fromISO(formattedDate).toISODate();
+  const today = DateTime.now().toISODate();
+  const sevenDaysFromNow = DateTime.now().plus({ days: 7 }).toISODate();
+
+  return lastBookingDate ? lastBookingDate >= today && lastBookingDate <= sevenDaysFromNow : false;
+};

@@ -29,15 +29,16 @@ export const editMarketNameAction = async (
   }
   const marketId = formData.get("marketId");
   const marketName = formData.get("marketName");
+  const lastDayToBook = formData.get("lastDayToBook");
   
-  if (!marketId || !marketName) {
+  if (!marketId || !marketName || !lastDayToBook) {
     return {
-      errors: ["Market ID and Market Name are required"],
+      errors: ["Market Name and last day to book are required"],
       success: false
     }
   }
 
-  const sanityResp = await sanityWriteClient.patch(marketId as string).set({ name: marketName as string }).commit()
+  const sanityResp = await sanityWriteClient.patch(marketId as string).set({ name: marketName as string, lastDayToBook: lastDayToBook as string }).commit()
 
   if (sanityResp) {
     

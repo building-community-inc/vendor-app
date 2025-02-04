@@ -55,8 +55,8 @@ const filterCurrentMarkets = (markets: TSanityMarket[]) => {
 };
 
 export const getCurrentMarkets = async () => {
-  const currentDate = new Date().toISOString().split("T")[0];
-
+  // const currentDate = new Date().toISOString().split("T")[0];
+  // console.log({ currentDate });
   try {
     const result = await sanityClient.fetch(
       // `*[_type == 'market' && date >= $currentDate]{
@@ -64,7 +64,7 @@ export const getCurrentMarkets = async () => {
 
         ${marketQueryString}
       }`,
-      { currentDate }
+      // { currentDate }
     );
 
     const parsedResult = zodMarketQueryArray.safeParse(result);

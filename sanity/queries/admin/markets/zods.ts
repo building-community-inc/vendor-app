@@ -43,6 +43,7 @@ export const zodVendorSchema = z.object({
     email: z.string(),
     firstName: z.string(),
     lastName: z.string(),
+    instagram: z.string().optional().nullable(),
   }),
   datesBooked: z.array(
     z.object({
@@ -74,6 +75,7 @@ export const zodMarketQuery = zodMarketFormSchema.merge(
     vendors: z.array(zodVendorSchema).optional().nullable(),
 
     daysWithTables: zodDaysWithTables.optional().nullable(),
+    lastDayToBook: z.string().optional().nullable(),
   })
 );
 export type TSanityMarket = z.infer<typeof zodMarketQuery>;

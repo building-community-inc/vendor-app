@@ -4,14 +4,17 @@ import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 import { ComponentPropsWithoutRef, useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { editMarketNameAction } from "./editMarketNameAction";
+import { redirect } from "next/navigation";
 
 const EditMarketForm = ({ market }: {
   market: TSanityMarket
 }) => {
 
-  const [marketNameFormState, marketNameFormAction] = useFormState(editMarketNameAction, { errors: [], success: false })
-  const [marketName, setMarketName] = useState(market.name)
-  const [showMarketNameSuccessMessage, setShowMarketNameSuccessMessage] = useState(false)
+  const [marketNameFormState, marketNameFormAction] = useFormState(editMarketNameAction, { errors: [], success: false });
+  const [marketName, setMarketName] = useState(market.name);
+  const [showMarketNameSuccessMessage, setShowMarketNameSuccessMessage] = useState(false);
+  const [lastDayToBook, setLastDayToBook] = useState<string>(market.lastDayToBook || "");
+  const [formChanged, setFormChanged] = useState(false);
 
   useEffect(() => {
     if (marketNameFormState.success) {
@@ -22,18 +25,42 @@ const EditMarketForm = ({ market }: {
         marketNameFormState.success = false; // Reset success state
       }, 3000);
 
+      const timeoutPageRedir = setTimeout(() => {
+        redirect(`/admin/dashboard/markets/${market._id}`);
+      }, 4000);
+
       return () => {
         clearTimeout(timeout);
+        clearTimeout(timeoutPageRedir);
       };
     }
   }, [marketNameFormState.success]);
 
+  useEffect(() => {
+    if (marketName !== market.name) {
+      setFormChanged(true);
+    } else {
+      setFormChanged(false);
+    }
+  }, [marketName]);
+
+  useEffect(() => {
+    if (lastDayToBook !== (market.lastDayToBook || "")) {
+      setFormChanged(true);
+    } else {
+      console.log("lastDayToBook did not");
+      setFormChanged(false);
+    }
+  }, [lastDayToBook]);
   return (
     <>
       <form action={marketNameFormAction} className="flex gap-5 justify-between items-end">
-        <Input label="Market Name" inputName="marketName" value={marketName} onChange={(e) => setMarketName(e.target.value)} />
-        <input type="hidden" name="marketId" defaultValue={market._id} />
-        <SubmitButton originalMarketName={market.name} newMarketName={marketName} />
+        <div className="flex flex-col gap-5 w-full">
+          <Input label="Market Name" inputName="marketName" value={marketName} onChange={(e) => setMarketName(e.target.value)} />
+          <Input type="date" label="Last Day To Book" inputName="lastDayToBook" value={lastDayToBook} onChange={(e) => setLastDayToBook(e.target.value)} />
+          <input type="hidden" name="marketId" defaultValue={market._id} />
+          <SubmitButton formChanged={formChanged} />
+        </div>
       </form>
       {marketNameFormState.errors && marketNameFormState.errors.length > 0 && (
         <ul className="flex flex-col w-fit mx-auto">
@@ -43,7 +70,7 @@ const EditMarketForm = ({ market }: {
         </ul>
       )}
       {showMarketNameSuccessMessage && (
-        <p className="text-green-500 text-sm">Market name updated successfully</p>
+        <p className="text-green-500 text-sm text-center">Market updated successfully</p>
       )}
       {/* <img src={market.marketCover.url} alt={market.name} className="w-[200px] h-[200px] object-cover" /> */}
     </>
@@ -69,14 +96,14 @@ const Input = ({ label, inputName, ...rest }: InputProps) => {
 };
 
 
-const SubmitButton = ({ newMarketName, originalMarketName }: {
-  originalMarketName: string;
-  newMarketName: string;
+const SubmitButton = ({ formChanged }: {
+  formChanged: boolean;
 }) => {
+  console.log({ formChanged });
   const { pending } = useFormStatus()
   return (
-    <Button type="submit" className="text-sm px-4 py-0 w-[120px] whitespace-nowrap h-10 disabled:text-gray-500" disabled={newMarketName === originalMarketName || pending}>
-      Save name
+    <Button type="submit" className="text-sm px-4 flex justify-center items-center mx-auto py-0 w-[120px] whitespace-nowrap h-10 disabled:text-gray-500" disabled={!formChanged || pending}>
+      Save
     </Button>
   )
 }

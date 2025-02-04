@@ -1,7 +1,7 @@
 import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
 import TableView from "../../venues/_components/TableView";
 import Image from "next/image";
-import { formatDateWLuxon, tablePriceTodisplay } from "@/utils/helpers";
+import { formatDateString, formatDateWLuxon, tablePriceTodisplay } from "@/utils/helpers";
 import Button from "@/app/_components/Button";
 import DeleteMarket from "./DeleteMarket";
 import Link from "next/link";
@@ -50,9 +50,28 @@ const MarketCard = ({
           <p>{market.venue.title}</p>
           <p>{market.venue.address}</p>
         </article>
-        <p>
-          <strong> {priceToDisplay}</strong> per table
-        </p>
+        <div className="flex flex-col items-end">
+
+          <p>
+            <strong> {priceToDisplay}</strong> per table
+          </p>
+          <div className="max-w-[20ch]">
+            {market.lastDayToBook ? (
+              <>
+                <p>
+                  <strong>
+                    Last day to book:
+                  </strong>
+                </p>
+                <p>
+                  {formatDateString(market.lastDayToBook)}
+                </p>
+              </>
+            ) : (
+              <p className="text-red-600 text-right">Market is missing last day to book</p>
+            )}
+          </div>
+        </div>
       </section>
       <section className="flex flex-col items-center gap-4 justify-evenly pb-5">
         <ul className="flex flex-col gap-4 w-full">
