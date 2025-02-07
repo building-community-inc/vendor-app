@@ -6,7 +6,7 @@ export const getAllMarkets = async () => {
   try {
     const result = await sanityClient.fetch(
       `*[_type == 'market']{
-        ${marketQueryString}
+        ${individualMarketQueryString}
       }`
     );
     const parsedResult = zodMarketQueryArray.safeParse(result);

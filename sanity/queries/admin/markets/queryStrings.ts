@@ -28,7 +28,6 @@ export const marketQueryString = `
   lastDayToBook,
   "daysWithTables": daysWithTables[] {
     date,
-
     "tables": tables[] {
       "table": table {
         id,
@@ -86,7 +85,13 @@ export const individualMarketQueryString = `
       },
       "booked": booked -> {
         "_type": "reference",
-        "_ref": _id
+        "_ref": _id,
+        "businessName": business -> businessName,
+        "businessCategory": business -> industry,
+        "instagram": business -> instagramHandle,  
+        email,
+        firstName,
+        lastName,
       }
     }
   },

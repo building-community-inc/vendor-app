@@ -9,6 +9,7 @@ import { nanoid } from "nanoid";
 import Dialog from "@/app/_components/Dialog/Dialog";
 import { TTable, TVendor } from "@/sanity/queries/admin/markets/zods";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { TMarketVendor } from "../[id]/page";
 
 
 export type TDayWithTable = {
@@ -34,7 +35,13 @@ const MarketDays = ({
 }: {
   marketId: string;
   dates: string[];
-  vendorsForSelectedDay: TVendor[];
+  vendorsForSelectedDay: {
+    vendor: TMarketVendor;
+    datesBooked: {
+        date: string;
+        tableId: string;
+    }[];
+}[]
   selectedDay: string | null;
   availableTablesForDay: { table: TTable }[] | null;
   daysWithTables: TDayWithTable[] | null | undefined;
@@ -177,7 +184,9 @@ const MarketDays = ({
                 const bookedDateForSelectedDay = vendor.datesBooked.find(
                   (bookedDate) => areDatesSame(bookedDate.date, selectedDay)
                 );
-
+                const bookedDatesForSelectedDay = vendor.datesBooked.filter(
+                  (bookedDate) => areDatesSame(bookedDate.date, selectedDay)
+                );
 
                 return (
                   <tr key={`${nanoid()}`} className="text-center capitalize py-2">
@@ -203,7 +212,7 @@ const MarketDays = ({
                               key={bookedDateForSelectedDay.tableId}
                             />
                           ) : (
-                            <span>{bookedDateForSelectedDay.tableId}</span>
+                            <span>{bookedDatesForSelectedDay.map(day => day.tableId).join(", ")}</span>
                           )}
 
                         </>

@@ -1,11 +1,11 @@
 "use client";
-import { TVendor } from "@/sanity/queries/admin/markets/zods";
 import { useState } from "react";
+import { TMarketVendor } from "../page";
 
 const AllVendors = ({
   vendors
 }: {
-  vendors?: TVendor[] | null;
+  vendors?: TMarketVendor[] | null;
 }) => {
 
   const [copySuccess, setCopySuccess] = useState<string | null>(null);
@@ -13,7 +13,7 @@ const AllVendors = ({
   if (!vendors || vendors.length < 1) return null;
 
   const handleCopyEmails = () => {
-    const emails = vendors.map(vendor => vendor.vendor.email).join(", ");
+    const emails = vendors.map(vendor => vendor.email).join(", ");
     navigator.clipboard.writeText(emails).then(() => {
       setCopySuccess("Emails copied to clipboard!");
       setTimeout(() => setCopySuccess(null), 2000);
@@ -61,21 +61,21 @@ const AllVendors = ({
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {vendors.map((vendor) => (
-              <tr key={vendor.vendor._ref}>
+              <tr key={vendor._ref}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {vendor.vendor.email}
+                  {vendor.email}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {vendor.vendor.businessName}
+                  {vendor.businessName}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {vendor.vendor.businessCategory}
+                  {vendor.businessCategory}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {vendor.vendor.firstName} {vendor.vendor.lastName}
+                  {vendor.firstName} {vendor.lastName}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {vendor.vendor.instagram}
+                  {vendor.instagram}
                 </td>
               </tr>
             ))}

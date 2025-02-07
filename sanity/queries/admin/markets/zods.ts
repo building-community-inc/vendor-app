@@ -12,7 +12,13 @@ export const zodTableInDay = z.object({
   table: zodTable,
   booked: z.object({
     _type: z.string(),
-    _ref: z.string()
+    _ref: z.string(),
+    businessName: z.string(),
+    businessCategory: z.string(),
+    email: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+    instagram: z.string().optional().nullable(),
   }).optional().nullable(),
 });
 
