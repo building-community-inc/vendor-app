@@ -66,12 +66,7 @@ export const saveNewMarketCoverAction = async (
     }
   }).commit();
 
-  revalidatePath("/dashboard/explore", "page");
-  revalidatePath("/admin/dashboard/markets", "page");
-  revalidatePath("/admin/dashboard/markets/[id]", "page");
-  revalidatePath("/admin/dashboard/markets/[id]/edit", "page");
-  revalidatePath("/dashboard/markets/[id]", "page");
-
+  
   const oldMarketCoverId = formData.get("oldMarketCoverId") as string;
   if (!oldMarketCoverId) {
     return {
@@ -79,16 +74,31 @@ export const saveNewMarketCoverAction = async (
       errors: null
     }
   }
+  
+  const pathsToRevalidate = [
+    "/dashboard/explore",
+    "/admin/dashboard/markets",
+    "/admin/dashboard/markets/[id]",
+    "/admin/dashboard/markets/[id]/edit",
+    "/dashboard/markets/[id]"
+  ];
+  
+  try {
+    const sanityDeleteResp = await sanityWriteClient.delete(oldMarketCoverId);
+    if (!sanityDeleteResp) {
 
-  const sanityDeleteResp = await sanityWriteClient.delete(oldMarketCoverId);
-
-  if (!sanityDeleteResp) {
-    return {
-      success: true,
-      errors: null
+      pathsToRevalidate.forEach(path => revalidatePath(path, "page"));
+      return {
+        success: true,
+        errors: null
+      };
     }
+  } catch (error) {
+    console.error(`Error while deleting cover with ID: ${oldMarketCoverId}. Skipping deletion.`);
   }
-
+  
+  pathsToRevalidate.forEach(path => revalidatePath(path, "page"));
+    
   return {
     success: true,
     errors: null
