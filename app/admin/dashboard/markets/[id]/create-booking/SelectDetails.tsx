@@ -1,7 +1,6 @@
 "use client"
-import { TSanityMarket, TTableInDay } from "@/sanity/queries/admin/markets/zods";
+import { TDayWithTable, TSanityMarket, TTableInDay } from "@/sanity/queries/admin/markets/zods";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
-import { TDayWithTable } from "../../_components/MarketDays";
 import { useState } from "react";
 import { TDateType, TSelectedTableType } from "@/app/dashboard/markets/[id]/select-preferences/_components/SelectOptions";
 import SelectPaymentOptions from "./SelectPaymentOptions";
