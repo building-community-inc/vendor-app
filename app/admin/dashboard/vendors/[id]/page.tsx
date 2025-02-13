@@ -2,12 +2,13 @@ import { getVendorById } from "@/sanity/queries/admin/vendors";
 import Link from "next/link";
 import { approveVendor, disapproveVendor } from "../actions";
 import Button from "@/app/_components/Button";
-import { ContactCard, DateOfAcceptance, PaymentRecordCard } from "@/app/dashboard/_components/profileComps";
+import { ContactCard, DateOfAcceptance } from "@/app/dashboard/_components/profileComps";
 import NoBz from "@/app/dashboard/_components/NoBz";
 import { getUserPaymentRecords } from "@/sanity/queries/user";
 import { AdminBusinessCard } from "./AdminBusinessCard";
 import { unstable_noStore } from "next/cache";
 import { SupportingDocsCard } from "@/app/dashboard/_components/profileComps/SupportingDocs";
+import VendorPayments from "./VendorPayments";
 
 const Page = async ({ params }: {
   params: {
@@ -34,7 +35,7 @@ const Page = async ({ params }: {
   const vendor = vendorData.data;
 
   const vendorPaymentRecords = await getUserPaymentRecords(vendor._id);
-  
+
   return (
     <main className="flex px-10 py-24 gap-24 min-h-screen w-full flex-col justify-center">
       <section className=" flex flex-wrap gap-10 justify-center">
@@ -60,7 +61,7 @@ const Page = async ({ params }: {
             <SupportingDocsCard pdfs={vendorData.data.business.pdfs} />
           )}
 
-          <DateOfAcceptance date={vendor.acceptedTerms?.dateAccepted}/>
+          <DateOfAcceptance date={vendor.acceptedTerms?.dateAccepted} />
           <div className="flex gap-8 w-full max-w-[433px] justify-evenly">
 
             <Link href={`/admin/dashboard/vendors/${vendor.email.replace("@", "-at-").replaceAll(".", "-dot-")}/edit-profile`}>
@@ -91,19 +92,9 @@ const Page = async ({ params }: {
         </footer>
       </section>
 
-      <section className="flex flex-col gap-2">
-        <header className="border-2 border-b-black">
-
-          <h2 className="text-2xl font-bold font-darker-grotesque text-black">Market Bookings</h2>
-        </header>
-        <ul className="flex flex-col gap-5">
-          {vendorPaymentRecords.map(paymentRecord => (
-            <PaymentRecordCard admin returned={paymentRecord.paymentReturned} payments={paymentRecord.payments} amount={paymentRecord.amount} paymentId={paymentRecord._id} key={paymentRecord._id} market={paymentRecord.market} items={paymentRecord.items} />
-          ))}
-        </ul>
-
-
-      </section>
+      {vendorPaymentRecords.length > 0 && (
+        <VendorPayments vendorPaymentRecords={vendorPaymentRecords} admin/>
+      )}
     </main>
   );
 }

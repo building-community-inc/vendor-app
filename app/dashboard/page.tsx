@@ -6,9 +6,10 @@ import { DateTime } from 'luxon';
 import Link from "next/link";
 import React from "react";
 import Button from "../_components/Button";
-import { BusinessCard, ContactCard, PaymentRecordCard } from "./_components/profileComps";
+import { BusinessCard, ContactCard } from "./_components/profileComps";
 import { unstable_noStore } from "next/cache";
 import { SupportingDocsCard } from "./_components/profileComps/SupportingDocs";
+import VendorPayments from "../admin/dashboard/vendors/[id]/VendorPayments";
 
 
 const page = async () => {
@@ -78,16 +79,7 @@ const page = async () => {
       </section>
 
       {userPaymentRecords.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <header className="border-2 border-b-black">
-            <h2 className="text-2xl font-bold font-darker-grotesque text-black">My Market Bookings</h2>
-          </header>
-          <ul className="flex flex-col gap-5">
-            {userPaymentRecords.map(paymentRecord => (
-              <PaymentRecordCard payments={paymentRecord.payments} amount={paymentRecord.amount} paymentId={paymentRecord._id} key={paymentRecord._id} market={paymentRecord.market} items={paymentRecord.items} />
-            ))}
-          </ul>
-        </section>
+        <VendorPayments vendorPaymentRecords={userPaymentRecords} />
       )}
     </main>
   );

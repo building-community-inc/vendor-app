@@ -119,6 +119,10 @@ const zodUserMarket = z.object({
   ),
 });
 
+export type TUserMarket = z.infer<typeof zodUserMarket>;
+
+
+
 
 
 const zodUserMarkets = z.array(zodUserMarket);
