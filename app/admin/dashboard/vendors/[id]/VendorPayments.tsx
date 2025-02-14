@@ -49,7 +49,9 @@ const VendorPayments = ({ vendorPaymentRecords, admin }: {
       </div>
       <ul className="flex flex-col gap-5">
         {filteredVendorPaymentRecords.map(paymentRecord => (
-          <PaymentRecordCard admin={admin} returned={paymentRecord.paymentReturned} payments={paymentRecord.payments} amount={paymentRecord.amount} paymentId={paymentRecord._id} key={paymentRecord._id} market={paymentRecord.market} items={paymentRecord.items} />
+          <PaymentRecordCard
+            admin={admin}
+            returned={paymentRecord.paymentReturned} payments={paymentRecord.payments} amount={paymentRecord.amount} paymentId={paymentRecord._id} key={paymentRecord._id} market={paymentRecord.market} items={paymentRecord.items} />
         ))}
       </ul>
     </section>

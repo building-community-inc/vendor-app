@@ -62,7 +62,7 @@ export const getCurrentMarkets = async () => {
       // `*[_type == 'market' && date >= $currentDate]{
       `*[_type == 'market']{
 
-        ${marketQueryString}
+        ${individualMarketQueryString}
       }`,
       // { currentDate }
     );
