@@ -39,16 +39,16 @@ const SortBy = () => {
     setIsSortOpen(false);
   };
   return (
-    <div className="absolute bottom-0 right-0">
+    <div className="relative">
       <button
         type="button"
-        className="text-black"
+        className="text-black text-xs md:text-base"
         onClick={() => setIsSortOpen(!isSortOpen)}
       >
       Sort by: {getKeyByValue(searchParams.get("sort") as SortOption, sortOptions) || "Date: coming up"}
       </button>
       {isSortOpen && (
-        <ul className="flex flex-col absolute w-fit top-full left-0 bg-white">
+        <ul className="absolute top-full left-0 z-10 flex flex-col w-fit bg-white">
           {Object.keys(sortOptions).map((option) => (
             <li key={option} className="w-full">
               <button

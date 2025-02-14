@@ -11,6 +11,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
 import { EMAIL } from "@/app/_components/constants";
 import { exploreSorts } from "./_components/sorts";
+import SelectCity from "./_components/SelectCity";
 
 
 
@@ -68,29 +69,42 @@ const ExplorePage = async ({
 
   const markets = await getCurrentMarkets();
 
-  const filteredMarketsByName = markets?.filter((market) => {
-    if (searchParams.search) {
-      return market.name
-        .toLowerCase()
-        .includes(searchParams.search.toLowerCase());
-    }
-    return true;
+  const filteredMarketsByNameAndCity = markets?.filter((market) => {
+    const matchesSearch = searchParams.search
+      ? market.name.toLowerCase().includes(searchParams.search.toLowerCase())
+      : true;
+  
+    const matchesCity = searchParams.city
+      ? market.venue.city.toLowerCase().includes(searchParams.city.split(",")[0].trim().toLowerCase())
+      : true;
+  
+    return matchesSearch && matchesCity;
   });
+  
 
   const sort = searchParams.sort || undefined;
 
-  let sortedMarkets = filteredMarketsByName ? [...filteredMarketsByName] : [];
+  let sortedMarkets = filteredMarketsByNameAndCity ? [...filteredMarketsByNameAndCity] : [];
 
   if (sort && exploreSorts[sort]) {
     exploreSorts[sort](sortedMarkets); // Call the sorting function
   }
 
+  const cities = new Set<string>();
+
+  markets?.forEach((market) => {
+    cities.add(market.venue.city.split(",")[0].trim());
+  });
+
   return (
     <main className="flex flex-col gap-2 min-h-screen w-full">
-      <header className=" w-full flex justify-center  items-center relative">
-        <div className="relative max-w-xl min-w-[250px] w-[40%] py-10 h-full flex items-center">
+      <header className="w-full pt-3 max-w-[70%] md:max-w-[80%] mx-auto relative">
+        <div className="relative w-full flex flex-col gap-4">
           <Search urlForSearch="/dashboard/explore" />
-          <SortBy />
+          <div className="flex justify-between items-center">
+            <SelectCity cities={Array.from(cities)} />
+            <SortBy />
+          </div>
         </div>
       </header>
       {sortedMarkets?.length === 0 ? (

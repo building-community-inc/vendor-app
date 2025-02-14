@@ -12,16 +12,16 @@ const Burger = ({ onClickHandler, isNavOpen, barColor }: BurgerProps) => {
         <Bar
           rotateZ={!isNavOpen ? "rotate-0" : "rotate-45 translate-y-3"}
           barColor={barColor}
-          width="w-7"
+          width="w-5"
         />
         <Bar
-          width={isNavOpen ? "w-0" : "w-7"}
+          width={isNavOpen ? "w-0" : "w-5"}
           barColor={barColor}
         />
         <Bar
           rotateZ={!isNavOpen ? "rotate-0" : "-rotate-45 -translate-y-2"}
           barColor={barColor}
-          width="w-7"
+          width="w-5"
         />
       </div>
     </div>
