@@ -29,8 +29,6 @@ const Page = async ({
   const search = searchParams.search?.toLowerCase();
   const selectedVendorStatus = searchParams.vendorStatus;
 
-  console.log({selectedVendorStatus})
-
   const filterVendors = (arrayVendors: TUserWithOptionalBusinessRef[]) => arrayVendors.filter((vendor) => {
     if (selectedVendorStatus && selectedVendorStatus !== 'all' && vendor.status !== selectedVendorStatus) {
       return false;
@@ -102,14 +100,19 @@ const VendorCard = ({ vendor }: {
       </section>
 
       <section className="flex flex-wrap justify-center gap-2 items-center">
-
         {vendor.status === "pending" ? (
-
-          <form action={setUserStatus}>
-            <input type="hidden" name="vendorId" value={vendor._id} />
-            <input type="hidden" name="status" value={"approved"} />
-            <Button className="bg-green-300 border border-green-400 transition-all">Approve</Button>
-          </form>
+          <>
+            <form action={setUserStatus}>
+              <input type="hidden" name="vendorId" value={vendor._id} />
+              <input type="hidden" name="status" value={"approved"} />
+              <Button className="bg-green-300 border border-green-400 transition-all">Approve</Button>
+            </form>
+            <form action={setUserStatus}>
+              <input type="hidden" name="vendorId" value={vendor._id} />
+              <input type="hidden" name="status" value={"not-approved"} />
+              <Button className="bg-red-500 border border-red-500 transition-all">Don't Approve</Button>
+            </form>
+          </>
         ) : (
           <>
             {vendor.status === "suspended" ? (
@@ -124,6 +127,20 @@ const VendorCard = ({ vendor }: {
                 <input type="hidden" name="status" value={"suspended"} />
                 <Button className="bg-red-200">Suspend</Button>
               </form>
+            )}
+            {vendor.status === "not-approved" && (
+              <>
+                <form action={setUserStatus}>
+                  <input type="hidden" name="vendorId" value={vendor._id} />
+                  <input type="hidden" name="status" value={"approved"} />
+                  <Button className="bg-green-300 border border-green-400 transition-all">Approve</Button>
+                </form>
+                <form action={setUserStatus}>
+                  <input type="hidden" name="vendorId" value={vendor._id} />
+                  <input type="hidden" name="status" value={"pending"} />
+                  <Button className="bg-red-200">Set as Pending</Button>
+                </form>
+              </>
             )}
           </>
         )}

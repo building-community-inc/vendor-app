@@ -10,7 +10,7 @@ export const zodUserBase = z.object({
   hasImage: z.boolean(),
   image: z.string().nullable(),
   role: z.enum(["admin", "vendor", "dev"]),
-  status: z.enum(["pending", "approved", "suspended"]),
+  status: z.enum(["pending", "approved", "suspended", "not-approved"]),
   acceptedTerms: z
     .object({
       dateAccepted: z.string().optional().nullable(),
