@@ -6,6 +6,7 @@ import { setUserStatus } from "./actions";
 import Link from "next/link";
 import Search from "@/app/dashboard/explore/_components/Search";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
+import VendorFilters from "./VendorFilters";
 
 
 
@@ -26,8 +27,15 @@ const Page = async ({
   const otherVendors = vendors.filter(vendor => vendor.status !== 'pending');
 
   const search = searchParams.search?.toLowerCase();
+  const selectedVendorStatus = searchParams.vendorStatus;
+
+  console.log({selectedVendorStatus})
 
   const filterVendors = (arrayVendors: TUserWithOptionalBusinessRef[]) => arrayVendors.filter((vendor) => {
+    if (selectedVendorStatus && selectedVendorStatus !== 'all' && vendor.status !== selectedVendorStatus) {
+      return false;
+    }
+
     if (!search) {
       return true;
     }
@@ -37,11 +45,19 @@ const Page = async ({
     return vendorBusinessName.toLowerCase().includes(search) || vendor.email.toLowerCase().includes(search) || vendor.firstName.toLowerCase().includes(search) || vendor.lastName.toLowerCase().includes(search) || vendor.status.toLowerCase().includes(search);
   });
 
+  const vendorStatuses = new Set();
+  vendors.forEach(vendor => {
+    vendorStatuses.add(vendor.status)
+  })
+
   return (
     <main className="pt-0 w-full min-h-screen mx-auto relative bg-background">
-      <header className="flex w-full justify- p-5 gap-5 sticky top-0 left-0 bg-background z-1 flex-col lg:flex-row">
-        <h1 className="font-segoe font-bold text-3xl text-center">Vendors</h1>
-        <Search urlForSearch="/admin/dashboard/vendors" theme="light" placeholder="Find a Vendor" />
+      <header className="flex flex-col w-full p-5 gap-2 sticky top-0 left-0 bg-background z-1">
+        <div className="flex gap-5 items-center">
+          <h1 className="font-segoe font-bold text-3xl text-center">Vendors</h1>
+          <Search urlForSearch="/admin/dashboard/vendors" theme="light" placeholder="Find a Vendor" />
+        </div>
+        <VendorFilters vendorStatuses={[...vendorStatuses] as string[]} />
       </header>
       <section className="px-5 pt-5">
 
@@ -80,6 +96,7 @@ const VendorCard = ({ vendor }: {
         )}
         <CardItem title="Contact:" value={`${vendor.firstName} ${vendor.lastName}`} />
         <CardItem title="Email:" value={vendor.email} />
+        <CardItem title="Instagram:" value={vendor.business?.instagramHandle || "no handle"} />
 
         <CardItem title="Status:" value={vendor.status} />
       </section>
