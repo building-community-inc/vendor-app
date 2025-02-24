@@ -70,7 +70,7 @@ export const userSchema = defineType({
       type: "string",
       initialValue: "pending",
       options: {
-        list: ["approved", "pending", "suspended", "not-approved"]
+        list: ["approved", "pending", "suspended", "notApproved"]
       },
     }),
     defineField({

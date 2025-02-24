@@ -32,7 +32,7 @@ const VendorFilters = ({ vendorStatuses }: {
   return (
     <select value={status} onChange={onSelect} className="w-fit border border-black rounded-full px-2 py-1 capitalize">
       {vendorStatuses.map(status => (
-        <option value={status}>{status}</option>
+        <option key={`vendor-status-select-${status}`} value={status}>{status}</option>
       ))}
       <option value="all">All</option>
     </select>

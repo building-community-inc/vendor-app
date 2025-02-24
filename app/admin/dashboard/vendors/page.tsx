@@ -109,8 +109,8 @@ const VendorCard = ({ vendor }: {
             </form>
             <form action={setUserStatus}>
               <input type="hidden" name="vendorId" value={vendor._id} />
-              <input type="hidden" name="status" value={"not-approved"} />
-              <Button className="bg-red-500 border border-red-500 transition-all">Don't Approve</Button>
+              <input type="hidden" name="status" value={"notApproved"} />
+              <Button className="bg-red-500 border border-red-500 transition-all">{"Don't Approve"}</Button>
             </form>
           </>
         ) : (
@@ -128,7 +128,7 @@ const VendorCard = ({ vendor }: {
                 <Button className="bg-red-200">Suspend</Button>
               </form>
             )}
-            {vendor.status === "not-approved" && (
+            {vendor.status === "notApproved" && (
               <>
                 <form action={setUserStatus}>
                   <input type="hidden" name="vendorId" value={vendor._id} />
