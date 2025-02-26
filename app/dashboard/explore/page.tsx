@@ -57,7 +57,7 @@ const ExplorePage = async ({
     )
   }
 
-  if (sanityUser.status === "pending") {
+  if (sanityUser.status === "pending" || sanityUser.status === "archived") {
     return (
       <div className="flex flex-col items-center justify-center w-full h-full px-10">
         <h2 className="text-3xl font-bold">Your account is pending</h2>
@@ -73,14 +73,14 @@ const ExplorePage = async ({
     const matchesSearch = searchParams.search
       ? market.name.toLowerCase().includes(searchParams.search.toLowerCase())
       : true;
-  
+
     const matchesCity = searchParams.city
       ? market.venue.city.toLowerCase().includes(searchParams.city.split(",")[0].trim().toLowerCase())
       : true;
-  
+
     return matchesSearch && matchesCity;
   });
-  
+
 
   const sort = searchParams.sort || undefined;
 
@@ -96,7 +96,7 @@ const ExplorePage = async ({
     cities.add(market.venue.city.split(",")[0].trim());
   });
 
-  return (
+  if (sanityUser.status === "approved") return (
     <main className="flex flex-col gap-2 min-h-screen w-full">
       <header className="w-full pt-3 max-w-[70%] md:max-w-[80%] mx-auto relative">
         <div className="relative w-full flex flex-col gap-4">

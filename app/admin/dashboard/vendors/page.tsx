@@ -109,8 +109,8 @@ const VendorCard = ({ vendor }: {
             </form>
             <form action={setUserStatus}>
               <input type="hidden" name="vendorId" value={vendor._id} />
-              <input type="hidden" name="status" value={"notApproved"} />
-              <Button className="bg-red-500 border border-red-500 transition-all">{"Don't Approve"}</Button>
+              <input type="hidden" name="status" value={"archived"} />
+              <Button className="bg-red-500 border border-red-500 transition-all">{"Archive"}</Button>
             </form>
           </>
         ) : (
@@ -122,13 +122,20 @@ const VendorCard = ({ vendor }: {
                 <Button className="bg-green-300 border border-green-400 transition-all">Reactivate</Button>
               </form>
             ) : (
-              <form action={setUserStatus}>
-                <input type="hidden" name="vendorId" value={vendor._id} />
-                <input type="hidden" name="status" value={"suspended"} />
-                <Button className="bg-red-200">Suspend</Button>
-              </form>
+              <>
+                <form action={setUserStatus}>
+                  <input type="hidden" name="vendorId" value={vendor._id} />
+                  <input type="hidden" name="status" value={"suspended"} />
+                  <Button className="bg-red-200">Suspend</Button>
+                </form>
+                <form action={setUserStatus}>
+                  <input type="hidden" name="vendorId" value={vendor._id} />
+                  <input type="hidden" name="status" value={"archived"} />
+                  <Button className="bg-red-500 border border-red-500 transition-all">{"Archive"}</Button>
+                </form>
+              </>
             )}
-            {vendor.status === "notApproved" && (
+            {vendor.status === "archived" && (
               <>
                 <form action={setUserStatus}>
                   <input type="hidden" name="vendorId" value={vendor._id} />

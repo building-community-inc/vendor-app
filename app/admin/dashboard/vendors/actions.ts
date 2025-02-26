@@ -65,7 +65,7 @@ export const disapproveVendor = async(formData: FormData) => {
   
   const approvedUser = {
     ...user,
-    status: "notApproved"
+    status: "archived"
   }
   const sanityRes = await sanityWriteClient.createOrReplace(approvedUser);
   
