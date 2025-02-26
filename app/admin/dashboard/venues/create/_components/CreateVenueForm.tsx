@@ -38,7 +38,7 @@ const CreateVenueForm = ({
   const router = useRouter();
 
   const fileId = useVenueImageIdStore((state) => state.fileId);
-  
+
   const tableInfo = useTableInfoStore((state) => state.tables);
 
 
@@ -59,13 +59,16 @@ const CreateVenueForm = ({
       });
       return;
     }
+
     const venueObj = {
       ...data,
       _type: "venue",
-      venueMap: defaultImage ? defaultImage._id : fileId,
+      venueMap: fileId === "" ? defaultImage?._id : fileId,
       _id: defaultValues ? defaultValues._id : undefined,
       tableInfo
     };
+
+    console.log({ venueObj })
 
     const parsedVenueObj = zodVenueFormSchema.safeParse(venueObj);
 
@@ -133,7 +136,7 @@ const CreateVenueForm = ({
             />
           );
         })}
-      {defaultImage && !isFileInputOpen ? (
+      {defaultImage && (
         <div className="flex flex-col gap-1 my-2 max-w-full w-[75vw] mx-auto xs:w-full  sm:w-[75vw]">
           <label
             htmlFor="venueMap"
@@ -141,32 +144,22 @@ const CreateVenueForm = ({
           >
             Venue Map
             <div className="flex items-center justify-evenly w-full">
-              <Image
-                src={defaultImage.url}
-                alt={defaultValues.title}
-                // className="w-full"
-                width={300}
-                height={300}
+              {!fileId && (
+                <Image
+                  src={defaultImage.url}
+                  alt={defaultValues.title}
+                  // className="w-full"
+                  width={300}
+                  height={300}
+                />
+              )}
+              <FileInput
+                title="Upload a new Venue Image"
+                useStore={useVenueImageIdStore}
               />
-              <button
-                type="button"
-                className="bg-black text-white px-[66px] py-[14px] w-fit h-fit"
-                onClick={() => setIsFileInputOpen(true)}
-              >
-                Update Map
-              </button>
             </div>
           </label>
         </div>
-      ) : (
-        <>
-          <div className="mx-auto">
-            <FileInput
-              title="Upload Venue Image"
-              useStore={useVenueImageIdStore}
-            />
-          </div>
-        </>
       )}
       {errors.venueMap && (
         <span className="text-red-500 text-center">

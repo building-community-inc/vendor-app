@@ -32,5 +32,18 @@ export const creditTransactionSchema = defineType({
       title: "Reason",
       type: "string",
     }),
-  ]
+  ],
+  preview: {
+    select: {
+      vendor: "vendor.business.businessName",
+      amount: "amount",
+      reason: "reason"
+    },
+    prepare({vendor, amount, reason}) {
+      return {
+        title: `${vendor}`,
+        subtitle: `$${amount} - ${reason}`
+      }
+    }
+  }
 })

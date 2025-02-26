@@ -156,7 +156,7 @@ const FileInput = ({
             type="file"
             className="hidden"
           />
-          {uploading ? "Uploading" : input.length > 0 ? "Change or add your logo" : title}
+          {uploading ? "Uploading" : input.length > 0 ? "Change image" : title}
         </label>
         {input.length > 1 && (
           <button
