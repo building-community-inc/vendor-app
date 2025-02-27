@@ -1,7 +1,7 @@
 "use client";
 
 import { createUrl, getKeyByValue } from "@/utils/helpers";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 
@@ -25,6 +25,7 @@ export type SortOptionKey = keyof typeof sortOptions;
 const SortBy = () => {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   const { push } = useRouter();
 
@@ -34,7 +35,7 @@ const SortBy = () => {
 
     newParams.set("sort", sortOptions[option]);
 
-    push(createUrl("/dashboard/explore", newParams), { scroll: false });
+    push(createUrl(pathname, newParams), { scroll: false });
 
     setIsSortOpen(false);
   };
@@ -45,7 +46,7 @@ const SortBy = () => {
         className="text-black text-xs md:text-base"
         onClick={() => setIsSortOpen(!isSortOpen)}
       >
-      Sort by: {getKeyByValue(searchParams.get("sort") as SortOption, sortOptions) || "Date: coming up"}
+      Sort by: {getKeyByValue(searchParams.get("sort") as SortOption, sortOptions) || "select an option"}
       </button>
       {isSortOpen && (
         <ul className="absolute top-full left-0 z-10 flex flex-col w-fit bg-white">

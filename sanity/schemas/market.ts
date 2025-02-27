@@ -193,6 +193,11 @@ export const marketSchema = defineType({
       title: "Cancelled",
       type: "boolean",
       initialValue: false
+    }),
+    defineField({
+      name: "archived",
+      title: "Archived",
+      type: "boolean",
     })
   ],
 

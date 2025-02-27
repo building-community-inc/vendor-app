@@ -44,6 +44,7 @@ export const individualMarketQueryString = `
   name,
   price,
   dates,
+  archived,
   "marketCover": marketCover ${imageQueryString},
   "venue": venue->{
     title,

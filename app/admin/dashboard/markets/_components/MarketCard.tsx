@@ -5,6 +5,7 @@ import { formatDateString, formatDateWLuxon, tablePriceTodisplay } from "@/utils
 import Button from "@/app/_components/Button";
 import DeleteMarket from "./DeleteMarket";
 import Link from "next/link";
+import ArchiveMarket from "./ArchiveMarket";
 
 const MarketCard = ({
   market,
@@ -45,6 +46,9 @@ const MarketCard = ({
       )}
       <section className="px-2 my-2 flex justify-between">
         <article>
+          {market.archived && (
+            <p className="text-red-600">Market Archived</p>
+          )}
           <h4 className="font-bold font-roboto text-sm">{dateToDisplay}</h4>
           <h4 className="font-bold font-roboto text-sm">{market.name}</h4>
           <p>{market.venue.title}</p>
@@ -109,6 +113,7 @@ const MarketCard = ({
               Edit Market
             </Button>
           </Link>
+          <ArchiveMarket marketId={market._id} archived={market.archived} />
         </footer>
       )}
     </article>

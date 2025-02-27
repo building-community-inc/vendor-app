@@ -7,6 +7,8 @@ import { dateArrayToDisplayableText } from "@/utils/helpers";
 import { unstable_noStore as noStore } from 'next/cache';
 import Search from "@/app/dashboard/explore/_components/Search";
 import { getAllMarkets } from "@/sanity/queries/admin/markets/markets";
+import SortBy from "@/app/dashboard/explore/_components/SortBy";
+import MarketFilters from "./_components/MarketFilters";
 // import VenueList from "./_components/VenueList";
 
 // export const dynamic = "force-dynamic";
@@ -91,11 +93,22 @@ const Page = async ({
   const markets = await getAllMarkets();
 
   const filteredMarketsByName = markets?.filter((market) => {
+    const marketFilter = searchParams.marketFilter;
+    console.log({marketFilter})
+    if (marketFilter === "archived" && !market.archived) {
+      return false;
+    }
+
+    if (marketFilter === "active" && market.archived) {
+      return false;
+    }
+
     if (searchParams.search) {
       return market.name
         .toLowerCase()
         .includes(searchParams.search.toLowerCase());
     }
+
     return true;
   });
 
@@ -108,11 +121,16 @@ const Page = async ({
   }
 
   return (
-    <main className="pt-14 px-5 w-full min-h-screen max-w-3xl mx-auto w-[80%]">
+    <main className="pt-14 px-5 min-h-screen max-w-3xl mx-auto w-[80%]">
       <Search urlForSearch="/admin/dashboard/markets" theme="light" />
       <h1 className="font-bold text-xl">Markets</h1>
       <FormTitleDivider title="Live Markets" />
+      <div className="flex justify-between">
+        <SortBy />
+        <MarketFilters />
+      </div>
       <MarketList markets={sortedMarkets || []} />
+
       {/* {venues && <VenueList venues={venues} />} */}
       {/* <Image src={markets.} */}
     </main>

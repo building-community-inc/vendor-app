@@ -31,7 +31,7 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
           alt={market.name}
           className="w-full object-cover rounded-xl rounded-b-none aspect-video mb-2"
         />
-        <div className="absolute bottom-2 right-10">
+        <div className="absolute bottom-2 right-2 lg:right-10">
 
           <PriceTag price={minPrice} />
         </div>
@@ -70,9 +70,9 @@ export default MarketCard;
 
 const PriceTag = ({ price }: { price: number }) => {
   return (
-    <div className="bg-[#C5B5A4] opacity-80 text-black p-2 font-darker-grotesque flex gap-1 items-center">
+    <div className="text-xs lg:text-lg bg-[#C5B5A4] opacity-80 text-black p-2 font-darker-grotesque flex gap-1 items-center">
       <span> From</span>
-      <span className="text-lg font-semibold">
+      <span className=" font-semibold">
         ${price} /day
       </span>
     </div>
