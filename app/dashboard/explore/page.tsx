@@ -13,8 +13,6 @@ import { EMAIL } from "@/app/_components/constants";
 import { exploreSorts } from "./_components/sorts";
 import SelectCity from "./_components/SelectCity";
 
-
-
 const ExplorePage = async ({
   searchParams,
 }: {
@@ -78,9 +76,10 @@ const ExplorePage = async ({
       ? market.venue.city.toLowerCase().includes(searchParams.city.split(",")[0].trim().toLowerCase())
       : true;
 
-    return matchesSearch && matchesCity;
-  });
+    const isNotArchived = !market.archived
 
+    return matchesSearch && matchesCity && isNotArchived;
+  });
 
   const sort = searchParams.sort || undefined;
 
