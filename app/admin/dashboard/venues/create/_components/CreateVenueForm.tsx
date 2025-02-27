@@ -68,8 +68,6 @@ const CreateVenueForm = ({
       tableInfo
     };
 
-    console.log({ venueObj })
-
     const parsedVenueObj = zodVenueFormSchema.safeParse(venueObj);
 
     if (!parsedVenueObj.success) {

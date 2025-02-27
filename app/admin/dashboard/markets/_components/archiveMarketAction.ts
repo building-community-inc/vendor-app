@@ -38,7 +38,6 @@ export const archiveMarket = async (
 };
 
 try {
-    console.log({rawData, parseddata: parsedData.data})
     await sanityWriteClient
       .patch(parsedData.data.marketId)
       .set({

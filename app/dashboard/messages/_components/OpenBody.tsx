@@ -9,7 +9,7 @@ const OpenBody = ({ body, messageId, userId, isMessageRead }: {
   isMessageRead: boolean;
 }) => {
   const formRef = useRef<HTMLFormElement>(null);
-  console.log({ body })
+  // console.log({ body })
 
   useEffect(() => {
     // setMessageAsRead(formRef.current);

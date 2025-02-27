@@ -94,7 +94,6 @@ const Page = async ({
 
   const filteredMarketsByName = markets?.filter((market) => {
     const marketFilter = searchParams.marketFilter;
-    console.log({marketFilter})
     if (marketFilter === "archived" && !market.archived) {
       return false;
     }
