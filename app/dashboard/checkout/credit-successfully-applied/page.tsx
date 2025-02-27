@@ -60,7 +60,7 @@ const Page = async ({
             </p>
           </section>
           <footer className="flex gap-10 flex-wrap">
-            {paymentRecord.amount.owed > 0 && (
+            {paymentRecord.amount.owed && paymentRecord.amount.owed > 0 && (
               <Link href={`/dashboard/checkout/${paymentRecord._id}/pay-remainder`}>
                 <ContinueButton>
                   Pay Remainder

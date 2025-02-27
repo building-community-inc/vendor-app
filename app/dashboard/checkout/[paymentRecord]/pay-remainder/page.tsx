@@ -32,7 +32,7 @@ const Page = async ({ params }: {
   return (
     <div>
       <RemainderCheckout
-        owed={paymentRecord.amount.owed}
+        owed={paymentRecord.amount.owed || 0}
         items={paymentRecord.items.map(item => ({
           date: item.date,
           tableId: item.tableId,

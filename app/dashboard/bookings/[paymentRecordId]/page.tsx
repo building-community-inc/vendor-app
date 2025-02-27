@@ -54,7 +54,7 @@ const Page = async ({ params }: {
           </ul>
           <footer className="text-black">
 
-            {paymentRecordInfo.amount.owed > 0 && (
+            {paymentRecordInfo.amount.owed && paymentRecordInfo.amount.owed > 0 && (
               <>
                 <div className="">
                   <h3 className="font-bold">Paid</h3>
@@ -78,7 +78,7 @@ const Page = async ({ params }: {
               <h3 className="font-bold">Total</h3>
               <p>${paymentRecordInfo.amount.total}</p>
             </div>
-            {paymentRecordInfo.amount.owed > 0 && (
+            {paymentRecordInfo.amount.owed && paymentRecordInfo.amount.owed > 0 && (
               <Button className="h-fit">
                 <Link href={`/dashboard/checkout/${paymentRecordInfo._id}/pay-remainder/`}>Pay Remainder</Link>
               </Button>

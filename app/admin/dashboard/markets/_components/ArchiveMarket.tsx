@@ -30,7 +30,7 @@ const ArchiveMarket = ({ marketId, archived }: {
 
       <SubmitButton archived={archived} />
       {formState.errors && formState.errors.length > 0 && formState.errors.map(error => (
-        <div className="text-red-600">{error}</div>
+        <div key={error} className="text-red-600">{error}</div>
       ))}
       {showSuccessMessage && (
         <div className="text-green-600">Update was successful</div>

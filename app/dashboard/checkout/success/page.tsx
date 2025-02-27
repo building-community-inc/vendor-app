@@ -61,7 +61,7 @@ const Page = async ({
     { paymentId: paymentIntent.id }
   );
 
-  if (partialCreditPayment && partialCreditPayment.amount.owed > 0) {
+  if (partialCreditPayment && partialCreditPayment.amount.owed && partialCreditPayment.amount.owed > 0) {
     const updatedPaymentRecord = {
       _id: partialCreditPayment._id,
       amount: {
