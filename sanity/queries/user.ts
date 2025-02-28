@@ -100,6 +100,7 @@ const zodPaymentSchema =  z.object({
   amount: z.number(),
   paymentDate: z.string(),
   stripePaymentIntentId: z.string().optional().nullable(),
+  paymentType: z.string().optional().nullable()
 })
 
 export type TPayment = z.infer<typeof zodPaymentSchema>;
@@ -132,7 +133,7 @@ export const getUserPaymentRecords = async (userId: string) => {
     // const user = await getSanityUserByEmail(email);
 
     const payments = await sanityClient.fetch(
-      `*[_type == "paymentRecord" && user._ref == $userId]{
+      `*[_type == "paymentRecord" && user._ref == $userId] | order(_created_at asc){
         ${userMarketQueryString}
       }`,
       { userId }

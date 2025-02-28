@@ -56,6 +56,8 @@ const Page = async ({
 
   const partialCreditPayment = paymentRecordId && await getPaymentById(paymentRecordId);
 
+  // console.log({partialCreditPayment, paymentRecordId})
+
   const existingStripePayment = await sanityClient.fetch(
     '*[_type == "paymentRecord" && payments[].stripePaymentIntentId match $paymentId][0]',
     { paymentId: paymentIntent.id }
@@ -83,11 +85,13 @@ const Page = async ({
     };
 
     try {
+      // console.log("updating payment record", {updatePaymentRecord})
       await updatePaymentRecord(updatedPaymentRecord);
-      const creditsLeft = +paymentIntent.metadata.creditsLeft;
-      if (creditsLeft) {
-        // await updateUserCredits(creditsLeft, user._id);
-      }
+      // const creditsLeft = +paymentIntent.metadata.creditsLeft;
+      // if (creditsLeft) {
+      //   // console.log({creditsLeft})
+      //   // await updateUserCredits(creditsLeft, user._id);
+      // }
       // await updateUserCredits(paymentIntent.metadata.creditsLeft, user._id);
     } catch (error) {
       console.error(`Failed to update payment record: ${error}`);
@@ -96,6 +100,7 @@ const Page = async ({
 
   if (!existingStripePayment && !partialCreditPayment && paymentIntent) {
     try {
+      // console.log("creating payment record", {paymentIntent})
       await createPaymentRecord(paymentIntent);
       if (user.credits !== +paymentIntent.metadata.creditsLeft) {
         await updateUserCredits(+paymentIntent.metadata.creditsLeft, user._id);

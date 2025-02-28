@@ -4,7 +4,7 @@ import { cn } from "@/utils";
 import Link from "next/link";
 import { ComponentPropsWithoutRef } from "react";
 
-export const PaymentRecordCard = ({ market, paymentId, items, amount, admin, returned }: {
+export const PaymentRecordCard = ({ market, paymentId, items, amount, admin, returned, payments }: {
   market: {
     _id: string;
     name: string;
@@ -19,70 +19,97 @@ export const PaymentRecordCard = ({ market, paymentId, items, amount, admin, ret
 }) => {
 
   return (
-    <li key={market._id} className="px-5 py-5 flex flex-wrap gap-8 border rounded-2xl justify-between border-button-border-color shadow-md shadow-button-border-color">
+    <li key={market._id} className="px-5 py-5 flex gap-5 flex-col border rounded-2xl justify-between border-button-border-color shadow-md shadow-button-border-color">
+      <div className="flex gap-8 flex-wrap">
 
-      <MarketSection title="Date">
-        <ul className="flex flex-col gap-2">
-          {items.map(date => (
-            <li key={date.date} className="flex items-center gap-2">
-              <span>{date.date}</span>
-            </li>
-          ))}
-        </ul>
-      </MarketSection>
-      <MarketSection title="Venue" className="flex-1">
-        {admin ? (
-          <Link href={`/admin/dashboard/markets/${market._id}`} target="_blank" rel="noreferrer">
+        <MarketSection title="Date">
+          <ul className="flex flex-col gap-2">
+            {items.map(date => (
+              <li key={date.date} className="flex items-center gap-2">
+                <span>{date.date}</span>
+              </li>
+            ))}
+          </ul>
+        </MarketSection>
+        <MarketSection title="Venue" className="flex-1">
+          {admin ? (
+            <Link href={`/admin/dashboard/markets/${market._id}`} target="_blank" rel="noreferrer">
+              <span>{market.name}</span>
+            </Link>
+          ) : (
             <span>{market.name}</span>
-          </Link>
-        ) : (
-          <span>{market.name}</span>
-        )}
+          )}
 
-      </MarketSection>
-      {/* <MarketSection title  */}
-      <MarketSection title="Table">
-        {/* {market.} */}
-        {items.map(item => (
-          <TableItem key={item.tableId} item={item} />
-        ))}
-      </MarketSection>
-      <MarketSection title="Amounts">
-        {amount.owed && amount.owed > 0 && (
-          <>
-            <p>Owed: ${amount.owed} </p>
-            <p>Paid: ${amount.paid} </p>
-          </>
-        )}
-        <p>Hst: ${amount.hst} </p>
-        <p>Total: ${amount.total} </p>
-      </MarketSection>
-      <MarketSection title="Booking Status">
-        {returned ? "Cancelled" : "Reserved"}
-      </MarketSection>
-      <section className="grid gap-5">
-        <Button className="h-fit ">
-          <Link className="text-center" href={`/dashboard/bookings/${paymentId}`}>Review Booking</Link>
-        </Button>
-        {amount.owed ? amount.owed > 0 && (
-          <Button className="h-fit">
-            <Link href={`/dashboard/checkout/${paymentId}/pay-remainder/`}>Pay Remainder</Link>
-          </Button>
-        ) : undefined}
+        </MarketSection>
+        {/* <MarketSection title  */}
+        <MarketSection title="Table">
+          {/* {market.} */}
+          {items.map(item => (
+            <TableItem key={item.tableId} item={item} />
+          ))}
+        </MarketSection>
+        <MarketSection title="Amounts">
+          <ul>
 
-        {admin && (
-          <Link href={`/studio/structure/paymentRecord;${paymentId}`} target="_blank" rel="noreferrer">
+            {items.map(date => (
+              <li key={`amounts ${date.date}`}>${date.price}</li>
+            ))}
+          </ul>
+        </MarketSection>
+      </div>
+      <div className="flex gap-8 flex-wrap justify-between">
+        <div className="flex gap-8 flex-wrap">
+
+          <MarketSection title="Booking Status">
+            {returned ? "Cancelled" : "Reserved"}
+          </MarketSection>
+
+          <MarketSection title="Payments">
+            <ul>
+              {payments.map((payment, index) => (
+                <li key={`payment-${payment.amount}-${index}`} className="">
+                  <p>
+                    {index + 1}. {payment.paymentType ? payment.paymentType : payment.stripePaymentIntentId ? "stripe" : ""} ${payment.amount}
+                  </p>
+               
+                </li>
+              ))}
+            </ul>
+          </MarketSection>
+          <MarketSection title="Totals" className="">
             <p>
-              <strong>
-                ID:
-              </strong>
-              {` ${paymentId}`}
-            </p>
-          </Link>
-        )}
 
-      </section>
-    </li>
+              HST: {amount.hst}
+            </p>
+            <p>
+              Total: {amount.total}
+            </p>
+          </MarketSection>
+        </div>
+        <section className="grid gap-5">
+          <Button className="h-fit ">
+            <Link className="text-center" href={`/dashboard/bookings/${paymentId}`}>Review Booking</Link>
+          </Button>
+          {amount.owed ? amount.owed > 0 && (
+            <Button className="h-fit">
+              <Link href={`/dashboard/checkout/${paymentId}/pay-remainder/`}>Pay Remainder</Link>
+            </Button>
+          ) : undefined}
+
+          {admin && (
+            <Link href={`/studio/structure/paymentRecord;${paymentId}`} target="_blank" rel="noreferrer">
+              <p>
+                <strong>
+                  ID:
+                </strong>
+                {` ${paymentId}`}
+              </p>
+            </Link>
+          )}
+
+        </section>
+      </div>
+    </li >
   )
 }
 

@@ -54,7 +54,7 @@ export const createPaymentWithCredits = async (formData: FormData) => {
     date: item.date,
     tableId: item.tableId,
     _key: nanoid(),
-    _type: "day"
+    _type: "day",
   }));
 
   const vendorDetails = {
@@ -105,7 +105,7 @@ export const createPaymentWithCredits = async (formData: FormData) => {
       _type: "object",
       total: +rawData.totalToPay,
       paid: +rawData.creditsApplied,
-      owed: (+rawData.totalToPay + +rawData.hst) - +rawData.creditsApplied,
+      owed: +rawData.totalToPay + +rawData.hst - +rawData.creditsApplied,
       hst: +rawData.hst,
     },
     items: rawData.items.map((item: TPaymentItem) => ({
@@ -148,12 +148,27 @@ export const createPaymentWithCredits = async (formData: FormData) => {
 
     const createdPaymentRecord = await sanityWriteClient.create(paymentRecord);
 
-    const creditsLeft = user.credits && (user.credits - +rawData.creditsApplied).toFixed(2);
+    const creditsLeft =
+      user.credits && (user.credits - +rawData.creditsApplied).toFixed(2);
     await sanityWriteClient
       .patch(user._id)
       .set({ credits: parseFloat(creditsLeft || "0") })
       .commit();
 
+    await sanityWriteClient.create({
+      _type: "creditTransaction",
+      date: new Date(),
+      market: {
+        _type: "reference",
+        _ref: marketDocument?._id,
+      },
+      vendor: {
+        _type: "reference",
+        _ref: user._id,
+      },
+      amount: -+rawData.creditsApplied,
+      reason: "vendor used credits",
+    });
 
     return {
       success: true,

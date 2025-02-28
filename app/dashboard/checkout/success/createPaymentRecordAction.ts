@@ -80,6 +80,35 @@ export const createPaymentRecord = async (
       }
     }
   }
+
+  const payments = paymentIntent.metadata.creditsApplied && +paymentIntent.metadata.creditsApplied > 0 ? [
+    {
+      paymentType: "credits",
+      _type: "payment",
+      stripePaymentIntentId: undefined,
+      amount: +paymentIntent.metadata.creditsApplied,
+      paymentDate: new Date().toISOString(),
+      _key: nanoid(),
+    },
+    {
+      paymentType: "stripe",
+      _type: "payment",
+      stripePaymentIntentId: paymentIntent.id,
+      amount: paymentIntent.amount / 100,
+      paymentDate: new Date().toISOString(),
+      _key: nanoid(),
+    },
+    // add more payments as needed
+  ] : [
+    {
+      paymentType: "stripe",
+      _type: "payment",
+      stripePaymentIntentId: paymentIntent.id,
+      amount: paymentIntent.amount / 100,
+      paymentDate: new Date().toISOString(),
+      _key: nanoid(),
+    },
+  ]
   const paymentRecord = {
     _type: "paymentRecord",
     // _id: idForPaymentRecord, // generate a unique ID
@@ -93,7 +122,7 @@ export const createPaymentRecord = async (
     },
     amount: {
       _type: "object",
-      total: +paymentIntent.metadata.totalToPay,
+      total: paymentIntent.metadata.creditsApplied && +paymentIntent.metadata.creditsApplied > 0 ? +paymentIntent.metadata.creditsApplied + +paymentIntent.metadata.totalToPay : +paymentIntent.metadata.totalToPay,
       paid: paymentIntent.amount / 100,
       owed: +paymentIntent.metadata.amountOwing,
       hst: +paymentIntent.metadata.hst,
@@ -102,16 +131,7 @@ export const createPaymentRecord = async (
       ...item,
       _key: nanoid(),
     })),
-    payments: [
-      {
-        _type: "payment",
-        stripePaymentIntentId: paymentIntent.id,
-        amount: paymentIntent.amount / 100,
-        paymentDate: new Date().toISOString(),
-        _key: nanoid(),
-      },
-      // add more payments as needed
-    ],
+    payments,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

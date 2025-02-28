@@ -52,9 +52,24 @@ const Page = async ({ params }: {
               </li>
             ))}
           </ul>
+          <ul>
+            <strong>
+              Payments
+            </strong>
+            {paymentRecordInfo.payments.map(payment => (
+              <li key={payment._key}>
+                <p>
+                  Payment type: {payment.paymentType}
+                </p>
+                <p>
+                  Amount: ${payment.amount}
+                </p>
+              </li>
+            ))}
+          </ul>
           <footer className="text-black">
-
-            {paymentRecordInfo.amount.owed && paymentRecordInfo.amount.owed > 0 && (
+            <strong>Totals:</strong>
+            {paymentRecordInfo.amount.owed && paymentRecordInfo.amount.owed > 0 ? (
               <>
                 <div className="">
                   <h3 className="font-bold">Paid</h3>
@@ -65,24 +80,21 @@ const Page = async ({ params }: {
                   <p>${paymentRecordInfo.amount.owed}</p>
                 </div>
               </>
-            )}
+            ) : ("")}
+
             <div className="">
               <h3 className="font-bold">HST</h3>
               <p>${paymentRecordInfo.amount.hst}</p>
             </div>
-            <div className="">
-              <h3 className="font-bold">HST</h3>
-              <p>${paymentRecordInfo.amount.hst}</p>
-            </div>
-            <div >
+            <div>
               <h3 className="font-bold">Total</h3>
-              <p>${paymentRecordInfo.amount.total}</p>
+              <p>${paymentRecordInfo.payments.reduce((total, payment) => total + payment.amount, 0).toFixed(2)}</p>
             </div>
-            {paymentRecordInfo.amount.owed && paymentRecordInfo.amount.owed > 0 && (
+            {paymentRecordInfo.amount.owed && paymentRecordInfo.amount.owed > 0 ? (
               <Button className="h-fit">
                 <Link href={`/dashboard/checkout/${paymentRecordInfo._id}/pay-remainder/`}>Pay Remainder</Link>
               </Button>
-            )}
+            ) : ""}
           </footer>
         </section>
       </Box>
@@ -127,7 +139,7 @@ const Page = async ({ params }: {
           Back to Profile
         </Button>
       </Link>
-    </main>
+    </main >
   );
 }
 
