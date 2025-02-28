@@ -6,12 +6,14 @@ import { TDayWithTable, TSanityMarket, TTableInDay } from "@/sanity/queries/admi
 
 const MAX_VENDORS_PER_CATEGORY = 3;
 
-export const getAvailableDays = (market: TSanityMarket, businessCategory: string) => {
+export const getAvailableDays = (market: TSanityMarket, businessCategory: string, withoutMax?: boolean) => {
   return market.daysWithTables?.filter(day => {
     const categoryCount = market.vendors?.filter(vendor =>
       vendor.vendor.businessCategory === businessCategory &&
       vendor.datesBooked.some(bookedDate => bookedDate.date === day.date)
     ).length ?? 0;
+
+    if (withoutMax) return true
 
     return categoryCount < MAX_VENDORS_PER_CATEGORY;
   });
@@ -30,7 +32,7 @@ const SelectDates = ({
   selectedDates: TDayWithTable[];
   businessCategory: string;
 }) => {
-  const availableDays = getAvailableDays(market, businessCategory);
+  const availableDays = getAvailableDays(market, businessCategory, true);
 
   if (availableDays?.length === 0) {
     return (
