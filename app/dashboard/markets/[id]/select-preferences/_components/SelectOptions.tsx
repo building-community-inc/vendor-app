@@ -316,7 +316,13 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         value={specialRequest}
         onChange={(e) => setSpecialRequest(e.target.value)}
         /> */}
-      <ContinueButton type="submit" className="max-w-[544px]">{payingWithCredits ? "Completing Payment..." : "Complete Booking"}</ContinueButton>
+      <ContinueButton
+        disabled
+        className="max-w-[544px] bg-black"
+      >
+        We are reworking some things please contact <a href="mailto:applications@buildingcommunityinc.com"> applications@buildingcommunityinc.com to complete your booking</a>
+      </ContinueButton>
+      {/* <ContinueButton type="submit" className="max-w-[544px]">{payingWithCredits ? "Completing Payment..." : "Complete Booking"}</ContinueButton> */}
     </form>
   );
 };

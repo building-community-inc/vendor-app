@@ -102,7 +102,12 @@ const SelectDates = ({
                             handleOnTableChange(newTable, dayObj);
                           }}
                         >
-                          <option value="null">Table</option>
+                          {dayObj.tables
+                            .filter((table) => !table.booked).length > 0 ? (
+                              <option value="null">Table</option>
+                            ) : (
+                              <option>No Available Tables</option>
+                            )}
                           {dayObj.tables
                             .filter((table) => !table.booked)
                             .map((table, index) => (
