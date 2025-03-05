@@ -409,7 +409,7 @@ export const saveMarketChanges = async (
             }),
           }
 
-          try {
+        try {
             await sanityWriteClient.patch(paymentToUpdate._id).set({
               items: newPaymentRecord.items,
             }).commit();

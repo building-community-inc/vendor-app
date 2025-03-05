@@ -16,6 +16,7 @@ import { DateTime } from "luxon";
 import PaymentOptions from "./PaymentOptions";
 import { createPaymentWithCredits } from "@/app/dashboard/checkout/_components/createPaymentWithCreditsAction";
 import { formatDateString, isMarketOpen, lessThan7DaysToBook } from "@/utils/helpers";
+import { createETransferBooking } from "./createETransferBooking";
 // import { useRouter } from "next/navigation";
 export type TSelectedTableType = {
   date: string;
@@ -45,6 +46,8 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
   const [creditsToUse, setCreditsToUse] = useState<number>(0);
 
   const { setAllCheckoutData, } = useCheckoutStore();
+
+  const [prebookingErrors, setPrebookingErrors] = useState<string[] | null | undefined>()
 
   const totalToPay = selectedTables.reduce(
     (total, table) => total + table.table.table.price,
@@ -188,7 +191,32 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
 
       if (parsedCheckoutState.data.totalToPay > 0) {
         // console.log("pushing to checkout", { parsedCheckoutState });
-        push(`/dashboard/checkout`);
+        try {
+          const formData = new FormData();
+          formData.append("items", JSON.stringify(parsedCheckoutState.data.items));
+          formData.append("marketId", JSON.stringify(market._id));
+          formData.append("specialRequest", parsedCheckoutState.data.specialRequest || "");
+          formData.append("totalToPay", `${totalToPay}`);
+          formData.append("depositAmount", `${parsedCheckoutState.data.depositAmount}`);
+          formData.append("paymentType", parsedCheckoutState.data.paymentType || "");
+          formData.append("hst", `${parsedCheckoutState.data.hst}`);
+          formData.append("price", `${parsedCheckoutState.data.price}`);
+          formData.append("creditsApplied", `${parsedCheckoutState.data.creditsApplied}`);
+
+          const resp = await createETransferBooking(formData);
+
+          console.log({resp})
+          if (!resp.success) {
+            setPrebookingErrors(resp.errors)
+          }
+
+          if (resp.success) {
+            push(`/dashboard/e-transfer-info/${resp.paymentRecordId}`)
+          }
+        } catch (error) {
+          setPrebookingErrors(["something went wrong"])
+        }
+        // push(`/dashboard/checkout`);
       } else {
         // console.log("creating payment with credits", { parsedCheckoutState });
         setPayingWithCredits(true);
@@ -316,13 +344,13 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         value={specialRequest}
         onChange={(e) => setSpecialRequest(e.target.value)}
         /> */}
-      <ContinueButton
+      {/* <ContinueButton
         disabled
         className="max-w-[544px] bg-black"
       >
         We are reworking some things please contact <a href="mailto:applications@buildingcommunityinc.com"> applications@buildingcommunityinc.com to complete your booking</a>
-      </ContinueButton>
-      {/* <ContinueButton type="submit" className="max-w-[544px]">{payingWithCredits ? "Completing Payment..." : "Complete Booking"}</ContinueButton> */}
+      </ContinueButton> */}
+      <ContinueButton type="submit" className="max-w-[544px]">{payingWithCredits ? "Completing Payment..." : "Complete Booking"}</ContinueButton>
     </form>
   );
 };

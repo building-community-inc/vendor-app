@@ -152,6 +152,14 @@ export const paymentRecordSchema = defineType({
       type: "boolean",
       initialValue: false,
     }),
+    defineField({
+      name: "status",
+      title: "Status",
+      type: "string",
+      options: {
+        list: ["pending", "approved", "cancelled"]
+      }
+    })
   ],
 
   preview: {
