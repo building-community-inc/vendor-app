@@ -4,7 +4,7 @@ import { cn } from "@/utils";
 import Link from "next/link";
 import { ComponentPropsWithoutRef } from "react";
 
-export const PaymentRecordCard = ({ market, paymentId, items, amount, admin, returned, payments }: {
+export const PaymentRecordCard = ({ market, paymentId, items, amount, admin, returned, payments, status }: {
   market: {
     _id: string;
     name: string;
@@ -13,15 +13,15 @@ export const PaymentRecordCard = ({ market, paymentId, items, amount, admin, ret
   paymentId: string;
   items: TTableItem[];
   amount: TAmount;
-  payments: TPayment[];
+  payments?: TPayment[] | null | undefined;
   admin?: boolean;
   returned?: boolean | undefined | null;
+  status?: "pending" | "approved" | "cancelled" | string | undefined | null
 }) => {
 
   return (
     <li key={market._id} className="px-5 py-5 flex gap-5 flex-col border rounded-2xl justify-between border-button-border-color shadow-md shadow-button-border-color">
       <div className="flex gap-8 flex-wrap">
-
         <MarketSection title="Date">
           <ul className="flex flex-col gap-2">
             {items.map(date => (
@@ -61,21 +61,22 @@ export const PaymentRecordCard = ({ market, paymentId, items, amount, admin, ret
         <div className="flex gap-8 flex-wrap">
 
           <MarketSection title="Booking Status">
-            {returned ? "Cancelled" : "Reserved"}
+            {returned ? "Cancelled" : status || "paid"}
           </MarketSection>
+          {payments && payments.length > 0 && (
+            <MarketSection title="Payments">
+              <ul>
+                {payments?.map((payment, index) => (
+                  <li key={`payment-${payment.amount}-${index}`} className="">
+                    <p>
+                      {index + 1}. {payment.paymentType ? payment.paymentType : payment.stripePaymentIntentId ? "stripe" : ""} ${payment.amount}
+                    </p>
 
-          <MarketSection title="Payments">
-            <ul>
-              {payments.map((payment, index) => (
-                <li key={`payment-${payment.amount}-${index}`} className="">
-                  <p>
-                    {index + 1}. {payment.paymentType ? payment.paymentType : payment.stripePaymentIntentId ? "stripe" : ""} ${payment.amount}
-                  </p>
-               
-                </li>
-              ))}
-            </ul>
-          </MarketSection>
+                  </li>
+                ))}
+              </ul>
+            </MarketSection>
+          )}
           <MarketSection title="Totals" className="">
             <p>
 
@@ -87,14 +88,24 @@ export const PaymentRecordCard = ({ market, paymentId, items, amount, admin, ret
           </MarketSection>
         </div>
         <section className="grid gap-5">
-          <Button className="h-fit ">
-            <Link className="text-center" href={`/dashboard/bookings/${paymentId}`}>Review Booking</Link>
-          </Button>
-          {amount.owed ? amount.owed > 0 && (
+          {status === "pending" ? (
+            <Link className="text-center" href={`/dashboard/e-transfer-info/${paymentId}`}>
+              <Button className="h-fit ">
+                View Payment Information
+              </Button>
+            </Link>
+          ) : (
+            <Link className="text-center" href={`/dashboard/bookings/${paymentId}`}>
+              <Button className="h-fit ">
+                Review Booking
+              </Button>
+            </Link>
+          )}
+          {/* {amount.owed ? amount.owed > 0 && (
             <Button className="h-fit">
               <Link href={`/dashboard/checkout/${paymentId}/pay-remainder/`}>Pay Remainder</Link>
             </Button>
-          ) : undefined}
+          ) : undefined} */}
 
           {admin && (
             <Link href={`/studio/structure/paymentRecord;${paymentId}`} target="_blank" rel="noreferrer">

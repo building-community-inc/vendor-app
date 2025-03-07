@@ -22,7 +22,7 @@ export const zodLatePaymentSchema = z.object({
       amount: z.number(),
       _type: z.string(),
     })
-  ),
+  ).optional().nullable(),
   amount: z.object({
     paid: z.number(),
     total: z.number(),
@@ -38,6 +38,7 @@ export const zodLatePaymentSchema = z.object({
     })
   ),
   paymentReturned: z.boolean().optional().nullable(),
+  status: z.string().optional().nullable(),
 });
 
 export const zodPaymentItem = z.object({
@@ -86,8 +87,8 @@ const paymentQuery = `
     date,
     price
   },
-  paymentReturned
-
+  paymentReturned,
+  status
 `;
 
 const paymentQueryWithMarket = groq`

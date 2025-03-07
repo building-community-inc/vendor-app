@@ -51,7 +51,15 @@ const VendorPayments = ({ vendorPaymentRecords, admin }: {
         {filteredVendorPaymentRecords.map(paymentRecord => (
           <PaymentRecordCard
             admin={admin}
-            returned={paymentRecord.paymentReturned} payments={paymentRecord.payments} amount={paymentRecord.amount} paymentId={paymentRecord._id} key={paymentRecord._id} market={paymentRecord.market} items={paymentRecord.items} />
+            returned={paymentRecord.paymentReturned}
+            payments={paymentRecord.payments}
+            amount={paymentRecord.amount}
+            paymentId={paymentRecord._id}
+            key={paymentRecord._id}
+            market={paymentRecord.market}
+            items={paymentRecord.items}
+            status={paymentRecord.status}
+          />
         ))}
       </ul>
     </section>

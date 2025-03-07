@@ -25,7 +25,7 @@ const Search = ({
       placeholder={placeholder}
       onChange={handleSearch}
       className={cn(
-        `bg-background text-black border border-button-border-color rounded-full px-3 py-2 max-w-[654px] w-[100%]`,
+        `bg-background text-black border border-button-border-color rounded-full px-3 py-2 w-[100%]`,
         theme === "light" && "bg-white text-black border border-black"
       )}
     />

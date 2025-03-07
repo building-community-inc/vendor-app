@@ -86,7 +86,7 @@ const VendorCard = ({ vendor }: {
 }) => {
   return (
     <li className="border-b border-black pb-5 w-content flex-grow flex flex-col items-center justify-between gap-10">
-      <section className="flex items-center justify-between gap-2 flex-grow flex-col w-full lg:flex-row">
+      <section className="flex flex-wrap items-center justify-between gap-2 flex-grow flex-col w-full lg:flex-row">
         {vendor.business ? (
           <CardItem title="Business:" value={vendor.business.businessName} />
         ) : (

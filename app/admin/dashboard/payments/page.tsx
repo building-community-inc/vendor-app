@@ -4,6 +4,8 @@ import FormTitleDivider from "../_components/FormTitleDivider";
 import { DateTime } from "luxon";
 import Search from "@/app/dashboard/explore/_components/Search";
 import { formatDateString } from "@/utils/helpers";
+import Button from "@/app/_components/Button";
+import ChangePaymentStatus from "./ChangePaymentStatus";
 
 const Page = async ({
   searchParams,
@@ -24,7 +26,7 @@ const Page = async ({
   }
 
   const balancesOwedPayments = allPayments.filter(
-    (payment) => payment.amount.owed > 0
+    (payment) => (payment.amount.owed ?? 0) > 0
   );
 
   const paymentHistory = allPayments.filter(
@@ -50,9 +52,11 @@ const Page = async ({
 
   return (
     <main className="flex flex-col px-10 py-10 gap-2 min-h-screen w-full">
-      <header className="flex w-full justify-between">
+      <header className="flex w-full justify-between items-center gap-2">
         <h1 className="font-bold text-xl">Payments</h1>
-        <Search urlForSearch="/admin/dashboard/payments" theme="light" placeholder="Find a Payment" />
+        <div className="flex-grow">
+          <Search urlForSearch="/admin/dashboard/payments" theme="light" placeholder="Find a Payment" />
+        </div>
       </header>
       {balancesOwedPayments.length > 0 && (
         <section className="">
@@ -74,7 +78,7 @@ const Page = async ({
                     </div>
                     <div className="flex flex-col">
                       <TitleName title="Market Name" name={payment.market.name.split(" - ")[0]} />
-                      <TitleName title="Market Dates" name={payment.market.name.split(" - ")[1]} />
+                      <TitleName title="Market Dates" name={payment.market.dates.join(", ")} />
                     </div>
                   </div>
                   <TitleName title="Dates Booked" list={dateList} />
@@ -82,6 +86,11 @@ const Page = async ({
                     <TitleName title="Amount Owing" name={`$${payment.amount.owed}`} />
                     <TitleName title="Due Date" name={formatDateString(payment.market.dates[0])} />
                   </div>
+
+                  <div className="flex flex-col items-end">
+                    <TitleName title="Status" name={payment.status || "paid"} />
+                  </div>
+                  <ChangePaymentStatus paymentRecordId={payment._id} status={payment.status || "paid"} />
                 </PaymentItem>
               )
             })}
@@ -107,10 +116,14 @@ const Page = async ({
                     <TitleName title="Order Id" name={payment._id} />
                   </div>                  <div className="flex flex-col">
                     <TitleName title="Market Name" name={payment.market.name.split(" - ")[0]} />
-                    <TitleName title="Market Dates" name={payment.market.name.split(" - ")[1]} />
+                    <TitleName title="Market Dates" name={payment.market.dates.join(" ")} />
                   </div>
                   <TitleName title="Dates Booked" list={datesBookedList} />
                   <TitleName title="Amount Paid" name={`$${payment.amount.paid}`} />
+                  <div className="flex flex-col items-end">
+                    <TitleName title="Status" name={payment.status || "paid"} />
+                  </div>
+                  <ChangePaymentStatus paymentRecordId={payment._id} status={payment.status || "paid"} />
                 </PaymentItem>
               )
             })}
@@ -131,7 +144,7 @@ const PaymentItem = ({ children }:
     <li className="border border-black rounded flex flex-wrap p-2 gap-2 flex-grow justify-between shadow-[5px_3px_6px_#00000029]">{children}</li>
   )
 }
-const TitleName = ({ title, name, list }: {
+export const TitleName = ({ title, name, list }: {
   title: string;
   name: string;
   list?: never;

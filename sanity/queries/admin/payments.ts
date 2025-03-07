@@ -11,7 +11,7 @@ const zodPaymentSchema = z.object({
   amount: z.object({
     total: z.number(),
     paid: z.number(),
-    owed: z.number(),
+    owed: z.number().optional().nullable(),
     hst: z.number(),
   }),
   vendor: z.object({
@@ -31,7 +31,8 @@ const zodPaymentSchema = z.object({
       tableId: z.string(),
     })
   ),
-  paymentReturned: z.boolean().optional().nullable()
+  paymentReturned: z.boolean().optional().nullable(),
+  status: z.string().optional().nullable(),
 });
 
 export type TPayment = z.infer<typeof zodPaymentSchema>;
@@ -73,10 +74,12 @@ export const getAllPayments = async () => {
           date,
           price,
           tableId
-        }
+        },
+        paymentReturned,
+        status
+
       }`
     );
-
     const parsedPayments = zodPaymentsSchema.safeParse(res);
 
     if (!parsedPayments.success) {

@@ -71,6 +71,7 @@ const userMarketQueryString = `
         date,
         tableId
     },
+    status,
     paymentReturned,
     "payments": payments[] {
       stripePaymentIntentId,
@@ -115,9 +116,10 @@ const zodUserMarket = z.object({
   _id: z.string(),
   items: z.array(zodTableItem),
   paymentReturned: z.boolean().optional().nullable(),
+  status: z.string().optional().nullable(),
   payments: z.array(
     zodPaymentSchema
-  ),
+  ).optional().nullable(),
 });
 
 export type TUserMarket = z.infer<typeof zodUserMarket>;

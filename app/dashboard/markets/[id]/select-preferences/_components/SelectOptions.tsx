@@ -47,7 +47,9 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
 
   const { setAllCheckoutData, } = useCheckoutStore();
 
-  const [prebookingErrors, setPrebookingErrors] = useState<string[] | null | undefined>()
+  const [prebookingErrors, setPrebookingErrors] = useState<string[] | null | undefined>();
+
+  const [addBooking, setAddBooking] = useState(false);
 
   const totalToPay = selectedTables.reduce(
     (total, table) => total + table.table.table.price,
@@ -203,14 +205,17 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
           formData.append("price", `${parsedCheckoutState.data.price}`);
           formData.append("creditsApplied", `${parsedCheckoutState.data.creditsApplied}`);
 
+          setAddBooking(true)
           const resp = await createETransferBooking(formData);
 
           console.log({resp})
           if (!resp.success) {
+            setAddBooking(false)
             setPrebookingErrors(resp.errors)
           }
-
+          
           if (resp.success) {
+            setAddBooking(false)
             push(`/dashboard/e-transfer-info/${resp.paymentRecordId}`)
           }
         } catch (error) {
@@ -350,7 +355,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
       >
         We are reworking some things please contact <a href="mailto:applications@buildingcommunityinc.com"> applications@buildingcommunityinc.com to complete your booking</a>
       </ContinueButton> */}
-      <ContinueButton type="submit" className="max-w-[544px]">{payingWithCredits ? "Completing Payment..." : "Complete Booking"}</ContinueButton>
+      <ContinueButton type="submit" disabled={addBooking} className="max-w-[544px]">{addBooking ? "Completing Booking..." : "Complete Booking"}</ContinueButton>
     </form>
   );
 };
