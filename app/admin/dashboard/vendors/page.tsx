@@ -50,10 +50,12 @@ const Page = async ({
 
   return (
     <main className="pt-0 w-full min-h-screen mx-auto relative bg-background">
-      <header className="flex flex-col w-full p-5 gap-2 sticky top-0 left-0 bg-background z-1">
-        <div className="flex gap-5 items-center">
+      <header className="flex flex-col w-full px-5 py-2 gap-2 sticky top-0 left-0 bg-background z-1">
+        <div className="pl-10 lg:pl-0 flex gap-5 items-center">
           <h1 className="font-segoe font-bold text-3xl text-center">Vendors</h1>
-          <Search urlForSearch="/admin/dashboard/vendors" theme="light" placeholder="Find a Vendor" />
+          <div className="flex-grow">
+            <Search urlForSearch="/admin/dashboard/vendors" theme="light" placeholder="Find a Vendor" />
+          </div>
         </div>
         <VendorFilters vendorStatuses={[...vendorStatuses] as string[]} />
       </header>

@@ -79,12 +79,21 @@ export const PaymentRecordCard = ({ market, paymentId, items, amount, admin, ret
           )}
           <MarketSection title="Totals" className="">
             <p>
-
               HST: {amount.hst}
             </p>
             <p>
               Total: {amount.total}
             </p>
+            {amount.paid ? (
+              <p>
+                Paid: {amount.paid}
+              </p>
+            ) : ""}
+            {amount.owed ? (
+              <p>
+                Owed: {amount.owed}
+              </p>
+            ) : ""}
           </MarketSection>
         </div>
         <section className="grid gap-5">

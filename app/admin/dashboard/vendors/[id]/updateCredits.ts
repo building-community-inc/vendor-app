@@ -79,7 +79,7 @@ export const updateCredits = async (
 
     await sanityWriteClient
       .patch(userId)
-      .set({ credits: result.output.newCredits })
+      .set({ credits: result.output.newCredits.toFixed(2) })
       .commit();
 
     await sanityWriteClient.create({
@@ -93,9 +93,8 @@ export const updateCredits = async (
       reason: "Admin added credits",
     });
 
-    revalidatePath(`/admin/dashboard/vendors/${userId}/`);
-    revalidatePath(`/admin/dashboard/vendors/`);
-    revalidatePath(`/dashboard`);
+    revalidatePath(`/admin/dashboard/`, "layout");
+    revalidatePath(`/dashboard`, "layout");
 
     return {
       success: true,

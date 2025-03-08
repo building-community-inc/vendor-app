@@ -429,10 +429,8 @@ export const saveMarketChanges = async (
     }
 
   if (sanityResp) {
-    revalidatePath("/admin/dashboard/markets/[id]", "page");
-    revalidatePath("/dashboard/markets/[id]", "page");
-    revalidatePath("/dashboard/vendors/[id]", "page");
-    revalidatePath("/admin/dashboard/vendors/[id]", "page");
+    revalidatePath("/admin/dashboard/", "layout");
+    revalidatePath("/dashboard/", "layout");
 
     return {
       success: true,

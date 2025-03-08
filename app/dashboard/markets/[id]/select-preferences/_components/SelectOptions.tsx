@@ -225,6 +225,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
       } else {
         // console.log("creating payment with credits", { parsedCheckoutState });
         setPayingWithCredits(true);
+        setAddBooking(true)
         const payWithCredits = async () => {
           const formData = new FormData();
           formData.append("items", JSON.stringify(parsedCheckoutState.data.items));
@@ -241,20 +242,23 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
             const resp = await createPaymentWithCredits(formData);
 
             if (resp.errors) {
+              setAddBooking(false)
               console.log(resp.errors);
               alert("Something went wrong. Please try again.");
               return;
             }
-
+            
             if (resp.success) {
+              setAddBooking(false)
               setAllCheckoutData(parsedCheckoutState.data);
               // setPayingWithCredits(false);
               push(`/dashboard/checkout/credit-successfully-applied?paymentRecordId=${resp.paymentRecordId}`);
             }
-
+            
             // redirect(`/dashboard/checkout/success?paymentRecordId${resp.paymentRecordId}`);
-
+            
           } catch (error) {
+            setAddBooking(false)
             setPayingWithCredits(false);
             console.log({ error });
           }
@@ -355,7 +359,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
       >
         We are reworking some things please contact <a href="mailto:applications@buildingcommunityinc.com"> applications@buildingcommunityinc.com to complete your booking</a>
       </ContinueButton> */}
-      <ContinueButton type="submit" disabled={addBooking} className="max-w-[544px]">{addBooking ? "Completing Booking..." : "Complete Booking"}</ContinueButton>
+      <ContinueButton type="submit" disabled={addBooking} className="max-w-[544px] disabled:bg-gray-500">{addBooking ? "Completing Booking..." : "Complete Booking"}</ContinueButton>
     </form>
   );
 };

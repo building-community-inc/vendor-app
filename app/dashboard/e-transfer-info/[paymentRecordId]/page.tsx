@@ -123,7 +123,7 @@ const Page = async ({ params }: {
               <p>Please send payment of <strong> ${paymentRecord.amount.owed}</strong> to:
                 {` ${PAYMENT_EMAIL}`}</p>
               <p>
-                Add the following payment code to the message of the payment:
+                Add the the market information to the e-transfer message.
               </p>
             </footer>
           </section>
@@ -173,7 +173,7 @@ const Page = async ({ params }: {
 
     );
   } else {
-    redirect(`/bookings/${params.paymentRecordId}`)
+    redirect(`/dashboard/bookings/${params.paymentRecordId}`)
   }
 }
 

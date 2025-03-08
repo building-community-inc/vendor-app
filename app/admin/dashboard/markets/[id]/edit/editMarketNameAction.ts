@@ -42,11 +42,8 @@ export const editMarketNameAction = async (
 
   if (sanityResp) {
     
-    revalidatePath("/dashboard/explore", "page");
-    revalidatePath("/admin/dashboard/markets", "page");
-    revalidatePath("/admin/dashboard/markets/[id]", "page");
-    revalidatePath("/admin/dashboard/markets/[id]/edit", "page");
-    revalidatePath("/dashboard/markets/[id]", "page");
+    revalidatePath("/dashboard/", "layout");
+    revalidatePath("/admin/dashboard/", "layout");
     return {
       errors: null,
       success: true

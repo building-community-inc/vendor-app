@@ -2,7 +2,6 @@
 
 import { TPaymentItem } from "@/app/dashboard/checkout/success/api/route";
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
-import { getMarketById } from "@/sanity/queries/admin/markets/markets";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
 import { nanoid } from "nanoid";
@@ -70,6 +69,17 @@ export const createETransferBooking = async (formData: FormData): Promise<{
     };
   }
 
+  const payments = data.creditsApplied > 0 ? [
+    {
+      _type: "payment",
+      amount: data.creditsApplied,
+      paymentType: "credit",
+      _key: nanoid(),
+      paymentDate: new Date().toISOString(),
+    },
+  ] : [];
+
+
   const newPaymentRecord = {
     _type: "paymentRecord",
     status: "pending",
@@ -94,7 +104,8 @@ export const createETransferBooking = async (formData: FormData): Promise<{
       date: item.date,
       _key: nanoid(),
     })),
-
+    payments,
+    specialRequest: data.specialRequest,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -231,18 +242,18 @@ export const createETransferBooking = async (formData: FormData): Promise<{
     daysWithTables = [...daysWithTables]; // Create a copy of the daysWithTables array
     daysWithTables[dayToUpdateIndex] = updatedDay;
 
-    console.log({ updated: daysWithTables[dayToUpdateIndex] });
+    // console.log({ updated: daysWithTables[dayToUpdateIndex] });
   }
 
   // After the loop, update the market object with the new daysWithTables
   market.daysWithTables = daysWithTables; // Important: Update the market object
 
-  console.log({ market });
+  // console.log({ market });
   // Update vendors List
 
   const vendors = market.vendors;
 
-  console.log({ vendorsLeng: vendors.length, userid: sanityUser._id });
+  // console.log({ vendorsLeng: vendors.length, userid: sanityUser._id });
 
   // find vendor to update if not found create one
 
@@ -278,22 +289,21 @@ export const createETransferBooking = async (formData: FormData): Promise<{
       vendor: { _ref: sanityUser._id, _type: "reference" },
     });
   }
-  console.log({ vendors });
+  // console.log({ vendors });
 
   market.vendors = vendors;
 
   try {
     const paymentRecordResp = await sanityWriteClient.create(newPaymentRecord);
     const marketResp = await sanityWriteClient.patch(market._id).set(market).commit()
-    console.log({ paymentRecordResp, marketResp });
-    revalidatePath("/admin/dashboard/markets/[id]", "page");
-    revalidatePath("/dashboard/", "page");
-    revalidatePath("/dashboard/markets/[id]", "page");
-    revalidatePath("/dashboard/vendors/[id]", "page");
-    revalidatePath("/admin/dashboard/vendors/[id]", "page");
+    // console.log({ paymentRecordResp, marketResp });
+    // console.log({ newPaymentRecord, payments: newPaymentRecord.payments });
+    revalidatePath("/dashboard/", "layout");
+    revalidatePath("/admin/dashboard/", "layout");
 
     return {
       success: true,
+      // errors: ["something went wrong"],
       paymentRecordId: paymentRecordResp._id
     }
   } catch (error) {

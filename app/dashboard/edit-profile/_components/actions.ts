@@ -70,8 +70,8 @@ export const saveNewBusinessInfo = async (
     .commit();
 
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/edit-profile");
+  revalidatePath("/dashboard", "layout");
+  revalidatePath("/admin/dashboard", "layout");
 
   return {
     success: true,

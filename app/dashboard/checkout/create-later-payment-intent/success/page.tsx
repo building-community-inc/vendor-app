@@ -35,7 +35,7 @@ const Page = async ({
       <p><strong>Amount Paid:</strong>${payment.amount.paid}</p>
       <ul>
         <h2 className="font-bold text-lg">Payments</h2>
-        {payment.payments.map((payment, index) => (
+        {payment.payments?.map((payment, index) => (
           <li key={payment.paymentDate} className="flex items-start gap-2">
             <span>{index + 1}.</span>
             <div>

@@ -26,7 +26,7 @@ const VendorPayments = ({ vendorPaymentRecords, admin }: {
     if (filter === "cancelled") {
       return paymentRecord.paymentReturned;
     } else if (filter === "reserved") {
-      return !paymentRecord.paymentReturned;
+      return paymentRecord.status === "paid";
     } else {
       return true;
     }

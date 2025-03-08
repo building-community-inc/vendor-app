@@ -72,7 +72,6 @@ export const createBooking = async (
         stripePaymentIntentId: parsedData.data.stripePaymentId,
         amount: parsedData.data.paid,
         paymentType: parsedData.data.paymentType,
-        _type: "payment",
       },
     ],
     amount: {
@@ -229,8 +228,8 @@ export const createBooking = async (
       success: false,
     };
   }
-  revalidatePath("/admin/dashboard/markets/[id]", "page");
-  revalidatePath("/dashboard/markets/[id]", "page");
+  revalidatePath("/admin/dashboard", "layout");
+  revalidatePath("/dashboard", "layout");
 
   return {
     errors: null,
@@ -299,4 +298,4 @@ const zodRawDataSchema = z
   type TSanityMarket = z.infer<typeof zodSanityMarket>;
 
 
-  type TPaymentRecordWithouMarketId = Omit<TPaymentRecord, "marketId">;
+  type TPaymentRecordWithouMarketId = Omit<TPaymentRecord, "marketId" | "vendorId">;

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { sanityClient, sanityWriteClient } from "../lib/client";
+import { sanityClient } from "../lib/client";
 import { groq } from "next-sanity";
 
 export const getExistingPayment = async (paymentIntentId: string) => {
@@ -20,7 +20,6 @@ export const zodLatePaymentSchema = z.object({
       paymentDate: z.string(),
       stripePaymentIntentId: z.string().optional().nullable(),
       amount: z.number(),
-      _type: z.string(),
     })
   ).optional().nullable(),
   amount: z.object({
@@ -39,6 +38,7 @@ export const zodLatePaymentSchema = z.object({
   ),
   paymentReturned: z.boolean().optional().nullable(),
   status: z.string().optional().nullable(),
+  vendorId: z.string(),
 });
 
 export const zodPaymentItem = z.object({
@@ -88,7 +88,8 @@ const paymentQuery = `
     price
   },
   paymentReturned,
-  status
+  status,
+  "vendorId": user->_id
 `;
 
 const paymentQueryWithMarket = groq`
@@ -137,7 +138,6 @@ export const getPaymentByIdWithMarket = async (paymentId: string) => {
     `,
     { paymentId }
   );
-
   const parsedResult = zodLatePaymentWithMarketSchema.safeParse(result);
 
   if (!parsedResult.success) {

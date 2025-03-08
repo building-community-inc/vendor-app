@@ -1,11 +1,11 @@
 import { TPayment, getAllPayments } from "@/sanity/queries/admin/payments";
 import { unstable_noStore as noStore } from "next/cache";
 import FormTitleDivider from "../_components/FormTitleDivider";
-import { DateTime } from "luxon";
 import Search from "@/app/dashboard/explore/_components/Search";
-import { formatDateString } from "@/utils/helpers";
-import Button from "@/app/_components/Button";
+import { formatDateString, formatDateWLuxon } from "@/utils/helpers";
 import ChangePaymentStatus from "./ChangePaymentStatus";
+import CancelPayment from "./CancelPayment";
+import Link from "next/link";
 
 const Page = async ({
   searchParams,
@@ -64,34 +64,11 @@ const Page = async ({
           <FormTitleDivider title="Outstanding Balances" />
           <ul className="flex flex-col gap-2">
             {filterPayments(balancesOwedPayments).map((payment) => {
-              const dateList = payment.items.map(({ date }) => {
-                return formatDateString(date);
-              });
+              const datesBookedList = payment.items.map(({ date }) => formatDateWLuxon(date));
 
               return (
-                <PaymentItem key={payment._id}>
-                  <div className="flex gap-5 justify-between">
+                <PaymentItem key={payment._id} datesBookedList={datesBookedList} payment={payment} />
 
-                    <div className="flex flex-col">
-                      <TitleName title="Vendor Name" name={payment.vendor.businessName} />
-                      <TitleName title="Order Id" name={payment._id} />
-                    </div>
-                    <div className="flex flex-col">
-                      <TitleName title="Market Name" name={payment.market.name.split(" - ")[0]} />
-                      <TitleName title="Market Dates" name={payment.market.dates.join(", ")} />
-                    </div>
-                  </div>
-                  <TitleName title="Dates Booked" list={dateList} />
-                  <div className="flex flex-col items-end">
-                    <TitleName title="Amount Owing" name={`$${payment.amount.owed}`} />
-                    <TitleName title="Due Date" name={formatDateString(payment.market.dates[0])} />
-                  </div>
-
-                  <div className="flex flex-col items-end">
-                    <TitleName title="Status" name={payment.status || "paid"} />
-                  </div>
-                  <ChangePaymentStatus paymentRecordId={payment._id} status={payment.status || "paid"} />
-                </PaymentItem>
               )
             })}
           </ul>
@@ -102,29 +79,9 @@ const Page = async ({
           <FormTitleDivider title="Payment History" />
           <ul className="flex flex-wrap gap-2">
             {filterPayments(paymentHistory).map((payment) => {
-              const datesBookedList = payment.items.map(({ date }) => {
-                const [year, month, day] = date.split('-').map(Number);
-                const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-                const newDate = DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
-                const formattedDateString = newDate.toFormat('EEE, MMM d, yyyy');
-                return formattedDateString;
-              });
+              const datesBookedList = payment.items.map(({ date }) => formatDateWLuxon(date));
               return (
-                <PaymentItem key={payment._id}>
-                  <div className="flex flex-col">
-                    <TitleName title="Vendor Name" name={payment.vendor.businessName} />
-                    <TitleName title="Order Id" name={payment._id} />
-                  </div>                  <div className="flex flex-col">
-                    <TitleName title="Market Name" name={payment.market.name.split(" - ")[0]} />
-                    <TitleName title="Market Dates" name={payment.market.dates.join(" ")} />
-                  </div>
-                  <TitleName title="Dates Booked" list={datesBookedList} />
-                  <TitleName title="Amount Paid" name={`$${payment.amount.paid}`} />
-                  <div className="flex flex-col items-end">
-                    <TitleName title="Status" name={payment.status || "paid"} />
-                  </div>
-                  <ChangePaymentStatus paymentRecordId={payment._id} status={payment.status || "paid"} />
-                </PaymentItem>
+                <PaymentItem key={payment._id} datesBookedList={datesBookedList} payment={payment} />
               )
             })}
           </ul>
@@ -136,15 +93,60 @@ const Page = async ({
 
 export default Page;
 
-const PaymentItem = ({ children }:
+const PaymentItem = ({ payment, datesBookedList }:
   {
-    children: React.ReactNode;
+    payment: TPayment;
+    datesBookedList: string[];
   }) => {
   return (
-    <li className="border border-black rounded flex flex-wrap p-2 gap-2 flex-grow justify-between shadow-[5px_3px_6px_#00000029]">{children}</li>
+    <li className="border border-black rounded flex flex-wrap p-2 gap-2 flex-grow justify-between shadow-[5px_3px_6px_#00000029]">  <div className="flex flex-col">
+      <Link href={`/admin/dashboard/vendors/${payment.vendor._id}`} target="_blank">
+        <TitleNameTest title="Vendor Name" name={payment.vendor.businessName} />
+      </Link>
+      <TitleNameTest title="Order Id" name={payment._id} />
+    </div>
+      <div className="flex flex-col">
+        <TitleNameTest title="Market Name" name={payment.market.name.split(" - ")[0]} />
+        <TitleNameTest title="Market Dates" name={payment.market.dates.map(date => formatDateWLuxon(date)).join(", ")} />
+      </div>
+      <TitleNameTest title="Dates Booked" list={datesBookedList} />
+      <TitleNameTest title="Amount Paid" name={`$${payment.amount.paid}`} />
+      <div className="flex flex-col items-end">
+        <TitleNameTest title="Status" name={payment.status || "paid"} />
+      </div>
+      {payment.payments && payment.payments.length > 0 && (
+        <div className="flex flex-col">
+          <strong>Payments:</strong>
+          <ul>
+            {payment.payments?.map((payment, index) => (
+              <li key={`payment-${payment.amount}-${index}`} className="">
+                <p>
+                  {index + 1}. {payment.paymentType ? payment.paymentType : payment.stripePaymentIntentId ? "stripe" : ""} ${payment.amount}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <div className="flex flex-wrap justify-center gap-5 w-full">
+        {payment.status === "pending" && (
+          <ChangePaymentStatus
+            marketName={payment.market.name}
+            amountPaid={payment.amount.owed || 0}
+            paymentRecordId={payment._id}
+            status={payment.status || "paid"}
+            contactName={`${payment.vendor.firstName} ${payment.vendor.lastName}`}
+            vendorName={payment.vendor.businessName}
+          />
+        )}
+        {payment.amount.paid > 0 && payment.status !== "cancelled" && (
+          <CancelPayment paymentRecordId={payment._id} amountPaid={payment.amount.paid} />
+        )}
+      </div>
+    </li>
   )
 }
-export const TitleName = ({ title, name, list }: {
+const TitleNameTest = ({ title, name, list }: {
   title: string;
   name: string;
   list?: never;

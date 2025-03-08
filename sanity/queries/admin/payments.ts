@@ -33,6 +33,14 @@ const zodPaymentSchema = z.object({
   ),
   paymentReturned: z.boolean().optional().nullable(),
   status: z.string().optional().nullable(),
+  payments: z.array(
+    z.object({
+      stripePaymentIntentId: z.string().optional().nullable(),
+      amount: z.number(),
+      paymentDate: z.string(),
+      paymentType: z.string().optional().nullable(),
+    })
+  ),
 });
 
 export type TPayment = z.infer<typeof zodPaymentSchema>;
@@ -58,7 +66,8 @@ export const getAllPayments = async () => {
         "payments": payments [] {
           stripePaymentIntentId,
           amount,
-          paymentDate
+          paymentDate,
+          paymentType
         },
         "vendor": user->{
           _id,
