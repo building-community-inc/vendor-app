@@ -4,6 +4,7 @@ import { SignIn } from "@clerk/nextjs";
 import Image from "next/image";
 
 export default function Page() {
+
   return (
     <main className="grid place-content-center min-h-screen ">
       <Image src="/logo-on-white-bg.png"

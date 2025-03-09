@@ -14,7 +14,8 @@ export const clerkLoginAppearance = {
       boxShadow: "none",
       
     },
-
+    
+    
     header: {
       display: "none",
     },
@@ -26,7 +27,12 @@ export const clerkLoginAppearance = {
       background: "",
       border: "1px solid #707070",
     },
-
+    formFieldAction__password: {
+      color: "black",
+      "&:hover": {
+        color: "gray",
+      }
+    },
     socialButtons: {
       background: "black",
       borderRadius: "0.5rem",
@@ -41,7 +47,10 @@ export const clerkLoginAppearance = {
     },
  
     footerActionLink: {
-      color: "#C5B5A4",
+      color: "black",
+      "&:hover": {
+        color: "gray",
+      }
     },
     formResendCodeLink: {
       color: "#C5B5A4",
