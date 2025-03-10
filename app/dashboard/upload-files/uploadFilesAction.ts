@@ -146,6 +146,7 @@ export const uploadFiles = async (
       .commit();
 
     revalidatePath("/dashboard", "layout");
+    revalidatePath("/admin/dashboard", "layout");
     // redirect("/dashboard");
 
     return {

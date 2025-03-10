@@ -37,10 +37,8 @@ export const deleteMarketAction = async (
 
   const sanityResp = await sanityWriteClient.delete(marketId);
 
-  revalidatePath("/dashboard/explore", "page");
-  revalidatePath("/admin/dashboard/markets", "page");
-  revalidatePath("/admin/dashboard/markets/[id]", "page");
-  revalidatePath("/dashboard/markets/[id]", "page");
+  revalidatePath("/dashboard/", "layout");
+  revalidatePath("/admin/dashboard/", "layout");
   return {
     success: true,
     errors: null

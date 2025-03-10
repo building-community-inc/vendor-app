@@ -23,6 +23,7 @@ const Page = async ({ params }: {
           <span className="text-[1.3rem]">Vendor Table for has been {paymentRecordInfo.paymentReturned ? "cancelled" : "reserved"} for:</span>
           <h2 className="font-bold text-blac text-[1rem] text-black">{paymentRecordInfo.market.name}</h2>
           <h3 className="text-black text-[1rem]"><strong>Order ID:</strong> {paymentRecordInfo._id}</h3>
+          <h4 className="capitalize"><strong> Booking Status:</strong> {paymentRecordInfo.status || "paid"} </h4>
         </header>
 
         <section className="w-full flex flex-col gap-2">
@@ -52,21 +53,23 @@ const Page = async ({ params }: {
               </li>
             ))}
           </ul>
-          <ul>
-            <strong>
-              Payments
-            </strong>
-            {paymentRecordInfo.payments.map(payment => (
-              <li key={payment._key}>
-                <p>
-                  Payment type: {payment.paymentType}
-                </p>
-                <p>
-                  Amount: ${payment.amount}
-                </p>
-              </li>
-            ))}
-          </ul>
+          {paymentRecordInfo.payments && (
+            <ul>
+              <strong>
+                Payments
+              </strong>
+              {paymentRecordInfo.payments?.map(payment => (
+                <li key={payment._key}>
+                  <p>
+                    Payment type: {payment.paymentType}
+                  </p>
+                  <p>
+                    Amount: ${payment.amount}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
           <footer className="text-black">
             <strong>Totals:</strong>
             {paymentRecordInfo.amount.owed && paymentRecordInfo.amount.owed > 0 ? (
@@ -86,15 +89,17 @@ const Page = async ({ params }: {
               <h3 className="font-bold">HST</h3>
               <p>${paymentRecordInfo.amount.hst}</p>
             </div>
-            <div>
-              <h3 className="font-bold">Total</h3>
-              <p>${paymentRecordInfo.payments.reduce((total, payment) => total + payment.amount, 0).toFixed(2)}</p>
-            </div>
-            {paymentRecordInfo.amount.owed && paymentRecordInfo.amount.owed > 0 ? (
+            {paymentRecordInfo.payments && (
+              <div>
+                <h3 className="font-bold">Total</h3>
+                <p>${paymentRecordInfo.payments?.reduce((total, payment) => total + payment.amount, 0).toFixed(2)}</p>
+              </div>
+            )}
+            {/* {paymentRecordInfo.amount.owed && paymentRecordInfo.amount.owed > 0 ? (
               <Button className="h-fit">
                 <Link href={`/dashboard/checkout/${paymentRecordInfo._id}/pay-remainder/`}>Pay Remainder</Link>
               </Button>
-            ) : ""}
+            ) : ""} */}
           </footer>
         </section>
       </Box>

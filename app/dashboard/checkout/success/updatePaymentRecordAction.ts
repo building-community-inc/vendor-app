@@ -9,7 +9,6 @@ type PaymentRecordToUpdate = {
       _key: string;
       paymentDate: string;
       amount: number;
-      _type: string;
       stripePaymentIntentId?: string | null | undefined;
   }[];
   amount: {

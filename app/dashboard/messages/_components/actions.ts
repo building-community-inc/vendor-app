@@ -72,9 +72,8 @@ export const setMessageAsRead = async (formData: FormData) => {
       };
     });
 
-  revalidatePath("/dashboard/messages");
-  revalidatePath("/dashboard/");
-  revalidatePath("admin/dashboard/messages");
+  revalidatePath("/dashboard/", "layout");
+  revalidatePath("/admin/dashboard/", "layout");
   return {
     status: 200,
     body: "Message updated",

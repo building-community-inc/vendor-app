@@ -66,10 +66,8 @@ export const cancelMarketWithLambda = async (
 
     const result = await response.json();
 
-    revalidatePath("/admin/dashboard/markets");
-    revalidatePath("/admin/dashboard/markets/[id]");
-    revalidatePath("/dashboard/markets");
-    revalidatePath("/dashboard/markets[id]");
+    revalidatePath("/admin/dashboard/", "layout");
+    revalidatePath("/dashboard/", "layout");
     return result;
   } catch (error) {
     console.error(error);
