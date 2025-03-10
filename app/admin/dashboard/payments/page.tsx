@@ -6,6 +6,8 @@ import { formatDateString, formatDateWLuxon } from "@/utils/helpers";
 import ChangePaymentStatus from "./ChangePaymentStatus";
 import CancelPayment from "./CancelPayment";
 import Link from "next/link";
+import StatusFilter from "./StatusFilter";
+import GeneralFilters from "./GeneralFilters";
 
 const Page = async ({
   searchParams,
@@ -34,6 +36,15 @@ const Page = async ({
   );
 
   const search = searchParams.search?.toLowerCase();
+  const statusFilter = (paymentsArray: TPayment[], filterName: string) => paymentsArray.filter((payment) => {
+    const filter = searchParams[filterName];
+    const status = payment.status || "paid"
+    if (!filter || filter === "all") {
+      return true;
+    }
+
+    return status === searchParams[filterName]
+  });
 
   const filterPayments = (paymentsArray: TPayment[]) => paymentsArray.filter((payment) => {
     if (!search) {
@@ -50,20 +61,35 @@ const Page = async ({
       || payment.items.map(({ date }) => formatDateString(date).toLowerCase()).includes(search);
   });
 
+  const filteredBalances = statusFilter(filterPayments(balancesOwedPayments), "balanceStatus");
+  const balancesStatuses = balancesOwedPayments.map(payment => payment.status || "paid");
+  const singleBalanceStatuses = [...new Set(balancesStatuses)];
+
+  const filteredHistory = statusFilter(filterPayments(paymentHistory), "history");
+  const historyStatuses = paymentHistory.map(payment => payment.status || "paid");
+  const singleHistoryStatuses = [...new Set(historyStatuses)];
+  const selectBalances = searchParams["select-balances"];
+  const selectHistory = searchParams["select-history"];
+  const selectAll = !selectBalances && !selectHistory
+
   return (
     <main className="flex flex-col px-10 py-10 gap-2 min-h-screen w-full">
-      <header className="flex w-full justify-between items-center gap-2">
-        <h1 className="font-bold text-xl">Payments</h1>
-        <div className="flex-grow">
-          <Search urlForSearch="/admin/dashboard/payments" theme="light" placeholder="Find a Payment" />
+      <header className="flex flex-col gap-2">
+        <div className="flex w-full justify-between items-center gap-2">
+          <h1 className="font-bold text-xl">Payments</h1>
+          <div className="flex-grow">
+            <Search urlForSearch="/admin/dashboard/payments" theme="light" placeholder="Find a Payment" />
+          </div>
         </div>
+        <GeneralFilters />
       </header>
-      {balancesOwedPayments.length > 0 && (
-        <section className="">
+      {(selectBalances || selectAll) && filteredBalances.length > 0 && (
+        <section className="flex flex-col gap-2">
 
           <FormTitleDivider title="Outstanding Balances" />
+          {singleBalanceStatuses && singleBalanceStatuses.length > 0 && <StatusFilter filterName="balanceStatus" statuses={singleBalanceStatuses} />}
           <ul className="flex flex-col gap-2">
-            {filterPayments(balancesOwedPayments).map((payment) => {
+            {filteredBalances.map((payment) => {
               const datesBookedList = payment.items.map(({ date }) => formatDateWLuxon(date));
 
               return (
@@ -74,11 +100,13 @@ const Page = async ({
           </ul>
         </section>
       )}
-      {paymentHistory.length > 0 && (
-        <section className="flex flex-col mt-10">
+      {(selectHistory || selectAll) && filteredHistory.length > 0 && (
+        <section className="flex flex-col mt-10 gap-2">
           <FormTitleDivider title="Payment History" />
+          {singleHistoryStatuses && singleHistoryStatuses.length > 0 && <StatusFilter filterName="history" statuses={singleHistoryStatuses} />}
+
           <ul className="flex flex-wrap gap-2">
-            {filterPayments(paymentHistory).map((payment) => {
+            {filteredHistory.map((payment) => {
               const datesBookedList = payment.items.map(({ date }) => formatDateWLuxon(date));
               return (
                 <PaymentItem key={payment._id} datesBookedList={datesBookedList} payment={payment} />
