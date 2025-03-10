@@ -168,7 +168,13 @@ const PaymentItem = ({ payment, datesBookedList }:
           />
         )}
         {payment.amount.paid > 0 && payment.status !== "cancelled" && (
-          <CancelPayment paymentRecordId={payment._id} amountPaid={payment.amount.paid} />
+          <CancelPayment
+            paymentRecordId={payment._id}
+            amountPaid={payment.amount.paid}
+            contactName={`${payment.vendor.firstName} ${payment.vendor.lastName}`}
+            vendorName={payment.vendor.businessName}
+            marketName={payment.market.name}
+          />
         )}
       </div>
     </li>

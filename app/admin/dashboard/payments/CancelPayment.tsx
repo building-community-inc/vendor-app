@@ -6,9 +6,12 @@ import { useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { cancelPaymentAction } from "./cancelPaymentAction";
 
-const CancelPayment = ({ amountPaid, paymentRecordId }: {
+const CancelPayment = ({ amountPaid, paymentRecordId, contactName, marketName, vendorName }: {
   amountPaid: number;
   paymentRecordId: string;
+  contactName: string;
+  vendorName: string;
+  marketName: string;
 }) => {
   const [returnedCredits, setReturnedCredits] = useState<number>(amountPaid);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -73,10 +76,29 @@ const CancelPayment = ({ amountPaid, paymentRecordId }: {
 
       }}
         ref={dialogRef}>
-        <form action={formAction}>
-          <p>
+        <form action={formAction} className="flex flex-col gap-4">
+          <h3 className="text-lg font-semibold">
             Are you sure you want to cancel this booking?
-          </p>
+          </h3>
+          <div className="">
+            <div className="flex gap-2">
+              <h2 className="font-bold">Contact Name:</h2>
+              <p className="">{contactName}</p>
+            </div>
+            <div className="flex gap-2">
+              <h2 className="font-bold">Vendor Name:</h2>
+              <p className="">{vendorName}</p>
+            </div>
+            <div className="flex gap-2">
+              <h2 className="font-bold">Market:</h2>
+              <p className="">{marketName}</p>
+            </div>
+            <div className="flex gap-2">
+              <h2 className="font-bold">Amount:</h2>
+              <p className="">${amountPaid}</p>
+            </div>
+          </div>
+
           <div className="flex flex-col">
             <label htmlFor="returnedCredits">
               Do you want to return credits to vendor?
