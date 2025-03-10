@@ -109,7 +109,6 @@ const PaymentsPage = async () => {
                   {dueDate && (
                     <PaymentItem title="Due Date" paragraph={formatDateWLuxon(dueDate)} />
                   )}
-
                 </section>
                 <section className="flex items-center px-2 w-fit">
                   {/* <strong>Actions:</strong> */}

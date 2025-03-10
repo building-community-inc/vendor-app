@@ -5,14 +5,13 @@ import Dialog from "@/app/_components/Dialog/Dialog";
 import { useEffect, useRef, useState } from "react";
 // import { cancelMarket } from "./cancelMarketAction";
 import { useFormState, useFormStatus } from "react-dom";
-import { useRouter } from "next/navigation";
 import { cancelMarketWithLambda } from "./cancelMarketWithLambda";
 
 const CancelMarketButton = ({ marketId }: {
   marketId: string
 }) => {
   const [formState, formAction] = useFormState(cancelMarketWithLambda, { errors: null, success: false })
-  const router = useRouter()
+  // const router = useRouter()
   const [currentUrl, setCurrentUrl] = useState<string>("")
 
   const dialogRef = useRef<HTMLDialogElement>(null);

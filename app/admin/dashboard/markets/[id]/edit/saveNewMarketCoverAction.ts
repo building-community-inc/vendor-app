@@ -76,18 +76,15 @@ export const saveNewMarketCoverAction = async (
   }
   
   const pathsToRevalidate = [
-    "/dashboard/explore",
-    "/admin/dashboard/markets",
-    "/admin/dashboard/markets/[id]",
-    "/admin/dashboard/markets/[id]/edit",
-    "/dashboard/markets/[id]"
+    "/dashboard/",
+    "/admin/dashboard/",
   ];
   
   try {
     const sanityDeleteResp = await sanityWriteClient.delete(oldMarketCoverId);
     if (!sanityDeleteResp) {
 
-      pathsToRevalidate.forEach(path => revalidatePath(path, "page"));
+      pathsToRevalidate.forEach(path => revalidatePath(path, "layout"));
       return {
         success: true,
         errors: null

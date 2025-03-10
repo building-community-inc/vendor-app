@@ -72,7 +72,7 @@ const Page = async ({
         owed: partialCreditPayment.amount.owed - (paymentIntent.amount / 100),
       },
       payments: [
-        ...partialCreditPayment.payments,
+        ...(partialCreditPayment.payments || []),
         {
           _key: nanoid(),
           _type: "payment",

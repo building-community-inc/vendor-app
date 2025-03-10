@@ -71,14 +71,13 @@ export const GET = async (req: Request) => {
         marketId: sanityPayment.marketId,
         _id: sanityPayment._id,
         payments: [
-          ...sanityPayment.payments,
+          ...(sanityPayment.payments ?? []),
           {
             _key: nanoid(),
             paymentType: "stripe",
             paymentDate,
             stripePaymentIntentId: stripePayment.id,
             amount: amountPaid,
-            _type: "payment",
           },
         ],
         amount: {
@@ -125,4 +124,4 @@ export const GET = async (req: Request) => {
 };
 
 
-type TLatePaymentNoItems = Omit<TLatePaymentSchema, "items">;
+type TLatePaymentNoItems = Omit<TLatePaymentSchema, "items" | "vendorId">;
