@@ -34,9 +34,9 @@ const config: Config = {
       },
       fontFamily: {
         roboto: ["Roboto", "sans-serif"],
-        inter: ["Inter", "sans-serif"],
+        inter: ["var(--font-inter)"],
         segoe: ["Segoe", "sans-serif"],
-        "darker-grotesque": ["Darker Grotesque", "sans-serif"],
+        "darker-grotesque": ["var(--font-darker-grotesque)"],
       },
     },
   },

@@ -7,9 +7,10 @@ import Box from "../../markets/[id]/select-preferences/_components/Box";
 import { formatDateWLuxon } from "@/utils/helpers";
 import Link from "next/link";
 import Button from "@/app/_components/Button";
+import Email from "./Email";
 
 
-const PAYMENT_EMAIL = "payments@buildingcommunityinc.com";
+const PAYMENT_EMAIL = "accounting@buildingcommunityinc.com";
 
 const Page = async ({ params }: {
   params: {
@@ -36,33 +37,35 @@ const Page = async ({ params }: {
       <main className="pt-10 flex flex-col gap-10 items-center font-darker-grotesque">
 
         <Box className="gap-5">
-          <header className="text-center flex flex-col gap-1">
+          <header className="text-center flex flex-col gap-2">
 
-            <h1 className="text-[1.9rem] font-bold font-darker-grotesque text-black">Booking Details </h1>
-            <span className="text-[1.3rem]">Vendor Table for has been {paymentRecord.paymentReturned ? "cancelled" : "reserved"} for:</span>
-            <h2 className="font-bold text-blac text-[1rem] text-black">{paymentRecord.market.name}</h2>
-            <h3 className="text-black text-[1rem]"><strong>Order ID:</strong> {paymentRecord._id}</h3>
-            <h4 className="capitalize"><strong> Booking Status:</strong> {paymentRecord.status || "paid"} </h4>
-          </header>
+            <h1 className="text-[1.9rem] font-bold font-darker-grotesque text-black">Booking Details</h1>
+            <h2 className="font-bold text-blac text-[1rem] text-black">To complete your reservation please remit your payment of ${paymentRecord.amount.owed} within 24 hours to:</h2>
+            <div className="my-2">
 
-          <section className="w-full flex flex-col gap-2">
-            {/* <h2 className="font-bold">Date</h2> */}
+              <Email paymentEmail={PAYMENT_EMAIL} />
+            </div>
+            <p className="text-left">Your booking status will remain pending until your payment has been processed.</p>
+            <p className="text-black text-left">
+              <strong>Event: </strong>
+              {paymentRecord.market.name}
+            </p>
             <header className="flex justify-between w-full">
-              <h3 className="text-lg font-bold font-darker-grotesque text-black flex-1">Date</h3>
-              <h3 className="text-lg font-bold font-darker-grotesque text-black flex-1">Table ID</h3>
-              <h3 className="text-lg font-bold font-darker-grotesque text-black flex-1">Price</h3>
+              <h3 className="text-lg text-left font-bold font-darker-grotesque text-black flex-1">Date</h3>
+              <h3 className="text-lg text-left font-bold font-darker-grotesque text-black flex-1">Table ID</h3>
+              <h3 className="text-lg text-left font-bold font-darker-grotesque text-black flex-1">Price</h3>
 
             </header>
             <ul className="flex flex-col gap-2 w-full">
               {paymentRecord.items.map(item => (
                 <li key={item.tableId} className="flex justify-between gap-2 w-full">
-                  <div className="flex-1">
+                  <div className="flex-1 text-left">
                     <span>{formatDateWLuxon(item.date)}</span>
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 text-left">
                     <span>{item.tableId}</span>
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 text-left">
                     <span>${item.price.toFixed(2)}</span>
                   </div>
                   {/* <div>
@@ -72,59 +75,36 @@ const Page = async ({ params }: {
                 </li>
               ))}
             </ul>
-            {paymentRecord.payments && (
-              <ul>
-                <strong>
-                  Payments
-                </strong>
-                {paymentRecord.payments?.map(payment => (
-                  <li key={payment._key}>
-                    <p>
-                      Payment type: {payment.paymentType}
-                    </p>
-                    <p>
-                      Amount: ${payment.amount}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            )}
+          </header>
+
+          <section className="w-full flex flex-col gap-2">
             <footer className="text-black flex flex-col gap-4">
-              <strong>Totals:</strong>
-              {paymentRecord.amount.owed && paymentRecord.amount.owed > 0 ? (
-                <>
-                  <div className="">
-                    <h3 className="font-bold">Paid</h3>
-                    <p>${paymentRecord.amount.paid}</p>
-                  </div>
-                  <div className="">
-                    <h3 className="font-bold">Owed</h3>
-                    <p>${paymentRecord.amount.owed}</p>
-                  </div>
-                </>
-              ) : ("")}
 
-              <div className="">
-                <h3 className="font-bold">HST</h3>
-                <p>${paymentRecord.amount.hst}</p>
-              </div>
-              {paymentRecord.payments && (
-                <div>
-                  <h3 className="font-bold">Total</h3>
-                  <p>${paymentRecord.payments?.reduce((total, payment) => total + payment.amount, 0).toFixed(2)}</p>
-                </div>
-              )}
-              {/* {paymentRecord.amount.owed && paymentRecord.amount.owed > 0 ? (
-              <Button className="h-fit">
-                <Link href={`/dashboard/checkout/${paymentRecord._id}/pay-remainder/`}>Pay Remainder</Link>
-              </Button>
-            ) : ""} */}
-
-              <p>Please send payment of <strong> ${paymentRecord.amount.owed}</strong> to:
-                {` ${PAYMENT_EMAIL}`}</p>
-              <p>
-                Add the the market information to the e-transfer message.
+              <p className="flex items-center gap-1">
+                <strong>
+                  Sub-Total:
+                </strong>
+                ${(paymentRecord.amount.owed || 0) - paymentRecord.amount.hst}
               </p>
+              <p className="flex items-center gap-1">
+                <strong>
+                  Hst:
+                </strong>
+                ${paymentRecord.amount.hst}
+              </p>
+              <p className="flex items-center gap-1">
+                <strong>
+                  Total:
+                </strong>
+                ${paymentRecord.amount.owed}
+              </p>
+              <p className="flex items-center gap-1">
+                <strong>
+                  Paid:
+                </strong>
+                ${paymentRecord.amount.paid}
+              </p>
+
             </footer>
           </section>
         </Box>
