@@ -138,7 +138,11 @@ const PaymentItem = ({ payment, datesBookedList }:
         <TitleNameTest title="Market Dates" name={payment.market.dates.map(date => formatDateWLuxon(date)).join(", ")} />
       </div>
       <TitleNameTest title="Dates Booked" list={datesBookedList} />
-      <TitleNameTest title="Amount Paid" name={`$${payment.amount.paid}`} />
+      <div className="">
+        <TitleNameTest title="Amount Paid" name={`$${payment.amount.paid}`} />
+        <TitleNameTest title="Amount Owed" name={`$${payment.amount.owed}`} />
+      </div>
+
       <div className="flex flex-col items-end">
         <TitleNameTest title="Status" name={payment.status || "paid"} />
       </div>

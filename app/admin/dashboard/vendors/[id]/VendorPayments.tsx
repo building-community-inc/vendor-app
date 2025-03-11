@@ -23,6 +23,9 @@ const VendorPayments = ({ vendorPaymentRecords, admin }: {
   };
 
   const filteredVendorPaymentRecords = vendorPaymentRecords.filter(paymentRecord => {
+    if (filter === "pending") {
+      return paymentRecord.status === "pending"
+    }
     if (filter === "cancelled") {
       return paymentRecord.paymentReturned;
     } else if (filter === "reserved") {
@@ -41,10 +44,12 @@ const VendorPayments = ({ vendorPaymentRecords, admin }: {
         <select
           onChange={onFilterChange}
           className="border-2 border-black rounded-md px-2 py-1"
+          value={filter}
         >
           <option value="reserved">Reserved</option>
-          <option value="cancelled">Cancelled</option>
           <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="cancelled">Cancelled</option>
         </select>
       </div>
       <ul className="flex flex-col gap-5">
