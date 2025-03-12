@@ -24,7 +24,7 @@ const Email = ({ paymentEmail }: {
   }, [showSuccess])
   return (
     <>
-      <Button onClick={onClick} className="rounded-full border-none bg-[#e5ddd3] w-fit mx-auto">
+      <Button onClick={onClick} className="rounded-full text-xl border-none bg-[#e5ddd3] w-fit mx-auto">
         {paymentEmail}
       </Button>
       {showSuccess && (

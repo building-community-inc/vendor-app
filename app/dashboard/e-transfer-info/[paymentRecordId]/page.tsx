@@ -34,7 +34,7 @@ const Page = async ({ params }: {
   if (paymentRecord.status === "pending") {
 
     return (
-      <main className="pt-10 flex flex-col gap-10 items-center font-darker-grotesque">
+      <main className="pt-10 flex flex-col gap-10 items-center font-darker-grotesque bg-white px-5">
 
         <Box className="gap-5">
           <header className="text-center flex flex-col gap-2">
