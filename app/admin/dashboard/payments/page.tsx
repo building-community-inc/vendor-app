@@ -135,13 +135,14 @@ const PaymentItem = ({ payment, datesBookedList }:
     </div>
       <div className="flex flex-col">
         <TitleNameTest title="Market Name" name={payment.market.name.split(" - ")[0]} />
-        <TitleNameTest title="Market Dates" name={payment.market.dates.map(date => formatDateWLuxon(date)).join(", ")} />
+        {/* <TitleNameTest title="Market Dates" name={payment.market.dates.map(date => formatDateWLuxon(date)).join(", ")} /> */}
       </div>
-      <TitleNameTest title="Dates Booked" list={datesBookedList} />
+      <TitleNameTest title="Dates Booked" list={payment.items.map((item, index) => `${index + 1}. ${formatDateWLuxon(item.date)} - Table: ${item.tableId}`)} />
       <div className="">
-        <TitleNameTest title="Amount Paid" name={`$${payment.amount.paid}`} />
         <TitleNameTest title="Amount Owed" name={`$${payment.amount.owed}`} />
+        <TitleNameTest title="Amount Paid" name={`$${payment.amount.paid}`} />
       </div>
+
 
       <div className="flex flex-col items-end">
         <TitleNameTest title="Status" name={payment.status || "paid"} />
