@@ -12,6 +12,7 @@ const publicRoutes = [
 
 export default authMiddleware({
   publicRoutes,
+  authorizedParties: ["https://vendorapp.buildingcommunityinc.com/"]
 });
 
 export const config = {
