@@ -79,7 +79,7 @@ export const updateCredits = async (
 
     await sanityWriteClient
       .patch(userId)
-      .set({ credits: result.output.newCredits.toFixed(2) })
+      .set({ credits: Number(result.output.newCredits.toFixed(2)) })
       .commit();
 
     await sanityWriteClient.create({

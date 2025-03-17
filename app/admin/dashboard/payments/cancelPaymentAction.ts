@@ -122,7 +122,7 @@ export const cancelPaymentAction = async (
     await sanityWriteClient
       .patch(sanityUser._id)
       .set({
-        credits: +((sanityUser.credits ?? 0) + data.returnedCredits).toFixed(2),
+        credits: Number(+((sanityUser.credits ?? 0) + data.returnedCredits).toFixed(2)),
       })
       .commit();
 
