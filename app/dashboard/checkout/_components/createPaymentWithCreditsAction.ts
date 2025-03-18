@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { TPaymentItem } from "../success/api/route";
 import { currentUser } from "@clerk/nextjs";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { unstable_noStore } from "next/cache";
+import { revalidatePath, unstable_noStore } from "next/cache";
 
 export const createPaymentWithCredits = async (formData: FormData) => {
   unstable_noStore();
@@ -123,10 +123,10 @@ export const createPaymentWithCredits = async (formData: FormData) => {
         paymentType: "credits",
         _key: nanoid(),
       },
-      // add more payments as needed
     ],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    status: "paid",
   };
 
   // const vendors = new Set(...(marketDocument.vendors || []), vendorDetails);
@@ -169,6 +169,9 @@ export const createPaymentWithCredits = async (formData: FormData) => {
       amount: -+rawData.creditsApplied,
       reason: "vendor used credits",
     });
+
+    revalidatePath("/dashboard/", "layout");
+    revalidatePath("/admin/dashboard/", "layout");
 
     return {
       success: true,

@@ -1,13 +1,22 @@
 import './globals.css'
-import { Inter, Roboto, Darker_Grotesque } from 'next/font/google'
+import { Inter, Roboto } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 import { dark } from '@clerk/themes'
 import localFont from 'next/font/local'
 
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: "--font-inter"
+})
+const darkerGrotesque = localFont({
+   src: "./fonts/DarkerGrotesque/static/DarkerGrotesque-Regular.ttf",
+   variable: "--font-darker-grotesque",
+   display: "swap"
+
+  }
+)
 const roboto = Roboto({ subsets: ['latin'], weight: "400" })
-const darkerGrotesque = Darker_Grotesque({ subsets: ['latin'], weight: "variable" })
 const segoe = localFont({ src: "./segoe-ui.ttf" })
 
 export const metadata = {
@@ -31,7 +40,7 @@ export default function RootLayout({
           <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
           <link rel="manifest" href="/site.webmanifest" />
         </head>
-        <body className={`bg-background text-primary ${inter.className} ${roboto.className} ${segoe.className} ${darkerGrotesque.className}`}>{children}</body>
+        <body className={`bg-background text-primary ${inter.variable} ${roboto.className} ${segoe.className} ${darkerGrotesque.variable}`}>{children}</body>
       </html>
     </ClerkProvider>
   )

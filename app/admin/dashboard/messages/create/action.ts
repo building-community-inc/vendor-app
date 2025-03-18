@@ -75,9 +75,8 @@ export const createMessage = async (
     };
   });
 
-  revalidatePath("/admin/dashboard/messages");
-  revalidatePath("dashboard/");
-  revalidatePath("dashboard/messages");
+  revalidatePath("/admin/dashboard/", "layout");
+  revalidatePath("/dashboard/", "layout");
 
   return {
     message: "Message sent almost.... lol!",

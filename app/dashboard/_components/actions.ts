@@ -61,7 +61,8 @@ export const updateBusinessLogo = async (
       throw new Error(err);
     });
 
-  revalidatePath("/dashboard");
+  revalidatePath("/dashboard", "layout");
+  revalidatePath("/admin/dashboard", "layout");
 
   return {
     message: "Success",

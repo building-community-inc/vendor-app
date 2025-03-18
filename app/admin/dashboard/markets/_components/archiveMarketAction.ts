@@ -45,7 +45,8 @@ try {
       })
       .commit();
       
-      revalidatePath("/", "layout")
+      revalidatePath("/dashboard", "layout")
+      revalidatePath("/admin/dashboard", "layout")
     
     return {
       errors: null,
