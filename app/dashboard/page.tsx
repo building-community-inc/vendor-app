@@ -1,5 +1,5 @@
 import { getSanityUserByEmail, getUserPaymentRecords } from "@/sanity/queries/user";
-import { currentUser } from "@clerk/nextjs";
+import { clerkClient, currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import NoBz from "./_components/NoBz";
 import { DateTime } from 'luxon';
@@ -15,6 +15,7 @@ import VendorPayments from "../admin/dashboard/vendors/[id]/VendorPayments";
 const page = async () => {
   unstable_noStore();
   const user = await currentUser();
+
   if (!user) redirect("/");
 
   const sanityUser = await getSanityUserByEmail(
