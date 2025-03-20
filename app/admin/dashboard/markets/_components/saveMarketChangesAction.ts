@@ -329,7 +329,10 @@ export const saveMarketChanges = async (
 
       await sanityWriteClient
         .patch(deletedPayment._id)
-        .set({ paymentReturned: true })
+        .set({ 
+          paymentReturned: true,
+          status: "cancelled"
+        })
         .commit();
 
       // add the transaction to the credit transactions array
