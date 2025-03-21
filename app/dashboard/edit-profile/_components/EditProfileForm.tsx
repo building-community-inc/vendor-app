@@ -1,7 +1,7 @@
 
 "use client";
 import { TBusiness, TUserWithOptionalBusinessRef, zodBusiness } from "@/zod/user-business";
-import { redirect } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { camelCaseToTitleCase } from "@/utils/helpers";
 import { useEffect, useRef, useState } from "react";
 import { TErrorType, saveNewBusinessInfo } from "./actions";
@@ -111,6 +111,7 @@ const SelectIndustry = ({ vendorCategories, sanityUser, onChange }: {
   sanityUser: TUserWithOptionalBusinessRef;
   onChange?: (value: boolean) => void;
 }) => {
+  const pathname = usePathname();
   const [selectValue, setSelectValue] = useState(sanityUser.business?.industry || "");
 
   return (
@@ -120,24 +121,30 @@ const SelectIndustry = ({ vendorCategories, sanityUser, onChange }: {
           {"Industry"}
         </h2>
       </label>
-      <select
-        value={selectValue}
-        onChange={(e) => {
-          setSelectValue(e.target.value)
-          if (sanityUser.business?.industry !== e.target.value) {
-            onChange && onChange(true)
-          } else {
-            onChange && onChange(false)
-          }
-        }}
-        name="industry"
-        className="text-black border border-button-border-color text-lg rounded-lg px-2 py-2 mb-2"
-      >
-        <option>Choose Industry</option>
-        {vendorCategories.map(({ name }) => {
-          return <option key={name}>{name}</option>;
-        })}
-      </select>
+      {pathname.includes("admin") ? (
+        <select
+          value={selectValue}
+          onChange={(e) => {
+            setSelectValue(e.target.value)
+            if (sanityUser.business?.industry !== e.target.value) {
+              onChange && onChange(true)
+            } else {
+              onChange && onChange(false)
+            }
+          }}
+          name="industry"
+          className="text-black border border-button-border-color text-lg rounded-lg px-2 py-2 mb-2"
+        >
+          <option>Choose Industry</option>
+          {vendorCategories.map(({ name }) => {
+            return <option key={name}>{name}</option>;
+          })}
+        </select>
+      ) : (
+        <>
+          {selectValue}
+        </>
+      )}
     </>
   )
 }
