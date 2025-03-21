@@ -1,7 +1,12 @@
 "use server";
 
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
-import { TPaymentRecord, zodPaymentRecordSchemaSanityReady, zodSanityMarket, zodSanityMarketWithOptionalVendors } from "@/sanity/queries/admin/markets/zods";
+import {
+  TPaymentRecord,
+  zodPaymentRecordSchemaSanityReady,
+  zodSanityMarket,
+  zodSanityMarketWithOptionalVendors,
+} from "@/sanity/queries/admin/markets/zods";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -57,8 +62,6 @@ export const createBooking = async (
     };
   }
 
-  // GENERATE PAYMENT RECORD uncomment the sanity query ....
-
   const newPaymentRecord: TPaymentRecordWithouMarketId = {
     _type: "paymentRecord",
     user: {
@@ -92,13 +95,12 @@ export const createBooking = async (
       _type: "reference",
       _ref: parsedData.data.marketId,
     },
+    status: parsedData.data.owed > 0 ? "pending" : "paid"
   };
-
 
   const parsedPaymentRecord =
     zodPaymentRecordSchemaSanityReady.safeParse(newPaymentRecord);
-    if (!parsedPaymentRecord.success) {
-
+  if (!parsedPaymentRecord.success) {
     const errors = parsedPaymentRecord.error.errors.map((error) => {
       const message = error.message;
       return `${message}`;
@@ -294,8 +296,9 @@ const zodRawDataSchema = z
     }
   );
 
+type TSanityMarket = z.infer<typeof zodSanityMarket>;
 
-  type TSanityMarket = z.infer<typeof zodSanityMarket>;
-
-
-  type TPaymentRecordWithouMarketId = Omit<TPaymentRecord, "marketId" | "vendorId">;
+type TPaymentRecordWithouMarketId = Omit<
+  TPaymentRecord,
+  "marketId" | "vendorId"
+>;

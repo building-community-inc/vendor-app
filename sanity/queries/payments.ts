@@ -38,7 +38,7 @@ export const zodLatePaymentSchema = z.object({
   ),
   paymentReturned: z.boolean().optional().nullable(),
   status: z.string().optional().nullable(),
-  vendorId: z.string(),
+  vendorId: z.string().optional().nullable(),
 });
 
 export const zodPaymentItem = z.object({
