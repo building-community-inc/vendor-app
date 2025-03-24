@@ -1,8 +1,10 @@
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs";
+import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
 
 const page = async () => {
+  unstable_noStore()
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
