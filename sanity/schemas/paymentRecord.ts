@@ -160,6 +160,11 @@ export const paymentRecordSchema = defineType({
         list: ["pending", "paid", "cancelled"]
       }
     }),
+    defineField({
+      name: "specialRequest",
+      title: "Special Request",
+      type: "string"
+    })
   ],
 
   preview: {
