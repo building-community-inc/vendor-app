@@ -16,14 +16,6 @@ export type TMarketVendor = {
   lastName: string;
   instagram?: string | null | undefined;
 };
-
-type TBooking = {
-  table: {
-    id: string;
-    price: number;
-  };
-  booked?: TMarketVendor | null | undefined;
-};
 const Page = async ({
   params,
   searchParams
@@ -96,51 +88,37 @@ const Page = async ({
     .filter((vendor): vendor is TMarketVendor => vendor !== undefined);
 
 
-    const selectedDay = searchParams.selectedDay || null;
+  const selectedDay = searchParams.selectedDay || null;
 
-    const newVendorsForSelectedDay: {
-      vendor: TMarketVendor;
-      datesBooked: {
-        date: string; // Ensure we handle date correctly here
-        tableId: string;
-      }[];
-    }[] = Object.values(uniqueVendors)
-      .filter(vendor => {
-        // Ensure selectedDay is not null and vendor has the selected day in their dates
-        return selectedDay !== null && vendor.dates?.[selectedDay] !== undefined && vendor.vendorInfo !== undefined;
-      })
-      .map(vendor => {
-        // Extract the tables for the selected day (if valid)
-        const tablesForSelectedDay = vendor.dates?.[selectedDay as string]?.tables || [];
-    
-        return {
-          vendor: vendor.vendorInfo!, // Non-null assertion since we already checked vendorInfo in filter
-          datesBooked: tablesForSelectedDay
-            .filter(table => selectedDay !== null && selectedDay !== undefined) // Ensure selectedDay is valid
-            .map(table => ({
-              date: selectedDay as string, // Safely assert selectedDay as string here
-              tableId: table.id, // Assuming each table has an 'id' field
-            }))
-        };
-      })
-      .filter(vendor => {
-        // Ensure datesBooked only contains valid date strings
-        return vendor.datesBooked.every(item => item.date !== null && item.date !== undefined);
-      });
-    
+  const newVendorsForSelectedDay: {
+    vendor: TMarketVendor;
+    datesBooked: {
+      date: string; // Ensure we handle date correctly here
+      tableId: string;
+    }[];
+  }[] = Object.values(uniqueVendors)
+    .filter(vendor => {
+      // Ensure selectedDay is not null and vendor has the selected day in their dates
+      return selectedDay !== null && vendor.dates?.[selectedDay] !== undefined && vendor.vendorInfo !== undefined;
+    })
+    .map(vendor => {
+      // Extract the tables for the selected day (if valid)
+      const tablesForSelectedDay = vendor.dates?.[selectedDay as string]?.tables || [];
 
-
-
-  // const vendorsForSelectedDay = market.vendors?.filter((vendor) => {
-  //   return vendor.datesBooked.some((bookedDate) => {
-  //     if (selectedDay) {
-  //       return areDatesSame(bookedDate.date, selectedDay)
-  //     }
-  //     return false;
-  //   });
-  // });
-
-  // console.log({ bling: uniqueVendors["user_2qOlaAxrUcfQNggppdWIHlTq7Z8"]?.dates["2025-2-8"].tables });
+      return {
+        vendor: vendor.vendorInfo!, // Non-null assertion since we already checked vendorInfo in filter
+        datesBooked: tablesForSelectedDay
+          .filter(table => selectedDay !== null && selectedDay !== undefined) // Ensure selectedDay is valid
+          .map(table => ({
+            date: selectedDay as string, // Safely assert selectedDay as string here
+            tableId: table.id, // Assuming each table has an 'id' field
+          }))
+      };
+    })
+    .filter(vendor => {
+      // Ensure datesBooked only contains valid date strings
+      return vendor.datesBooked.every(item => item.date !== null && item.date !== undefined);
+    });
 
   const dayInfo = market.daysWithTables?.find(day => areDatesSame(day.date, selectedDay || ""));
 
@@ -166,7 +144,7 @@ const Page = async ({
         vendorsForSelectedDay={newVendorsForSelectedDay || []}
         marketId={market._id}
         selectedDay={selectedDay}
-        daysWithTables={market.daysWithTables}
+        marketName={market.name}
         cancelled={market.cancelled}
       />
       {/* {!market.cancelled && (
