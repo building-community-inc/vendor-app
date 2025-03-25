@@ -1,25 +1,26 @@
 "use server";
-
-import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
-import { z } from "zod";
-import { FormState } from "../../payments/changeStatusAction";
+import {
+  paymentRecordQuery,
+  PaymentRecordsSchema,
+  updateMarketQuery,
+  updateMarketSchema,
+} from "./zodAndQueries";
 import { currentUser } from "@clerk/nextjs";
+import { FormState } from "../../payments/changeStatusAction";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
+import { z } from "zod";
+import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { Mutation } from "next-sanity";
 import { revalidatePath } from "next/cache";
-import { nanoid } from "nanoid";
-import { paymentRecordQuery, PaymentRecordsSchema, updateMarketQuery, updateMarketSchema } from "./zodAndQueries";
 
-// Define the Zod schema for the input data
-const UpdateTableBookingSchema = z.object({
+const RemoveTableBookingSchema = z.object({
   marketId: z.string(),
   date: z.string(), // Expecting date as a string (e.g., "YYYY-MM-DD")
   tableId: z.string(),
   vendorId: z.string(),
-  oldTableId: z.string(),
 });
 
-export const updateTableBooking = async (
+export const removeVendorFromMarket = async (
   formState: FormState,
   formData: FormData
 ): Promise<FormState> => {
@@ -46,12 +47,10 @@ export const updateTableBooking = async (
   const rawData = {
     marketId: formData.get("marketId"),
     date: formData.get("date"),
-    tableId: formData.get("tableId"),
-    oldTableId: formData.get("oldTableId"),
     vendorId: formData.get("vendorId"),
+    tableId: formData.get("tableId"),
   };
-  // Validate the input data using the Zod schema
-  const validationResult = UpdateTableBookingSchema.safeParse(rawData);
+  const validationResult = RemoveTableBookingSchema.safeParse(rawData);
 
   if (!validationResult.success) {
     console.error(
@@ -61,28 +60,24 @@ export const updateTableBooking = async (
     return { success: false, errors: ["Invalid input data"] };
   }
 
-  const { marketId, date, tableId, vendorId, oldTableId } =
-    validationResult.data;
+  const { marketId, date, tableId, vendorId } = validationResult.data;
 
-  if (tableId === oldTableId) {
-    return {
-      success: false,
-      errors: ["No changes detected"],
-    };
-  }
   try {
-
     const marketRaw = await sanityClient.fetch(updateMarketQuery(marketId));
-
-    const { data: market, success, error } = updateMarketSchema.safeParse(marketRaw);
+    const {
+      data: market,
+      success,
+      error,
+    } = updateMarketSchema.safeParse(marketRaw);
 
     if (!market || !success) {
       console.error(error.message);
       return { success: false, errors: ["Market not found"] };
     }
 
-
-    const paymentRecordsRaw = await sanityClient.fetch(paymentRecordQuery(vendorId, marketId));
+    const paymentRecordsRaw = await sanityClient.fetch(
+      paymentRecordQuery(vendorId, marketId)
+    );
 
     const {
       success: paymentRecordsSuccess,
@@ -97,8 +92,6 @@ export const updateTableBooking = async (
         errors: ["Error Finding The Payment Record"],
       };
     }
-
-    // Find the correct day
     const dayIndex = market.daysWithTables?.findIndex(
       (day: { date: string }) => day.date === date
     );
@@ -125,11 +118,10 @@ export const updateTableBooking = async (
     const patches: Mutation<Record<string, unknown>>[] &
       Mutation<Record<string, unknown>>[] = [];
 
-    // Unbook the old table
-    if (oldTableId && oldTableId !== "null") {
+    if (tableId && tableId !== "null") {
       const oldTableIndex = market.daysWithTables[dayIndex]?.tables?.findIndex(
         (tableGroup: { table: { id: string } }) =>
-          tableGroup.table.id === oldTableId
+          tableGroup.table.id === tableId
       );
 
       if (oldTableIndex !== undefined && oldTableIndex !== -1) {
@@ -145,25 +137,22 @@ export const updateTableBooking = async (
       }
 
       // Remove the old booking from the vendor's datesBooked array
-      const existingVendorIndexForOld = market.vendors?.findIndex(
+      const existingVendorIndex = market.vendors?.findIndex(
         (vendorEntry: { vendor: { _ref: string } }) =>
           vendorEntry.vendor._ref === vendorId
       );
 
-      if (
-        existingVendorIndexForOld !== undefined &&
-        existingVendorIndexForOld !== -1
-      ) {
+      if (existingVendorIndex !== undefined && existingVendorIndex !== -1) {
         const bookingToRemoveIndex = market.vendors[
-          existingVendorIndexForOld
+          existingVendorIndex
         ]?.datesBooked?.findIndex(
           (booking: { date: string; tableId: string }) =>
-            booking.date === date && booking.tableId === oldTableId
+            booking.date === date && booking.tableId === tableId
         );
 
         if (bookingToRemoveIndex !== undefined && bookingToRemoveIndex !== -1) {
           const bookingToRemoveKey =
-            market.vendors[existingVendorIndexForOld].datesBooked[
+            market.vendors[existingVendorIndex].datesBooked[
               bookingToRemoveIndex
             ]?._key;
           if (bookingToRemoveKey) {
@@ -171,7 +160,7 @@ export const updateTableBooking = async (
               patch: {
                 id: marketId,
                 unset: [
-                  `vendors[${existingVendorIndexForOld}].datesBooked[_key == "${bookingToRemoveKey}"]`,
+                  `vendors[${existingVendorIndex}].datesBooked[_key == "${bookingToRemoveKey}"]`,
                 ],
               },
             });
@@ -180,90 +169,40 @@ export const updateTableBooking = async (
       }
     }
 
-    // Book the new table
-    patches.push({
-      patch: {
-        id: marketId,
-        set: {
-          [`daysWithTables[${dayIndex}].tables[${newTableIndex}].booked`]:
-            vendorId ? { _type: "reference", _ref: vendorId } : null,
-        },
-      },
-    });
-
-    const existingVendorIndexNew = market.vendors?.findIndex(
-      (vendorEntry: { vendor: { _ref: string } }) =>
-        vendorEntry.vendor._ref === vendorId
-    );
-    if (existingVendorIndexNew !== undefined && existingVendorIndexNew !== -1) {
-      // Vendor exists, add the date and tableId if not already present
-      const existingBookingIndexNew = market.vendors[
-        existingVendorIndexNew
-      ]?.datesBooked?.findIndex(
-        (booking: { date: string; tableId: string }) =>
-          booking.date === date && booking.tableId === tableId
+    paymentRecords.forEach((record) => {
+      const matchingItems = record.items.filter(
+        (item) => item.date === date && item.tableId === tableId
       );
 
-      if (
-        existingBookingIndexNew === undefined ||
-        existingBookingIndexNew === -1
-      ) {
+      if (matchingItems.length === 1) {
+        // If there's only one matching item, set the record status to cancelled
         patches.push({
           patch: {
-            id: marketId,
-            insert: {
-              before: `vendors[${existingVendorIndexNew}].datesBooked[0]`, // Insert at the beginning
-              items: [
-                {
-                  date,
-                  tableId,
-                  _key: nanoid(),
-                  _type: "day",
-                },
-              ],
-            },
+            id: record._id,
+            set: { status: 'cancelled' },
+          },
+        });
+      } else if (matchingItems.length > 0) {
+        // If there are multiple matching items, remove them
+        const itemsToRemoveKeys = matchingItems.map((item) => item._key);
+        patches.push({
+          patch: {
+            id: record._id,
+            unset: itemsToRemoveKeys.map((key) => `items[_key == "${key}"]`),
           },
         });
       }
-    } else {
-      // Vendor doesn't exist, add a new vendor entry
-      patches.push({
-        patch: {
-          id: marketId,
-          insert: {
-            before: `vendors[0]`, // Insert at the beginning
-            items: [
-              {
-                _type: "vendorDetails",
-                vendor: { _type: "reference", _ref: vendorId },
-                datesBooked: [{ _type: "day", date, tableId, _key: nanoid() }],
-                _key: nanoid(),
-              },
-            ],
-          },
-        },
-      });
+      // If matchingItems.length is 0, we do nothing for this record
+    });
+
+    if (patches.length > 0) {
+      await sanityWriteClient.transaction(patches).commit();
     }
 
-    if (paymentRecords && paymentRecords.length > 0) {
-      paymentRecords.forEach((record) => {
-        record.items.forEach((item, index) => {
-          if (item.date === date && item.tableId === oldTableId) {
-            patches.push({
-              patch: {
-                id: record._id,
-                set: {
-                  [`items[_key == "${item._key}"].tableId`]: tableId,
-                },
-              },
-            });
-          }
-        });
-      });
+    if (patches.length > 0) {
+      await sanityWriteClient.transaction(patches).commit();
     }
-
-    await sanityWriteClient.transaction(patches).commit();
-
+    
     revalidatePath("/admin/dashboard/", "layout");
     revalidatePath("/dashboard/", "layout");
 
@@ -271,11 +210,8 @@ export const updateTableBooking = async (
       success: true,
       errors: undefined,
     };
-
   } catch (error) {
     console.error("Error updating table booking:", error);
     return { success: false, errors: ["Failed to update table booking"] };
   }
-  
 };
-

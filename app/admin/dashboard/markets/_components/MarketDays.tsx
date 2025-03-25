@@ -7,9 +7,9 @@ import { useEffect, useRef, useState } from "react";
 import { nanoid } from "nanoid";
 import Dialog from "@/app/_components/Dialog/Dialog";
 import { TTable } from "@/sanity/queries/admin/markets/zods";
-import { FaRegTrashAlt } from "react-icons/fa";
 import { TMarketVendor } from "../[id]/page";
 import { updateTableBooking } from "./newSaveMarketAction";
+import RemoveVendorFromMarket from "./RemoveVendorFromMarket";
 
 
 export type TDayWithTable = {
@@ -113,15 +113,15 @@ const MarketDays = ({
       </div>
 
       {selectedDay && vendorsForSelectedDay && vendorsForSelectedDay.length > 0 && (
-        <table className="my-10 mx-auto">
+        <table className="my-10 mx-auto w-full">
           <thead>
-            <tr>
+            <tr className="">
               <th>Vendor</th>
               <th>Category</th>
               <th>Table Selection</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="">
             {sortedVendors
               .map((vendor) => {
                 const bookedDateForSelectedDay = vendor.datesBooked.find(
@@ -131,7 +131,7 @@ const MarketDays = ({
                   (bookedDate) => areDatesSame(bookedDate.date, selectedDay)
                 );
                 return (
-                  <tr key={`${nanoid()}`} className="text-center capitalize py-2">
+                  <tr key={`${nanoid()}`} className="text-center capitalize py-2 ">
                     <td>
                       <Link href={`/admin/dashboard/vendors/${vendor.vendor._ref}`} target="_blank" rel="noreferrer">
                         {vendor.vendor.businessName}
@@ -143,49 +143,48 @@ const MarketDays = ({
                     </td>
                     <td>
                       {bookedDateForSelectedDay && availableTablesForDay ? (
-                        <div className="flex flex-col">
+                        <ul className="flex flex-col">
                           {editTables ?
                             bookedDatesForSelectedDay.map((date) => (
-                              <SelectTable
-                                vendorEmail={vendor.vendor.email}
-                                vendorInsta={vendor.vendor.instagram || "no handle provided"}
-                                vendorContactName={`${vendor.vendor.firstName} ${vendor.vendor.lastName}`}
-                                vendorBusinessName={vendor.vendor.businessName}
-                                marketName={marketName}
-                                date={date.date}
-                                marketId={marketId}
-                                vendorId={vendor.vendor._ref}
-                                originalValue={date.tableId}
-                                tables={sortedAvailableTables}
+                              <li
+                                className="flex"
                                 key={date.tableId}
-                              />
-
+                              >
+                                <SelectTable
+                                  vendorEmail={vendor.vendor.email}
+                                  vendorInsta={vendor.vendor.instagram || "no handle provided"}
+                                  vendorContactName={`${vendor.vendor.firstName} ${vendor.vendor.lastName}`}
+                                  vendorBusinessName={vendor.vendor.businessName}
+                                  marketName={marketName}
+                                  marketId={marketId}
+                                  vendorId={vendor.vendor._ref}
+                                  originalValue={date.tableId}
+                                  tables={sortedAvailableTables}
+                                  date={date.date}
+                                />
+                                <RemoveVendorFromMarket
+                                  vendorEmail={vendor.vendor.email}
+                                  vendorInsta={vendor.vendor.instagram || "no handle provided"}
+                                  vendorContactName={`${vendor.vendor.firstName} ${vendor.vendor.lastName}`}
+                                  vendorBusinessName={vendor.vendor.businessName}
+                                  marketName={marketName}
+                                  date={date.date}
+                                  tableId={date.tableId}
+                                  marketId={marketId}
+                                  vendorId={vendor.vendor._ref}
+                                />
+                              </li>
 
                             ))
                             : (
                               <span>{bookedDatesForSelectedDay.map(day => day.tableId).join(", ")}</span>
                             )}
 
-                        </div>
+                        </ul>
                       ) : (
                         'N/A'
                       )}
                     </td>
-                    {editTables && (
-                      <td>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            // deleteVendor(vendor.vendor._ref)
-                            // setTableSelectionsChanged(true);
-                          }}
-                          className=" flex items-center"
-                        >
-                          <FaRegTrashAlt className="text-2xl" />
-
-                        </button>
-                      </td>
-                    )}
                   </tr>
                 );
               })}

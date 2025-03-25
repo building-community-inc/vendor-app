@@ -16,14 +16,6 @@ export type TMarketVendor = {
   lastName: string;
   instagram?: string | null | undefined;
 };
-
-type TBooking = {
-  table: {
-    id: string;
-    price: number;
-  };
-  booked?: TMarketVendor | null | undefined;
-};
 const Page = async ({
   params,
   searchParams
