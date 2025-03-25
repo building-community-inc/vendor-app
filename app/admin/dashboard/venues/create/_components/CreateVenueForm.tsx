@@ -134,7 +134,7 @@ const CreateVenueForm = ({
             />
           );
         })}
-      {defaultImage && (
+      {/* {defaultImage && ( */}
         <div className="flex flex-col gap-1 my-2 max-w-full w-[75vw] mx-auto xs:w-full  sm:w-[75vw]">
           <label
             htmlFor="venueMap"
@@ -142,15 +142,15 @@ const CreateVenueForm = ({
           >
             Venue Map
             <div className="flex items-center justify-evenly w-full">
-              {!fileId && (
+              {/* {!fileId && (
                 <Image
-                  src={defaultImage.url}
+                  src={""}
                   alt={defaultValues.title}
                   // className="w-full"
                   width={300}
                   height={300}
                 />
-              )}
+              )} */}
               <FileInput
                 title="Upload a new Venue Image"
                 useStore={useVenueImageIdStore}
@@ -158,7 +158,7 @@ const CreateVenueForm = ({
             </div>
           </label>
         </div>
-      )}
+      {/* )} */}
       {errors.venueMap && (
         <span className="text-red-500 text-center">
           {errors.venueMap?.message}

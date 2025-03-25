@@ -2,6 +2,7 @@ import { sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { zodSanityVenue } from "@/zod/venues";
 import { currentUser } from "@clerk/nextjs";
+import { revalidatePath } from "next/cache";
 
 export const POST = async (req: Request) => {
   if (req.method !== "POST") {
@@ -39,10 +40,14 @@ export const POST = async (req: Request) => {
     throw new Error(parsedVenue.error.message);
   }
 
-  
-  const sanityResp = await sanityWriteClient.create(parsedVenue.data).catch((err) => {
-    throw new Error(err);
-  });
-  
+  const sanityResp = await sanityWriteClient
+    .create(parsedVenue.data)
+    .catch((err) => {
+      throw new Error(err);
+    });
+
+  revalidatePath("/admin/dashboard/", "layout");
+  revalidatePath("/dashboard/", "layout");
+
   return Response.json(sanityResp);
 };
