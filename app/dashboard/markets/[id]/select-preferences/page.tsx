@@ -88,7 +88,21 @@ const Page = async ({
           <VenueMap
             market={market}
           />
+
+          {market.vendorInstructions && (
+            <Box>
+              {market.vendorInstructions?.split(".").map(p => (
+                <p className="text-left w-full text-gray-500" key={p}>{p}.</p>
+              ))}
+            </Box>
+          )}
           <SelectOptions market={market} user={sanityUser} />
+          {market.venue.loadInInstructions && (
+            <Box className="mb-10">
+              <strong>Load in instructions: </strong>
+              {market.venue.loadInInstructions}
+            </Box>
+          )}
         </article>
       )}
     </main>

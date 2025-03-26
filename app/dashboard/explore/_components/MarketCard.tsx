@@ -37,14 +37,21 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
         </div>
       </header>
 
-      <footer className="flex items-center justify-evenly flex-wrap py-10 gap-5 text-center">
+      <footer className="flex items-center px-10 justify-evenly flex-wrap py-10 gap-5 text-center">
         <Calendar dates={market.dates} />
         <div className="flex flex-col">
-          <h3 className="text-2xl font-bold font-darker-grotesque max-w-[20ch]">{market.name.split("-")[0]}</h3>
+          <h3 className="text-2xl font-bold font-darker-grotesque">{market.name.split("-")[0]}</h3>
           <span className="text-[#C5B5A4]">
             {market.venue.address}, {market.venue.city}
           </span>
         </div>
+        {/* <p>
+          {market.vendorInstructions}
+        </p>
+         */}
+        {market.vendorInstructions?.split(".").map(p => (
+          <p className="text-left w-full text-gray-500" key={p}>{p}.</p>
+        ))}
         {!!marketIsOpen && (
           <Link href={`/dashboard/markets/${market._id}/select-preferences`}>
             <Button type="button" className="bg-[#C5B5A4] uppercase font-semibold px-5">
@@ -90,7 +97,7 @@ const PriceTag = ({ price }: { price: number }) => {
 //   return (
 //     <section className="border-t-2 border-[#C5B5A4] transition-all ">
 //       {isOpen && (
-//         <div className={`w-full flex p-10 flex-col border-b-2 border-[#C5B5A4] transition-all 
+//         <div className={`w-full flex p-10 flex-col border-b-2 border-[#C5B5A4] transition-all
 //       `}>
 //           <div className="flex flex-col">
 //             <strong>Dates</strong>
