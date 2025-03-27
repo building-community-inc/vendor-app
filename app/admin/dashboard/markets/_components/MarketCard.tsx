@@ -59,7 +59,7 @@ const MarketCard = ({
           <p>
             <strong> {priceToDisplay}</strong> per table
           </p>
-          <div className="max-w-[20ch]">
+          <div className="max-w-[20ch] text-right">
             {market.lastDayToBook ? (
               <>
                 <p>
@@ -73,6 +73,12 @@ const MarketCard = ({
               </>
             ) : (
               <p className="text-red-600 text-right">Market is missing last day to book</p>
+            )}
+
+            {market.allDaysMandatory ? (
+              <p>All days are mandatory</p>
+            ) : (
+              <p>Days are optional</p>
             )}
           </div>
         </div>
