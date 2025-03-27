@@ -47,7 +47,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
 
   const { setAllCheckoutData, } = useCheckoutStore();
 
-  const [prebookingErrors, setPrebookingErrors] = useState<string[] | null | undefined>();
+  // const [prebookingErrors, setPrebookingErrors] = useState<string[] | null | undefined>();
 
   const [addBooking, setAddBooking] = useState(false);
 
@@ -208,18 +208,18 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
           setAddBooking(true)
           const resp = await createETransferBooking(formData);
 
-          console.log({resp})
+          console.log({ resp })
           if (!resp.success) {
             setAddBooking(false)
-            setPrebookingErrors(resp.errors)
+            // setPrebookingErrors(resp.errors)
           }
-          
+
           if (resp.success) {
             setAddBooking(false)
             push(`/dashboard/e-transfer-info/${resp.paymentRecordId}`)
           }
         } catch (error) {
-          setPrebookingErrors(["something went wrong"])
+          // setPrebookingErrors(["something went wrong"])
         }
         // push(`/dashboard/checkout`);
       } else {
@@ -247,16 +247,16 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
               alert("Something went wrong. Please try again.");
               return;
             }
-            
+
             if (resp.success) {
               setAddBooking(false)
               setAllCheckoutData(parsedCheckoutState.data);
               // setPayingWithCredits(false);
               push(`/dashboard/checkout/credit-successfully-applied?paymentRecordId=${resp.paymentRecordId}`);
             }
-            
+
             // redirect(`/dashboard/checkout/success?paymentRecordId${resp.paymentRecordId}`);
-            
+
           } catch (error) {
             setAddBooking(false)
             setPayingWithCredits(false);
@@ -324,6 +324,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
         <p className="text-red-500">Bookings close on: {formatDateString(market.lastDayToBook)}</p>
       )}
       <SelectDates
+        setSelectedDates={setNewSelectedDates}
         market={market}
         handleDateSelect={handleNewDateSelect}
         selectedDates={newSelectedDates}

@@ -18,7 +18,8 @@ export const zodMarketFormSchema = z.object({
     })
     .optional(),
   cancelled: z.boolean().optional().nullable(),
-  archived: z.boolean().optional().nullable()
+  archived: z.boolean().optional().nullable(),
+  allDaysMandatory: z.boolean().optional().nullable()
 });
 
 export const sanityZodMarketFormSchema = zodMarketFormSchema.merge(

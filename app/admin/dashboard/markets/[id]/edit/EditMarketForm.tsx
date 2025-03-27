@@ -1,11 +1,12 @@
 "use client";
 import Button from "@/app/_components/Button";
 import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
-import { ComponentPropsWithoutRef, useEffect, useState } from "react";
+import { ChangeEvent, ComponentPropsWithoutRef, useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { editMarketNameAction } from "./editMarketNameAction";
 import { redirect } from "next/navigation";
 import { addZerosToDate } from "@/utils/helpers";
+import Link from "next/link";
 
 const EditMarketForm = ({ market }: {
   market: TSanityMarket
@@ -16,6 +17,13 @@ const EditMarketForm = ({ market }: {
   const [showMarketNameSuccessMessage, setShowMarketNameSuccessMessage] = useState(false);
   const [lastDayToBook, setLastDayToBook] = useState<string | null>(market.lastDayToBook ? addZerosToDate(market.lastDayToBook) : null);
   const [formChanged, setFormChanged] = useState(false);
+  const [allDaysMandatory, setAllDaysMandatory] = useState(market.allDaysMandatory ?? false)
+
+
+  const onAllDaysMandatoryChange = () => {
+    setAllDaysMandatory(!allDaysMandatory)
+    setFormChanged(true)
+  };
   useEffect(() => {
     if (marketNameFormState.success) {
       setShowMarketNameSuccessMessage(true);
@@ -35,6 +43,17 @@ const EditMarketForm = ({ market }: {
       };
     }
   }, [marketNameFormState.success]);
+
+  useEffect(() => {
+    const marketValue = Boolean(market.allDaysMandatory);
+
+    if (allDaysMandatory === marketValue) {
+      setFormChanged(false);
+    } else {
+      setFormChanged(true);
+    }
+  }, [allDaysMandatory, market.allDaysMandatory]); 
+
 
   useEffect(() => {
     if (marketName !== market.name) {
@@ -57,8 +76,23 @@ const EditMarketForm = ({ market }: {
         <div className="flex flex-col gap-5 w-full">
           <Input label="Market Name" inputName="marketName" value={marketName} onChange={(e) => setMarketName(e.target.value)} />
           <Input type="date" label="Last Day To Book" inputName="lastDayToBook" value={lastDayToBook || ""} onChange={(e) => setLastDayToBook(e.target.value)} />
-          <input type="hidden" name="marketId" defaultValue={market._id} />
-          <SubmitButton formChanged={formChanged} />
+          <input type="hidden" name="oldAllDaysMandatory" readOnly defaultValue={`${market.allDaysMandatory ?? false}`} />
+          <input type="hidden" name="oldMarketName" readOnly defaultValue={market.name} />
+          <input type="hidden" name="oldLastDayToBook" readOnly defaultValue={market.lastDayToBook ?? ""} />
+          <input type="hidden" name="marketId" readOnly defaultValue={market._id} />
+          <label className="inline-flex items-center mb-5 cursor-pointer">
+            <input name="allDaysMandatory" type="checkbox" onChange={onAllDaysMandatoryChange} checked={allDaysMandatory} className="sr-only peer" />
+            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer  peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all  peer-checked:bg-blue-600"></div>
+            <span className="ms-3 text-sm font-medium text-gray-900 ">Make All Dates Mandatory</span>
+          </label>
+          <footer className="flex">
+            <SubmitButton formChanged={formChanged} />
+            <Link href={`/admin/dashboard/markets/${market._id}`} className="mx-auto">
+              <Button className="w-fit text-sm">
+                Back to market
+              </Button>
+            </Link>
+          </footer>
         </div>
       </form>
       {marketNameFormState.errors && marketNameFormState.errors.length > 0 && (

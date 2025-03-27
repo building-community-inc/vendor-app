@@ -97,5 +97,6 @@ export const individualMarketQueryString = `
     }
   },
   cancelled,
-  vendorInstructions
+  vendorInstructions,
+  allDaysMandatory
 `;

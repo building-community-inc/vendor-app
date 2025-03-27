@@ -17,13 +17,9 @@ const Page = async ({ params }: {
 
   return (
     <main className="pt-14 px-5 w-full flex flex-col gap-8 max-w-3xl mx-auto">
-      <EditMarketForm market={market} />
       <EditMarketCoverForm marketCoverId={market.marketCover._id} marketCover={market.marketCover.url} marketId={market._id} marketName={market.name} />
-      <Link href={`/admin/dashboard/markets/${market._id}`} className="mx-auto">
-        <Button className="w-fit text-sm">
-          Back to market
-        </Button>
-      </Link>
+      <EditMarketForm market={market} />
+   
     </main>
   );
 }
