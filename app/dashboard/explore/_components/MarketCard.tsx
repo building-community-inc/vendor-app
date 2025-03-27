@@ -35,7 +35,12 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
 
           <PriceTag price={minPrice} />
         </div>
+
+        {market.allDaysMandatory && (
+          <p className="absolute right-2 text-xs top-full">* All days are mandatory</p>
+        )}
       </header>
+
 
       <footer className="flex items-center px-10 justify-evenly flex-wrap py-10 gap-5 text-center">
         <Calendar dates={market.dates} />
