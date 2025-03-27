@@ -198,6 +198,11 @@ export const marketSchema = defineType({
       name: "archived",
       title: "Archived",
       type: "boolean",
+    }),
+    defineField({
+      name: "allDaysMandatory",
+      title: "All Days Mandatory",
+      type: "boolean"
     })
   ],
 
