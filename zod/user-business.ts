@@ -93,6 +93,7 @@ export const zodSanityBusiness = zodBusiness.merge(
 export const zodSanityUpdateBusiness = zodSanityBusiness.merge(
   z.object({
     _id: z.string(),
+    industry: z.string().optional().nullable()
     // logo: z
     //     .object({
     //       _type: z.literal("image"),
