@@ -136,7 +136,7 @@ const SelectDates = ({
       {market.allDaysMandatory && (
           <div className="text-xs">
           <p className="">* All days are mandatory</p>
-          <p className="">* La participation à tous les jours de l'événement est obligatoire</p>
+          <p className="">{"* La participation à tous les jours de l'événement est obligatoire"}</p>
         </div>      )}
     </Box>
   );
