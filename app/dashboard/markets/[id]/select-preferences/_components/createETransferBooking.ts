@@ -46,8 +46,6 @@ export const createETransferBooking = async (formData: FormData): Promise<{
     user.emailAddresses[0].emailAddress
   );
 
-  console.log({sanityUser})
-
   const rawData = {
     items: JSON.parse(formData.get("items") as string),
     marketId: JSON.parse(formData.get("marketId") as string),
@@ -120,6 +118,7 @@ export const createETransferBooking = async (formData: FormData): Promise<{
       errors: ["market not found"],
     };
   }
+
 
   // update days with tables
   let daysWithTables = market?.daysWithTables;
@@ -196,7 +195,7 @@ export const createETransferBooking = async (formData: FormData): Promise<{
       ...tableToUpdate,
       booked: {
         _type: "reference",
-        _ref: user.id,
+        _ref: sanityUser._id,
       },
     };
 
