@@ -134,8 +134,10 @@ const SelectDates = ({
       </ul>
       <span>{"Note: Table selection is subject to change at administrator's discretion."}</span>
       {market.allDaysMandatory && (
-        <p className="w-full text-sm">* All days in this market are mandatory</p>
-      )}
+          <div className="text-xs">
+          <p className="">* All days are mandatory</p>
+          <p className="">* La participation à tous les jours de l'événement est obligatoire</p>
+        </div>      )}
     </Box>
   );
 };

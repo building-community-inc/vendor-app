@@ -37,7 +37,10 @@ const MarketCard = ({ market }: { market: TSanityMarket }) => {
         </div>
 
         {market.allDaysMandatory && (
-          <p className="absolute right-2 text-xs top-full">* All days are mandatory</p>
+          <div className="text-xs text-right absolute right-2 top-full">
+            <p className="">* All days are mandatory</p>
+            <p className="">* La participation à tous les jours de l'événement est obligatoire</p>
+          </div>
         )}
       </header>
 

@@ -46,6 +46,8 @@ export const createETransferBooking = async (formData: FormData): Promise<{
     user.emailAddresses[0].emailAddress
   );
 
+  console.log({sanityUser})
+
   const rawData = {
     items: JSON.parse(formData.get("items") as string),
     marketId: JSON.parse(formData.get("marketId") as string),
@@ -296,7 +298,7 @@ export const createETransferBooking = async (formData: FormData): Promise<{
   try {
     const paymentRecordResp = await sanityWriteClient.create(newPaymentRecord);
     const marketResp = await sanityWriteClient.patch(market._id).set(market).commit()
-    // console.log({ paymentRecordResp, marketResp });
+    console.log({ paymentRecordResp, marketResp });
     // console.log({ newPaymentRecord, payments: newPaymentRecord.payments });
     revalidatePath("/dashboard/", "layout");
     revalidatePath("/admin/dashboard/", "layout");
