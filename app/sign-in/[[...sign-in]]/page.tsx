@@ -1,16 +1,14 @@
 
-import { clerkLoginAppearance } from "@/app/_components/clerk/styles";
 import { SignIn } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
+// import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 
 export default async function Page() {
-  const user = await currentUser();
-  console.log({user})
-  if (user) {
+  // const user = await currentUser();
+  // if (user) {
     // redirect("/dashboard");
-  }
+  // }
   return (
     <main className="grid place-content-center min-h-screen ">
       <Image src="/logo-on-white-bg.png"

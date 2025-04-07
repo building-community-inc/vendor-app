@@ -1,4 +1,3 @@
-import { clerkLoginAppearance } from "@/app/_components/clerk/styles";
 import { SignUp } from "@clerk/nextjs";
 import Image from "next/image";
 
@@ -9,7 +8,7 @@ export default function Page() {
         className="w-[200px] h-[200px] md:w-[468px] md:h-[468px] mx-auto"
         width={468} height={468} alt="logo" />
       <SignUp
-        appearance={clerkLoginAppearance}
+        // appearance={clerkLoginAppearance}
       />
     </main>
   );
