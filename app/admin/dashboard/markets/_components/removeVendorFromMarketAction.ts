@@ -5,7 +5,7 @@ import {
   updateMarketQuery,
   updateMarketSchema,
 } from "./zodAndQueries";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { FormState } from "../../payments/changeStatusAction";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { z } from "zod";

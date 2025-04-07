@@ -6,7 +6,7 @@ import {
 } from "@/sanity/queries/payments";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { stripe } from "@/stripe";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { nanoid } from "nanoid";
 import { HST } from "../../../_components/checkoutStore";
 

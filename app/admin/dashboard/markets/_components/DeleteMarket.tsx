@@ -1,16 +1,15 @@
 "use client"
 
 import Button from "@/app/_components/Button";
-import { useFormState } from "react-dom";
 import { deleteMarketAction } from "./deleteMarketAction";
-import { useEffect } from "react";
+import { useEffect, useActionState } from "react";
 import { redirect } from "next/navigation";
 
 const DeleteMarket = ({marketId}: {
   marketId: string;
 }) => {
 
-  const [formState, formAction] = useFormState(deleteMarketAction, { success: false , errors: [] });
+  const [formState, formAction] = useActionState(deleteMarketAction, { success: false , errors: [] });
 
   useEffect(() => {
     if (formState.success) {

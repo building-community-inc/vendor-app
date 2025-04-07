@@ -1,20 +1,16 @@
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { currentUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
 import NavBar from "./_components/NavBar";
 import NoBz from "./_components/NoBz";
 import { getAllUserMessagesById } from "@/sanity/queries/messages";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await currentUser();
-  if (!user) redirect("/");
+  if (!user) return;
 
   const sanityUser = await getSanityUserByEmail(
     user.emailAddresses[0].emailAddress
   );
-
-  if (!sanityUser) redirect("/");
-
 
   if (!sanityUser.business)
     return (

@@ -1,6 +1,6 @@
 import { getPaymentByIdWithMarket } from "@/sanity/queries/payments";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import Box from "../../markets/[id]/select-preferences/_components/Box";
@@ -12,11 +12,14 @@ import Email from "./Email";
 
 const PAYMENT_EMAIL = "accounting@buildingcommunityinc.com";
 
-const Page = async ({ params }: {
-  params: {
-    paymentRecordId: string;
+const Page = async (
+  props: {
+    params: Promise<{
+      paymentRecordId: string;
+    }>
   }
-}) => {
+) => {
+  const params = await props.params;
   unstable_noStore();
 
   const user = await currentUser();

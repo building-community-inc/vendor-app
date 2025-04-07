@@ -1,14 +1,14 @@
 "use client";
 import Button from "@/app/_components/Button";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import { archiveMarket } from "./archiveMarketAction";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useActionState } from "react";
 
 const ArchiveMarket = ({ marketId, archived }: {
   marketId: string;
   archived: boolean | null | undefined;
 }) => {
-  const [formState, formAction] = useFormState(archiveMarket, { errors: [], success: false })
+  const [formState, formAction] = useActionState(archiveMarket, { errors: [], success: false })
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   useEffect(() => {
     if (formState.success) {

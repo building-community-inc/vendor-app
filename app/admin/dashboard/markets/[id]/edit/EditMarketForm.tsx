@@ -1,8 +1,8 @@
 "use client";
 import Button from "@/app/_components/Button";
 import { TSanityMarket } from "@/sanity/queries/admin/markets/zods";
-import { ChangeEvent, ComponentPropsWithoutRef, useEffect, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { ChangeEvent, ComponentPropsWithoutRef, useEffect, useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { editMarketNameAction } from "./editMarketNameAction";
 import { redirect } from "next/navigation";
 import { addZerosToDate } from "@/utils/helpers";
@@ -12,7 +12,7 @@ const EditMarketForm = ({ market }: {
   market: TSanityMarket
 }) => {
 
-  const [marketNameFormState, marketNameFormAction] = useFormState(editMarketNameAction, { errors: [], success: false });
+  const [marketNameFormState, marketNameFormAction] = useActionState(editMarketNameAction, { errors: [], success: false });
   const [marketName, setMarketName] = useState(market.name);
   const [showMarketNameSuccessMessage, setShowMarketNameSuccessMessage] = useState(false);
   const [lastDayToBook, setLastDayToBook] = useState<string | null>(market.lastDayToBook ? addZerosToDate(market.lastDayToBook) : null);

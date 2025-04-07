@@ -1,6 +1,6 @@
 import { getMarketById } from "@/sanity/queries/admin/markets/markets";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import SelectOptions from "./_components/SelectOptions";
 import Link from "next/link";
@@ -11,13 +11,14 @@ import Box from "./_components/Box";
 import Calendar from "@/app/dashboard/_components/Calendar";
 import { unstable_noStore } from "next/cache";
 
-const Page = async ({
-  params,
-}: {
-  params: {
-    id: string;
-  };
-}) => {
+const Page = async (
+  props: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   unstable_noStore();
   const user = await currentUser();
 

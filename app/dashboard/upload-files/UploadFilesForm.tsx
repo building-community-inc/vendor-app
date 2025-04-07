@@ -2,8 +2,7 @@
 
 import Button from "@/app/_components/Button";
 import Link from "next/link";
-import { useFormState } from "react-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useActionState } from "react";
 import UploadPdf from "./UploadPdf";
 import { uploadFiles } from "./uploadFilesAction";
 import ChangeLogo from "./ChangeLogo";
@@ -43,7 +42,7 @@ const UploadFilesForm = ({
   logoId?: string | null;
   redirectPath?: string;
 }) => {
-  const [formState, formAction] = useFormState(uploadFiles, { errors: [], success: false })
+  const [formState, formAction] = useActionState(uploadFiles, { errors: [], success: false })
 
   const [pdfFiles, setPdfFiles] = useState<File[]>([]);
   const [logoFile, setLogoFile] = useState<File | null>(null);

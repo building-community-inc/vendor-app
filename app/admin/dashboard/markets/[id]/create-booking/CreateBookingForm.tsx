@@ -1,8 +1,8 @@
 
 "use client"
+import { useActionState } from "react";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import Image from "next/image";
-import { useFormState } from "react-dom";
 import SelectVendor from "./SelectVendor";
 import SelectDetails from "./SelectDetails";
 import { createBooking } from "./createBooking";
@@ -16,7 +16,7 @@ const CreateBookingForm = ({ market, allVendors, sanityUser }: {
   sanityUser: TUserWithOptionalBusinessRef;
 }) => {
 
-  const [formState, formAction] = useFormState(createBooking, { errors: [], success: false })
+  const [formState, formAction] = useActionState(createBooking, { errors: [], success: false })
 
   if (formState.success) {
     return (

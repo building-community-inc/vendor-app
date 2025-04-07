@@ -16,17 +16,18 @@ export type TMarketVendor = {
   lastName: string;
   instagram?: string | null | undefined;
 };
-const Page = async ({
-  params,
-  searchParams
-}: {
-  params: {
-    id: string;
-  };
-  searchParams: {
-    [key: string]: string | undefined;
-  };
-}) => {
+const Page = async (
+  props: {
+    params: Promise<{
+      id: string;
+    }>;
+    searchParams: Promise<{
+      [key: string]: string | undefined;
+    }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   noStore();
   const market = await getMarketById(params.id);
 

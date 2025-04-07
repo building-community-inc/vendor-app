@@ -1,7 +1,7 @@
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { zodSanityUpdateVenue } from "@/zod/venues";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 // import { revalidatePath } from "next/cache";
 

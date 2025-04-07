@@ -1,5 +1,5 @@
 import FormTitleDivider from "../../_components/FormTitleDivider";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { getAllVendors } from "@/sanity/queries/admin/vendors";
 import CreateMessageForm from "./_components/CreateMessageForm";

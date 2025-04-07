@@ -1,14 +1,17 @@
 import { getPaymentById } from "@/sanity/queries/payments";
 import RemainderCheckout from "./RemainderCheckout";
 import { getMarketById } from "@/sanity/queries/admin/markets/markets";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 
-const Page = async ({ params }: {
-  params: {
-    paymentRecord: string;
+const Page = async (
+  props: {
+    params: Promise<{
+      paymentRecord: string;
+    }>
   }
-}) => {
+) => {
+  const params = await props.params;
   const user = await currentUser();
 
   if (!user) {

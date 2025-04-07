@@ -5,11 +5,14 @@ import { formatDateWLuxon } from "@/utils/helpers";
 import Button from "@/app/_components/Button";
 import Link from "next/link";
 
-const Page = async ({ params }: {
-  params: {
-    paymentRecordId: string;
-  };
-}) => {
+const Page = async (
+  props: {
+    params: Promise<{
+      paymentRecordId: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   unstable_noStore();
   const paymentRecordInfo = await getPaymentByIdWithMarket(params.paymentRecordId);
 

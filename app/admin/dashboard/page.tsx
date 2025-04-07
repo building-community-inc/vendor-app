@@ -1,5 +1,5 @@
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
 

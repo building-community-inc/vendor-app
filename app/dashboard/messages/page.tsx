@@ -1,7 +1,7 @@
 import Dropdown from "@/app/admin/dashboard/messages/_components/Dropdown";
 import { getAllUserMessagesById } from "@/sanity/queries/messages";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import OpenBody from "./_components/OpenBody";
 

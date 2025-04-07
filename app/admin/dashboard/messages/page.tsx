@@ -4,13 +4,14 @@ import Link from "next/link";
 import { TMessage, getAllSentMessages } from "@/sanity/queries/admin/messages";
 import Dropdown from "./_components/Dropdown";
 
-const Page = async ({
-  searchParams,
-}: {
-  searchParams: {
-    [key: string]: string | undefined;
-  };
-}) => {
+const Page = async (
+  props: {
+    searchParams: Promise<{
+      [key: string]: string | undefined;
+    }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
   const messages = await getAllSentMessages();
 
   const search = searchParams.search?.toLowerCase();

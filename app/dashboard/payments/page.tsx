@@ -4,7 +4,7 @@ import {
   getSanityUserByEmail,
 } from "@/sanity/queries/user";
 import { formatDateWLuxon } from "@/utils/helpers";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { TPaymentItem } from "../checkout/success/api/route";
 import PaymentNotification from "./_components/PaymentNotification";

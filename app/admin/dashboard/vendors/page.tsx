@@ -2,21 +2,22 @@ import { getAllVendors } from "@/sanity/queries/admin/vendors";
 import { unstable_noStore as noStore } from "next/cache";
 import FormTitleDivider from "../_components/FormTitleDivider";
 import Button from "@/app/_components/Button";
-import { setUserStatus } from "./actions";
 import Link from "next/link";
 import Search from "@/app/dashboard/explore/_components/Search";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import VendorFilters from "./VendorFilters";
+import StatusUpdateButton from "./StatusUpdateButton";
 
 
 
-const Page = async ({
-  searchParams,
-}: {
-  searchParams: {
-    [key: string]: string | undefined;
-  };
-}) => {
+const Page = async (
+  props: {
+    searchParams: Promise<{
+      [key: string]: string | undefined;
+    }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
   noStore()
   const vendors = await getAllVendors();
 
@@ -102,55 +103,74 @@ const VendorCard = ({ vendor }: {
       </section>
 
       <section className="flex flex-wrap justify-center gap-2 items-center">
-        {vendor.status === "pending" ? (
+        {vendor.status === "pending" && (
           <>
-            <form action={setUserStatus}>
-              <input type="hidden" name="vendorId" value={vendor._id} />
-              <input type="hidden" name="status" value={"approved"} />
-              <Button className="bg-green-300 border border-green-400 transition-all">Approve</Button>
-            </form>
-            <form action={setUserStatus}>
-              <input type="hidden" name="vendorId" value={vendor._id} />
-              <input type="hidden" name="status" value={"archived"} />
-              <Button className="bg-red-500 border border-red-500 transition-all">{"Archive"}</Button>
-            </form>
+            <StatusUpdateButton
+              vendorId={vendor._id}
+              status="approved"
+              buttonText="Approve"
+              pendingText="Approving..."
+              buttonClassName="bg-green-300 border border-green-400 transition-all"
+            />
+            <StatusUpdateButton
+              vendorId={vendor._id}
+              status="archived"
+              buttonText="Archive"
+              pendingText="Archiving..."
+              buttonClassName="bg-red-500 border border-red-500 transition-all"
+            />
           </>
-        ) : (
+        )}
+
+        {vendor.status === "suspended" && (
+          <StatusUpdateButton
+            vendorId={vendor._id}
+            status="approved"
+            buttonText="Reactivate"
+            pendingText="Reactivating..."
+            buttonClassName="bg-green-300 border border-green-400 transition-all"
+          />
+        )}
+
+        {vendor.status !== "pending" && vendor.status !== "suspended" && (
           <>
-            {vendor.status === "suspended" ? (
-              <form action={setUserStatus}>
-                <input type="hidden" name="vendorId" value={vendor._id} />
-                <input type="hidden" name="status" value={"approved"} />
-                <Button className="bg-green-300 border border-green-400 transition-all">Reactivate</Button>
-              </form>
-            ) : (
-              <>
-                <form action={setUserStatus}>
-                  <input type="hidden" name="vendorId" value={vendor._id} />
-                  <input type="hidden" name="status" value={"suspended"} />
-                  <Button className="bg-red-200">Suspend</Button>
-                </form>
-                <form action={setUserStatus}>
-                  <input type="hidden" name="vendorId" value={vendor._id} />
-                  <input type="hidden" name="status" value={"archived"} />
-                  <Button className="bg-red-500 border border-red-500 transition-all">{"Archive"}</Button>
-                </form>
-              </>
+            {vendor.status !== "archived" && (
+              <StatusUpdateButton
+                vendorId={vendor._id}
+                status="suspended"
+                buttonText="Suspend"
+                pendingText="Suspending..."
+                buttonClassName="bg-red-200"
+              />
             )}
-            {vendor.status === "archived" && (
-              <>
-                <form action={setUserStatus}>
-                  <input type="hidden" name="vendorId" value={vendor._id} />
-                  <input type="hidden" name="status" value={"approved"} />
-                  <Button className="bg-green-300 border border-green-400 transition-all">Approve</Button>
-                </form>
-                <form action={setUserStatus}>
-                  <input type="hidden" name="vendorId" value={vendor._id} />
-                  <input type="hidden" name="status" value={"pending"} />
-                  <Button className="bg-red-200">Set as Pending</Button>
-                </form>
-              </>
+            {vendor.status !== "archived" && (
+              <StatusUpdateButton
+                vendorId={vendor._id}
+                status="archived"
+                buttonText="Archive"
+                pendingText="Archiving..."
+                buttonClassName="bg-red-500 border border-red-500 transition-all"
+              />
             )}
+          </>
+        )}
+
+        {vendor.status === "archived" && (
+          <>
+            <StatusUpdateButton
+              vendorId={vendor._id}
+              status="approved"
+              buttonText="Approve"
+              pendingText="Approving..."
+              buttonClassName="bg-green-300 border border-green-400 transition-all"
+            />
+            <StatusUpdateButton
+              vendorId={vendor._id}
+              status="pending"
+              buttonText="Set as Pending"
+              pendingText="Setting as Pending..."
+              buttonClassName="bg-red-200"
+            />
           </>
         )}
 

@@ -1,14 +1,17 @@
 import UploadFilesForm from "@/app/dashboard/upload-files/UploadFilesForm";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
 
-const Page = async ({ params }: {
-  params: {
-    id: string;
+const Page = async (
+  props: {
+    params: Promise<{
+      id: string;
+    }>
   }
-}) => {
+) => {
+  const params = await props.params;
 
   unstable_noStore();
 

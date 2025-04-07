@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { getSanityUserByEmail, zodUserPayment } from "@/sanity/queries/user";
 import { zodLaterPaymentIntentSchema } from "@/zod/checkout";
 import { HST } from "../../_components/checkoutStore";

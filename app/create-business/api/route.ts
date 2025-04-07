@@ -1,7 +1,7 @@
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { zodSanityBusiness } from "@/zod/user-business";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 
 export const POST = async (req: Request) => {
   if (req.method !== "POST") {

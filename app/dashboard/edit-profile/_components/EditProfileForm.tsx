@@ -3,10 +3,10 @@
 import { TBusiness, TUserWithOptionalBusinessRef, zodBusiness } from "@/zod/user-business";
 import { redirect, usePathname } from "next/navigation";
 import { camelCaseToTitleCase } from "@/utils/helpers";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useActionState } from "react";
 import { TErrorType, saveNewBusinessInfo } from "./actions";
 import { usePdfFileStore, useUpdateProfileImageStore } from "@/app/_components/store/fileStore";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import Button from "@/app/_components/Button";
 import Link from "next/link";
 type TVendorCategory = {
@@ -18,7 +18,7 @@ const EditProfileForm = ({ sanityUser, vendorCategories, redirectPath }: {
   redirectPath?: string;
 }) => {
 
-  const [formState, formAction] = useFormState(saveNewBusinessInfo, {
+  const [formState, formAction] = useActionState(saveNewBusinessInfo, {
     success: false,
     message: "",
     errors: null,
@@ -168,7 +168,7 @@ const BusinessFormInputComp = ({
   const [valueState, setValueState] = useState(value);
   return (
     // <section className="flex flex-col gap-1 my-2 max-w-full w-[75vw] mx-auto xs:w-full  sm:w-[75vw]">
-    <label htmlFor={name} hidden={hidden} className="flex flex-col gap-2">
+    (<label htmlFor={name} hidden={hidden} className="flex flex-col gap-2">
       <h2 className="font-darker-grotesque text-2xl text-black">
         {title}
       </h2>
@@ -187,8 +187,7 @@ const BusinessFormInputComp = ({
           }
         }}
       />
-    </label>
-
+    </label>)
   );
 };
 

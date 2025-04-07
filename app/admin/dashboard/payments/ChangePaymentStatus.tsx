@@ -1,8 +1,8 @@
 "use client";
 import Button from "@/app/_components/Button";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import { changeStatusAction } from "./changeStatusAction";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useActionState } from "react";
 import Dialog from "@/app/_components/Dialog/Dialog";
 
 const ChangePaymentStatus = ({ status, paymentRecordId, amountPaid, marketName, contactName, vendorName }: {
@@ -13,7 +13,7 @@ const ChangePaymentStatus = ({ status, paymentRecordId, amountPaid, marketName, 
   contactName: string;
   vendorName: string;
 }) => {
-  const [formState, formAction] = useFormState(changeStatusAction, {
+  const [formState, formAction] = useActionState(changeStatusAction, {
     success: false,
     errors: undefined
   })

@@ -1,7 +1,7 @@
 import Button from "@/app/_components/Button";
 import Dialog from "@/app/_components/Dialog/Dialog";
-import { useRef } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useRef, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { removeVendorFromMarket } from "./removeVendorFromMarketAction";
 import { formatDateWLuxon } from "@/utils/helpers";
@@ -28,7 +28,7 @@ const RemoveVendorFromMarket = ({
   vendorInsta: string;
 }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [formState, formAction] = useFormState(removeVendorFromMarket, { errors: undefined, success: false })
+  const [formState, formAction] = useActionState(removeVendorFromMarket, { errors: undefined, success: false })
 
 
   const toggleDialog = () => {

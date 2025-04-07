@@ -2,15 +2,15 @@
 
 import Button from "@/app/_components/Button";
 import Dialog from "@/app/_components/Dialog/Dialog";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useActionState } from "react";
 // import { cancelMarket } from "./cancelMarketAction";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import { cancelMarketWithLambda } from "./cancelMarketWithLambda";
 
 const CancelMarketButton = ({ marketId }: {
   marketId: string
 }) => {
-  const [formState, formAction] = useFormState(cancelMarketWithLambda, { errors: null, success: false })
+  const [formState, formAction] = useActionState(cancelMarketWithLambda, { errors: null, success: false })
   // const router = useRouter()
   const [currentUrl, setCurrentUrl] = useState<string>("")
 

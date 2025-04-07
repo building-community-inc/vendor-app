@@ -5,11 +5,14 @@ import Button from "@/app/_components/Button";
 import Link from "next/link";
 import EditMarketCoverForm from "./EditMarketCoverForm";
 
-const Page = async ({ params }: {
-  params: {
-    id: string;
-  };
-}) => {
+const Page = async (
+  props: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
+) => {
+  const params = await props.params;
   noStore();
   const market = await getMarketById(params.id);
 
