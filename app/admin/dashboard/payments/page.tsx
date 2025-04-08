@@ -9,13 +9,14 @@ import Link from "next/link";
 import StatusFilter from "./StatusFilter";
 import GeneralFilters from "./GeneralFilters";
 
-const Page = async ({
-  searchParams,
-}: {
-  searchParams: {
-    [key: string]: string | undefined;
-  };
-}) => {
+const Page = async (
+  props: {
+    searchParams: Promise<{
+      [key: string]: string | undefined;
+    }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
   noStore()
 
   const allPayments = await getAllPayments();

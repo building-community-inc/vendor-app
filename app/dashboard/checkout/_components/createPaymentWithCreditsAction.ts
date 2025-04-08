@@ -2,7 +2,7 @@
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { nanoid } from "nanoid";
 import { TPaymentItem } from "../success/api/route";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { revalidatePath, unstable_noStore } from "next/cache";
 

@@ -3,7 +3,7 @@
 import { TPaymentItem } from "@/app/dashboard/checkout/success/api/route";
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";

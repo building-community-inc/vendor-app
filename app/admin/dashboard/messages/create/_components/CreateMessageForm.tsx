@@ -1,10 +1,9 @@
 "use client";
-import { ComponentPropsWithoutRef, useEffect } from "react";
+import { ComponentPropsWithoutRef, useEffect, useActionState } from "react";
 import { createMessage } from "../action";
 import To from "./To";
 import Button from "@/app/_components/Button";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
-import { useFormState } from "react-dom";
 import { redirect } from "next/navigation";
 
 const CreateMessageForm = ({ sanityUser, allVendors }: {
@@ -12,7 +11,7 @@ const CreateMessageForm = ({ sanityUser, allVendors }: {
   allVendors: TUserWithOptionalBusinessRef[];
 }) => {
 
-  const [formState, formAction] = useFormState(createMessage, {
+  const [formState, formAction] = useActionState(createMessage, {
     message: "",
     success: false,
     errors: null
@@ -26,7 +25,7 @@ const CreateMessageForm = ({ sanityUser, allVendors }: {
   }, [formState.success])
 
   return (
-    <form action={formAction} className="mt-10 w-full flex flex-col gap-5">
+    (<form action={formAction} className="mt-10 w-full flex flex-col gap-5">
       <input type="hidden" name="from" value={sanityUser._id} />
       <To vendorList={allVendors || []} />
       {formState.errors?.find(error => error.path[0] === "for") && (
@@ -34,7 +33,6 @@ const CreateMessageForm = ({ sanityUser, allVendors }: {
           *{formState.errors.find(error => error.path[0] === "for")?.message}
         </span>
       )}
-
       <Input label="Subject" name="subject" />
       {formState.errors?.find(error => error.path[0] === "subject") && (
         <span className="text-red-700">
@@ -49,9 +47,8 @@ const CreateMessageForm = ({ sanityUser, allVendors }: {
       )}
       {formState.success ? (
         // <Button disabled className="mx-auto bg-white border border-[#707070] py-5 font-semibold px-10 text-lg rounded-none">
-        <span>
-          Message Sent
-        </span>
+        (<span>Message Sent
+                  </span>)
         // </Button>
 
       ) : (
@@ -64,7 +61,7 @@ const CreateMessageForm = ({ sanityUser, allVendors }: {
           *{formState.errors.find(error => error.path[0] === "sanity")?.message}
         </span>
       )}
-    </form>
+    </form>)
   );
 }
 

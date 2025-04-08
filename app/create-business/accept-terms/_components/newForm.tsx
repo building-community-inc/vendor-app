@@ -1,13 +1,13 @@
 "use client";
 import Button from "@/app/_components/Button";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import { FaArrowRight } from "react-icons/fa";
 import { acceptTerms } from "./acceptTermsAction";
-import { useEffect } from "react";
+import { useEffect, useActionState } from "react";
 import { redirect } from "next/navigation";
 
 const Form = () => {
-  const [formState, formAction] = useFormState(acceptTerms, { errors: [], success: false });
+  const [formState, formAction] = useActionState(acceptTerms, { errors: [], success: false });
 
   useEffect(() => {
     if (formState.success) {

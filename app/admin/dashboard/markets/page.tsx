@@ -80,13 +80,14 @@ const exploreSorts: { [key: string]: (markets: TSanityMarket[]) => void } = {
     });
   },
 };
-const Page = async ({
-  searchParams,
-}: {
-  searchParams: {
-    [key: string]: string | undefined;
-  };
-}) => {
+const Page = async (
+  props: {
+    searchParams: Promise<{
+      [key: string]: string | undefined;
+    }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
   noStore();
   // const venues = await getAllVenues();
 

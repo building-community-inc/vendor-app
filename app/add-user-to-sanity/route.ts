@@ -1,14 +1,15 @@
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { zodUserBase } from "@/zod/user-business";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-export const revalidate = 60;
+// export const revalidate = 60;
 
 export const GET = async () => {
   const clerkUser = await currentUser();
 
   if (!clerkUser) {
+    console.log("no user found redirecting to sign in");
     return redirect("/sign-in");
   };
 

@@ -2,7 +2,7 @@ import {
   getCurrentMarkets,
 } from "@/sanity/queries/admin/markets/markets";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import MarketCard from "./_components/MarketCard";
 import Search from "./_components/Search";
@@ -13,13 +13,14 @@ import { EMAIL } from "@/app/_components/constants";
 import { exploreSorts } from "./_components/sorts";
 import SelectCity from "./_components/SelectCity";
 
-const ExplorePage = async ({
-  searchParams,
-}: {
-  searchParams: {
-    [key: string]: string | undefined;
-  };
-}) => {
+const ExplorePage = async (
+  props: {
+    searchParams: Promise<{
+      [key: string]: string | undefined;
+    }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
 
   noStore();
   const user = await currentUser();
@@ -120,7 +121,6 @@ const ExplorePage = async ({
       )}
     </main>
   );
-
 };
 
 export default ExplorePage;

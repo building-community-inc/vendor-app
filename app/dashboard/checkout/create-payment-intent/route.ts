@@ -2,7 +2,7 @@ import {
   zodCheckoutStateSchemaRequired,
   zodPaymentIntentSchema,
 } from "@/zod/checkout";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 // This is your test secret API key.
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);

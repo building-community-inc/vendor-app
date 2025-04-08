@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import UploadFilesForm from "./UploadFilesForm";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { redirect } from "next/navigation";

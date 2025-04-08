@@ -1,7 +1,7 @@
 import SanityTextBlock from "@/app/_components/SanityTextBlock";
 import { getAcceptTermsContent } from "@/sanity/queries/pages/accept-terms";
 import Form from "./_components/newForm";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { zodUserInTerms } from "./_components/zod";
 

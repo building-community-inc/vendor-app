@@ -1,5 +1,6 @@
 "use server";
 
+import { FormState } from "@/app/types";
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import {
   messageQueryString,
@@ -8,7 +9,10 @@ import {
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 
-export const setMessageAsRead = async (formData: FormData) => {
+export const setMessageAsRead = async (
+  formState: FormState,
+  formData: FormData
+): Promise<FormState> => {
   const messageId = formData.get("messageId");
   const userId = formData.get("userId");
 
@@ -23,15 +27,15 @@ export const setMessageAsRead = async (formData: FormData) => {
 
   if (!message)
     return {
-      status: 404,
-      body: "Message not found",
+      success: false,
+      errors: ["Message not found"],
     };
 
   if (!message.success) {
     console.error(message.error);
     return {
-      status: 500,
-      body: message.error.message,
+      success: false,
+      errors: message.error.issues.map((issue) => issue.message),
     };
   }
 
@@ -39,54 +43,47 @@ export const setMessageAsRead = async (formData: FormData) => {
     (forObject) => forObject.vendor._id === userId
   );
 
-  if (!forObject) return { status: 404, body: "User not found" };
+  if (!forObject)
+    return {
+      success: false,
+      errors: ["User not found"],
+    };
+  try {
+    await sanityWriteClient
+      .patch(message.data._id)
+      .set({
+        for: message.data.for.map((forObject) =>
+          forObject.vendor._id === userId
+            ? {
+                _key: nanoid(),
+                vendor: {
+                  _type: "reference",
+                  _ref: forObject.vendor._id,
+                },
+                read: true,
+              }
+            : {
+                _key: nanoid(),
+                vendor: {
+                  _type: "reference",
+                  _ref: forObject.vendor._id,
+                },
+                read: forObject.read,
+              }
+        ),
+      })
+      .commit();
 
-  const updatedMessage = await sanityWriteClient
-    .patch(message.data._id)
-    .set({
-      for: message.data.for.map((forObject) =>
-        forObject.vendor._id === userId
-          ? {
-              _key: nanoid(),
-              vendor: {
-                _type: "reference",
-                _ref: forObject.vendor._id,
-              },
-              read: true,
-            }
-          : {
-              _key: nanoid(),
-              vendor: {
-                _type: "reference",
-                _ref: forObject.vendor._id,
-              },
-              read: forObject.read,
-            }
-      ),
-    })
-    .commit()
-    .catch((error) => {
-      return {
-        status: 500,
-        body: error.message,
-      };
-    });
-
-  revalidatePath("/dashboard/", "layout");
-  revalidatePath("/admin/dashboard/", "layout");
-  return {
-    status: 200,
-    body: "Message updated",
-  };
-  // const updatedMessage = await client
-  //   .patch(message._id)
-  //   .set({
-  //     for: message.for.map((forObject) =>
-  //       forObject.vendor._ref === userId
-  //         ? { ...forObject, read: true }
-  //         : forObject
-  //     ),
-  //   })
-  //   .commit();
-  // return updatedMessage;
+    revalidatePath("/dashboard/", "layout");
+    revalidatePath("/admin/dashboard/", "layout");
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error("Error creating or replacing user:", error);
+    return {
+      success: false,
+      errors: ["Error creating or replacing user"],
+    };
+  }
 };

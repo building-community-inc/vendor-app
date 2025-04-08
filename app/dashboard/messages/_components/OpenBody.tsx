@@ -1,6 +1,6 @@
 "use client"
 import { setMessageAsRead } from "./actions";
-import { useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef } from "react";
 
 const OpenBody = ({ body, messageId, userId, isMessageRead }: {
   body: string;
@@ -10,6 +10,13 @@ const OpenBody = ({ body, messageId, userId, isMessageRead }: {
 }) => {
   const formRef = useRef<HTMLFormElement>(null);
   // console.log({ body })
+  const [formState, formAction, isPending] = useActionState(
+    setMessageAsRead,
+    {
+      success: false,
+      errors: null
+    });
+
 
   useEffect(() => {
     // setMessageAsRead(formRef.current);
@@ -18,7 +25,7 @@ const OpenBody = ({ body, messageId, userId, isMessageRead }: {
     }
   }, [])
   return (
-    <form ref={formRef} action={setMessageAsRead}>
+    <form ref={formRef} action={formAction}>
       <input type="hidden" name="messageId" value={messageId} />
       <input type="hidden" name="userId" value={userId} />
       {/* <Dropdown title="Body" theme="dark"

@@ -2,7 +2,7 @@
 
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 export const deleteMarketAction = async (

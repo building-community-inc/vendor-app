@@ -4,13 +4,14 @@ import { formatDateWLuxon } from "@/utils/helpers";
 import Link from "next/link";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
-const Page = async ({
-  searchParams,
-}: {
-  searchParams: {
-    [key: string]: string | undefined;
-  };
-}) => {
+const Page = async (
+  props: {
+    searchParams: Promise<{
+      [key: string]: string | undefined;
+    }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
 
   if (!searchParams.paymentId) {
     return (

@@ -1,5 +1,5 @@
 import { getSanityUserByEmail, getUserPaymentRecords } from "@/sanity/queries/user";
-import { clerkClient, currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import NoBz from "./_components/NoBz";
 import { DateTime } from 'luxon';

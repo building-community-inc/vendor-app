@@ -13,14 +13,15 @@ import { unstable_noStore } from "next/cache";
 import { updatePaymentRecord } from "./updatePaymentRecordAction";
 import { createPaymentRecord } from "./createPaymentRecordAction";
 import { updateUserCredits } from "./updateUserCreditsAction";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 
-const Page = async ({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) => {
+const Page = async (
+  props: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
   unstable_noStore();
 
   const clerkUser = await currentUser();
@@ -35,7 +36,7 @@ const Page = async ({
     return <div>Not authorized</div>;
   }
 
-  
+
   const paymentIntentId =
     typeof searchParams.payment_intent === "string"
       ? searchParams.payment_intent
@@ -51,10 +52,10 @@ const Page = async ({
         <h1>Payment Failed</h1>
       </main>
     );
-  };
+  }
 
 
-  const partialCreditPayment = paymentRecordId && await getPaymentById(paymentRecordId);
+  const partialCreditPayment = paymentRecordId && (await getPaymentById(paymentRecordId));
 
   // console.log({partialCreditPayment, paymentRecordId})
 
@@ -96,7 +97,7 @@ const Page = async ({
     } catch (error) {
       console.error(`Failed to update payment record: ${error}`);
     }
-  };
+  }
 
   if (!existingStripePayment && !partialCreditPayment && paymentIntent) {
     try {
@@ -109,7 +110,7 @@ const Page = async ({
     } catch (error) {
       console.error(`Failed to create payment record: ${error}`);
     }
-  };
+  }
 
   // const resend = new Resend(process.env.RESEND_API_KEY);
 

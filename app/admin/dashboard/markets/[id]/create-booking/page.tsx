@@ -2,20 +2,21 @@ import { getMarketById } from "@/sanity/queries/admin/markets/markets";
 import FormTitleDivider from "../../../_components/FormTitleDivider";
 import { dateArrayToDisplayableText } from "@/utils/helpers";
 import { getAllVendors } from "@/sanity/queries/admin/vendors";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import CreateBookingForm from "./CreateBookingForm";
 import { unstable_noStore } from "next/cache";
 
-const Page = async ({
-  params,
-}: {
-  params: {
-    id: string;
-  };
+const Page = async (
+  props: {
+    params: Promise<{
+      id: string;
+    }>;
 
-}) => {
+  }
+) => {
+  const params = await props.params;
   unstable_noStore();
   const market = await getMarketById(params.id);
 

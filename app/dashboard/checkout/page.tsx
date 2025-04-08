@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import Checkout from "./_components/Checkout";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { unstable_noStore } from "next/cache";

@@ -1,7 +1,7 @@
 "use server";
 
 import { sanityWriteClient } from "@/sanity/lib/client";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 

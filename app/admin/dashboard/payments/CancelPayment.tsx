@@ -2,8 +2,8 @@
 
 import Button from "@/app/_components/Button";
 import Dialog from "@/app/_components/Dialog/Dialog";
-import { useEffect, useRef, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useEffect, useRef, useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { cancelPaymentAction } from "./cancelPaymentAction";
 
 const CancelPayment = ({ amountPaid, paymentRecordId, contactName, marketName, vendorName }: {
@@ -17,7 +17,7 @@ const CancelPayment = ({ amountPaid, paymentRecordId, contactName, marketName, v
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [showErrors, setShowErrors] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [formState, formAction] = useFormState(cancelPaymentAction, {
+  const [formState, formAction] = useActionState(cancelPaymentAction, {
     success: false,
     errors: undefined
   });
@@ -44,7 +44,7 @@ const CancelPayment = ({ amountPaid, paymentRecordId, contactName, marketName, v
   }, [formState.errors]);
 
   useEffect(() => {
-    let timeout = null;
+    let timeout: NodeJS.Timeout | null = null;
 
     if (formState.success) {
       setShowSuccessMessage(true);

@@ -4,11 +4,14 @@ import CreateVenueForm from "../../create/_components/CreateVenueForm";
 
 export const dynamic = "force-dynamic";
 
-const Page = async ({params}: {
-  params: {
-    id: string
+const Page = async (
+  props: {
+    params: Promise<{
+      id: string
+    }>
   }
-}) => {
+) => {
+  const params = await props.params;
 
   const {title, address, city, hours, phone, securityPhone, loadInInstructions, venueMap, _id, tableInfo} = await getVenueById(params.id)
 

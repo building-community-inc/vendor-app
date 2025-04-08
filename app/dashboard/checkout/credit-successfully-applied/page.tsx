@@ -6,11 +6,12 @@ import Link from "next/link";
 import { formatDateWLuxon } from "@/utils/helpers";
 import { unstable_noStore } from "next/cache";
 
-const Page = async ({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) => {
+const Page = async (
+  props: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
   unstable_noStore();
 
   const paymentRecordId = searchParams.paymentRecordId as string;
@@ -90,7 +91,6 @@ const Page = async ({
       </main>
     );
   }
-
 }
 
 export default Page;

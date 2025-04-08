@@ -2,8 +2,8 @@
 import Button from "@/app/_components/Button";
 import { areDatesSame, formatDateWLuxon } from "@/utils/helpers";
 import Link from "next/link";
-import { useFormState, useFormStatus } from "react-dom";
-import { useEffect, useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
+import { useEffect, useRef, useState, useActionState } from "react";
 import { nanoid } from "nanoid";
 import Dialog from "@/app/_components/Dialog/Dialog";
 import { TTable } from "@/sanity/queries/admin/markets/zods";
@@ -232,7 +232,7 @@ const SelectTable = ({ originalValue, vendorEmail, vendorInsta, vendorContactNam
 }) => {
   const [selectedValue, setSelectedValue] = useState(originalValue);
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [formState, formAction] = useFormState(updateTableBooking, { errors: undefined, success: false })
+  const [formState, formAction] = useActionState(updateTableBooking, { errors: undefined, success: false })
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const toggleDialog = () => {

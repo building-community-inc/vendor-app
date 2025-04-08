@@ -1,5 +1,5 @@
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import BusinessInfoForm from "./_components/BusinessInfoForm";
 import { getAllVendorCategories } from "@/sanity/queries/vendorCategories";

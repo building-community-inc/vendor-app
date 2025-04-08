@@ -4,22 +4,23 @@ import Dialog from "@/app/_components/Dialog/Dialog";
 import { BusinessSection, DashboardSection } from "@/app/dashboard/_components/profileComps";
 import { TUserWithOptionalBusinessRef } from "@/zod/user-business";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useEffect, useRef, useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { updateCredits } from "./updateCredits";
 
-export const AdminBusinessCard = ({ business, ownerName, credits, vendorId }: {
+export const AdminBusinessCard = ({ business, ownerName, credits, vendorId, status }: {
   business: TUserWithOptionalBusinessRef["business"];
   ownerName: string;
   credits: number;
   vendorId: string;
+  status: "approved" | "suspended" | "archived" | "pending";
 }) => {
   const [creditValueError, setCreditValueError] = useState<string | null>(null);
   const [creditsValue, setCreditsValue] = useState<number>(credits);
   const [creditsToShow, setCreditsToShow] = useState<string>(credits.toFixed(2));
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [showAreYouSureMessage, setShowAreYouSureMessage] = useState<boolean>(false);
-  const [formState, formAction] = useFormState(updateCredits, { errors: [], success: false });
+  const [formState, formAction] = useActionState(updateCredits, { errors: [], success: false });
 
   const onCreditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseFloat(e.currentTarget.value)
@@ -75,6 +76,10 @@ export const AdminBusinessCard = ({ business, ownerName, credits, vendorId }: {
         <div>
           <p className="text-xl font-segoe font-bold text-black">Instagram Handle:</p>
           <p className="font-segoe">{business?.instagramHandle}</p>
+        </div>
+        <div>
+          <p className="text-xl font-segoe font-bold text-black">Status:</p>
+          <p className="font-segoe">{status}</p>
         </div>
       </BusinessSection>
       <BusinessSection className="text-black border-none flex justify-between items-center py-5">

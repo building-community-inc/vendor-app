@@ -2,8 +2,8 @@
 
 import Button from "@/app/_components/Button";
 import Dialog from "@/app/_components/Dialog/Dialog";
-import { useEffect, useRef, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useEffect, useRef, useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { saveNewMarketCoverAction } from "./saveNewMarketCoverAction";
 
 const EditMarketCoverForm = ({ marketCover, marketId, marketName, marketCoverId }: {
@@ -15,7 +15,7 @@ const EditMarketCoverForm = ({ marketCover, marketId, marketName, marketCoverId 
   const [newMarketCover, setNewMarketCover] = useState<File | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [formState, formAction] = useFormState(saveNewMarketCoverAction, { errors: [], success: false })
+  const [formState, formAction] = useActionState(saveNewMarketCoverAction, { errors: [], success: false })
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const toggleDialog = () => {

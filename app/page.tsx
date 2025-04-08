@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -10,6 +10,7 @@ export default async function Home() {
   if (user) {
     redirect("/dashboard");
   }
+  
   return (
     <main className="flex flex-col gap-10 items-center justify-center h-[100dvh]">
       <header>

@@ -1,7 +1,6 @@
 import './globals.css'
 import { Inter, Roboto } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
-import { dark } from '@clerk/themes'
 import localFont from 'next/font/local'
 
 
@@ -30,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider appearance={{ baseTheme: dark }}>
+    <ClerkProvider>
       <html lang="en">
         <head>
           <script defer data-domain="vendorapp.buildingcommunityinc.com" src="https://plausible.io/js/script.js"></script>

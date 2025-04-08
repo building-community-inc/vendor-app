@@ -1,7 +1,7 @@
 "use server";
 
 import { getAllPaymentsForAMarket } from "@/sanity/queries/admin/payments";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 // const LAMBDA_URL = "http://127.0.0.1:3000/cancel-market";

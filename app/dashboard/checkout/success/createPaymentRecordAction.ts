@@ -2,7 +2,7 @@
 
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { nanoid } from "nanoid";
 import Stripe from "stripe";
 import { type TPaymentItem } from "./api/route";

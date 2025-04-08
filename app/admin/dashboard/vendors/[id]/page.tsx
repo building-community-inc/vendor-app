@@ -9,12 +9,16 @@ import { AdminBusinessCard } from "./AdminBusinessCard";
 import { unstable_noStore } from "next/cache";
 import { SupportingDocsCard } from "@/app/dashboard/_components/profileComps/SupportingDocs";
 import VendorPayments from "./VendorPayments";
+import { ApproveVendorForm, DisapproveVendorForm } from "./VendorForms";
 
-const Page = async ({ params }: {
-  params: {
-    id: string;
+const Page = async (
+  props: {
+    params: Promise<{
+      id: string;
+    }>
   }
-}) => {
+) => {
+  const params = await props.params;
 
   unstable_noStore();
   const vendorData = await getVendorById(params.id);
@@ -33,21 +37,21 @@ const Page = async ({ params }: {
   }
 
   const vendor = vendorData.data;
-
   const vendorPaymentRecords = await getUserPaymentRecords(vendor._id);
 
   return (
-    <main className="flex px-10 py-24 gap-24 min-h-screen w-full flex-col justify-center">
+    (<main className="flex px-10 py-24 gap-24 min-h-screen w-full flex-col justify-center">
       <section className=" flex flex-wrap gap-10 justify-center">
 
         {vendorData.data.business ? (
           // <section className="flex flex-wrap justify-evenly gap-10 ">
-          <AdminBusinessCard
+          (<AdminBusinessCard
+            status={vendorData.data.status}
             vendorId={vendorData.data._id}
             credits={vendorData.data.credits || 0}
             business={vendorData.data.business}
             ownerName={`${vendorData.data.firstName} ${vendorData.data.lastName}`}
-          />
+          />)
           // </section>
         ) : (
           <NoBz />
@@ -76,26 +80,18 @@ const Page = async ({ params }: {
             </Link>
 
           </div>
-          {vendor.status === "pending" ? (
-
-            <form action={approveVendor}>
-              <input type="hidden" name="vendorId" value={vendor._id} />
-              <Button>Approve</Button>
-            </form>
+          {vendor.status === "approved" ? (
+            <DisapproveVendorForm vendorId={vendor._id} />
           ) : (
-            <form action={disapproveVendor}>
-              <input type="hidden" name="vendorId" value={vendor._id} />
-              <Button>Disaprove</Button>
-            </form>
+            <ApproveVendorForm vendorId={vendor._id} />
           )}
 
         </footer>
       </section>
-
       {vendorPaymentRecords.length > 0 && (
-        <VendorPayments vendorPaymentRecords={vendorPaymentRecords} admin/>
+        <VendorPayments vendorPaymentRecords={vendorPaymentRecords} admin />
       )}
-    </main>
+    </main>)
   );
 }
 
