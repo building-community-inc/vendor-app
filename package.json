@@ -12,6 +12,7 @@
     "@clerk/nextjs": "^6.13.0",
     "@hookform/resolvers": "^3.9.0",
     "@portabletext/react": "^3.1.0",
+    "@react-email/components": "0.0.36",
     "@sanity/client": "6.28.4",
     "@sanity/icons": "~3.7.0",
     "@sanity/image-url": "^1.1.0",

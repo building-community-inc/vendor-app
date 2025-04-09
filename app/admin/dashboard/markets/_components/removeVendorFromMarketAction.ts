@@ -6,12 +6,12 @@ import {
   updateMarketSchema,
 } from "./zodAndQueries";
 import { currentUser } from "@clerk/nextjs/server";
-import { FormState } from "../../payments/changeStatusAction";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { z } from "zod";
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { Mutation } from "next-sanity";
 import { revalidatePath } from "next/cache";
+import { FormState } from "@/app/types";
 
 const RemoveTableBookingSchema = z.object({
   marketId: z.string(),

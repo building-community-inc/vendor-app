@@ -19,7 +19,7 @@ const Dialog = forwardRef<HTMLDialogElement, Props>(
             toggleDialog();
           }
         }}
-        className={cn("p-6", className)}
+        className={cn("p-6 m-auto", className)}
       >
         {children}
       </dialog>

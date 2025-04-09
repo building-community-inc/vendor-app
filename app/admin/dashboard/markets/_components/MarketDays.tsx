@@ -232,7 +232,7 @@ const SelectTable = ({ originalValue, vendorEmail, vendorInsta, vendorContactNam
 }) => {
   const [selectedValue, setSelectedValue] = useState(originalValue);
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [formState, formAction] = useActionState(updateTableBooking, { errors: undefined, success: false })
+  const [formState, formAction] = useActionState(updateTableBooking, { errors: null, success: false })
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const toggleDialog = () => {
@@ -291,9 +291,22 @@ const SelectTable = ({ originalValue, vendorEmail, vendorInsta, vendorContactNam
         <p className="text-green-600">✔️ Table updated successfully</p>
       )}
       <Dialog toggleDialog={toggleDialog} ref={dialogRef}>
-        {formState.errors && formState.errors.map(err => (
-          <p key={err} className="text-red-600">{err}</p>
-        ))}
+        {formState.errors && (
+          Array.isArray(formState.errors) ? (
+            formState.errors.map((error) => (
+              <p key={error} className="text-red-500">
+                {error}
+              </p>
+            ))
+          ) : (
+            // Handle the case where formState.errors is a ZodError
+            formState.errors.issues.map((issue) => (
+              <p key={issue.path.join('.')} className="text-red-500">
+                {issue.message}
+              </p>
+            ))
+          )
+        )}
         <form action={formAction} className="flex flex-col gap-4">
           <input name="marketId" defaultValue={marketId} readOnly hidden />
           <input name="date" defaultValue={date} readOnly hidden />

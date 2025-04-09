@@ -19,7 +19,7 @@ const CancelPayment = ({ amountPaid, paymentRecordId, contactName, marketName, v
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [formState, formAction] = useActionState(cancelPaymentAction, {
     success: false,
-    errors: undefined
+    errors: null
   });
 
   const toggleDialog = () => {
@@ -112,9 +112,22 @@ const CancelPayment = ({ amountPaid, paymentRecordId, contactName, marketName, v
             </Button>
             <SubmitButton />
           </footer>
-          {formState.errors && showErrors && formState.errors.map(error => (
-            <p key={error} className="text-red-500 text-center">{error}</p>
-          ))}
+          {formState.errors && showErrors && (
+            Array.isArray(formState.errors) ? (
+              formState.errors.map((error) => (
+                <p key={error} className="text-red-500">
+                  {error}
+                </p>
+              ))
+            ) : (
+              // Handle the case where formState.errors is a ZodError
+              formState.errors.issues.map((issue) => (
+                <p key={issue.path.join('.')} className="text-red-500">
+                  {issue.message}
+                </p>
+              ))
+            )
+          )}
         </form>
       </Dialog>
     </>

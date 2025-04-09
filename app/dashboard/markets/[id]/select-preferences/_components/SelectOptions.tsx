@@ -204,11 +204,10 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
           formData.append("hst", `${parsedCheckoutState.data.hst}`);
           formData.append("price", `${parsedCheckoutState.data.price}`);
           formData.append("creditsApplied", `${parsedCheckoutState.data.creditsApplied}`);
-
+          formData.append("requestOrigin", window.location.origin);
           setAddBooking(true)
           const resp = await createETransferBooking(formData);
 
-          console.log({ resp })
           if (!resp.success) {
             setAddBooking(false)
             // setPrebookingErrors(resp.errors)
@@ -360,7 +359,7 @@ const SelectOptions = ({ market, user }: { market: TSanityMarket, user: TUserWit
       >
         We are reworking some things please contact <a href="mailto:applications@buildingcommunityinc.com"> applications@buildingcommunityinc.com to complete your booking</a>
       </ContinueButton> */}
-      <ContinueButton type="submit" disabled={addBooking} className="max-w-[544px] disabled:bg-gray-500">{addBooking ? "Completing Booking..." : "Complete Booking"}</ContinueButton>
+      <ContinueButton type="submit" disabled={addBooking} className="max-w-[544px] disabled:bg-gray-500 disabled:cursor-auto cursor-pointer">{addBooking ? "Completing Booking..." : "Complete Booking here"}</ContinueButton>
     </form>
   );
 };

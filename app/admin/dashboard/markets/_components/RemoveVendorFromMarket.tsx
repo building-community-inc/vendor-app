@@ -28,7 +28,7 @@ const RemoveVendorFromMarket = ({
   vendorInsta: string;
 }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [formState, formAction] = useActionState(removeVendorFromMarket, { errors: undefined, success: false })
+  const [formState, formAction] = useActionState(removeVendorFromMarket, { errors: null, success: false })
 
 
   const toggleDialog = () => {
@@ -98,9 +98,22 @@ const RemoveVendorFromMarket = ({
               </Button>
               <SubmitButton />
             </div>
-            {formState.errors && formState.errors.map(err => (
-              <p key={err} className="text-red-600">{err}</p>
-            ))}
+            {formState.errors && (
+              Array.isArray(formState.errors) ? (
+                formState.errors.map((error) => (
+                  <p key={error} className="text-red-500">
+                    {error}
+                  </p>
+                ))
+              ) : (
+                // Handle the case where formState.errors is a ZodError
+                formState.errors.issues.map((issue) => (
+                  <p key={issue.path.join('.')} className="text-red-500">
+                    {issue.message}
+                  </p>
+                ))
+              )
+            )}
           </footer>
         </form>
       </Dialog>
