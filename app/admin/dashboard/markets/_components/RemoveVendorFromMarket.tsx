@@ -50,7 +50,7 @@ const RemoveVendorFromMarket = ({
       <button
         type="button"
         onClick={toggleDialog}
-        className=" flex items-center"
+        className=" flex items-center cursor-pointer"
       >
         <FaRegTrashAlt className="text-2xl" />
       </button>

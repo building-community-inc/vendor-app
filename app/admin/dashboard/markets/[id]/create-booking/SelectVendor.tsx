@@ -113,7 +113,7 @@ const SelectVendor = ({ allVendors }: {
           {isInputFocused && filteredVendors.length >= 1 && (
             <ul className={`flex flex-col gap-2 border max-h-[400px] hide-scrollbar overflow-y-scroll bg-white z-20 border-black rounded-xl py-5 absolute w-full`}>
               {filteredVendors.map(vendor => (
-                <li key={vendor.email} className="flex justify-between hover:bg-slate-200 w-full px-5"
+                <li key={vendor._id} className="flex justify-between hover:bg-slate-200 w-full px-5"
                   onMouseDown={() => {
                     setSelectedVendor(vendor);
                     setInputText(vendor.business?.businessName || vendor.email); // Update the input text

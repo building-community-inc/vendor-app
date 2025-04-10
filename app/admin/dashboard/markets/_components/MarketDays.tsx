@@ -93,7 +93,7 @@ const MarketDays = ({
   }, [selectedDay, vendorsForSelectedDay]);
 
   return (
-    <section>
+    <section className="relative overflow-x-auto">
       <div className="flex gap-4 w-fit mx-auto">
         {dates.map((date, i) => {
           return (
@@ -113,12 +113,12 @@ const MarketDays = ({
       </div>
 
       {selectedDay && vendorsForSelectedDay && vendorsForSelectedDay.length > 0 && (
-        <table className="my-10 mx-auto w-full">
-          <thead>
+        <table className="w-full text-sm my-10 text-left rtl:text-right">
+          <thead className="text-xs uppercase bg-gray-50 ">
             <tr className="">
-              <th>Vendor</th>
-              <th>Category</th>
-              <th>Table Selection</th>
+              <th className="px-6 py-3">Vendor</th>
+              <th className="px-6 py-3">Category</th>
+              <th className="px-6 py-3">Table Selection</th>
             </tr>
           </thead>
           <tbody className="">
@@ -131,19 +131,19 @@ const MarketDays = ({
                   (bookedDate) => areDatesSame(bookedDate.date, selectedDay)
                 );
                 return (
-                  <tr key={`${nanoid()}`} className="text-center capitalize py-2 ">
-                    <td>
+                  <tr key={`${nanoid()}`} className="bg-white border-b border-gray-200">
+                    <td className="px-6 py-4">
                       <Link href={`/admin/dashboard/vendors/${vendor.vendor._ref}`} target="_blank" rel="noreferrer">
                         {vendor.vendor.businessName}
                       </Link>
                     </td>
-                    <td>
+                    <td className="px-6 py-4">
                       {vendor.vendor.businessCategory}
                       <input readOnly type="text" hidden name="vendorId" value={vendor.vendor._ref} />
                     </td>
-                    <td>
+                    <td className="px-6 py-4">
                       {bookedDateForSelectedDay && availableTablesForDay ? (
-                        <ul className="flex flex-col">
+                        <ul className="flex flex-col gap-2">
                           {editTables ?
                             bookedDatesForSelectedDay.map((date) => (
                               <li
@@ -192,10 +192,11 @@ const MarketDays = ({
         </table>
       )}
       {selectedDay && !cancelled && (
-        <section className="flex max-w-md mx-auto gap-4">
+        <section className="flex w-full justify-center gap-4">
           {!editTables && (
             <Button
-              className="my-5 py-2 px-8 capitalize bg-black opacity-[1] text-white rounded-none mx-auto"
+              className="capitalize"
+              // className="my-5 py-2 px-8 capitalize bg-black opacity-[1] text-white rounded-none mx-auto"
               onClick={() => setEditTables(true)}
               type="button"
             >
@@ -203,9 +204,11 @@ const MarketDays = ({
             </Button>
           )}
           <Link href={`/admin/dashboard/markets/${marketId}/create-booking`}
-            className="my-5 py-2 px-8 bg-black opacity-[1] text-white rounded-none mx-auto"
+          // className="my-5 py-2 px-8 bg-black opacity-[1] text-white rounded-none mx-auto"
           >
-            Create Booking
+            <Button>
+              Create Booking
+            </Button>
           </Link>
         </section>
       )

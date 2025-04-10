@@ -76,7 +76,7 @@ const SelectDates = ({
                       !!selectedDates.find((d) => d && d.date === dayObj.date)
                     }
                     id="table"
-                    className="text-black w-fit"
+                    className="text-black w-fit border border-black rounded-lg py-1 px-1.5"
                     onChange={(e) => {
                       const newTable = dayObj.tables.find(
                         (t) => t.table.id === e.target.value.split("-")[0]

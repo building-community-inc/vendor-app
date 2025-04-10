@@ -174,16 +174,7 @@ export const removeVendorFromMarket = async (
         (item) => item.date === date && item.tableId === tableId
       );
 
-      if (matchingItems.length === 1) {
-        // If there's only one matching item, set the record status to cancelled
-        patches.push({
-          patch: {
-            id: record._id,
-            set: { status: 'cancelled' },
-          },
-        });
-      } else if (matchingItems.length > 0) {
-        // If there are multiple matching items, remove them
+      if (matchingItems.length > 0) {
         const itemsToRemoveKeys = matchingItems.map((item) => item._key);
         patches.push({
           patch: {
@@ -192,17 +183,27 @@ export const removeVendorFromMarket = async (
           },
         });
       }
-      // If matchingItems.length is 0, we do nothing for this record
     });
 
+    // After removing the items, check if any record's 'items' array is now empty
+    // and set their status to 'cancelled'
+    paymentRecords.forEach((record) => {
+      const remainingItems = record.items.filter(
+        (item) => !(item.date === date && item.tableId === tableId)
+      );
+      if (remainingItems.length === 0) {
+        patches.push({
+          patch: {
+            id: record._id,
+            set: { status: "cancelled" },
+          },
+        });
+      }
+    });
     if (patches.length > 0) {
       await sanityWriteClient.transaction(patches).commit();
     }
 
-    if (patches.length > 0) {
-      await sanityWriteClient.transaction(patches).commit();
-    }
-    
     revalidatePath("/admin/dashboard/", "layout");
     revalidatePath("/dashboard/", "layout");
 
