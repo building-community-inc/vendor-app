@@ -2,13 +2,13 @@
 
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { z } from "zod";
-import { FormState } from "../../payments/changeStatusAction";
 import { currentUser } from "@clerk/nextjs/server";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { Mutation } from "next-sanity";
 import { revalidatePath } from "next/cache";
 import { nanoid } from "nanoid";
 import { paymentRecordQuery, PaymentRecordsSchema, updateMarketQuery, updateMarketSchema } from "./zodAndQueries";
+import { FormState } from "@/app/types";
 
 // Define the Zod schema for the input data
 const UpdateTableBookingSchema = z.object({

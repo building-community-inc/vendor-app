@@ -1,10 +1,10 @@
 "use server";
 import { currentUser } from "@clerk/nextjs/server";
-import { FormState } from "./changeStatusAction";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { z } from "zod";
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { revalidatePath } from "next/cache";
+import { FormState } from "@/app/types";
 const dataSchema = z.object({
   returnedCredits: z.string().transform((v) => parseFloat(v)),
   paymentRecordId: z.string(),

@@ -7,6 +7,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { sendBookingDetailsToAdmin } from "./sendConfirmationEmails";
 
 const itemSchema = z.object({
   price: z.number(),
@@ -24,15 +25,21 @@ const dataParser = z.object({
   hst: z.number(),
   price: z.number(),
   creditsApplied: z.number(),
+  requestOrigin: z.string(),
 });
 
-export const createETransferBooking = async (formData: FormData): Promise<{
-  success: true;
-  paymentRecordId: string;
-} | {
-  success: false;
-  errors: string[]
-}> => {
+export const createETransferBooking = async (
+  formData: FormData
+): Promise<
+  | {
+      success: true;
+      paymentRecordId: string;
+    }
+  | {
+      success: false;
+      errors: string[];
+    }
+> => {
   console.log("creating booking");
   const user = await currentUser();
 
@@ -56,6 +63,7 @@ export const createETransferBooking = async (formData: FormData): Promise<{
     hst: parseFloat(formData.get("hst") as string),
     price: parseFloat(formData.get("price") as string),
     creditsApplied: parseFloat(formData.get("creditsApplied") as string),
+    requestOrigin: formData.get("requestOrigin") as string,
   };
 
   const { data, success, error } = dataParser.safeParse(rawData);
@@ -69,18 +77,21 @@ export const createETransferBooking = async (formData: FormData): Promise<{
     };
   }
 
-  const payments = data.creditsApplied > 0 ? [
-    {
-      _type: "payment",
-      amount: data.creditsApplied,
-      paymentType: "credit",
-      _key: nanoid(),
-      paymentDate: new Date().toISOString(),
-    },
-  ] : [];
-
+  const payments =
+    data.creditsApplied > 0
+      ? [
+          {
+            _type: "payment",
+            amount: data.creditsApplied,
+            paymentType: "credit",
+            _key: nanoid(),
+            paymentDate: new Date().toISOString(),
+          },
+        ]
+      : [];
 
   const newPaymentRecord = {
+    _id: nanoid(),
     _type: "paymentRecord",
     status: "pending",
     user: {
@@ -119,7 +130,6 @@ export const createETransferBooking = async (formData: FormData): Promise<{
     };
   }
 
-
   // update days with tables
   let daysWithTables = market?.daysWithTables;
   if (!daysWithTables) {
@@ -128,39 +138,6 @@ export const createETransferBooking = async (formData: FormData): Promise<{
       errors: ["Market daysWithTables not found"],
     };
   }
-
-  // for (const item of data.items) {
-  //   const dayToUpdate = daysWithTables?.find(day => day.date === item.date)
-
-  //   if (!dayToUpdate) {
-  //     return {
-  //       success: false,
-  //       errors: "day not found"
-  //     }
-  //   }
-
-  //   const tableToUpdate = dayToUpdate.tables.find(table => table.table.id === item.tableId)
-
-  //   const newTable = {
-  //     ...tableToUpdate,
-  //     booked: {
-  //       _type: "reference",
-  //       _ref: user.id
-  //     }
-  //   }
-
-  //   const newDayObject = {
-  //     ...dayToUpdate,
-  //     tables: dayToUpdate.tables.map(table => {
-  //       if (table.table.id === tableToUpdate?.table.id) {
-  //         return newTable
-  //       } else  {
-  //         return table;
-  //       }
-  //     })
-  //   }
-
-  // }
 
   for (const item of data.items) {
     const dayToUpdateIndex = daysWithTables.findIndex(
@@ -202,23 +179,25 @@ export const createETransferBooking = async (formData: FormData): Promise<{
     // Create a new tables array for the day, replacing the old table with the updated one
     const updatedTables = [...dayToUpdate.tables]; // Create a copy to avoid direct mutation
     const zodTables = z.array(
-      z.object({
-        _key: z.string().optional(),
-        table: z.object({
-          price: z.number(),
-          id: z.string(),
-        }),
-        booked: z
-          .object({
-            _type: z.string(),
-            _ref: z.string(),
-          })
-          .optional()
-          .nullable(),
-      }).transform(data => ({
-        ...data,
-        _key: data._key || nanoid()
-      }))
+      z
+        .object({
+          _key: z.string().optional(),
+          table: z.object({
+            price: z.number(),
+            id: z.string(),
+          }),
+          booked: z
+            .object({
+              _type: z.string(),
+              _ref: z.string(),
+            })
+            .optional()
+            .nullable(),
+        })
+        .transform((data) => ({
+          ...data,
+          _key: data._key || nanoid(),
+        }))
     );
 
     const parsedUpdatedTables = zodTables.safeParse(updatedTables);
@@ -296,23 +275,35 @@ export const createETransferBooking = async (formData: FormData): Promise<{
 
   try {
     const paymentRecordResp = await sanityWriteClient.create(newPaymentRecord);
-    const marketResp = await sanityWriteClient.patch(market._id).set(market).commit()
-    console.log({ paymentRecordResp, marketResp });
-    // console.log({ newPaymentRecord, payments: newPaymentRecord.payments });
+    await sanityWriteClient.patch(market._id).set(market).commit();
+    // console.log({ paymentRecordResp, marketResp });
     revalidatePath("/dashboard/", "layout");
     revalidatePath("/admin/dashboard/", "layout");
 
+    try {
+      // console.log("sending email")
+      const bookingUrl = `${data.requestOrigin}/admin/dashboard/payments?search=${newPaymentRecord._id}`;
+      const vendorName =
+        sanityUser.business?.businessName ||
+        `${sanityUser.firstName} - ${sanityUser.lastName}` ||
+        "Vendor";
+      const vendorLogoUrl = sanityUser.business?.logoUrl || undefined;
+      // console.log({ bookingUrl, vendorName, vendorLogoUrl })
+      await sendBookingDetailsToAdmin(bookingUrl, vendorName, vendorLogoUrl);
+    } catch (error) {
+      console.error("Error sending email", error);
+    }
+
     return {
       success: true,
-      // errors: ["something went wrong"],
-      paymentRecordId: paymentRecordResp._id
-    }
+      // errors: ["notImplemented!!!!"],
+      paymentRecordId: paymentRecordResp._id,
+    };
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return {
       success: false,
-      errors: ["something went wrong"]
-    }
+      errors: ["something went wrong"],
+    };
   }
-
 };

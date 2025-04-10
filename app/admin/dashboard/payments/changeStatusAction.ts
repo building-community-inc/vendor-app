@@ -1,20 +1,15 @@
 "use server";
+import { sendConfirmationEmailToVendor } from "@/app/dashboard/markets/[id]/select-preferences/_components/sendConfirmationEmails";
+import { FormState } from "@/app/types";
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
+import { getMarketById } from "@/sanity/queries/admin/markets/markets";
+import { getVendorById } from "@/sanity/queries/admin/vendors";
 import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { currentUser } from "@clerk/nextjs/server";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-export type FormState =
-  | {
-      success: false;
-      errors: string[] | undefined;
-    }
-  | {
-      success: true;
-      errors: undefined;
-    };
 export const changeStatusAction = async (
   formState: FormState,
   formData: FormData
@@ -43,6 +38,7 @@ export const changeStatusAction = async (
     paymentRecordId: formData.get("paymentRecordId"),
     newStatus: formData.get("newStatus"),
     amountPaid: formData.get("amountPaid"),
+    requestOrigin: formData.get("requestOrigin"),
   };
 
   const { success, data, error } = formSchema.safeParse(rawData);
@@ -100,6 +96,27 @@ export const changeStatusAction = async (
     revalidatePath("/admin/dashboard/", "layout");
     revalidatePath("/dashboard/", "layout");
 
+    try {
+      const marketId = paymentRecordDocument.market._ref;
+      const market = await getMarketById(marketId);
+      const vendor = await getVendorById(paymentRecordDocument.user._ref);
+      const marketCoverUrl = market?.marketCover.url || "";
+      const marketName = market?.name || "";
+      const vendorName = vendor.data?.business?.businessName || "";
+      const marketDate = market?.dates.join(", ") || "";
+
+      await sendConfirmationEmailToVendor(
+        marketCoverUrl,
+        marketName,
+        vendorName,
+        marketDate,
+        vendor.data?.email || "",
+        `${data.requestOrigin}/dashboard/bookings/${paymentRecordDocument._id}`
+      );
+    } catch (error) {
+      console.error(error);
+    }
+
     return {
       success: true,
       errors: undefined,
@@ -120,4 +137,5 @@ const formSchema = z.object({
     .string()
     .min(1)
     .transform((val) => parseFloat(val)),
+    requestOrigin: z.string().min(1),
 });

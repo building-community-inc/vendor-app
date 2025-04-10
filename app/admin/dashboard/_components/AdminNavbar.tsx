@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import navOptions from "./navOptions.json";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Burger from "@/app/_components/Burger";
 import SignOutButton from "@/app/_components/clerk/SignOut";
 
@@ -38,7 +38,7 @@ const AdminNavbar = () => {
           </Link>
 
           {navOptions.map((option) => (
-            <React.Fragment key={option.href}>
+            <Fragment key={option.href}>
               {option.title === "Logout" ? (
                 <div className="text-center uppercase font-bold text-xl">
                   <SignOutButton key={option.href} />
@@ -75,7 +75,7 @@ const AdminNavbar = () => {
                   )}
                 </div>
               )}
-            </React.Fragment>
+            </Fragment>
           ))}
         </div>
       {/* )} */}
