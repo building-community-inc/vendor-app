@@ -26,6 +26,7 @@ const Button = ({ children, className = "", ...rest }: ButtonProps) => {
         'transition-all',
         'disabled:bg-gray-300',
         'disabled:text-gray-500',
+        'cursor-pointer',
         className,
       )}
       {...rest}
