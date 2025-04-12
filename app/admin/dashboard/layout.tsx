@@ -13,10 +13,10 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   if (sanityUser.role !== "admin") return
 
   return (
-    <section className="flex bg-nav-bg text-nav-text h-screen overflow-y-hidden">
+    <div className="flex bg-nav-bg text-nav-text h-screen overflow-y-hidden">
       <AdminNavbar/>
-      <div className="h-full overflow-y-scroll w-full hide-scrollbar pb-5">{children}</div>
-    </section>
+      <div className="h-full overflow-y-scroll w-full hide-scrollbar py-15">{children}</div>
+    </div>
   );
 };
 

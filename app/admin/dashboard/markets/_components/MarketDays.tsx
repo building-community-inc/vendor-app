@@ -10,7 +10,9 @@ import { TTable } from "@/sanity/queries/admin/markets/zods";
 import { TMarketVendor } from "../[id]/page";
 import { updateTableBooking } from "./newSaveMarketAction";
 import RemoveVendorFromMarket from "./RemoveVendorFromMarket";
-
+import EditMarketTables from "./EditMarketTables";
+import { Change } from "./changesStore";
+import SaveMarketTableChanges from "./SaveMarketTableChanges";
 
 export type TDayWithTable = {
   date: string;
@@ -45,12 +47,13 @@ const MarketDays = ({
     }[];
   }[]
   selectedDay: string | null;
-  availableTablesForDay: { table: TTable }[] | null;
+  availableTablesForDay?: { table: TTable }[] | null;
   // daysWithTables: TDayWithTable[] | null | undefined;
   cancelled?: boolean | null | undefined;
 }) => {
   const [sortedVendors, setSortedVendors] = useState(vendorsForSelectedDay);
   const [sortedAvailableTables, setSortedAvailableTables] = useState<{ table: TTable }[]>([]);
+  const [changes, setChanges] = useState<Change[]>();
 
   const [editTables, setEditTables] = useState(false);
 
@@ -91,7 +94,11 @@ const MarketDays = ({
 
     setSortedVendors(sorted);
   }, [selectedDay, vendorsForSelectedDay]);
+  useEffect(() => {
+    console.log("Changes:", changes);
+  }, [changes]);
 
+  console.log({ changes })
   return (
     <section className="relative overflow-x-auto">
       <div className="flex gap-4 w-fit mx-auto">
@@ -143,44 +150,55 @@ const MarketDays = ({
                     </td>
                     <td className="px-6 py-4">
                       {bookedDateForSelectedDay && availableTablesForDay ? (
-                        <ul className="flex flex-col gap-2">
-                          {editTables ?
-                            bookedDatesForSelectedDay.map((date) => (
-                              <li
-                                className="flex"
-                                key={date.tableId}
-                              >
-                                <SelectTable
-                                  vendorEmail={vendor.vendor.email}
-                                  vendorInsta={vendor.vendor.instagram || "no handle provided"}
-                                  vendorContactName={`${vendor.vendor.firstName} ${vendor.vendor.lastName}`}
-                                  vendorBusinessName={vendor.vendor.businessName}
-                                  marketName={marketName}
-                                  marketId={marketId}
-                                  vendorId={vendor.vendor._ref}
-                                  originalValue={date.tableId}
-                                  tables={sortedAvailableTables}
-                                  date={date.date}
-                                />
-                                <RemoveVendorFromMarket
-                                  vendorEmail={vendor.vendor.email}
-                                  vendorInsta={vendor.vendor.instagram || "no handle provided"}
-                                  vendorContactName={`${vendor.vendor.firstName} ${vendor.vendor.lastName}`}
-                                  vendorBusinessName={vendor.vendor.businessName}
-                                  marketName={marketName}
-                                  date={date.date}
-                                  tableId={date.tableId}
-                                  marketId={marketId}
-                                  vendorId={vendor.vendor._ref}
-                                />
-                              </li>
+                        editTables ? (
+                          <EditMarketTables
+                            bookedDatesForSelectedDay={bookedDatesForSelectedDay}
+                            sortedAvailableTables={sortedAvailableTables}
+                            editTables={editTables}
+                            vendor={vendor}
+                            setChanges={setChanges}
+                          />
+                        ) : (
+                          <span>{bookedDatesForSelectedDay.map(day => day.tableId).join(", ")}</span>
+                        )
+                        // <ul className="flex flex-col gap-2">
+                        //   {editTables ?
+                        //     bookedDatesForSelectedDay.map((date) => (
+                        //       <li
+                        //         className="flex"
+                        //         key={date.tableId}
+                        //       >
+                        //         <SelectTable
+                        //           vendorEmail={vendor.vendor.email}
+                        //           vendorInsta={vendor.vendor.instagram || "no handle provided"}
+                        //           vendorContactName={`${vendor.vendor.firstName} ${vendor.vendor.lastName}`}
+                        //           vendorBusinessName={vendor.vendor.businessName}
+                        //           marketName={marketName}
+                        //           marketId={marketId}
+                        //           vendorId={vendor.vendor._ref}
+                        //           originalValue={date.tableId}
+                        //           tables={sortedAvailableTables}
+                        //           date={date.date}
+                        //         />
+                        //         <RemoveVendorFromMarket
+                        //           vendorEmail={vendor.vendor.email}
+                        //           vendorInsta={vendor.vendor.instagram || "no handle provided"}
+                        //           vendorContactName={`${vendor.vendor.firstName} ${vendor.vendor.lastName}`}
+                        //           vendorBusinessName={vendor.vendor.businessName}
+                        //           marketName={marketName}
+                        //           date={date.date}
+                        //           tableId={date.tableId}
+                        //           marketId={marketId}
+                        //           vendorId={vendor.vendor._ref}
+                        //         />
+                        //       </li>
 
-                            ))
-                            : (
-                              <span>{bookedDatesForSelectedDay.map(day => day.tableId).join(", ")}</span>
-                            )}
+                        //     ))
+                        //     : (
+                        //       <span>{bookedDatesForSelectedDay.map(day => day.tableId).join(", ")}</span>
+                        //       )}
 
-                        </ul>
+                        // </ul>
                       ) : (
                         'N/A'
                       )}
@@ -193,26 +211,32 @@ const MarketDays = ({
       )}
       {selectedDay && !cancelled && (
         <section className="flex w-full justify-center gap-4">
-          {!editTables && (
-            <Button
-              className="capitalize"
-              // className="my-5 py-2 px-8 capitalize bg-black opacity-[1] text-white rounded-none mx-auto"
-              onClick={() => setEditTables(true)}
-              type="button"
-            >
-              edit tables
-            </Button>
-          )}
-          <Link href={`/admin/dashboard/markets/${marketId}/create-booking`}
-          // className="my-5 py-2 px-8 bg-black opacity-[1] text-white rounded-none mx-auto"
+          {/* {!editTables && ( */}
+          <Button
+            className="capitalize"
+            // className="my-5 py-2 px-8 capitalize bg-black opacity-[1] text-white rounded-none mx-auto"
+            onClick={() => setEditTables(!editTables)}
+            type="button"
           >
-            <Button>
-              Create Booking
-            </Button>
-          </Link>
+            {editTables ? "cancel" : "edit tables"}
+          </Button>
+          {/* )} */}
+
+          {editTables ? (
+           <SaveMarketTableChanges/>
+          ) : (
+
+            <Link href={`/admin/dashboard/markets/${marketId}/create-booking`}
+            >
+              <Button>
+                Create Booking
+              </Button>
+            </Link>
+          )}
         </section>
       )
       }
+      {JSON.stringify(changes, null, 2)}
     </section >
   );
 };
@@ -220,157 +244,12 @@ const MarketDays = ({
 export default MarketDays;
 
 
-const SelectTable = ({ originalValue, vendorEmail, vendorInsta, vendorContactName, vendorBusinessName, tables, date, marketId, marketName, vendorId }: {
-  originalValue: string;
-  tables: { table: TTable }[];
-  marketId: string;
-  date: string;
-  vendorId: string;
-  marketName: string;
-  vendorBusinessName: string;
-  vendorContactName: string;
-  vendorEmail: string;
-  vendorInsta: string;
+// const SubmitButton = () => {
+//   const { pending } = useFormStatus()
 
-}) => {
-  const [selectedValue, setSelectedValue] = useState(originalValue);
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const [formState, formAction] = useActionState(updateTableBooking, { errors: null, success: false })
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-
-  const toggleDialog = () => {
-    if (!dialogRef.current) {
-      return;
-    }
-    if (dialogRef.current.hasAttribute("open")) {
-      setSelectedValue(originalValue)
-      dialogRef.current.close()
-    } else {
-      dialogRef.current.showModal();
-    }
-  }
-
-  const onCancel = () => {
-    setSelectedValue(originalValue)
-    toggleDialog();
-  };
-
-  useEffect(() => {
-    if (formState.success) {
-      setShowSuccessMessage(true);
-
-      const timeout = setTimeout(() => {
-        setShowSuccessMessage(false)
-      }, 5000)
-
-      return () => {
-        clearTimeout(timeout)
-      }
-    }
-  }, [formState.success])
-
-  return (
-    <>
-      <select
-        name="tableSelection"
-        value={selectedValue}
-        className="border border-black rounded-lg w-fit flex mx-auto px-1 py-0.5"
-        onChange={(e) => {
-          toggleDialog()
-          setSelectedValue(e.target.value);
-        }}
-      >
-        <option key={originalValue} value={originalValue}>
-          {originalValue}
-        </option>
-        {tables
-          .map((table) => (
-            <option key={table.table.id} value={table.table.id}>
-              {table.table.id}
-            </option>
-          ))}
-      </select>
-      {showSuccessMessage && (
-        <p className="text-green-600">✔️ Table updated successfully</p>
-      )}
-      <Dialog toggleDialog={toggleDialog} ref={dialogRef}>
-        {formState.errors && (
-          Array.isArray(formState.errors) ? (
-            formState.errors.map((error) => (
-              <p key={error} className="text-red-500">
-                {error}
-              </p>
-            ))
-          ) : (
-            // Handle the case where formState.errors is a ZodError
-            formState.errors.issues.map((issue) => (
-              <p key={issue.path.join('.')} className="text-red-500">
-                {issue.message}
-              </p>
-            ))
-          )
-        )}
-        <form action={formAction} className="flex flex-col gap-4">
-          <input name="marketId" defaultValue={marketId} readOnly hidden />
-          <input name="date" defaultValue={date} readOnly hidden />
-          <input name="vendorId" defaultValue={vendorId} readOnly hidden />
-          <input name="tableId" value={selectedValue} readOnly hidden />
-          <input name="oldTableId" value={originalValue} readOnly hidden />
-          <section className="flex flex-col gap-2">
-            <p>
-              <strong>Date: </strong>
-              {formatDateWLuxon(date)}
-            </p>
-            <p>
-              <strong>Market: </strong>
-              {marketName}
-            </p>
-            <p>
-              <strong>Business Name: </strong>
-              {vendorBusinessName}
-            </p>
-            <p>
-              <strong>Business Contact: </strong>
-              {vendorContactName}
-            </p>
-            <p>
-              <strong>Business Contact: </strong>
-              {vendorEmail}
-            </p>
-            <p>
-              <strong>Business Contact: </strong>
-              {vendorInsta}
-            </p>
-            <p>
-              <strong>Old Table: </strong>
-              {originalValue}
-            </p>
-            <p>
-              <strong>New Table: </strong>
-              {selectedValue}
-            </p>
-          </section>
-          <footer>
-            <div className="flex justify-between">
-              <Button onClick={onCancel}>
-                Cancel
-              </Button>
-              <SubmitButton />
-            </div>
-
-          </footer>
-        </form>
-      </Dialog>
-    </>
-  )
-}
-
-const SubmitButton = () => {
-  const { pending } = useFormStatus()
-
-  return (
-    <Button type="submit" disabled={pending}>
-      {pending ? "Saving..." : "Save Change"}
-    </Button>
-  );
-};
+//   return (
+//     <Button type="submit" disabled={pending}>
+//       {pending ? "Saving..." : "Save Change"}
+//     </Button>
+//   );
+// };

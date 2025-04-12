@@ -92,7 +92,7 @@ const paymentQuery = `
   "vendorId": user->_id
 `;
 
-const paymentQueryWithMarket = groq`
+const paymentQueryWithMarket = `
   ${paymentQuery},
   "market": market->{
     name,

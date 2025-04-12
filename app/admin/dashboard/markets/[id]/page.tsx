@@ -5,6 +5,7 @@ import Image from "next/image";
 import MarketDays from "../_components/MarketDays";
 import { unstable_noStore as noStore } from 'next/cache';
 import AllVendors from "./_components/AllVendors";
+import Accordion from "@/app/_components/Accordion";
 
 export type TMarketVendor = {
   _type: string;
@@ -123,21 +124,27 @@ const Page = async (
 
   const dayInfo = market.daysWithTables?.find(day => areDatesSame(day.date, selectedDay || ""));
 
-  const availableTablesForDay = dayInfo?.tables.filter((table) => table.booked === null) || null;
+  const availableTablesForDay = dayInfo?.tables
 
-
+  
   return (
-    <main className="pt-14 px-5 w-full flex flex-col gap-8 max-w-3xl mx-auto">
+    <main className="py-14 px-5 w-full flex flex-col gap-8 max-w-3xl mx-auto">
       <h1 className="font-bold text-xl">{market?.name}</h1>
       <MarketCard market={market} dateToDisplay={dateToDisplay} withOptions />
       {market.venue.venueMap && (
-        <Image
-          src={market.venue.venueMap.url}
-          alt={market.venue.title}
-          width={500}
-          height={500}
-          className="w-full mx-auto"
-        />
+        <Accordion
+          closedText="View Venue Map"
+          openedText="Hide Venue Map"
+          initialHeight={0}
+        >
+          <Image
+            src={market.venue.venueMap.url}
+            alt={market.venue.title}
+            width={500}
+            height={500}
+            className="w-full mx-auto"
+          />
+        </Accordion>
       )}
       <MarketDays
         availableTablesForDay={availableTablesForDay}
@@ -151,8 +158,13 @@ const Page = async (
       {/* {!market.cancelled && (
         <CancelMarketButton marketId={market._id} />
       )} */}
-
-      <AllVendors vendors={uniqueVendorsArray} />
+      <Accordion
+        closedText="View Vendor List"
+        openedText="Hide Vendor List"
+        initialHeight={0}
+      >
+        <AllVendors vendors={uniqueVendorsArray} />
+      </Accordion>
     </main>
   );
 };
