@@ -434,6 +434,61 @@ export type SanityImageMetadata = {
 
 export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | Geopoint | Slug | CreditTransaction | Message | PaymentRecord | Market | Venue | Terms | VendorCategory | User | Business | SanityFileAsset | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata;
 export declare const internalGroqTypeReferenceTo: unique symbol;
+// Source: ./app/admin/dashboard/markets/_components/saveMarketTablesUpdateAction.ts
+// Variable: MARKET_UPDATE_QUERY
+// Query: *[_type == "market" && _id == $marketId] [0] {  vendors,  daysWithTables}
+export type MARKET_UPDATE_QUERYResult = {
+  vendors: Array<{
+    vendor?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "user";
+    };
+    datesBooked?: Array<{
+      date?: string;
+      tableId?: string;
+      _type: "day";
+      _key: string;
+    }>;
+    specialRequests?: string;
+    _type: "vendorDetails";
+    _key: string;
+  }> | null;
+  daysWithTables: Array<{
+    date?: string;
+    tables?: Array<{
+      table?: {
+        id?: string;
+        price?: number;
+      };
+      booked?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "user";
+      };
+      _type: "table";
+      _key: string;
+    }>;
+    _type: "day";
+    _key: string;
+  }> | null;
+} | null;
+// Variable: PAYMENT_RECORD_UPDATE_QUERY
+// Query: *[_type == "paymentRecord" && market._ref == $marketId && user._ref == $vendorId] {  items,  status,  _id}
+export type PAYMENT_RECORD_UPDATE_QUERYResult = Array<{
+  items: Array<{
+    price?: number;
+    date?: string;
+    tableId?: string;
+    _type: "item";
+    _key: string;
+  }> | null;
+  status: "cancelled" | "paid" | "pending" | null;
+  _id: string;
+}>;
+
 // Source: ./sanity/queries/admin/vendors.ts
 // Variable: VENDOR_BUSINESS_NAME_BY_ID_QUERY
 // Query: *[_type == "user" && _id == $id][0] {    "businessName": business -> businessName  }
@@ -445,6 +500,8 @@ export type VENDOR_BUSINESS_NAME_BY_ID_QUERYResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
+    "*[_type == \"market\" && _id == $marketId] [0] {\n  vendors,\n  daysWithTables\n}": MARKET_UPDATE_QUERYResult;
+    "*[_type == \"paymentRecord\" && market._ref == $marketId && user._ref == $vendorId] {\n  items,\n  status,\n  _id\n}": PAYMENT_RECORD_UPDATE_QUERYResult;
     "\n  *[_type == \"user\" && _id == $id][0] {\n    \"businessName\": business -> businessName\n  }\n": VENDOR_BUSINESS_NAME_BY_ID_QUERYResult;
   }
 }

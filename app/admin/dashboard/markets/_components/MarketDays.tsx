@@ -223,7 +223,7 @@ const MarketDays = ({
           {/* )} */}
 
           {editTables ? (
-           <SaveMarketTableChanges/>
+            <SaveMarketTableChanges marketId={marketId} />
           ) : (
 
             <Link href={`/admin/dashboard/markets/${marketId}/create-booking`}

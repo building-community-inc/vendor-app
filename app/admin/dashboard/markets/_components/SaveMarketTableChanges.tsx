@@ -6,12 +6,18 @@ import { getVendorBusinessNameById } from "@/sanity/queries/admin/vendors";
 import { saveMarketTablesUpdateAction } from "./saveMarketTablesUpdateAction";
 import FormErrorDisplay from "@/app/_components/FormErrorDisplay";
 
-const SaveMarketTableChanges = () => {
+const SaveMarketTableChanges = ({
+  marketId
+}: {
+  marketId: string
+}) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { changes } = useChangesStore()
   const [vendorBusinessNames, setVendorBusinessNames] = useState<{ [key: string]: string }>({});
-  const [formState, formAction] = useActionState(saveMarketTablesUpdateAction, { errors: null, success: false })
+  const [formState, formAction, isPending] = useActionState(saveMarketTablesUpdateAction, { errors: null, success: false })
   const [showError, setShowError] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const toggleDialog = () => {
     if (!dialogRef.current) {
       return;
@@ -61,6 +67,18 @@ const SaveMarketTableChanges = () => {
     }
   }, [formState.errors])
 
+  useEffect(() => {
+    if (formState.success) {
+      setShowSuccess(true);
+      const timeout = setTimeout(() => {
+        setShowSuccess(false);
+        toggleDialog();
+      }, 5000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [formState.success])
+
 
   console.log({ formState })
   return (
@@ -71,6 +89,7 @@ const SaveMarketTableChanges = () => {
       <Dialog toggleDialog={toggleDialog} ref={dialogRef}>
         <form action={formAction}>
           <div className="flex flex-col gap-4">
+            <input type="text" hidden readOnly defaultValue={marketId} name="marketId" />
             <h2 className="text-2xl font-bold">Save Changes</h2>
             <p className="text-lg">Are you sure you want to save the changes?</p>
 
@@ -82,17 +101,18 @@ const SaveMarketTableChanges = () => {
                     <input type="text" hidden readOnly defaultValue={change.vendorId} name="vendorId" />
                     <input type="text" hidden readOnly defaultValue={change.date} name="date" />
                     <input type="text" hidden readOnly defaultValue={change.oldTableId} name="oldTableId" />
+                    {/* <input type="text" hidden readOnly defaultValue={change.} name="newTableId" /> */}
                     <input type="text" hidden readOnly defaultValue={change.type} name="type" />
 
                     <h3 className="text-lg capitalize font-bold">{change.type === "delete" ? "deleting" : "updating"}: {vendorBusinessName}</h3>
                     <p className="text-lg">Date: {change.date}</p>
                     <p className="text-lg">Table ID: {change.oldTableId}</p>
-                    {change.type === "update" && (
-                      <>
-                        <input type="text" hidden readOnly defaultValue={change.newTableId} name="newTableId" />
+                    <>
+                      <input type="text" hidden readOnly defaultValue={change.type === "update" ? change.newTableId : "undefined"} name="newTableId" />
+                      {change.type === "update" && (
                         <p className="text-lg">New Table ID: {change.newTableId}</p>
-                      </>
-                    )}
+                      )}
+                    </>
                   </li>
                 )
               }
@@ -102,8 +122,13 @@ const SaveMarketTableChanges = () => {
           <footer className="flex flex-col gap-4 mt-4">
             <div className="flex justify-center gap-4">
               <Button type="button" onClick={toggleDialog} className="bg-red-700 text-white">Cancel</Button>
-              <Button type="submit" className="bg-green-600 text-white">Save</Button>
+              <Button disabled={isPending} type="submit" className="bg-green-600 text-white">{isPending ? "Saving..." : "Save"}</Button>
             </div>
+            {showSuccess && formState.success && (
+              <div className="text-green-600 text-center font-bold">
+                Changes saved successfully!
+              </div>
+            )}
             <div className="text-center">
               {showError && formState.errors && (
                 <FormErrorDisplay errors={formState.errors} />
