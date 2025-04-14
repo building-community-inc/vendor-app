@@ -1,4 +1,5 @@
 import { sanityWriteClient } from "@/sanity/lib/client";
+import { getSanityUserByEmail } from "@/sanity/queries/user";
 import { zodUserBase } from "@/zod/user-business";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -26,19 +27,24 @@ export const GET = async () => {
   };
 
   const validatedUser = zodUserBase.safeParse(userToValidate);
-
+  
   if (!validatedUser.success) {
     throw new Error(validatedUser.error.message);
   }
+  const sanityUser = await getSanityUserByEmail(validatedUser.data.email)
 
-  const sanityWriteResponse = await sanityWriteClient.createIfNotExists(
-    validatedUser.data
-  );
+  if (!sanityUser) {
+    const sanityWriteResponse = await sanityWriteClient.createIfNotExists(
+      validatedUser.data
+    );
+    if (!sanityWriteResponse) {
+      throw new Error("something went wrong");
+    }
+    if (sanityWriteResponse) {
+      return redirect("/create-business");
+    }
 
-  if (!sanityWriteResponse) {
-    throw new Error("something went wrong");
-  }
-  if (sanityWriteResponse) {
-    return redirect("/create-business");
-  }
+  };
+  return redirect("/dashboard")
+
 };
