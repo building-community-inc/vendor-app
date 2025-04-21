@@ -92,6 +92,8 @@ export const saveMarketTablesUpdateAction = async (
       const targetDay = market.daysWithTables?.find(
         (day) => day.date === change.date
       );
+
+      console.log({targetDay})
       const dayKey = targetDay?._key;
 
       // Find the old table group object and its key using oldTableId from change
@@ -331,8 +333,12 @@ export const saveMarketTablesUpdateAction = async (
 
     try {
       if (patches.length > 0) {
-        await sanityWriteClient.transaction(patches).commit();
+        for (const patchItem of patches) {
+          // const {} = patchItem
+          // console.log({patch: JSON.stringify(patchItem.patch, 2, null)})
+        }
       }
+      // await sanityWriteClient.transaction(patches).commit();
 
       revalidatePath("/admin/dashboard/", "layout");
       revalidatePath("/dashboard/", "layout");
