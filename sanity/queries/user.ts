@@ -46,8 +46,9 @@ export const getSanityUserByEmail = async (email: string) => {
 
   const validatedUser = zodUserWithOptionalBusinessRef.safeParse(user);
   if (!validatedUser.success) {
-     console.log(new Error(validatedUser.error.message));
-    return redirect("/add-user-to-sanity")
+    
+     console.log(new Error(JSON.stringify(validatedUser.error.formErrors.fieldErrors)));
+    return undefined
   }
 
   return validatedUser.data;

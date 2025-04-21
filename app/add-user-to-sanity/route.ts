@@ -14,6 +14,7 @@ export const GET = async () => {
     return redirect("/sign-in");
   };
 
+  
   const userToValidate = {
     _type: "user",
     _id: clerkUser.id,
@@ -25,11 +26,13 @@ export const GET = async () => {
     role: "vendor",
     status: "pending",
   };
-
+  
   const validatedUser = zodUserBase.safeParse(userToValidate);
   
   if (!validatedUser.success) {
-    throw new Error(validatedUser.error.message);
+    const error = validatedUser.error.formErrors.fieldErrors
+
+    throw new Error(JSON.stringify(error));
   }
   const sanityUser = await getSanityUserByEmail(validatedUser.data.email)
 
