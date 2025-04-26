@@ -30,8 +30,9 @@ const SignUpForm = () => {
     <div className="mx-auto flex flex-col items-center px-5 gap-5">
       {userAgent.includes("Instagram") && (
         <p className="mt-4 text-sm text-gray-500">
-          For the best Google login experience, please open this page in your
-          device's browser (e.g., Chrome, Safari).
+          {
+            "For the best Google login experience, please open this page in your device's browser (e.g., Chrome, Safari)."
+          }
         </p>
       )}
       <SignUp

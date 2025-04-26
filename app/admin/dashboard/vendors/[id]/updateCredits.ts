@@ -40,7 +40,7 @@ export const updateCredits = async (
     clerkUser.emailAddresses[0].emailAddress
   );
 
-  if (sanityUser.role !== "admin") {
+  if (sanityUser?.role !== "admin") {
     return {
       success: false,
       errors: ["You are not authorized to perform this action"],

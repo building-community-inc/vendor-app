@@ -48,10 +48,17 @@ export const createETransferBooking = async (
       success: false,
       errors: ["access denied"],
     };
+    
+    const sanityUser = await getSanityUserByEmail(
+      user.emailAddresses[0].emailAddress
+    );
+    
+    if (!sanityUser)
+      return {
+        success: false,
+        errors: ["access denied"],
+      };
 
-  const sanityUser = await getSanityUserByEmail(
-    user.emailAddresses[0].emailAddress
-  );
 
   const rawData = {
     items: JSON.parse(formData.get("items") as string),

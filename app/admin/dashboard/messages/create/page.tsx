@@ -15,7 +15,7 @@ const Page = async () => {
     user.emailAddresses[0].emailAddress
   );
 
-  if (sanityUser.role !== "admin") {
+  if (sanityUser?.role !== "admin") {
     return null;
   }
 
@@ -24,13 +24,17 @@ const Page = async () => {
   return (
     <main className="pt-14 px-5 w-full min-h-screen mx-auto">
       <header className="flex w-full justify-between">
-        <h1 className="font-segoe font-bold text-lg lg:text-3xl">Create Message</h1>
+        <h1 className="font-segoe font-bold text-lg lg:text-3xl">
+          Create Message
+        </h1>
       </header>
       <FormTitleDivider title="Compose Message" />
-      <CreateMessageForm sanityUser={sanityUser} allVendors={allVendors || []} />
+      <CreateMessageForm
+        sanityUser={sanityUser}
+        allVendors={allVendors || []}
+      />
     </main>
   );
-}
+};
 
 export default Page;
-

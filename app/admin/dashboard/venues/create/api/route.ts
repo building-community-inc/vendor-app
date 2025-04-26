@@ -25,7 +25,7 @@ export const POST = async (req: Request) => {
     clerkUser.emailAddresses[0].emailAddress
   );
 
-  if (user.role !== "admin") {
+  if (user?.role !== "admin") {
     return Response.json({
       status: 401,
       body: { message: "Unauthorized" },

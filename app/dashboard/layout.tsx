@@ -11,6 +11,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const sanityUser = await getSanityUserByEmail(
     user.emailAddresses[0].emailAddress
   );
+  if (!sanityUser) return;
 
   if (!sanityUser.business)
     return (
@@ -25,16 +26,19 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 
   const userMessages = await getAllUserMessagesById(sanityUser._id);
 
-  const areThereNewMessages = userMessages?.some(message => 
-    message.for.some(forObject => 
-      forObject.vendor.email === sanityUser.email && !forObject.read
+  const areThereNewMessages = userMessages?.some((message) =>
+    message.for.some(
+      (forObject) =>
+        forObject.vendor.email === sanityUser.email && !forObject.read
     )
   );
 
-
   return (
     <section className="flex  h-screen overflow-y-hidden">
-      <NavBar user={sanityUser} areThereNewMessages={areThereNewMessages || false} />
+      <NavBar
+        user={sanityUser}
+        areThereNewMessages={areThereNewMessages || false}
+      />
 
       <div className="h-full overflow-y-scroll w-full hide-scrollbar pb-5">
         {children}
