@@ -83,6 +83,14 @@ export const createETransferBooking = async (
       errors: ["something went wrong"],
     };
   }
+  
+  if (data.creditsApplied > 0 && sanityUser.credits && sanityUser.credits <= 0) {
+    console.error("credit data doesnt match")
+    return {
+      success: false,
+      errors: ["something went wrong"],
+    };
+  }
 
   const payments =
     data.creditsApplied > 0
@@ -279,6 +287,13 @@ export const createETransferBooking = async (
   // console.log({ vendors });
 
   market.vendors = vendors;
+
+  const vendorCredits = sanityUser.credits
+
+  if (data.creditsApplied && data.creditsApplied > 0) {
+    const newVendorCredits = vendorCredits ? (vendorCredits - data.creditsApplied) : 0;
+    await sanityWriteClient.patch(sanityUser._id).set({credits: newVendorCredits}).commit()
+  }
 
   try {
     const paymentRecordResp = await sanityWriteClient.create(newPaymentRecord);
