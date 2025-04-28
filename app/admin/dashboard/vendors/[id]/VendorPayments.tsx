@@ -3,15 +3,17 @@ import { PaymentRecordCard } from "@/app/dashboard/_components/profileComps/Paym
 import { TUserMarket } from "@/sanity/queries/user";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const VendorPayments = ({ vendorPaymentRecords, admin }: {
+const VendorPayments = ({
+  vendorPaymentRecords,
+  admin,
+}: {
   vendorPaymentRecords: TUserMarket[];
   admin?: boolean;
 }) => {
-
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const filter = searchParams.get("filter") || "reserved";
+  const filter = searchParams.get("filter") || "all";
 
   const onFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const filter = e.target.value;
@@ -22,23 +24,29 @@ const VendorPayments = ({ vendorPaymentRecords, admin }: {
     }
   };
 
-  const filteredVendorPaymentRecords = vendorPaymentRecords.filter(paymentRecord => {
-    if (filter === "pending") {
-      return paymentRecord.status === "pending"
+  const filteredVendorPaymentRecords = vendorPaymentRecords.filter(
+    (paymentRecord) => {
+      if (filter === "pending") {
+        return paymentRecord.status === "pending";
+      }
+      if (filter === "cancelled") {
+        return (
+          paymentRecord.paymentReturned || paymentRecord.status === "cancelled"
+        );
+      } else if (filter === "reserved") {
+        return !paymentRecord.status || paymentRecord.status === "paid";
+      } else {
+        return true;
+      }
     }
-    if (filter === "cancelled") {
-      return paymentRecord.paymentReturned || paymentRecord.status === "cancelled";
-    } else if (filter === "reserved") {
-      return !paymentRecord.status || paymentRecord.status === "paid";
-    } else {
-      return true;
-    }
-  });
+  );
 
   return (
     <section className="flex flex-col gap-2">
       <header className="border-b-2 border-black w-full">
-        <h2 className="text-2xl font-bold font-darker-grotesque text-black">Market Bookings</h2>
+        <h2 className="text-2xl font-bold font-darker-grotesque text-black">
+          Market Bookings
+        </h2>
       </header>
       <div>
         <select
@@ -53,7 +61,7 @@ const VendorPayments = ({ vendorPaymentRecords, admin }: {
         </select>
       </div>
       <ul className="flex flex-col gap-5">
-        {filteredVendorPaymentRecords.map(paymentRecord => (
+        {filteredVendorPaymentRecords.map((paymentRecord) => (
           <PaymentRecordCard
             admin={admin}
             returned={paymentRecord.paymentReturned}
@@ -69,6 +77,6 @@ const VendorPayments = ({ vendorPaymentRecords, admin }: {
       </ul>
     </section>
   );
-}
+};
 
 export default VendorPayments;
