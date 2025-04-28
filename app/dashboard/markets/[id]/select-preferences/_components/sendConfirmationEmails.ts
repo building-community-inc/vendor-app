@@ -3,7 +3,7 @@ import { BookingCreatedEmail, ClientConfirmationEmail } from '@/app/_components/
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const ADMIN_EMAIL = "julian.m.bustos@gmail.com"; 
+const ADMIN_EMAIL = "accounting@buildingcommunityinc.com"; 
 export const sendBookingDetailsToAdmin = async (bookingUrl: string, vendorName: string, vendorLogoUrl?: string) => {
   if (!resend) {
     throw new Error("Resend client is not initialized. Check your API key.");
