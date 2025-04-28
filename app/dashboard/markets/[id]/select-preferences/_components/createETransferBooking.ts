@@ -292,7 +292,19 @@ export const createETransferBooking = async (
 
   if (data.creditsApplied && data.creditsApplied > 0) {
     const newVendorCredits = vendorCredits ? (vendorCredits - data.creditsApplied) : 0;
-    await sanityWriteClient.patch(sanityUser._id).set({credits: newVendorCredits}).commit()
+    await sanityWriteClient.patch(sanityUser._id).set({ credits: newVendorCredits }).commit();
+
+    await sanityWriteClient.create({
+      _type: "creditTransaction",
+      date: new Date().toISOString(),
+      vendor: {
+        _type: "reference",
+        _ref: sanityUser._id,
+      },
+      amount: -data.creditsApplied,
+      reason: "Vendor used credits",
+    });
+
   }
 
   try {
