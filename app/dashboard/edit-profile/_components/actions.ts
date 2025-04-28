@@ -21,7 +21,7 @@ export const saveNewBusinessInfo = async (
     address1: formData.get("address1"),
     address2: formData.get("address2"),
     phone: formData.get("phone"),
-    // industry: formData.get("industry"),
+    industry: formData.get("industry"),
     city: formData.get("city"),
     province: formData.get("province"),
     postalCode: formData.get("postalCode"),
