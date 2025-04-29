@@ -111,7 +111,7 @@ export const changeStatusAction = async (
         vendorName,
         marketDate,
         vendor.data?.email || "",
-        `${data.requestOrigin}/dashboard/bookings/${paymentRecordDocument._id}`
+        `https://vendorapp.buildingcommunityinc.com/dashboard/bookings/${paymentRecordDocument._id}`
       );
     } catch (error) {
       console.error(error);
@@ -137,5 +137,5 @@ const formSchema = z.object({
     .string()
     .min(1)
     .transform((val) => parseFloat(val)),
-    requestOrigin: z.string().min(1),
+  requestOrigin: z.string().min(1),
 });

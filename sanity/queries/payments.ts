@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { sanityClient } from "../lib/client";
-import { groq } from "next-sanity";
 
 export const getExistingPayment = async (paymentIntentId: string) => {
   const result = await sanityClient.fetch(
@@ -92,7 +91,7 @@ const paymentQuery = `
   "vendorId": user->_id
 `;
 
-const paymentQueryWithMarket = groq`
+const paymentQueryWithMarket = `
   ${paymentQuery},
   "market": market->{
     name,

@@ -76,16 +76,19 @@ export const marketSchema = defineType({
                       name: "table",
                       title: "Table",
                       type: "object",
+                      validation: (R) => R.required(),
                       fields: [
                         defineField({
                           name: "id",
                           title: "Id",
                           type: "string",
+                          validation: (R) => R.required(),
                         }),
                         defineField({
                           name: "price",
                           title: "Price",
                           type: "number",
+                          validation: (R) => R.required(),
                         }),
                       ],
                     }),
@@ -104,17 +107,24 @@ export const marketSchema = defineType({
                       lastName: "booked.lastName",
                       media: "booked.business.logo",
                     },
-                    prepare({tableId, firstName, lastName, media, businessName}) {
-                      if (!businessName) return {
-                        title: `table # ${tableId} available`,
-                        // media: 
-                      }
+                    prepare({
+                      tableId,
+                      firstName,
+                      lastName,
+                      media,
+                      businessName,
+                    }) {
+                      if (!businessName)
+                        return {
+                          title: `table # ${tableId} available`,
+                          // media:
+                        };
                       return {
                         title: businessName,
                         subtitle: `${firstName} ${lastName} - table # ${tableId}`,
                         media,
                       };
-                    }
+                    },
                   },
                 }),
               ],
@@ -137,6 +147,7 @@ export const marketSchema = defineType({
               name: "vendor",
               title: "Vendor",
               type: "reference",
+              validation: (R) => R.required(),
               to: [{ type: "user" }],
             }),
             defineField({
@@ -177,13 +188,13 @@ export const marketSchema = defineType({
               lastName: "vendor.lastName",
               media: "vendor.business.logo",
             },
-            prepare({firstName, lastName, media, businessName}) {
+            prepare({ firstName, lastName, media, businessName }) {
               return {
                 title: businessName,
                 subtitle: `${firstName} ${lastName}`,
                 media,
               };
-            }
+            },
           },
         }),
       ],
@@ -192,7 +203,7 @@ export const marketSchema = defineType({
       name: "cancelled",
       title: "Cancelled",
       type: "boolean",
-      initialValue: false
+      initialValue: false,
     }),
     defineField({
       name: "archived",
@@ -202,8 +213,8 @@ export const marketSchema = defineType({
     defineField({
       name: "allDaysMandatory",
       title: "All Days Mandatory",
-      type: "boolean"
-    })
+      type: "boolean",
+    }),
   ],
 
   preview: {
@@ -218,6 +229,6 @@ export const marketSchema = defineType({
         subtitle: dates.join(" - "),
         media,
       };
-    }
-  }
+    },
+  },
 });

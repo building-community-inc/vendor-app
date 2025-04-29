@@ -6,7 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+        "schema": "sanity schema extract --enforce-required-fields",
+    "query": "sanity typegen generate",
+    "sanityupdate": "pnpm schema && pnpm query",
+    "g": "pnpm schema && pnpm query"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.13.0",

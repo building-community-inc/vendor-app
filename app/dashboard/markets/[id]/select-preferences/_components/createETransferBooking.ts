@@ -8,6 +8,15 @@ import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { sendBookingDetailsToAdmin } from "./sendConfirmationEmails";
+import { defineQuery } from "next-sanity";
+
+const MARKET_BOOKING_QUERY = defineQuery(`
+    *[_type == "market" && _id == $id] [0] {
+      vendors,
+      daysWithTables,
+      _id
+    }
+  `);
 
 const itemSchema = z.object({
   price: z.number(),
@@ -48,17 +57,16 @@ export const createETransferBooking = async (
       success: false,
       errors: ["access denied"],
     };
-    
-    const sanityUser = await getSanityUserByEmail(
-      user.emailAddresses[0].emailAddress
-    );
-    
-    if (!sanityUser)
-      return {
-        success: false,
-        errors: ["access denied"],
-      };
 
+  const sanityUser = await getSanityUserByEmail(
+    user.emailAddresses[0].emailAddress
+  );
+
+  if (!sanityUser)
+    return {
+      success: false,
+      errors: ["access denied"],
+    };
 
   const rawData = {
     items: JSON.parse(formData.get("items") as string),
@@ -83,9 +91,13 @@ export const createETransferBooking = async (
       errors: ["something went wrong"],
     };
   }
-  
-  if (data.creditsApplied > 0 && sanityUser.credits && sanityUser.credits <= 0) {
-    console.error("credit data doesnt match")
+
+  if (
+    data.creditsApplied > 0 &&
+    sanityUser.credits &&
+    sanityUser.credits <= 0
+  ) {
+    console.error("credit data doesnt match");
     return {
       success: false,
       errors: ["something went wrong"],
@@ -136,7 +148,9 @@ export const createETransferBooking = async (
     updatedAt: new Date().toISOString(),
   };
 
-  const market = await sanityClient.getDocument(rawData.marketId);
+  const market = await sanityClient.fetch(MARKET_BOOKING_QUERY, {
+    id: rawData.marketId,
+  });
 
   if (!market) {
     return {
@@ -156,7 +170,7 @@ export const createETransferBooking = async (
 
   for (const item of data.items) {
     const dayToUpdateIndex = daysWithTables.findIndex(
-      (day: { date: string }) => day.date === item.date
+      (day) => day.date === item.date
     );
 
     if (dayToUpdateIndex === -1) {
@@ -167,8 +181,14 @@ export const createETransferBooking = async (
     }
 
     const dayToUpdate = daysWithTables[dayToUpdateIndex];
+    if (!dayToUpdate.tables) {
+      return {
+        errors: ["tables not found"],
+        success: false,
+      };
+    }
     const tableToUpdateIndex = dayToUpdate.tables.findIndex(
-      (table: { table: { id: string } }) => table.table.id === item.tableId
+      (table) => table.table.id === item.tableId
     );
 
     if (tableToUpdateIndex === -1) {
@@ -185,14 +205,18 @@ export const createETransferBooking = async (
     // Create a new table object with updated booked info - more direct and clear
     const updatedTable = {
       ...tableToUpdate,
+      _type: "table",
       booked: {
         _type: "reference",
         _ref: sanityUser._id,
       },
     };
 
-    // Create a new tables array for the day, replacing the old table with the updated one
-    const updatedTables = [...dayToUpdate.tables]; // Create a copy to avoid direct mutation
+    const updatedTables = dayToUpdate.tables.map((table) => ({
+      ...table,
+      _type: "table",
+    })); // Create a copy to avoid direct mutation
+
     const zodTables = z.array(
       z
         .object({
@@ -235,7 +259,19 @@ export const createETransferBooking = async (
     // Create a new daysWithTables array, replacing the old day with the updated day
     // const parsedDaysWithTables = zodTables.safeParse(daysWithTables)
     daysWithTables = [...daysWithTables]; // Create a copy of the daysWithTables array
-    daysWithTables[dayToUpdateIndex] = updatedDay;
+    daysWithTables[dayToUpdateIndex] = {
+      ...updatedDay,
+      tables: updatedDay.tables.map((table) => ({
+        ...table,
+        _type: "table",
+        booked: table.booked
+          ? {
+              _ref: table.booked._ref,
+              _type: "reference",
+            }
+          : undefined,
+      })),
+    };
 
     // console.log({ updated: daysWithTables[dayToUpdateIndex] });
   }
@@ -246,26 +282,30 @@ export const createETransferBooking = async (
   // console.log({ market });
   // Update vendors List
 
-  const vendors = market.vendors;
+  const vendors = market.vendors || [];
 
   // console.log({ vendorsLeng: vendors.length, userid: sanityUser._id });
 
   // find vendor to update if not found create one
 
-  const vendorToUpdateIndex = vendors.findIndex(
-    (vendor: { vendor: { _ref: string } }) =>
-      vendor.vendor._ref === sanityUser._id
+  const vendorToUpdateIndex = vendors?.findIndex(
+    (vendor) => vendor.vendor._ref === sanityUser._id
   );
 
   let newDatesBooked = [];
 
-  if (vendors[vendorToUpdateIndex]) {
+  if (
+    vendorToUpdateIndex &&
+    vendors &&
+    vendors.length > 0 &&
+    vendors[vendorToUpdateIndex]
+  ) {
     // console.log("adding to existing vendor", {vendor: vendors[vendorToUpdateIndex]})
     newDatesBooked = [
-      ...vendors[vendorToUpdateIndex].datesBooked,
+      ...(vendors[vendorToUpdateIndex].datesBooked || []),
       ...data.items.map((item) => ({
         _key: nanoid(),
-        _type: "day",
+        _type: "day" as const,
         date: item.date,
         tableId: item.tableId,
       })),
@@ -275,6 +315,7 @@ export const createETransferBooking = async (
     // console.log("creating new vendor")
     vendors.push({
       _key: nanoid(),
+      _type: "vendorDetails",
       datesBooked: data.items.map((item) => ({
         _key: nanoid(),
         _type: "day",
@@ -288,11 +329,16 @@ export const createETransferBooking = async (
 
   market.vendors = vendors;
 
-  const vendorCredits = sanityUser.credits
+  const vendorCredits = sanityUser.credits;
 
   if (data.creditsApplied && data.creditsApplied > 0) {
-    const newVendorCredits = vendorCredits ? (vendorCredits - data.creditsApplied) : 0;
-    await sanityWriteClient.patch(sanityUser._id).set({ credits: newVendorCredits }).commit();
+    const newVendorCredits = vendorCredits
+      ? vendorCredits - data.creditsApplied
+      : 0;
+    await sanityWriteClient
+      .patch(sanityUser._id)
+      .set({ credits: newVendorCredits })
+      .commit();
 
     await sanityWriteClient.create({
       _type: "creditTransaction",
@@ -304,7 +350,6 @@ export const createETransferBooking = async (
       amount: -data.creditsApplied,
       reason: "Vendor used credits",
     });
-
   }
 
   try {
@@ -316,7 +361,7 @@ export const createETransferBooking = async (
 
     try {
       // console.log("sending email")
-      const bookingUrl = `${data.requestOrigin}/admin/dashboard/payments?search=${newPaymentRecord._id}`;
+      const bookingUrl = `https://vendorapp.buildingcommunityinc.com/admin/dashboard/payments?search=${paymentRecordResp._id}`;
       const vendorName =
         sanityUser.business?.businessName ||
         `${sanityUser.firstName} - ${sanityUser.lastName}` ||
