@@ -8,10 +8,16 @@ export type TErrorType = {
   path: string[];
 };
 export const saveNewBusinessInfo = async (
-  state: { success: boolean; message: string; errors: {
+  state: {
+    success: boolean;
     message: string;
-    path: string[];
-  }[] | null },
+    errors:
+      | {
+          message: string;
+          path: string[];
+        }[]
+      | null;
+  },
   formData: FormData
 ) => {
   const data = {
@@ -21,7 +27,7 @@ export const saveNewBusinessInfo = async (
     address1: formData.get("address1"),
     address2: formData.get("address2"),
     phone: formData.get("phone"),
-    industry: formData.get("industry"),
+    // industry: formData.get("industry"),
     city: formData.get("city"),
     province: formData.get("province"),
     postalCode: formData.get("postalCode"),
@@ -61,14 +67,12 @@ export const saveNewBusinessInfo = async (
     };
   }
 
-
   // const sanityBusiness = await getSanityBusinessById(business.data._id);
 
   const sanityResp = await sanityWriteClient
     .patch(business.data._id)
     .set(business.data)
     .commit();
-
 
   revalidatePath("/dashboard", "layout");
   revalidatePath("/admin/dashboard", "layout");

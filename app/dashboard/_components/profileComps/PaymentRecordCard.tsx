@@ -102,8 +102,8 @@ export const PaymentRecordCard = ({
           )}
           <MarketSection title="Totals" className="">
             <p>HST: {amount.hst}</p>
-            <p>Total: {amount.total}</p>
-            {amount.paid ? <p>Paid: {amount.paid}</p> : ""}
+            <p>Subtotal: {amount.total}</p>
+            {amount.paid ? <p>Total: {amount.paid}</p> : ""}
             {amount.owed ? <p>Owed: {amount.owed}</p> : ""}
           </MarketSection>
         </div>

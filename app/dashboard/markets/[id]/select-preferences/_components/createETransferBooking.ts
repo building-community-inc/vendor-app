@@ -368,7 +368,11 @@ export const createETransferBooking = async (
         "Vendor";
       const vendorLogoUrl = sanityUser.business?.logoUrl || undefined;
       // console.log({ bookingUrl, vendorName, vendorLogoUrl })
-      await sendBookingDetailsToAdmin(bookingUrl, vendorName, vendorLogoUrl);
+
+      if (process.env.NODE_ENV === "production") {
+        // console.log("in production sending email");
+        await sendBookingDetailsToAdmin(bookingUrl, vendorName, vendorLogoUrl);
+      }
     } catch (error) {
       console.error("Error sending email", error);
     }
