@@ -24,7 +24,7 @@ const dayWithTablesSchema = z.object({
 
 const bookedDateSchema = z.object({
   date: z.string(),
-  _type: z.string(),
+  _type: z.string().optional().nullable(),
   tableId: z.string(),
   _key: z.string(),
 });
@@ -60,7 +60,9 @@ const PaymentRecordSchema = z.object({
 });
 
 export const PaymentRecordsSchema = z.array(PaymentRecordSchema);
-export const updateMarketQuery = (marketId: string) => groq`*[_type == "market" && _id == "${marketId}"] [0] {
+export const updateMarketQuery = (
+  marketId: string
+) => groq`*[_type == "market" && _id == "${marketId}"] [0] {
   "daysWithTables": daysWithTables [] {
     date,
     "tables": tables [] {   
@@ -91,8 +93,10 @@ export const updateMarketQuery = (marketId: string) => groq`*[_type == "market" 
   }
 }`;
 
-
-export const paymentRecordQuery = (vendorId: string, marketId: string) => groq`*[_type == "paymentRecord" && user._ref == "${vendorId}" && market._ref == "${marketId}"] {
+export const paymentRecordQuery = (
+  vendorId: string,
+  marketId: string
+) => groq`*[_type == "paymentRecord" && user._ref == "${vendorId}" && market._ref == "${marketId}"] {
   "user": user {
     _ref,
     _type
