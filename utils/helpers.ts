@@ -8,16 +8,22 @@ import { ReadonlyURLSearchParams } from "next/navigation";
 export function areDatesSame(date1: string, date2: string): boolean {
   // Ensure dates are in the format "YYYY-MM-DD"
   if (!date1 || !date2 || date1.length < 1 || date2.length < 1) return false;
-  const [year1, month1, day1] = date1.split('-');
-  const formattedDate1 = `${year1}-${month1.padStart(2, '0')}-${day1.padStart(2, '0')}`;
+  const [year1, month1, day1] = date1.split("-");
+  const formattedDate1 = `${year1}-${month1.padStart(2, "0")}-${day1.padStart(
+    2,
+    "0"
+  )}`;
 
-  const [year2, month2, day2] = date2.split('-');
-  const formattedDate2 = `${year2}-${month2.padStart(2, '0')}-${day2.padStart(2, '0')}`;
+  const [year2, month2, day2] = date2.split("-");
+  const formattedDate2 = `${year2}-${month2.padStart(2, "0")}-${day2.padStart(
+    2,
+    "0"
+  )}`;
 
-  const dateTime1 = DateTime.fromISO(formattedDate1).setZone('utc');
-  const dateTime2 = DateTime.fromISO(formattedDate2).setZone('utc');
+  const dateTime1 = DateTime.fromISO(formattedDate1).setZone("utc");
+  const dateTime2 = DateTime.fromISO(formattedDate2).setZone("utc");
 
-  return dateTime1.hasSame(dateTime2, 'day');
+  return dateTime1.hasSame(dateTime2, "day");
 }
 
 export const tablePriceTodisplay = (minPrice: number, maxPrice: number) =>
@@ -62,7 +68,6 @@ export const dateArrayToDisplayableText = function (dates: string[]): string {
   return `${formattedStartDate} - ${formattedEndDate}`;
 };
 
-
 export const createDateString = (date: Date): string => {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 };
@@ -89,76 +94,120 @@ export const getKeyByValue = (
   }
 };
 
-
 export function formatDateStringToMMMDDYYYY(dateStr: string): string {
   // Create a Date object from the date string
   const date = new Date(dateStr);
 
   // Format the date
-  const formattedDate = date.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const formattedDate = date.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 
   return formattedDate;
 }
 
-
 export const buildOrderUrl = (localUrl: string, paymentIntentId: string) => {
-  return `${localUrl}/dashboard/checkout/success?payment_intent=${paymentIntentId}`
+  return `${localUrl}/dashboard/checkout/success?payment_intent=${paymentIntentId}`;
 };
 
-
 export const formatDateWLuxon = function (dateString: string): string {
-  const [year, month, day] = dateString.split('-').map(Number);
-  const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-  const newDate = DateTime.fromISO(formattedDate, { zone: 'America/Toronto' }).startOf('day');
-  return newDate.toFormat('EEE, MMM d, yyyy');
+  const [year, month, day] = dateString.split("-").map(Number);
+  const formattedDate = `${year}-${month.toString().padStart(2, "0")}-${day
+    .toString()
+    .padStart(2, "0")}`;
+  const newDate = DateTime.fromISO(formattedDate, {
+    zone: "America/Toronto",
+  }).startOf("day");
+  return newDate.toFormat("EEE, MMM d, yyyy");
+};
+
+export function formatDateString(
+  dateString: string,
+  timeZone: string = "America/Toronto"
+): string {
+  const [year, month, day] = dateString.split("-").map(Number);
+  const formattedDate = `${year}-${month.toString().padStart(2, "0")}-${day
+    .toString()
+    .padStart(2, "0")}`;
+  const date = DateTime.fromISO(formattedDate, { zone: timeZone }).startOf(
+    "day"
+  );
+  return date.toFormat("EEE, MMM d, yyyy");
 }
 
-
-
-export function formatDateString(dateString: string, timeZone: string = 'America/Toronto'): string {
-  const [year, month, day] = dateString.split('-').map(Number);
-  const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-  const date = DateTime.fromISO(formattedDate, { zone: timeZone }).startOf('day');
-  return date.toFormat('EEE, MMM d, yyyy');
-}
-
-export function debounce<F extends (...args: any[]) => any>(func: F, wait: number) {
+export function debounce<F extends (...args: any[]) => any>(
+  func: F,
+  wait: number
+) {
   let timeout: NodeJS.Timeout | null;
   return (...args: Parameters<F>) => {
     if (timeout) {
       clearTimeout(timeout);
     }
     timeout = setTimeout(() => func(...args), wait);
-  }
+  };
 }
 
-
-export const isMarketOpen = (lastDayToBook: string | null | undefined): boolean => {
+export const isMarketOpen = (
+  lastDayToBook: string | null | undefined
+): boolean => {
   const today = DateTime.now().toISODate();
   if (!lastDayToBook) return true;
 
-  const [year, month, day] = lastDayToBook.split('-').map(Number);
-  const formattedDate = year && month && day && `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-  const lastBookingDate = formattedDate && DateTime.fromISO(formattedDate).toISODate();
+  const [year, month, day] = lastDayToBook.split("-").map(Number);
+  const formattedDate =
+    year &&
+    month &&
+    day &&
+    `${year}-${month.toString().padStart(2, "0")}-${day
+      .toString()
+      .padStart(2, "0")}`;
+  const lastBookingDate =
+    formattedDate && DateTime.fromISO(formattedDate).toISODate();
 
   return lastBookingDate ? lastBookingDate >= today : true;
 };
 
-export const lessThan7DaysToBook = (lastDayToBook: string | null | undefined): boolean => {
-  
+export const lessThan7DaysToBook = (
+  lastDayToBook: string | null | undefined
+): boolean => {
   if (!lastDayToBook) return false;
 
-  const [year, month, day] = lastDayToBook.split('-').map(Number);
-  const formattedDate = year && month && day && `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-  const lastBookingDate = formattedDate && DateTime.fromISO(formattedDate).toISODate();
+  const [year, month, day] = lastDayToBook.split("-").map(Number);
+  const formattedDate =
+    year &&
+    month &&
+    day &&
+    `${year}-${month.toString().padStart(2, "0")}-${day
+      .toString()
+      .padStart(2, "0")}`;
+  const lastBookingDate =
+    formattedDate && DateTime.fromISO(formattedDate).toISODate();
   const today = DateTime.now().toISODate();
   const sevenDaysFromNow = DateTime.now().plus({ days: 7 }).toISODate();
 
-  return lastBookingDate ? lastBookingDate >= today && lastBookingDate <= sevenDaysFromNow : false;
+  return lastBookingDate
+    ? lastBookingDate >= today && lastBookingDate <= sevenDaysFromNow
+    : false;
 };
 
 export const addZerosToDate = (dateString: string): string => {
-  const [year, month, day] = dateString.split('-').map(Number);
-  const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+  const [year, month, day] = dateString.split("-").map(Number);
+  const formattedDate = `${year}-${month.toString().padStart(2, "0")}-${day
+    .toString()
+    .padStart(2, "0")}`;
   return formattedDate;
+};
+
+export const getFormattedDateTime = (dateStr: string) => {
+  try {
+    const dateTime = DateTime.fromISO(dateStr);
+    const localTime = dateTime.toLocal();
+    return localTime.toFormat("MMMM dd, yyyy, h:mm:ss a ZZZZ"); // Added time zone
+  } catch (error) {
+    console.error("Error parsing date:", error);
+    return "Invalid Date"; // Handle invalid date strings
+  }
 };

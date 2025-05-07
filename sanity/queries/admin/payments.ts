@@ -41,6 +41,7 @@ const zodPaymentSchema = z.object({
       paymentType: z.string().optional().nullable(),
     })
   ),
+  createdAt: z.string(),
 });
 
 export type TPayment = z.infer<typeof zodPaymentSchema>;
@@ -85,7 +86,8 @@ export const getAllPayments = async () => {
           tableId
         },
         paymentReturned,
-        status
+        status,
+        "createdAt": _createdAt
 
       }`
     );

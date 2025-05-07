@@ -2,7 +2,11 @@ import { TPayment, getAllPayments } from "@/sanity/queries/admin/payments";
 import { unstable_noStore as noStore } from "next/cache";
 import FormTitleDivider from "../_components/FormTitleDivider";
 import Search from "@/app/dashboard/explore/_components/Search";
-import { formatDateString, formatDateWLuxon } from "@/utils/helpers";
+import {
+  formatDateString,
+  formatDateWLuxon,
+  getFormattedDateTime,
+} from "@/utils/helpers";
 import ChangePaymentStatus from "./ChangePaymentStatus";
 import CancelPayment from "./CancelPayment";
 import Link from "next/link";
@@ -181,21 +185,22 @@ const PaymentItem = ({
           href={`/admin/dashboard/vendors/${payment.vendor._id}`}
           target="_blank"
         >
-          <TitleNameTest
-            title="Vendor Name"
-            name={payment.vendor.businessName}
-          />
+          <TitleName title="Vendor Name" name={payment.vendor.businessName} />
         </Link>
-        <TitleNameTest title="Order Id" name={payment._id} />
+        <TitleName
+          title="Booked on"
+          name={getFormattedDateTime(payment.createdAt)}
+        />
+        <TitleName title="Order Id" name={payment._id} />
       </div>
       <div className="flex flex-col">
-        <TitleNameTest
+        <TitleName
           title="Market Name"
           name={payment.market.name.split(" - ")[0]}
         />
-        {/* <TitleNameTest title="Market Dates" name={payment.market.dates.map(date => formatDateWLuxon(date)).join(", ")} /> */}
+        {/* <TitleName title="Market Dates" name={payment.market.dates.map(date => formatDateWLuxon(date)).join(", ")} /> */}
       </div>
-      <TitleNameTest
+      <TitleName
         title="Dates Booked"
         list={payment.items.map(
           (item, index) =>
@@ -205,11 +210,11 @@ const PaymentItem = ({
         )}
       />
       <div className="">
-        <TitleNameTest title="Amount Owed" name={`$${payment.amount.owed}`} />
-        <TitleNameTest title="Amount Paid" name={`$${payment.amount.paid}`} />
+        <TitleName title="Amount Owed" name={`$${payment.amount.owed}`} />
+        <TitleName title="Amount Paid" name={`$${payment.amount.paid}`} />
       </div>
       <div className="flex flex-col items-end">
-        <TitleNameTest title="Status" name={payment.status || "paid"} />
+        <TitleName title="Status" name={payment.status || "paid"} />
       </div>
       {payment.payments && payment.payments.length > 0 && (
         <div className="flex flex-col">
@@ -255,7 +260,7 @@ const PaymentItem = ({
     </li>
   );
 };
-const TitleNameTest = ({
+const TitleName = ({
   title,
   name,
   list,
