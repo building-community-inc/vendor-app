@@ -4,7 +4,7 @@ import FormTitleDivider from "../_components/FormTitleDivider";
 import Link from "next/link";
 import MarketCard from "./_components/MarketCard";
 import { dateArrayToDisplayableText } from "@/utils/helpers";
-import { unstable_noStore as noStore } from 'next/cache';
+import { unstable_noStore as noStore } from "next/cache";
 import Search from "@/app/dashboard/explore/_components/Search";
 import { getAllMarkets } from "@/sanity/queries/admin/markets/markets";
 import SortBy from "@/app/dashboard/explore/_components/SortBy";
@@ -80,13 +80,11 @@ const exploreSorts: { [key: string]: (markets: TSanityMarket[]) => void } = {
     });
   },
 };
-const Page = async (
-  props: {
-    searchParams: Promise<{
-      [key: string]: string | undefined;
-    }>;
-  }
-) => {
+const Page = async (props: {
+  searchParams: Promise<{
+    [key: string]: string | undefined;
+  }>;
+}) => {
   const searchParams = await props.searchParams;
   noStore();
   // const venues = await getAllVenues();
@@ -112,7 +110,7 @@ const Page = async (
     return true;
   });
 
-  const sort = searchParams.sort || undefined;
+  const sort = searchParams.sort || "date_upcoming";
 
   let sortedMarkets = filteredMarketsByName ? [...filteredMarketsByName] : [];
 
