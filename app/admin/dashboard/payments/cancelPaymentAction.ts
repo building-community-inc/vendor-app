@@ -5,6 +5,7 @@ import { z } from "zod";
 import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { revalidatePath } from "next/cache";
 import { FormState } from "@/app/types";
+import { sendCancelEmail } from "./sendCancelEmail";
 const dataSchema = z.object({
   returnedCredits: z.string().transform((v) => parseFloat(v)),
   paymentRecordId: z.string(),
@@ -58,7 +59,7 @@ export const cancelPaymentAction = async (
   // update payment record
   // update the status
   // update the returned payment
-  
+
   const market = await sanityClient.getDocument(paymentRecord.market._ref);
 
   if (!market) {
@@ -69,19 +70,21 @@ export const cancelPaymentAction = async (
   }
   // find vendor in the vendors array
   const vendor = market.vendors?.find(
-    (vendor: { vendor: {_ref: string}}) => vendor.vendor._ref === paymentRecord.user._ref
+    (vendor: { vendor: { _ref: string } }) =>
+      vendor.vendor._ref === paymentRecord.user._ref
   );
 
   if (!vendor) {
     return {
       success: false,
       errors: ["vendor not found"],
-    }
+    };
   }
 
   // console.log({vendor, items: paymentRecord.items})
   for (const item of paymentRecord.items) {
-    const indexToRemove = vendor?.datesBooked?.findIndex( // Note: Vendor date removal seems separate to market update
+    const indexToRemove = vendor?.datesBooked?.findIndex(
+      // Note: Vendor date removal seems separate to market update
       (table: { date: string }) => table.date === item.date
     );
 
@@ -94,7 +97,8 @@ export const cancelPaymentAction = async (
     );
 
     if (dayWithTable) {
-      const tableToUpdate = dayWithTable.tables.find( // Renamed 'table' to 'tableToUpdate' for clarity
+      const tableToUpdate = dayWithTable.tables.find(
+        // Renamed 'table' to 'tableToUpdate' for clarity
         (table: { table: { id: string } }) => table.table.id === item.tableId
       );
       if (tableToUpdate) {
@@ -104,10 +108,12 @@ export const cancelPaymentAction = async (
   }
 
   // create new vendors
-  const newVendors = [...market.vendors?.filter(
-    (vendor: { vendor: {_ref: string}}) => vendor.vendor._ref !== paymentRecord.vendorId
-  )];
-
+  const newVendors = [
+    ...market.vendors?.filter(
+      (vendor: { vendor: { _ref: string } }) =>
+        vendor.vendor._ref !== paymentRecord.vendorId
+    ),
+  ];
 
   try {
     await sanityWriteClient
@@ -122,25 +128,28 @@ export const cancelPaymentAction = async (
     await sanityWriteClient
       .patch(sanityUser._id)
       .set({
-        credits: Number(+((sanityUser.credits ?? 0) + data.returnedCredits).toFixed(2)),
+        credits: Number(
+          +((sanityUser.credits ?? 0) + data.returnedCredits).toFixed(2)
+        ),
       })
       .commit();
 
-      // update market
-      await sanityWriteClient
-        .patch(market._id)
-        .set({
-          vendors: newVendors,
-          daysWithTables: market.daysWithTables,
-        })
-        .commit();
+    // update market
+    await sanityWriteClient
+      .patch(market._id)
+      .set({
+        vendors: newVendors,
+        daysWithTables: market.daysWithTables,
+      })
+      .commit();
 
-      revalidatePath("/admin/", "layout");
-      revalidatePath("/dashboard/", "layout");
+    revalidatePath("/admin/", "layout");
+    revalidatePath("/dashboard/", "layout");
 
+    await sendCancelEmail(sanityUser.email);
     return {
       success: true,
-      errors: undefined
+      errors: undefined,
     };
   } catch (error) {
     console.log(error);

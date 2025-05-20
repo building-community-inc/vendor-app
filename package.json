@@ -7,10 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-        "schema": "sanity schema extract --enforce-required-fields",
+    "schema": "sanity schema extract --enforce-required-fields",
     "query": "sanity typegen generate",
     "sanityupdate": "pnpm schema && pnpm query",
-    "g": "pnpm schema && pnpm query"
+    "g": "pnpm schema && pnpm query",
+    "devEmail": "npx react-email dev"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.13.0",

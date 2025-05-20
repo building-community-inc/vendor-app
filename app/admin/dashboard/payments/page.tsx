@@ -42,6 +42,10 @@ const Page = async (props: {
   const search = searchParams.search?.toLowerCase();
   const statusFilter = (paymentsArray: TPayment[], filterName: string) =>
     paymentsArray.filter((payment) => {
+      if (payment.status === "cancelled" || payment.status === undefined) {
+        return false;
+      }
+
       const filter = searchParams[filterName];
       const status = payment.status || "paid";
       if (!filter || filter === "all") {
@@ -53,6 +57,13 @@ const Page = async (props: {
 
   const filterPayments = (paymentsArray: TPayment[]) =>
     paymentsArray.filter((payment) => {
+      if (
+        payment.status === "cancelled" ||
+        payment.status === undefined ||
+        payment.status === "paid"
+      ) {
+        return false;
+      }
       if (!search) {
         return true;
       }
@@ -115,12 +126,12 @@ const Page = async (props: {
       {(selectBalances || selectAll) && filteredBalances.length > 0 && (
         <section className="flex flex-col gap-2">
           <FormTitleDivider title="Outstanding Balances" />
-          {singleBalanceStatuses && singleBalanceStatuses.length > 0 && (
+          {/* {singleBalanceStatuses && singleBalanceStatuses.length > 0 && (
             <StatusFilter
               filterName="balanceStatus"
               statuses={singleBalanceStatuses}
             />
-          )}
+          )} */}
           <ul className="flex flex-col gap-2">
             {filteredBalances.map((payment) => {
               const datesBookedList = payment.items.map(({ date }) =>

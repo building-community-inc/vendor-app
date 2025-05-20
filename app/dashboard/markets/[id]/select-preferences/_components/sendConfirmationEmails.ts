@@ -1,10 +1,17 @@
-"use server"
-import { BookingCreatedEmail, ClientConfirmationEmail } from '@/app/_components/email/NewEmailBooking';
-import { Resend } from 'resend';
+"use server";
+import {
+  BookingCreatedEmail,
+  ClientConfirmationEmail,
+} from "@/app/_components/email/NewEmailBooking";
+import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const ADMIN_EMAIL = "accounting@buildingcommunityinc.com"; 
-export const sendBookingDetailsToAdmin = async (bookingUrl: string, vendorName: string, vendorLogoUrl?: string) => {
+const ADMIN_EMAIL = "accounting@buildingcommunityinc.com";
+export const sendBookingDetailsToAdmin = async (
+  bookingUrl: string,
+  vendorName: string,
+  vendorLogoUrl?: string
+) => {
   if (!resend) {
     throw new Error("Resend client is not initialized. Check your API key.");
   }
@@ -13,9 +20,9 @@ export const sendBookingDetailsToAdmin = async (bookingUrl: string, vendorName: 
     throw new Error("Missing required parameters: bookingUrl or vendorName.");
   }
 
-  console.log("sending admin email");
+  // console.log("sending admin email");
   try {
-    const eResp = await resend.emails.send({
+    await resend.emails.send({
       from: "no-reply@buildingcommunityinc.com",
       to: ADMIN_EMAIL,
       subject: "Booking",
@@ -25,12 +32,9 @@ export const sendBookingDetailsToAdmin = async (bookingUrl: string, vendorName: 
         vendorLogoUrl,
       }),
     });
-
-
-    console.log("sending email", {eResp});
   } catch (error) {
-    console.error(error)
-  }  
+    console.error(error);
+  }
 };
 
 export const sendConfirmationEmailToVendor = async (
@@ -39,35 +43,42 @@ export const sendConfirmationEmailToVendor = async (
   vendorName: string,
   marketDate: string,
   vendorEmail: string,
-  bookingUrl: string,
+  bookingUrl: string
 ) => {
-  
   if (!resend) {
     throw new Error("Resend client is not initialized. Check your API key.");
   }
 
-  if (!bookingUrl || !marketCoverUrl || !marketName || !vendorName || !marketDate || !vendorEmail) {
-    throw new Error("Missing required parameters: marketCoverUrl, marketName, vendorName, marketDate or vendorEmail.");
+  if (
+    !bookingUrl ||
+    !marketCoverUrl ||
+    !marketName ||
+    !vendorName ||
+    !marketDate ||
+    !vendorEmail
+  ) {
+    throw new Error(
+      "Missing required parameters: marketCoverUrl, marketName, vendorName, marketDate or vendorEmail."
+    );
   }
 
-  console.log("sending client confirmation email");
+  // console.log("sending client confirmation email");
   try {
-    const eResp = await resend.emails.send({
-      from: "no-reply@buildingcommunityinc.com",
+    await resend.emails.send({
+      from: "applications@buildingcommunityinc.com",
       to: vendorEmail,
-      subject: "Booking",
+      subject: "✅ Your Payment has been Confirmed! Here is your Receipt",
       react: ClientConfirmationEmail({
         marketCoverUrl,
         marketName,
         vendorName,
         marketDate,
-        bookingUrl
+        bookingUrl,
       }),
     });
 
-
-    console.log("sending email", {eResp});
+    // console.log("sending email", { eResp });
   } catch (error) {
-    console.error(error)
-  }  
+    console.error(error);
+  }
 };

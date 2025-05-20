@@ -12,15 +12,18 @@ export const getExistingPayment = async (paymentIntentId: string) => {
 
 export const zodLatePaymentSchema = z.object({
   _id: z.string(),
-  payments: z.array(
-    z.object({
-      paymentType: z.string().optional().nullable(),
-      _key: z.string(),
-      paymentDate: z.string(),
-      stripePaymentIntentId: z.string().optional().nullable(),
-      amount: z.number(),
-    })
-  ).optional().nullable(),
+  payments: z
+    .array(
+      z.object({
+        paymentType: z.string().optional().nullable(),
+        _key: z.string(),
+        paymentDate: z.string(),
+        stripePaymentIntentId: z.string().optional().nullable(),
+        amount: z.number(),
+      })
+    )
+    .optional()
+    .nullable(),
   amount: z.object({
     paid: z.number(),
     total: z.number(),
@@ -51,6 +54,7 @@ export const zodLatePaymentWithMarketSchema = zodLatePaymentSchema.merge(
     market: z.object({
       name: z.string(),
       _id: z.string(),
+      dates: z.array(z.string()),
       venue: z.object({
         city: z.string(),
         phone: z.string(),
@@ -96,6 +100,7 @@ const paymentQueryWithMarket = `
   "market": market->{
     name,
     _id,
+    dates,
     "venue": venue->{
       city,
       phone,

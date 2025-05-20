@@ -108,14 +108,15 @@ export const PaymentRecordCard = ({
           </MarketSection>
         </div>
         <section className="grid gap-5">
-          {status === "pending" ? (
+          {status === "pending" && (
             <Link
               className="text-center"
               href={`/dashboard/e-transfer-info/${paymentId}`}
             >
               <Button className="h-fit ">View Payment Information</Button>
             </Link>
-          ) : (
+          )}
+          {status === "paid" && (
             <Link
               className="text-center"
               href={`/dashboard/bookings/${paymentId}`}
