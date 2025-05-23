@@ -1,5 +1,6 @@
 "use server";
 
+import { FormState } from "@/app/types";
 import { sanityWriteClient } from "@/sanity/lib/client";
 import { zodSanityUpdateBusiness } from "@/zod/user-business";
 import { revalidatePath } from "next/cache";
@@ -8,18 +9,9 @@ export type TErrorType = {
   path: string[];
 };
 export const saveNewBusinessInfo = async (
-  state: {
-    success: boolean;
-    message: string;
-    errors:
-      | {
-          message: string;
-          path: string[];
-        }[]
-      | null;
-  },
+  formState: FormState,
   formData: FormData
-) => {
+): Promise<FormState> => {
   const data = {
     _id: formData.get("_id"),
     _type: "business",
@@ -27,7 +19,7 @@ export const saveNewBusinessInfo = async (
     address1: formData.get("address1"),
     address2: formData.get("address2"),
     phone: formData.get("phone"),
-    // industry: formData.get("industry"),
+    industry: formData.get("industry"),
     city: formData.get("city"),
     province: formData.get("province"),
     postalCode: formData.get("postalCode"),
@@ -62,24 +54,33 @@ export const saveNewBusinessInfo = async (
     }));
     return {
       success: false,
-      message: "Business info is not valid",
-      errors: formattedErrors, // Return the array of formatted errors
+      // message: "Business info is not valid",
+      errors: ["business info is not valid"], // Return the array of formatted errors
     };
   }
 
   // const sanityBusiness = await getSanityBusinessById(business.data._id);
 
-  const sanityResp = await sanityWriteClient
-    .patch(business.data._id)
-    .set(business.data)
-    .commit();
+  try {
+    await sanityWriteClient
+      .patch(business.data._id)
+      .set(business.data)
+      .commit();
 
-  revalidatePath("/dashboard", "layout");
-  revalidatePath("/admin/dashboard", "layout");
+    revalidatePath("/dashboard", "layout");
+    revalidatePath("/admin/dashboard", "layout");
 
-  return {
-    success: true,
-    message: "Business info saved successfully",
-    errors: null,
-  };
+    return {
+      success: true,
+      // message: "Business info saved successfully",
+      errors: null,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      errors: ["something went wrong saving the information"],
+    };
+  }
 };

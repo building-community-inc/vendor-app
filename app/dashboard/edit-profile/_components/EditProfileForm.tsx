@@ -1,28 +1,37 @@
-
 "use client";
-import { TBusiness, TUserWithOptionalBusinessRef, zodBusiness } from "@/zod/user-business";
+import {
+  TBusiness,
+  TUserWithOptionalBusinessRef,
+  zodBusiness,
+} from "@/zod/user-business";
 import { redirect, usePathname } from "next/navigation";
 import { camelCaseToTitleCase } from "@/utils/helpers";
 import { useEffect, useRef, useState, useActionState } from "react";
-import { TErrorType, saveNewBusinessInfo } from "./actions";
-import { usePdfFileStore, useUpdateProfileImageStore } from "@/app/_components/store/fileStore";
+import { saveNewBusinessInfo } from "./actions";
+import {
+  usePdfFileStore,
+  useUpdateProfileImageStore,
+} from "@/app/_components/store/fileStore";
 import { useFormStatus } from "react-dom";
 import Button from "@/app/_components/Button";
 import Link from "next/link";
 type TVendorCategory = {
   name: string;
 };
-const EditProfileForm = ({ sanityUser, vendorCategories, redirectPath }: {
+const EditProfileForm = ({
+  sanityUser,
+  vendorCategories,
+  redirectPath,
+}: {
   sanityUser: TUserWithOptionalBusinessRef;
   vendorCategories: TVendorCategory[];
   redirectPath?: string;
 }) => {
-
   const [formState, formAction] = useActionState(saveNewBusinessInfo, {
     success: false,
-    message: "",
+    // message: "",
     errors: null,
-  })
+  });
 
   const [formChanged, setFormChanged] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -43,29 +52,35 @@ const EditProfileForm = ({ sanityUser, vendorCategories, redirectPath }: {
 
   useEffect(() => {
     if (sanityUser.business?.pdfs) {
-      setPdfFileIds(sanityUser.business.pdfs.map(pdf => pdf._id))
+      setPdfFileIds(sanityUser.business.pdfs.map((pdf) => pdf._id));
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (formState.success) {
       if (redirectPath) {
-        redirect(redirectPath)
+        redirect(redirectPath);
       } else {
-        redirect("/dashboard")
+        redirect("/dashboard");
       }
-
-
     }
-
-  }, [formState])
+  }, [formState]);
 
   return (
     <>
-      <form action={formAction} ref={formRef} className="px-10 flex flex-col max-w-[400px] mx-auto gap-5 mt-10">
+      <form
+        action={formAction}
+        ref={formRef}
+        className="px-10 flex flex-col max-w-[400px] mx-auto gap-5 mt-10"
+      >
         {/* <UpdateProfileImage businessName={sanityUser.business.businessName} logoUrl={sanityUser.business.logoUrl || ""} currentLogoId={sanityUser.business.logo?.asset._ref} /> */}
         <input type="hidden" name="logo" value={logoFileId} readOnly />
-        <input type="hidden" name="_id" value={sanityUser.business._id} readOnly />
+        <input
+          type="hidden"
+          name="_id"
+          value={sanityUser.business._id}
+          readOnly
+        />
 
         {formInputs.map(({ name, title }) => {
           if (name === "_id") return null;
@@ -86,16 +101,25 @@ const EditProfileForm = ({ sanityUser, vendorCategories, redirectPath }: {
           vendorCategories={vendorCategories}
         />
 
-        {formState.errors && formState.errors.map((error: TErrorType) => (
-          <p className="text-red-500" key={error.path[0]}>{JSON.stringify(error)}</p>
-        ))
-        }
+        {formState.errors &&
+          (Array.isArray(formState.errors)
+            ? formState.errors.map((error) => (
+                <p key={error} className="text-red-500">
+                  {error}
+                </p>
+              ))
+            : // Handle the case where formState.errors is a ZodError
+              formState.errors.issues.map((issue) => (
+                <p key={issue.path.join(".")} className="text-red-500">
+                  {issue.message}
+                </p>
+              )))}
         <footer className="flex w-full justify-evenly">
-
-          <Button type="button" className="w-fit font-bold font-darker-grotesque">
-            <Link href="/dashboard">
-              Cancel
-            </Link>
+          <Button
+            type="button"
+            className="w-fit font-bold font-darker-grotesque"
+          >
+            <Link href="/dashboard">Cancel</Link>
           </Button>
           <SubmitButton formChanged={formChanged} />
         </footer>
@@ -104,15 +128,19 @@ const EditProfileForm = ({ sanityUser, vendorCategories, redirectPath }: {
   );
 };
 
-
-
-const SelectIndustry = ({ vendorCategories, sanityUser, onChange }: {
+const SelectIndustry = ({
+  vendorCategories,
+  sanityUser,
+  onChange,
+}: {
   vendorCategories: TVendorCategory[];
   sanityUser: TUserWithOptionalBusinessRef;
   onChange?: (value: boolean) => void;
 }) => {
   const pathname = usePathname();
-  const [selectValue, setSelectValue] = useState(sanityUser.business?.industry || "");
+  const [selectValue, setSelectValue] = useState(
+    sanityUser.business?.industry || ""
+  );
 
   return (
     <>
@@ -125,11 +153,11 @@ const SelectIndustry = ({ vendorCategories, sanityUser, onChange }: {
         <select
           value={selectValue}
           onChange={(e) => {
-            setSelectValue(e.target.value)
+            setSelectValue(e.target.value);
             if (sanityUser.business?.industry !== e.target.value) {
-              onChange && onChange(true)
+              onChange && onChange(true);
             } else {
-              onChange && onChange(false)
+              onChange && onChange(false);
             }
           }}
           name="industry"
@@ -142,12 +170,18 @@ const SelectIndustry = ({ vendorCategories, sanityUser, onChange }: {
         </select>
       ) : (
         <>
+          <input
+            type="hidden"
+            name="industry"
+            defaultValue={selectValue}
+            readOnly
+          />
           {selectValue}
         </>
       )}
     </>
-  )
-}
+  );
+};
 
 export default EditProfileForm;
 type TInputProps = {
@@ -163,15 +197,13 @@ const BusinessFormInputComp = ({
   title,
   hidden = false,
   value,
-  onChange
+  onChange,
 }: TInputProps) => {
   const [valueState, setValueState] = useState(value);
   return (
     // <section className="flex flex-col gap-1 my-2 max-w-full w-[75vw] mx-auto xs:w-full  sm:w-[75vw]">
-    (<label htmlFor={name} hidden={hidden} className="flex flex-col gap-2">
-      <h2 className="font-darker-grotesque text-2xl text-black">
-        {title}
-      </h2>
+    <label htmlFor={name} hidden={hidden} className="flex flex-col gap-2">
+      <h2 className="font-darker-grotesque text-2xl text-black">{title}</h2>
       <input
         type="text"
         name={name}
@@ -179,27 +211,27 @@ const BusinessFormInputComp = ({
         defaultValue={valueState}
         className="w-full text-lg py-2 px-2 border border-button-border-color rounded-lg"
         onChange={(e) => {
-          setValueState(e.target.value)
+          setValueState(e.target.value);
           if (value !== e.target.value) {
-            onChange && onChange(true)
+            onChange && onChange(true);
           } else {
-            onChange && onChange(false)
+            onChange && onChange(false);
           }
         }}
       />
-    </label>)
+    </label>
   );
 };
 
-
-const SubmitButton = ({ formChanged }: {
-  formChanged: boolean;
-}) => {
+const SubmitButton = ({ formChanged }: { formChanged: boolean }) => {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={!formChanged || pending} className="disabled:text-gray-400 disabled:bg-gray-300 w-fit font-bold font-darker-grotesque">
+    <Button
+      type="submit"
+      disabled={!formChanged || pending}
+      className="disabled:text-gray-400 disabled:bg-gray-300 w-fit font-bold font-darker-grotesque"
+    >
       {pending ? "Saving..." : "Save"}
     </Button>
-  )
-}
-
+  );
+};
