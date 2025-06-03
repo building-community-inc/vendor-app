@@ -265,6 +265,7 @@ const PaymentItem = ({
             contactName={`${payment.vendor.firstName} ${payment.vendor.lastName}`}
             vendorName={payment.vendor.businessName}
             marketName={payment.market.name}
+            vendorEmail={payment.vendor.email}
           />
         )}
       </div>

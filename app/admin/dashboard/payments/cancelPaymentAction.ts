@@ -9,6 +9,7 @@ import { sendCancelEmail } from "./sendCancelEmail";
 const dataSchema = z.object({
   returnedCredits: z.string().transform((v) => parseFloat(v)),
   paymentRecordId: z.string(),
+  vendorEmail: z.string(),
 });
 export const cancelPaymentAction = async (
   formState: FormState,
@@ -36,6 +37,7 @@ export const cancelPaymentAction = async (
   const rawData = {
     returnedCredits: formData.get("returnedCredits"),
     paymentRecordId: formData.get("paymentRecordId"),
+    vendorEmail: formData.get("vendorEmail"),
   };
 
   const { success, data, error } = dataSchema.safeParse(rawData);
@@ -44,6 +46,15 @@ export const cancelPaymentAction = async (
     return {
       success: false,
       errors: ["something went wrong!"],
+    };
+  }
+
+  const sanityVendor = await getSanityUserByEmail(data.vendorEmail);
+
+  if (!sanityVendor) {
+    return {
+      success: false,
+      errors: ["no vendor found"],
     };
   }
 
@@ -125,14 +136,16 @@ export const cancelPaymentAction = async (
       .commit();
 
     // update vendor credits
-    await sanityWriteClient
-      .patch(sanityUser._id)
-      .set({
-        credits: Number(
-          +((sanityUser.credits ?? 0) + data.returnedCredits).toFixed(2)
-        ),
-      })
-      .commit();
+    if (data.returnedCredits && data.returnedCredits > 0) {
+      await sanityWriteClient
+        .patch(sanityVendor._id)
+        .set({
+          credits: Number(
+            +((sanityVendor.credits ?? 0) + data.returnedCredits).toFixed(2)
+          ),
+        })
+        .commit();
+    }
 
     // update market
     await sanityWriteClient
@@ -145,8 +158,8 @@ export const cancelPaymentAction = async (
 
     revalidatePath("/admin/", "layout");
     revalidatePath("/dashboard/", "layout");
-
-    await sendCancelEmail(sanityUser.email);
+    // console.log({ sanityVendor });
+    await sendCancelEmail(sanityVendor.email);
     return {
       success: true,
       errors: undefined,
