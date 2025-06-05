@@ -7,7 +7,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendCancelEmail = async (vendorEmail: string) => {
   try {
-    console.log("sending cancellation email");
+    console.log("sending cancellation email", vendorEmail);
     const resendResp = await resend.emails.send({
       from: "applications@buildingcommunityinc.com",
       to: vendorEmail,

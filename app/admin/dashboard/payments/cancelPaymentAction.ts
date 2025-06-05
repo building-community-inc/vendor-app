@@ -6,6 +6,7 @@ import { sanityClient, sanityWriteClient } from "@/sanity/lib/client";
 import { revalidatePath } from "next/cache";
 import { FormState } from "@/app/types";
 import { sendCancelEmail } from "./sendCancelEmail";
+import { DateTime } from "luxon";
 const dataSchema = z.object({
   returnedCredits: z.string().transform((v) => parseFloat(v)),
   paymentRecordId: z.string(),
@@ -137,14 +138,35 @@ export const cancelPaymentAction = async (
 
     // update vendor credits
     if (data.returnedCredits && data.returnedCredits > 0) {
-      await sanityWriteClient
-        .patch(sanityVendor._id)
-        .set({
-          credits: Number(
+      try {
+        await sanityWriteClient
+          .patch(sanityVendor._id)
+          .set({
+            credits: Number(
+              +((sanityVendor.credits ?? 0) + data.returnedCredits).toFixed(2)
+            ),
+          })
+          .commit();
+
+        await sanityWriteClient.create({
+          _type: "creditTransaction",
+          date: DateTime.now().toISODate(),
+          market: {
+            _type: "reference",
+            _ref: market._id,
+          },
+          vendor: {
+            _type: "reference",
+            _ref: sanityVendor._id,
+          },
+          amount: Number(
             +((sanityVendor.credits ?? 0) + data.returnedCredits).toFixed(2)
           ),
-        })
-        .commit();
+          reason: `admin selected return ${data.returnedCredits} to vendor for cancelling market`,
+        });
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     // update market
@@ -156,10 +178,10 @@ export const cancelPaymentAction = async (
       })
       .commit();
 
-    revalidatePath("/admin/", "layout");
-    revalidatePath("/dashboard/", "layout");
     // console.log({ sanityVendor });
     await sendCancelEmail(sanityVendor.email);
+    revalidatePath("/admin/", "layout");
+    revalidatePath("/dashboard/", "layout");
     return {
       success: true,
       errors: undefined,
