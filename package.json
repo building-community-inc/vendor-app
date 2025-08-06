@@ -16,6 +16,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.13.0",
     "@hookform/resolvers": "^3.9.0",
+    "@next/third-parties": "^15.4.5",
     "@portabletext/react": "^3.1.0",
     "@react-email/components": "0.0.36",
     "@sanity/client": "6.28.4",
